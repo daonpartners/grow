@@ -1,0 +1,126 @@
+{
+  "date": "2026-07-13",
+  "dateLabel": "2026.07.13(월)",
+  "weather": [
+    {
+      "city": "서울",
+      "min": 24,
+      "max": 33,
+      "code": 3
+    },
+    {
+      "city": "부산",
+      "min": 26,
+      "max": 31,
+      "code": 3
+    },
+    {
+      "city": "대구",
+      "min": 25,
+      "max": 34,
+      "code": 1
+    },
+    {
+      "city": "인천",
+      "min": 25,
+      "max": 31,
+      "code": 2
+    },
+    {
+      "city": "광주",
+      "min": 26,
+      "max": 31,
+      "code": 1
+    },
+    {
+      "city": "대전",
+      "min": 24,
+      "max": 34,
+      "code": 1
+    },
+    {
+      "city": "강릉",
+      "min": 26,
+      "max": 37,
+      "code": 2
+    },
+    {
+      "city": "제주",
+      "min": 26,
+      "max": 32,
+      "code": 0
+    }
+  ],
+  "market": [
+    {
+      "label": "코스피",
+      "value": "6,880.97",
+      "diff": "-594.97",
+      "dir": "down"
+    },
+    {
+      "label": "코스닥",
+      "value": "801.59",
+      "diff": "-35.84",
+      "dir": "down"
+    },
+    {
+      "label": "환율(USD)",
+      "value": "1,506.98",
+      "diff": "+1.07",
+      "dir": "up"
+    },
+    {
+      "label": "국제유가($/배럴)",
+      "value": "74.5",
+      "diff": "+3.0",
+      "dir": "up"
+    },
+    {
+      "label": "금(돈)",
+      "value": "737,914",
+      "diff": "-7,228",
+      "dir": "down"
+    }
+  ],
+  "trends": [
+    "박지원",
+    "코스피 주가",
+    "전인화"
+  ],
+  "news": [
+    {
+      "cat": "경제",
+      "title": "7월부터 국민연금 보험료 인상",
+      "summary": "7월부터 국민연금 기준소득월액 상한과 하한이 조정되어 보험료가 인상된다. 고소득 가입자는 월 2만900원 증가하며, 전체 가입자의 86%는 영향이 없다.",
+      "url": "https://n.news.naver.com/article/009/0005706102",
+      "host": "n.news.naver.com"
+    },
+    {
+      "cat": "보험",
+      "title": "에즈금융서비스, 허위사실 유포 법적 대응",
+      "summary": "에즈금융서비스가 허위사실 유포에 대해 법적 대응을 시작했다. 김앤장과 함께 손해배상 청구 및 가압류 절차를 진행 중이다.",
+      "url": "http://www.fins.co.kr/news/articleView.html?idxno=109127",
+      "host": "fins.co.kr"
+    },
+    {
+      "cat": "사회",
+      "title": "당뇨병 환자, 80세 이상 치매 사망 증가",
+      "summary": "당뇨병 환자의 치매 사망률이 80세 이상에서 급증하고 있다는 연구 결과가 발표됐다. 이는 당뇨병 치료 발전으로 수명이 늘어난 반면, 치매가 새로운 건강 부담으로 떠오르고 있음을 시사한다.",
+      "url": "https://v.daum.net/v/20260712210148518?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "여름철 신장 건강, 물 섭취 중요",
+      "summary": "여름철 갈증을 느끼기 전에 물을 충분히 마시는 것이 신장 건강에 중요하다. 탈수 예방을 위해 적절한 수분 섭취가 필요하며, 만성 질환자는 주의해야 한다.",
+      "url": "https://v.daum.net/v/20260712173128553?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    }
+  ],
+  "quote": {
+    "text": "신뢰는 쌓기 어렵고 무너지기는 쉽다",
+    "author": "워런 버핏"
+  },
+  "updatedAt": "2026-07-13T13:53:51.000Z"
+}
