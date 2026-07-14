@@ -547,6 +547,9 @@
 
   /* ---------- MODAL ---------- */
   .modal-backdrop{display:none; position:fixed; inset:0; z-index:100; background:rgba(11,27,51,0.6); align-items:center; justify-content:center; padding:20px;}
+  /* 목록 모달 위에서 다시 열리는 상세 모달은 항상 위에 그린다.
+     (z-index가 같으면 HTML에서 나중에 나온 목록 모달이 상세를 덮어버린다) */
+  #noticeModalBackdrop{z-index:300;}
   .modal-backdrop.open{display:flex;}
   .modal-card{background:#fff; border-radius:18px; max-width:520px; width:100%; padding:30px; position:relative; max-height:86vh; overflow-y:auto;}
   .modal-close{position:absolute; top:16px; right:18px; border:none; background:none; font-size:22px; color:var(--slate); cursor:pointer; line-height:1;}
@@ -1380,22 +1383,6 @@ body.growon{ background:var(--g-navy); }
           <div style="margin-top:16px;" id="cardnewsModalLinks"></div>
         </div>
       </div>
-<div class="modal-backdrop" id="docModalBackdrop">
-          <div class="modal-card">
-            <button class="modal-close" id="docModalClose">&times;</button>
-            <div class="modal-title" id="docModalTitle"></div>
-            <div style="font-size:11px; color:var(--slate); margin-top:6px;" id="docModalMeta"></div>
-            <div style="font-size:13.5px; color:var(--navy-2); line-height:1.7; margin-top:14px; white-space:pre-wrap;" id="docModalContent"></div>
-            <div style="margin-top:16px;" id="docModalLinks"></div>
-          </div>
-        </div>
-<div class="modal-backdrop" id="reqBoardModalBackdrop">
-          <div class="modal-card">
-            <button class="modal-close" id="reqBoardModalClose">&times;</button>
-            <div class="modal-title">🙋 강의자료요청 전체보기</div>
-            <div id="reqBoardList" style="margin-top:16px;"></div>
-          </div>
-        </div>
 
 <div class="modal-backdrop" id="qnaBoardModalBackdrop">
         <div class="modal-card">
@@ -1433,7 +1420,7 @@ body.growon{ background:var(--g-navy); }
   <div class="modal-card">
     <button class="modal-close" id="bizModalClose">&times;</button>
     <div class="modal-title" id="bizModalName">분야명</div>
-    <div class="modal-tag" id="bizModalSummary">요약</div>
+    <div class="modal-tag" id="bizModalSummary" style="white-space:pre-line; line-height:1.6; text-align:left;">요약</div>
     <div class="modal-tile wide" style="margin-top:16px;">
       <div class="tile-icon">📌</div>
       <div class="tile-body">
@@ -1872,41 +1859,47 @@ body.growon{ background:var(--g-navy); }
   document.getElementById('dayModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'dayModalBackdrop') closeDayModal(); });
 
   // ================= 사업소개 =================
+  // showPosts: true 인 센터에만 게시물 목록이 표시됩니다. (현재 비즈니스파트너스만)
   const bizItems = [
     {
       icon: "🏥",
       name: "사업장컨설팅센터",
-      summary: "사업자 안전경영컨설팅",
-      desc: "중대재해 대응 및 안전점검 관련",
-      category: "사장님클리닉"
+      summary: "일반 소상공인 및 기업 보험 전문센터",
+      desc: "일반 소상공인 및 기업 보험 전문센터\n중대재해 대응 및 안전점검 센터\nSafe Consulting 지원",
+      category: "사장님클리닉",
+      showPosts: false
     },
     {
       icon: "🎪",
       name: "행사컨설팅센터",
-      summary: "오프라인 행사 진행",
-      desc: "산모교실, 펫페어, 입주부스, 지문상담 등",
-      category: "행사컨설팅"
+      summary: "1:1 산모교실 및 출산박람회 등",
+      desc: "1:1 산모교실 및 출산박람회 등\n펫페어\n지문 상담 행사 등",
+      category: "행사컨설팅",
+      showPosts: false
     },
     {
       icon: "💻",
       name: "온라인센터",
-      summary: "카페,블로그 기반",
-      desc: "카페, 블로그 등 온라인 채널",
-      category: "온라인영업"
+      summary: "카페, 블로그 등 온라인 전문채널",
+      desc: "카페, 블로그 등 온라인 전문채널",
+      category: "온라인영업",
+      showPosts: false
     },
     {
       icon: "💡",
       name: "수익확장센터",
-      summary: "다양한 수익화실현",
-      desc: "다양한 추가 수익화 모델 소개",
-      category: "수익화모델"
+      summary: "다양한 추가 수익화",
+      desc: "다양한 추가 수익화",
+      category: "수익화모델",
+      showPosts: false
     },
     {
       icon: "🤝",
       name: "비즈니스파트너스",
       summary: "그로우사업부 제휴업체",
       desc: "그로우사업부 제휴업체",
-      category: "제휴업체"
+      category: "제휴업체",
+      showPosts: true
     }
   ];
 
@@ -1955,7 +1948,7 @@ body.growon{ background:var(--g-navy); }
     grid.innerHTML = bizItems.map((b, idx) => `
       <div class="biz-card" data-idx="${idx}">
         <div class="biz-name">${b.icon} ${b.name}</div>
-        <div class="biz-desc">${b.desc}</div>
+        <div class="biz-desc">${escapeHtml(b.summary)}</div>
       </div>
     `).join('');
     grid.querySelectorAll('.biz-card').forEach(card => {
@@ -1969,12 +1962,28 @@ body.growon{ background:var(--g-navy); }
   function openBizModal(b){
     document.getElementById('bizModalName').textContent = b.name;
     document.getElementById('bizModalSummary').textContent = b.desc;
-    document.getElementById('bizModalCaseLabel').textContent = '게시물';
+    const caseEl = document.getElementById('bizModalCase');
+    const labelEl = document.getElementById('bizModalCaseLabel');
+
+    /* 게시물은 showPosts 인 센터에만 표시한다. 나머지는 설명만 보여준다. */
+    if(!b.showPosts){
+      labelEl.textContent = '';
+      labelEl.style.display = 'none';
+      caseEl.innerHTML = '';
+      caseEl.style.display = 'none';
+      document.getElementById('bizModalBackdrop').classList.add('open');
+      return;
+    }
+
+    labelEl.textContent = '게시물';
+    labelEl.style.display = '';
+    caseEl.style.display = '';
+
     const posts = bizPosts.filter(p => p.category === b.category);
     if(posts.length === 0){
-      document.getElementById('bizModalCase').innerHTML = '<div class="doc-empty-note">아직 등록된 게시물이 없습니다.</div>';
+      caseEl.innerHTML = '<div class="doc-empty-note">아직 등록된 게시물이 없습니다.</div>';
     } else {
-      document.getElementById('bizModalCase').innerHTML = posts.map(p => `
+      caseEl.innerHTML = posts.map(p => `
         <div class="doc-search-result" style="text-align:left;">
           <div class="doc-name">${escapeHtml(p.title)}</div>
           <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}</div>
@@ -1982,22 +1991,6 @@ body.growon{ background:var(--g-navy); }
           ${(p.images && p.images.length) ? `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:10px;">${p.images.map(src => `
             <img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">
           `).join('')}</div>` : ''}
-          ${(p.replies && p.replies.length) ? `<div class="qna-replies">${p.replies.map(r => `
-            <div class="qna-reply">
-              <div class="qna-reply-meta">${escapeHtml(r.author || '')} · ${escapeHtml(r.date || '')}</div>
-              <div class="qna-reply-content">${escapeHtml(r.content || '')}</div>
-            </div>
-          `).join('')}</div>` : ''}
-          <span class="qna-reply-toggle" data-pid="${p.id}">💬 답글 달기</span>
-          <div class="qna-form" id="bizReplyForm-${p.id}">
-            <div class="qna-form-row">
-              <input type="text" class="biz-reply-author" placeholder="이름">
-              <input type="text" class="biz-reply-code" placeholder="설계사 인증코드">
-            </div>
-            <textarea class="biz-reply-content-input" placeholder="답글 내용을 입력하세요"></textarea>
-            <div class="qna-form-msg" data-msg-for="${p.id}"></div>
-            <button type="button" class="biz-reply-submit" data-pid="${p.id}">답글 등록</button>
-          </div>
         </div>
       `).join('');
     }
@@ -2074,55 +2067,6 @@ body.growon{ background:var(--g-navy); }
         "content": "이달의 보험사별 판매전략_2026년 7월_생명보험",
         "date": "2026.07.06 게시",
         "link": "https://drive.google.com/open?id=1yA2teiVLlAcfMdc7cs9FAP-IEobHW1Oe&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "6월 영업전략(생보) (5)",
-        "content": "이달의 생보소식지_2026년 6월",
-        "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "6월 영업전략(생보) (4)",
-        "content": "이달의 생보소식지_2026년 6월",
-        "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "6월 영업전략(생보) (3)",
-        "content": "이달의 생보소식지_2026년 6월",
-        "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "6월 영업전략(생보) (2)",
-        "content": "이달의 생보소식지_2026년 6월",
-        "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "6월 영업전략(생보) (1)",
-        "content": "이달의 생보소식지_2026년 6월",
-        "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "6월 영업전략(생보)",
-        "content": "이달의 생보소식지_2026년 6월",
-        "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "6월 영업전략 브리핑",
-        "content": "이달의 보험영업전략 브리핑_2026년 6월",
-        "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1m_MpqwSqyXhumvVBkvQ177LLErj9C5-R&usp=drive_fs",
         "images": []
     }
 ];
