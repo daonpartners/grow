@@ -3320,7 +3320,7 @@ body.growon{ background:var(--g-navy); }
     if(!list.length) return '<div class="alb-empty">아직 등록된 사진이 없습니다.<br>관리자센터 → 앨범 탭에서 등록하거나, 텔레그램 봇에 사진을 보내주세요.</div>';
     return list.map((p, i) =>
       '<div class="alb-item" data-ai="' + i + '">' +
-        '<img src="' + albEsc(p.url) + '" alt="' + albEsc(p.caption) + '" loading="lazy">' +
+        '<img src="' + albEsc(albSrc(p)) + '" alt="' + albEsc(p.caption) + '" loading="lazy">' +
         (p.caption || p.date ?
           '<div class="alb-cap">' +
             (p.caption ? '<b>' + albEsc(p.caption) + '</b>' : '') +
@@ -3388,6 +3388,17 @@ body.growon{ background:var(--g-navy); }
     if(r.ok && typeof opts.onDone === 'function') setTimeout(opts.onDone, 900);
   }
 
+  /* 사진 주소는 항상 상대경로로 만든다.
+     album.json에 https://grow.ai.kr/... 같은 절대주소가 들어 있어도,
+     도메인 변경이나 인증서 미발급 상황에서 이미지가 깨지지 않도록 파일명만 사용한다. */
+  function albSrc(p){
+    if(p && p.file) return 'album/' + p.file;
+    const u = (p && p.url) ? String(p.url) : '';
+    const i = u.lastIndexOf('/album/');
+    if(i !== -1) return u.slice(i + 1);
+    return u;
+  }
+
   function albRender(){
     const main = document.getElementById('albGrid');
     if(main){ main.innerHTML = albCardsHtml(albPhotos); albBind(main); }
@@ -3431,7 +3442,7 @@ body.growon{ background:var(--g-navy); }
     if(!albPhotos.length) return;
     albIdx = (i + albPhotos.length) % albPhotos.length;
     const p = albPhotos[albIdx];
-    document.getElementById('albLbImg').src = p.url;
+    document.getElementById('albLbImg').src = albSrc(p);
     document.getElementById('albLbCap').textContent = p.caption || '';
     document.getElementById('albLbSub').textContent = (p.date || '') + (p.uploader ? ' · ' + p.uploader : '');
     document.getElementById('albLb').classList.add('open');
