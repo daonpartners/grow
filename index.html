@@ -490,7 +490,10 @@
   .adm-badge.mgr{background:var(--orange); color:#fff;}
   .adm-who{font-size:12px; font-weight:800; color:var(--navy-2);}
   .adm-role{font-size:11px; color:var(--slate); font-weight:700;}
-  .adm-out{margin-left:auto; font-size:11px; font-weight:800; color:var(--slate); background:none; border:1px solid var(--line); border-radius:7px; padding:5px 11px; cursor:pointer;}
+  .adm-out{font-size:11px; font-weight:800; color:var(--slate); background:none; border:1px solid var(--line); border-radius:7px; padding:5px 11px; cursor:pointer;}
+  .adm-sync{margin-left:auto; font-size:11px; font-weight:800; color:#fff; background:var(--orange); border:none; border-radius:7px; padding:5px 12px; cursor:pointer; transition:background .13s;}
+  .adm-sync:hover{background:var(--orange-deep);}
+  .adm-sync:disabled{opacity:.55; cursor:default;}
   .adm-out:hover{color:var(--orange-deep); border-color:var(--orange);}
   .dbb-fixed{padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-weight:800; color:var(--navy-2); background:#EEF1F6; margin-bottom:8px;}
 
@@ -996,8 +999,10 @@ body.growon{ background:var(--g-navy); }
             <span class="adm-badge" id="admBadge">관리자</span>
             <span class="adm-who" id="admWho"></span>
             <span class="adm-role" id="admRole"></span>
+            <button type="button" class="adm-sync" id="admSyncBtn" title="Notion에 올린 공지·자료·일정을 사이트에 즉시 반영합니다">🔄 지금 반영</button>
             <button type="button" class="adm-out" id="admOut">나가기</button>
           </div>
+          <div class="cm-msg" id="admSyncMsg" style="margin:0 0 4px 2px;"></div>
           <div class="edu-tabs" id="adminTabs" data-reveal>
             <button class="edu-tab active" data-atab="meeting">📁 회의자료</button>
             <button class="edu-tab" data-atab="event">📋 행사신청</button>
@@ -3122,6 +3127,23 @@ body.growon{ background:var(--g-navy); }
   if(_ao) _ao.addEventListener('click', () => {
     ['growAdmin','growRole','growBranch','growName','growLabel'].forEach(k => sessionStorage.removeItem(k));
     location.reload();
+  });
+
+  /* 지금 반영: Notion 콘텐츠 자동화를 즉시 실행시키는 웹훅 호출 */
+  const NOTION_SYNC = 'https://daonpartners.app.n8n.cloud/webhook/daon-notion-change';
+  const _asb = document.getElementById('admSyncBtn');
+  if(_asb) _asb.addEventListener('click', async () => {
+    const msg = document.getElementById('admSyncMsg');
+    _asb.disabled = true;
+    _asb.textContent = '⏳ 반영 중…';
+    if(msg){ msg.textContent = 'Notion 내용을 사이트에 반영하고 있습니다…'; msg.style.color = 'var(--slate)'; }
+    try{
+      await fetch(NOTION_SYNC, { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+      if(msg){ msg.textContent = '✅ 요청 완료. 약 1분 내 사이트에 반영됩니다. (새로고침 Ctrl+Shift+R)'; msg.style.color = 'green'; }
+    } catch(e){
+      if(msg){ msg.textContent = '❌ 반영 요청에 실패했습니다. 잠시 후 다시 시도해 주세요.'; msg.style.color = 'red'; }
+    }
+    setTimeout(() => { _asb.disabled = false; _asb.textContent = '🔄 지금 반영'; }, 4000);
   });
 
   if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')){
