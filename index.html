@@ -555,6 +555,10 @@
   .modal-close{position:absolute; top:16px; right:18px; border:none; background:none; font-size:22px; color:var(--slate); cursor:pointer; line-height:1;}
   .modal-title{font-size:20px; font-weight:800; color:var(--navy-2);}
   .modal-tag{display:inline-block; margin-top:8px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; background:var(--canvas); color:var(--orange-deep);}
+  /* 게시물 없는 센터: 설명을 크게 채우는 스타일 */
+  .biz-desc-full{margin-top:18px; display:flex; flex-direction:column; gap:12px;}
+  .biz-desc-line{background:var(--canvas); border-left:4px solid var(--orange); border-radius:10px;
+    padding:16px 18px; font-size:15.5px; font-weight:700; color:var(--navy-2); line-height:1.5; letter-spacing:-0.3px;}
   .modal-grid{margin-top:20px; display:flex; flex-wrap:wrap; gap:10px;}
   .modal-tile{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:16px 8px; background:var(--canvas); border-radius:12px; text-align:center; min-height:96px; transition:background .15s; flex:1 1 96px; max-width:calc(25% - 8px);}
   .modal-tile.is-link{cursor:pointer;}
@@ -615,12 +619,18 @@ body.growon{ background:var(--g-navy); }
 .rail-t{font-size:12px; font-weight:900; color:var(--g-orange); padding-left:2px;}
 .rlink{display:block; background:#fff; border-radius:7px; padding:10px 8px; font-size:12.5px; font-weight:800; color:#0F2740; text-align:center; text-decoration:none;}
 .rlink:hover{background:#EEF3F9;}
-.rgroup{background:#fff; border-radius:10px; padding:10px 9px;}
-.rgroup h4{font-size:12.5px; font-weight:900; text-align:center; color:#0F2740; margin-bottom:6px;}
-.rgroup a{display:block; font-size:11.5px; color:#6B7A8C; text-align:center; padding:4px 0; text-decoration:none; font-weight:600;}
-.rgroup a:hover{color:var(--g-orange-deep);}
-.rstack{background:#fff; border-radius:10px; overflow:hidden;}
-.rstack a{display:block; font-size:12px; font-weight:700; color:#0F2740; text-align:center; padding:10px 6px; text-decoration:none; border-bottom:1px solid #E3E7EE;}
+.rgroup{background:#fff; border-radius:12px; padding:12px 10px 6px; border:1px solid #E7EBF1;}
+.rgroup h4{font-size:12.5px; font-weight:900; text-align:center; color:#0F2740; margin:0 0 8px; padding-bottom:8px; border-bottom:1px solid #EDF0F5; letter-spacing:-0.2px;}
+.rgroup a{display:flex; align-items:center; gap:7px; min-height:30px; font-size:11.5px; color:#5C6B7D;
+  padding:5px 6px; margin-bottom:2px; text-decoration:none; font-weight:600; border-radius:7px;
+  line-height:1.3; transition:background .13s, color .13s;}
+.rgroup a:last-child{margin-bottom:6px;}
+.rgroup a::before{content:attr(data-n); flex:0 0 16px; height:16px; display:inline-flex; align-items:center; justify-content:center;
+  background:#EEF2F7; color:#8494A6; border-radius:5px; font-size:9.5px; font-weight:900;}
+.rgroup a:hover{background:#F4F7FB; color:var(--g-orange-deep);}
+.rgroup a:hover::before{background:var(--g-orange); color:#fff;}
+.rstack{background:#fff; border-radius:12px; overflow:hidden; border:1px solid #E7EBF1;}
+.rstack a{display:flex; align-items:center; justify-content:center; min-height:38px; font-size:12px; font-weight:700; color:#0F2740; text-align:center; padding:8px 6px; text-decoration:none; border-bottom:1px solid #EDF0F5; transition:background .13s;}
 .rstack a:last-child{border-bottom:none;} .rstack a:hover{background:#EEF3F9;}
 .gmain{background:#fff; border-radius:12px; padding:18px; min-height:600px;}
 .gmain .panel{background:transparent; border:none; box-shadow:none; padding:0; margin:0;}
@@ -1123,7 +1133,6 @@ body.growon{ background:var(--g-navy); }
         <div class="edu-tabs" id="eduTabs" data-reveal>
           <button class="edu-tab active" data-tab="lecture">🎬 강의실</button>
           <button class="edu-tab" data-tab="archive">📁 자료실</button>
-          <button class="edu-tab" data-tab="request">🙋 강의자료요청</button>
         </div>
 
         <div class="edu-panel active" id="edu-lecture">
@@ -1172,31 +1181,7 @@ body.growon{ background:var(--g-navy); }
           </div>
         </div>
 
-        <div class="edu-panel" id="edu-request">
-          <div class="qna-notice">강의나 자료가 필요하시면 자유롭게 요청해주세요. 다온지사 설계사가 아니어도 누구나 보고 쓰실 수 있습니다.</div>
-          <button class="qna-new-btn" id="reqNewBtn">✏️ 요청 글쓰기</button>
-          <div class="qna-form" id="reqNewForm">
-            <div class="qna-form-row">
-              <input type="text" id="reqNewAuthor" placeholder="이름">
-            </div>
-            <input type="text" id="reqNewTitle" placeholder="제목">
-            <textarea id="reqNewContent" placeholder="어떤 강의·자료가 필요하신지 적어주세요"></textarea>
-            <textarea id="reqNewImages" placeholder="이미지 링크(선택, 한 줄에 하나씩)" style="min-height:44px;"></textarea>
-            <div class="qna-form-msg" id="reqNewMsg"></div>
-            <button type="button" id="reqNewSubmit">등록</button>
-          </div>
-          <div id="reqList"></div>
-          <button class="qna-new-btn" id="reqBoardOpenBtn" style="margin-top:10px;">📋 전체 요청 보기</button>
-        </div>
-
-        <!-- 강의자료요청 전체보기 모달 -->
-        <div class="modal-backdrop" id="reqBoardModalBackdrop">
-          <div class="modal-card">
-            <button class="modal-close" id="reqBoardModalClose">&times;</button>
-            <div class="modal-title">🙋 강의자료요청 전체보기</div>
-            <div id="reqBoardList" style="margin-top:16px;"></div>
-          </div>
-        </div>
+        <div class="edu-panel" id="edu-request" style="display:none;"></div>
       </section>
       </div>
       
@@ -1314,18 +1299,18 @@ body.growon{ background:var(--g-navy); }
 
     <div class="rgroup">
       <h4>자동차보험</h4>
-      <a href="https://iics.kidi.or.kr/insuUserReal/viewInsuUserReal.do" target="_blank" rel="noopener">1. 보험개발원등록</a>
-      <a href="https://prem.kidi.or.kr:1443/" target="_blank" rel="noopener">2. 할인할증요인 조회</a>
-      <a href="https://accident.knia.or.kr/" target="_blank" rel="noopener">3. 과실비율조회</a>
-      <a href="https://carinfo.knia.or.kr/lmxsrv/main/main.do" target="_blank" rel="noopener">4. 자동차보험종합포털</a>
+      <a href="https://iics.kidi.or.kr/insuUserReal/viewInsuUserReal.do" target="_blank" rel="noopener" data-n="1">보험개발원등록</a>
+      <a href="https://prem.kidi.or.kr:1443/" target="_blank" rel="noopener" data-n="2">할인할증요인 조회</a>
+      <a href="https://accident.knia.or.kr/" target="_blank" rel="noopener" data-n="3">과실비율조회</a>
+      <a href="https://carinfo.knia.or.kr/lmxsrv/main/main.do" target="_blank" rel="noopener" data-n="4">자동차보험종합포털</a>
     </div>
     <div class="rgroup">
       <h4>화재·배상보험</h4>
-      <a href="https://bridge.kfpa.or.kr/#/" target="_blank" rel="noopener">1. 특수건물조회</a>
-      <a href="https://www.gov.kr/mw/AA020InfoCappView.do?CappBizCD=15000000098&HighCtgCD=A02004002&Mcode=10205" target="_blank" rel="noopener">2. 건축물대장</a>
-      <a href="https://www.elevator.go.kr/opn/MainPage.do" target="_blank" rel="noopener">3. 승강기정보조회</a>
-      <a href="https://www.safemap.go.kr/insur/searchInsur.do" target="_blank" rel="noopener">4. 재난배상정보조회</a>
-      <a href="https://cps.kstar.or.kr/playgroundState" target="_blank" rel="noopener">5. 어린이놀이시설 조회</a>
+      <a href="https://bridge.kfpa.or.kr/#/" target="_blank" rel="noopener" data-n="1">특수건물조회</a>
+      <a href="https://www.gov.kr/mw/AA020InfoCappView.do?CappBizCD=15000000098&HighCtgCD=A02004002&Mcode=10205" target="_blank" rel="noopener" data-n="2">건축물대장</a>
+      <a href="https://www.elevator.go.kr/opn/MainPage.do" target="_blank" rel="noopener" data-n="3">승강기정보조회</a>
+      <a href="https://www.safemap.go.kr/insur/searchInsur.do" target="_blank" rel="noopener" data-n="4">재난배상정보조회</a>
+      <a href="https://cps.kstar.or.kr/playgroundState" target="_blank" rel="noopener" data-n="5">어린이놀이시설 조회</a>
     </div>
     <div class="rstack">
       <a href="https://www.nps.or.kr" target="_blank" rel="noopener">연금계산기</a>
@@ -1961,13 +1946,14 @@ body.growon{ background:var(--g-navy); }
 
   function openBizModal(b){
     document.getElementById('bizModalName').textContent = b.name;
-    document.getElementById('bizModalSummary').textContent = b.desc;
+    const sumEl = document.getElementById('bizModalSummary');
     const caseEl = document.getElementById('bizModalCase');
     const labelEl = document.getElementById('bizModalCaseLabel');
 
-    /* 게시물은 showPosts 인 센터에만 표시한다. 나머지는 설명만 보여준다. */
+    /* 게시물은 showPosts 인 센터에만 표시. 나머지는 설명을 크게 채운다. */
     if(!b.showPosts){
-      labelEl.textContent = '';
+      sumEl.className = 'biz-desc-full';
+      sumEl.innerHTML = b.desc.split('\n').map(line => line.trim() ? `<div class="biz-desc-line">${escapeHtml(line.trim())}</div>` : '').join('');
       labelEl.style.display = 'none';
       caseEl.innerHTML = '';
       caseEl.style.display = 'none';
@@ -1975,6 +1961,10 @@ body.growon{ background:var(--g-navy); }
       return;
     }
 
+    /* 비즈니스파트너스: 요약은 알약, 아래 게시물 목록 */
+    sumEl.className = 'modal-tag';
+    sumEl.style.whiteSpace = '';
+    sumEl.textContent = b.desc;
     labelEl.textContent = '게시물';
     labelEl.style.display = '';
     caseEl.style.display = '';
@@ -2359,52 +2349,7 @@ body.growon{ background:var(--g-navy); }
       </div>
     `;
   }
-  function renderReqList(list){
-    const box = document.getElementById('reqList');
-    box.innerHTML = list.length === 0
-      ? '<div class="doc-empty-note">아직 등록된 요청이 없습니다.</div>'
-      : reqRowHtml(list[0]);
-  }
-  document.getElementById('reqBoardOpenBtn').addEventListener('click', () => {
-    document.getElementById('reqBoardList').innerHTML = reqList.length === 0
-      ? '<div class="doc-empty-note">아직 등록된 요청이 없습니다.</div>'
-      : reqList.map(r => reqRowHtml(r)).join('');
-    document.getElementById('reqBoardModalBackdrop').classList.add('open');
-  });
-  function closeReqBoardModal(){ document.getElementById('reqBoardModalBackdrop').classList.remove('open'); }
-  document.getElementById('reqBoardModalClose').addEventListener('click', closeReqBoardModal);
-  document.getElementById('reqBoardModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'reqBoardModalBackdrop') closeReqBoardModal(); });
-  renderReqList(reqList);
-
-  document.getElementById('reqNewBtn').addEventListener('click', () => {
-    document.getElementById('reqNewForm').classList.toggle('open');
-  });
-  document.getElementById('reqNewSubmit').addEventListener('click', async () => {
-    const author = document.getElementById('reqNewAuthor').value.trim();
-    const title = document.getElementById('reqNewTitle').value.trim();
-    const content = document.getElementById('reqNewContent').value.trim();
-    const imageLinks = document.getElementById('reqNewImages').value.split(/\r?\n/).map(s => s.trim()).filter(s => s);
-    const msg = document.getElementById('reqNewMsg');
-    if(!author || !title || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
-    msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
-    try{
-      const res = await fetch(REQ_WEBHOOK, {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ author, title, content, imageLinks })
-      });
-      const data = await res.json();
-      if(data.success){
-        msg.textContent = '등록되었습니다. 잠시 후(수 초~1분) 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
-        document.getElementById('reqNewTitle').value = '';
-        document.getElementById('reqNewContent').value = '';
-        document.getElementById('reqNewImages').value = '';
-      } else {
-        msg.textContent = data.message || '등록에 실패했습니다.'; msg.style.color = 'red';
-      }
-    } catch(err){
-      msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red';
-    }
-  });
+  // ================= 강의자료요청 (기능 제거됨) =================
 
   // ================= 보험사 전산·보상청구 =================
   const insurers = [
