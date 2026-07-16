@@ -487,6 +487,13 @@
   /* 관리자 역할 배지 */
   .adm-bar{display:flex; align-items:center; gap:9px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:9px 13px; margin-bottom:14px; flex-wrap:wrap;}
   .adm-badge{font-size:10.5px; font-weight:800; padding:4px 10px; border-radius:999px; background:var(--navy-2); color:#fff;}
+  .fc-card{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--navy-2); border-radius:12px; padding:14px 16px; margin-bottom:10px;}
+  .fc-card-top{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .fc-card-name{font-size:14.5px; font-weight:900; color:var(--navy-2);}
+  .fc-card-status{font-size:10.5px; font-weight:800; padding:2px 8px; border-radius:999px; background:var(--canvas); color:var(--orange-deep);}
+  .fc-card-row{font-size:12px; color:var(--slate); margin-top:3px; line-height:1.5;}
+  .fc-card-row b{color:var(--navy-2); font-weight:700;}
+  .fc-empty{text-align:center; padding:40px 16px; color:var(--slate); font-size:13px;}
   .adm-badge.mgr{background:var(--orange); color:#fff;}
   .adm-who{font-size:12px; font-weight:800; color:var(--navy-2);}
   .adm-role{font-size:11px; color:var(--slate); font-weight:700;}
@@ -792,6 +799,7 @@ body.growon{ background:var(--g-navy); }
       </div>
     </div>
     <button class="gbtn" data-view="admin">🔒 관리자센터</button>
+    <button class="gbtn" data-view="fclookup">👤 내 고객 조회<small>FC 전용</small></button>
     <button class="gbtn" data-view="album">그로우앨범</button>
     <button class="gbtn" data-view="recruit">파트너모집</button>
 
@@ -970,6 +978,41 @@ body.growon{ background:var(--g-navy); }
         </div>
         <div class="biz-grid" id="bizGrid" data-reveal></div>
       </section>
+      </div>
+      <div class="gview" id="view-fclookup">
+<section class="panel" id="fclookup">
+        <div class="panel-head">
+          <div><div class="panel-eyebrow">FC Only</div><h2 class="panel-title">내 고객 조회</h2></div>
+        </div>
+
+        <div id="fcGate">
+          <div class="qna-notice">👤 소속 지사장에게 받은 <b>조회 코드</b>와 본인 이름을 입력하면, 본인에게 배정된 고객만 확인할 수 있습니다.<br>다른 FC의 정보는 볼 수 없습니다.</div>
+          <div class="qna-form open" style="max-width:360px;">
+            <select id="fcBranch">
+              <option value="">지사 선택</option>
+              <option value="광명">광명</option>
+              <option value="다온">다온</option>
+              <option value="도약">도약</option>
+              <option value="동행">동행</option>
+              <option value="광주">광주</option>
+            </select>
+            <input type="text" id="fcName" placeholder="본인 이름 (담당FC에 등록된 이름과 동일하게)" autocomplete="off">
+            <input type="password" id="fcCode" placeholder="지사 조회 코드" autocomplete="off">
+            <div class="qna-form-msg" id="fcGateMsg"></div>
+            <button type="button" id="fcGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">조회하기</button>
+          </div>
+        </div>
+
+        <div id="fcBody" style="display:none;">
+          <div class="adm-bar" id="fcBar">
+            <span class="adm-badge">FC</span>
+            <span class="adm-who" id="fcWho"></span>
+            <span class="adm-role" id="fcCount"></span>
+            <button type="button" class="adm-out" id="fcOut">나가기</button>
+          </div>
+          <div id="fcList"></div>
+        </div>
+</section>
       </div>
       <div class="gview" id="view-admin">
 <section class="panel" id="admincenter">
@@ -3145,6 +3188,95 @@ body.growon{ background:var(--g-navy); }
     }
     setTimeout(() => { _asb.disabled = false; _asb.textContent = '🔄 지금 반영'; }, 4000);
   });
+
+  /* ===== FC 내 고객 조회 ===== */
+  const FC_LOOKUP = 'https://daonpartners.app.n8n.cloud/webhook/daon-fc-lookup';
+
+  function fcStatusColor(s){
+    if(s === '체결') return 'background:#E8F6EE; color:#12693F;';
+    if(s === '상담중') return 'background:#FFF6E0; color:#8A6300;';
+    if(s === '실패') return 'background:#FDEDEB; color:#B02A20;';
+    return 'background:var(--canvas); color:var(--orange-deep);';
+  }
+
+  function fcRenderList(customers){
+    const box = document.getElementById('fcList');
+    if(!customers.length){
+      box.innerHTML = '<div class="fc-empty">아직 배정된 고객이 없습니다.<br>고객이 배정되면 텔레그램으로도 알려드립니다.</div>';
+      return;
+    }
+    box.innerHTML = customers.map(c => `
+      <div class="fc-card">
+        <div class="fc-card-top">
+          <span class="fc-card-name">${escapeHtml(c.name || '(이름 없음)')}</span>
+          <span class="fc-card-status" style="${fcStatusColor(c.status)}">${escapeHtml(c.status)}</span>
+        </div>
+        <div class="fc-card-row">📞 <b>${escapeHtml(c.phone || '-')}</b> &nbsp;·&nbsp; 🎂 ${escapeHtml(c.birth || '-')}</div>
+        <div class="fc-card-row">📍 ${escapeHtml(c.address || '-')}</div>
+        <div class="fc-card-row">🏷️ ${escapeHtml(c.dbType || '기타')} DB &nbsp;·&nbsp; 배정일 ${escapeHtml(c.assignedAt || '-')}</div>
+        ${c.product ? `<div class="fc-card-row">✅ 체결상품: ${escapeHtml(c.product)}${c.amount ? ' (' + Number(c.amount).toLocaleString('ko-KR') + '원)' : ''}</div>` : ''}
+        ${c.memo ? `<div class="fc-card-row">💬 ${escapeHtml(c.memo)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  const _fcgb = document.getElementById('fcGateBtn');
+  if(_fcgb) _fcgb.addEventListener('click', async () => {
+    const branch = document.getElementById('fcBranch').value;
+    const name = document.getElementById('fcName').value.trim();
+    const code = document.getElementById('fcCode').value.trim();
+    const msg = document.getElementById('fcGateMsg');
+    if(!branch || !name || !code){
+      msg.textContent = '지사·이름·조회코드를 모두 입력해 주세요.'; msg.style.color = 'var(--orange-deep)';
+      return;
+    }
+    _fcgb.disabled = true; _fcgb.textContent = '조회 중…';
+    msg.textContent = ''; msg.style.color = '';
+    try{
+      const res = await fetch(FC_LOOKUP, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ branch, name, code })
+      });
+      const data = await res.json();
+      if(data.success){
+        sessionStorage.setItem('fcBranch', branch);
+        sessionStorage.setItem('fcName', name);
+        sessionStorage.setItem('fcCode', code);
+        document.getElementById('fcGate').style.display = 'none';
+        document.getElementById('fcBody').style.display = 'block';
+        document.getElementById('fcWho').textContent = branch + '지사 · ' + name + '님';
+        document.getElementById('fcCount').textContent = '· 배정 ' + data.count + '건';
+        fcRenderList(data.customers);
+      } else {
+        msg.textContent = data.message || '조회에 실패했습니다.'; msg.style.color = 'red';
+      }
+    } catch(e){
+      msg.textContent = '네트워크 오류가 발생했습니다.'; msg.style.color = 'red';
+    }
+    _fcgb.disabled = false; _fcgb.textContent = '조회하기';
+  });
+
+  const _fco = document.getElementById('fcOut');
+  if(_fco) _fco.addEventListener('click', () => {
+    ['fcBranch','fcName','fcCode'].forEach(k => sessionStorage.removeItem(k));
+    document.getElementById('fcBody').style.display = 'none';
+    document.getElementById('fcGate').style.display = 'block';
+    document.getElementById('fcName').value = '';
+    document.getElementById('fcCode').value = '';
+  });
+
+  /* 이전에 조회 성공한 세션이 있으면 자동 재조회 (새로고침해도 유지) */
+  (function fcAutoRestore(){
+    const b = sessionStorage.getItem('fcBranch');
+    const n = sessionStorage.getItem('fcName');
+    const c = sessionStorage.getItem('fcCode');
+    if(b && n && c && document.getElementById('fcGateBtn')){
+      document.getElementById('fcBranch').value = b;
+      document.getElementById('fcName').value = n;
+      document.getElementById('fcCode').value = c;
+      document.getElementById('fcGateBtn').click();
+    }
+  })();
 
   if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')){
     admRole = sessionStorage.getItem('growRole') || 'admin';
