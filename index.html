@@ -244,18 +244,18 @@
   .filter-pill:hover{border-color:var(--orange); color:var(--orange-deep);}
   .filter-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
 
-  .doc-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px;}
-  .doc-card{background:var(--canvas); border:1px solid var(--line); border-radius:12px; overflow:hidden; transition:.15s;}
-  .doc-card:hover{transform:translateY(-2px); border-color:var(--orange);}
-  .doc-thumb{height:104px; display:flex; align-items:center; justify-content:center; font-size:28px; color:#fff; background:linear-gradient(135deg,#2F6E63,#1c4a42); position:relative;}
+.doc-grid{display:flex; flex-direction:column; gap:7px;}
+.doc-card{display:flex; align-items:center; gap:11px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:10px 13px; transition:.13s;}
+.doc-card:hover{border-color:var(--orange); background:#fff;}
+.doc-row-icon{flex:none; font-size:18px; width:34px; height:34px; border-radius:8px; background:linear-gradient(135deg,#2F6E63,#1c4a42); color:#fff; display:flex; align-items:center; justify-content:center;}
+.doc-row-body{flex:1; min-width:0;}
+.doc-cat{font-size:10px; font-weight:800; color:var(--orange-deep);}
+.doc-name{font-size:12.5px; font-weight:700; color:var(--navy-2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.doc-meta{font-size:10.5px; color:var(--slate); margin-top:2px;}
+.doc-row-badge{flex:none; font-size:9.5px; font-weight:800; color:#fff; background:#8FA3B8; padding:3px 8px; border-radius:999px; white-space:nowrap;}
   .doc-thumb img{width:100%; height:100%; object-fit:cover;}
   .doc-thumb.doc{background:linear-gradient(135deg,var(--navy-2),#2b3f66);}
   .doc-thumb.video{background:linear-gradient(135deg,#D64545,#a8402f);}
-  .doc-type-badge{position:absolute; top:7px; left:7px; font-size:9.5px; font-weight:800; color:#fff; background:rgba(0,0,0,0.3); padding:3px 7px; border-radius:999px;}
-  .doc-info{padding:11px 12px 13px;}
-  .doc-cat{font-size:10.5px; font-weight:700; color:var(--orange-deep);}
-  .doc-name{font-size:12.5px; font-weight:700; margin-top:4px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
-  .doc-meta{font-size:10.5px; color:var(--slate); margin-top:7px;}
 
   .lecture-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px;}
   .lecture-card{background:var(--canvas); border:1px solid var(--line); border-radius:12px; overflow:hidden; transition:.15s;}
@@ -713,6 +713,16 @@ body.growon{ background:var(--g-navy); }
 /* ===== 보험사 전산실 카드 ===== */
 .desk-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:14px;}
 .dname-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-top:14px;}
+.cardpay-box{background:linear-gradient(135deg,#FFF7ED,#FFFFFF); border:1px solid #F5D9B8; border-radius:14px; padding:16px 18px; margin-bottom:16px;}
+.cardpay-head{display:flex; align-items:flex-start; gap:11px; margin-bottom:12px;}
+.cardpay-icon{font-size:22px; line-height:1;}
+.cardpay-title{font-size:14.5px; font-weight:900; color:var(--navy-2); margin-bottom:3px;}
+.cardpay-desc{font-size:11.5px; color:var(--slate); line-height:1.5;}
+.cardpay-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px;}
+.cardpay-thumb{aspect-ratio:3/4; border-radius:9px; overflow:hidden; border:1px solid #F0DDC3; cursor:pointer; background:#fff; position:relative;}
+.cardpay-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+.cardpay-thumb .cardpay-cap{position:absolute; left:0; right:0; bottom:0; padding:4px 6px; font-size:9.5px; font-weight:800; color:#fff; background:linear-gradient(transparent,rgba(0,0,0,.6)); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.cardpay-empty{grid-column:1/-1; text-align:center; padding:22px 10px; font-size:12px; color:var(--slate); background:#fff; border-radius:9px; border:1px dashed #F0DDC3;}
 .dname-box{background:#fff; border:1px solid #E3E7EE; border-radius:10px; padding:14px 10px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; transition:.15s;}
 .dname-box:hover{border-color:#1D3A5C; box-shadow:0 2px 10px rgba(15,39,64,.08);}
 .dname-box .dname{font-size:13px; font-weight:800; color:#0F2740; text-align:center;}
@@ -723,6 +733,9 @@ body.growon{ background:var(--g-navy); }
 .sm-item .sm-meta{font-size:11px; color:var(--slate);}
 .sm-item .sm-dl{background:var(--navy-2); color:#fff; font-size:12px; font-weight:700; padding:7px 13px; border-radius:7px; text-decoration:none; flex:none;}
 .sm-item .sm-dl:hover{background:var(--navy-3,#0F2740);}
+.sm-item .sm-view{font-size:11px; font-weight:800; color:var(--orange-deep); background:var(--canvas); padding:5px 10px; border-radius:999px; flex:none;}
+.sm-lb-dl{display:inline-block; margin-top:10px; background:var(--orange); color:#fff; font-size:13px; font-weight:800; padding:9px 20px; border-radius:8px; text-decoration:none;}
+.sm-lb-dl:hover{background:var(--orange-deep);}
 .evt-card{border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px;}
 .evt-tag{display:inline-block; font-size:11px; font-weight:800; color:var(--orange-deep); background:#FFF1E4; padding:3px 10px; border-radius:20px; margin-bottom:8px;}
 .evt-title{font-size:15px; font-weight:800; color:var(--navy-2);}
@@ -1242,6 +1255,18 @@ body.growon{ background:var(--g-navy); }
             </div>
             <span class="badge" id="deskCount">26개사</span>
           </div>
+
+          <div class="cardpay-box">
+            <div class="cardpay-head">
+              <span class="cardpay-icon">💳</span>
+              <div>
+                <div class="cardpay-title">보험사 카드수납 일괄 안내</div>
+                <div class="cardpay-desc">보험사별 카드납 방법을 이미지 자료로 모아뒀습니다. 클릭하면 크게 볼 수 있습니다.</div>
+              </div>
+            </div>
+            <div class="cardpay-grid" id="cardPayGrid"></div>
+          </div>
+
           <input id="deskSearch" class="search-input" type="text" placeholder="보험사명 검색 (예: 삼성화재)" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;margin-bottom:10px;">
           <div class="filter-row" id="deskFilterRow">
             <button class="filter-pill active" data-dcat="전체">전체</button>
@@ -1471,6 +1496,25 @@ body.growon{ background:var(--g-navy); }
     <img id="albLbImg" src="" alt="">
     <div class="alb-lb-cap" id="albLbCap"></div>
     <div class="alb-lb-sub" id="albLbSub"></div>
+  </div>
+</div>
+<div class="alb-lb" id="cardPayLb">
+  <div class="alb-lb-box">
+    <button class="alb-lb-x" id="cardPayLbX">&times;</button>
+    <button class="alb-lb-nav prev" id="cardPayLbPrev">‹</button>
+    <button class="alb-lb-nav next" id="cardPayLbNext">›</button>
+    <img id="cardPayLbImg" src="" alt="">
+    <div class="alb-lb-cap" id="cardPayLbCap"></div>
+  </div>
+</div>
+<div class="alb-lb" id="smLb">
+  <div class="alb-lb-box">
+    <button class="alb-lb-x" id="smLbX">&times;</button>
+    <button class="alb-lb-nav prev" id="smLbPrev">‹</button>
+    <button class="alb-lb-nav next" id="smLbNext">›</button>
+    <img id="smLbImg" src="" alt="">
+    <div class="alb-lb-cap" id="smLbCap"></div>
+    <a id="smLbDl" href="#" download class="sm-lb-dl">⬇ 다운로드</a>
   </div>
 </div>
 <div class="dn-modal" id="dnModal">
@@ -2343,15 +2387,13 @@ body.growon{ background:var(--g-navy); }
     }
     grid.innerHTML = list.map((d, idx) => `
       <div class="doc-card" data-idx="${idx}" style="cursor:pointer;">
-        <div class="doc-thumb doc">
-          <span class="doc-type-badge">${d.links.length}개 자료</span>
-          📄
-        </div>
-        <div class="doc-info">
+        <span class="doc-row-icon">📄</span>
+        <div class="doc-row-body">
           <div class="doc-cat">${escapeHtml((d.category || '').replace(/\./g,' · '))}</div>
           <div class="doc-name">${escapeHtml(d.title)}</div>
           <div class="doc-meta">${escapeHtml(d.date)}</div>
         </div>
+        <span class="doc-row-badge">${d.links.length}개 자료</span>
       </div>
     `).join('');
     grid.querySelectorAll('.doc-card').forEach(card => {
@@ -2842,7 +2884,6 @@ body.growon{ background:var(--g-navy); }
   }
   let deskCurrentList = [];
   function buildDeskDetail(i){
-    const card = i.cardInfo ? escapeHtml(i.cardInfo) : '<span class="dnone">-</span>';
     const sys = i.systemLink
       ? `<a class="dcard-btn" href="${escapeHtml(i.systemLink)}" target="_blank" rel="noopener">↗ 전산접속</a>`
       : `<span class="dcard-btn off">전산접속 없음</span>`;
@@ -2861,7 +2902,6 @@ body.growon{ background:var(--g-navy); }
       ${deskRow('청구팩스', i.claimFax ? escapeHtml(i.claimFax) : '')}
       ${i.claimAddress ? deskRow('청구주소', escapeHtml(i.claimAddress), addrExtra) : ''}
       ${i.dentalClaimFax ? deskRow('치아청구팩스', escapeHtml(i.dentalClaimFax)) : ''}
-      ${deskRow('카드납', card)}
       <div class="dfoot">${terms}${form}</div>`;
   }
   function openInsurerDetail(idx){
@@ -2891,13 +2931,6 @@ body.growon{ background:var(--g-navy); }
     grid.querySelectorAll('.dname-box').forEach(el=>{
       el.addEventListener('click', ()=> openInsurerDetail(Number(el.dataset.idx)));
     });
-
-  grid.querySelectorAll('.dinfo').forEach(el=>{
-      el.addEventListener('click', ()=>{
-        const it = list[Number(el.dataset.card)];
-        if(it && it.cardInfo) alert(it.name + ' — 카드납 안내\n\n' + it.cardInfo);
-      });
-    });
   }
   let deskCat = '전체', deskKw = '';
   function applyDesk(){
@@ -2917,6 +2950,51 @@ body.growon{ background:var(--g-navy); }
   const _ds = document.getElementById('deskSearch');
   if(_ds) _ds.addEventListener('input', e=>{ deskKw = e.target.value.trim(); applyDesk(); });
   applyDesk();
+
+  /* ===== 카드수납 일괄 안내 이미지 =====
+     화진님이 사진/캡처를 주시면 여기 배열에 항목을 추가합니다.
+     url: 이미지 경로(또는 링크), caption: 짧은 설명 */
+  const CARD_PAYMENT_IMAGES = [
+    { url: 'cardpay/26.07-생명보험-카드납.jpg', caption: '26.07 생명보험 카드납 가능 보험사' },
+    { url: 'cardpay/26.07-손해보험-카드납.jpg', caption: '26.07 손해보험 카드납 가능 보험사' }
+  ];
+
+  function renderCardPayment(){
+    const grid = document.getElementById('cardPayGrid');
+    if(!grid) return;
+    if(!CARD_PAYMENT_IMAGES.length){
+      grid.innerHTML = '<div class="cardpay-empty">카드수납 안내 자료 준비 중입니다. 곧 이미지로 안내해 드릴게요.</div>';
+      return;
+    }
+    grid.innerHTML = CARD_PAYMENT_IMAGES.map((c, idx) => `
+      <div class="cardpay-thumb" data-idx="${idx}">
+        <img src="${escapeHtml(c.url)}" alt="${escapeHtml(c.caption || '')}" loading="lazy">
+        ${c.caption ? `<span class="cardpay-cap">${escapeHtml(c.caption)}</span>` : ''}
+      </div>`).join('');
+    grid.querySelectorAll('.cardpay-thumb').forEach(el => {
+      el.addEventListener('click', () => cardPayOpen(Number(el.dataset.idx)));
+    });
+  }
+
+  let cardPayIdx = 0;
+  function cardPayOpen(i){
+    if(!CARD_PAYMENT_IMAGES.length) return;
+    cardPayIdx = (i + CARD_PAYMENT_IMAGES.length) % CARD_PAYMENT_IMAGES.length;
+    const c = CARD_PAYMENT_IMAGES[cardPayIdx];
+    document.getElementById('cardPayLbImg').src = c.url;
+    document.getElementById('cardPayLbCap').textContent = c.caption || '';
+    document.getElementById('cardPayLb').classList.add('open');
+  }
+  const _cplx = document.getElementById('cardPayLbX');
+  if(_cplx) _cplx.addEventListener('click', () => document.getElementById('cardPayLb').classList.remove('open'));
+  const _cplb = document.getElementById('cardPayLb');
+  if(_cplb) _cplb.addEventListener('click', (e) => { if(e.target.id === 'cardPayLb') _cplb.classList.remove('open'); });
+  const _cplp = document.getElementById('cardPayLbPrev');
+  if(_cplp) _cplp.addEventListener('click', (e) => { e.stopPropagation(); cardPayOpen(cardPayIdx - 1); });
+  const _cpln = document.getElementById('cardPayLbNext');
+  if(_cpln) _cpln.addEventListener('click', (e) => { e.stopPropagation(); cardPayOpen(cardPayIdx + 1); });
+
+  renderCardPayment();
 
 
   // ================= AI 질문센터 탭 전환 =================
@@ -2997,15 +3075,42 @@ body.growon{ background:var(--g-navy); }
       box.innerHTML = `<div class="cr-empty" style="padding:28px; text-align:center;">${escapeHtml(smFolderLabel[key])} 자료가 없습니다.<br><span style="font-size:11.5px;">자료를 주시면 채워 드립니다.</span></div>`;
       return;
     }
-    box.innerHTML = list.map(f => `
-      <div class="sm-item">
+    box.innerHTML = list.map((f, idx) => `
+      <div class="sm-item" data-idx="${idx}" data-key="${key}" ${f.type === 'image' ? 'style="cursor:pointer;"' : ''}>
         <span class="sm-icon">${smIcon[f.type] || '📁'}</span>
         <span class="sm-name">${escapeHtml(f.name)}</span>
         ${f.meta ? `<span class="sm-meta">${escapeHtml(f.meta)}</span>` : ''}
-        <a class="sm-dl" href="${escapeHtml(f.link||'#')}" target="_blank" rel="noopener">다운로드</a>
+        ${f.type === 'image' ? `<span class="sm-view">🔍 확인</span>` : ''}
+        <a class="sm-dl" href="${escapeHtml(f.link||'#')}" download="${escapeHtml(f.name||'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">다운로드</a>
       </div>`).join('');
+    box.querySelectorAll('.sm-item[style*="cursor:pointer"]').forEach(el => {
+      el.addEventListener('click', () => smPreviewOpen(el.dataset.key, Number(el.dataset.idx)));
+    });
   }
   Object.keys(salesMaterials).forEach(renderSmFolder);
+
+  /* 영업자료실 이미지 미리보기 (카드뉴스 등). 같은 도메인 파일이라 다운로드 버튼이 실제로 저장까지 됩니다. */
+  let smPreviewKey = '', smPreviewIdx = 0;
+  function smPreviewOpen(key, idx){
+    const list = (salesMaterials[key] || []).filter(f => f.type === 'image');
+    if(!list.length) return;
+    smPreviewKey = key;
+    smPreviewIdx = ((salesMaterials[key] || []).slice(0, idx + 1).filter(f => f.type === 'image').length - 1 + list.length) % list.length;
+    const f = list[smPreviewIdx];
+    document.getElementById('smLbImg').src = f.link;
+    document.getElementById('smLbCap').textContent = f.name || '';
+    document.getElementById('smLbDl').href = f.link;
+    document.getElementById('smLbDl').setAttribute('download', f.name || '');
+    document.getElementById('smLb').classList.add('open');
+  }
+  const _smlx = document.getElementById('smLbX');
+  if(_smlx) _smlx.addEventListener('click', () => document.getElementById('smLb').classList.remove('open'));
+  const _smlb = document.getElementById('smLb');
+  if(_smlb) _smlb.addEventListener('click', (e) => { if(e.target.id === 'smLb') _smlb.classList.remove('open'); });
+  const _smlp = document.getElementById('smLbPrev');
+  if(_smlp) _smlp.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewIdx - 1); });
+  const _smln = document.getElementById('smLbNext');
+  if(_smln) _smln.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewIdx + 1); });
 
   const _smt = document.getElementById('smTabs');
   if(_smt) _smt.addEventListener('click', (e) => {
