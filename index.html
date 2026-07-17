@@ -319,6 +319,23 @@
 
   /* ---------- 질문센터 ---------- */
   .subsection-title{font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 10px; display:flex; align-items:center; gap:6px;}
+  /* ===== 그로우꿀단지 FAQ ===== */
+  .honey-tabs{flex-wrap:wrap;}
+  .faq-toolbar{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+  .faq-subrow{flex-wrap:wrap;}
+  .faq-search-wrap{width:100%;}
+  .faq-search{width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:9px; font-size:13px; background:#fff;}
+  .faq-search:focus{outline:none; border-color:var(--orange);}
+  .faq-list{display:flex; flex-direction:column; gap:7px;}
+  .faq-row{display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:13px 15px; cursor:pointer; transition:.13s;}
+  .faq-row:hover{border-color:var(--orange); background:var(--canvas);}
+  .faq-row-main{flex:1; min-width:0; display:flex; align-items:center; gap:9px; flex-wrap:wrap;}
+  .faq-minor{flex:none; font-size:10px; font-weight:800; color:#fff; background:#C79A3B; padding:3px 9px; border-radius:999px;}
+  .faq-q{font-size:13px; font-weight:700; color:var(--navy-2); line-height:1.4;}
+  .faq-arrow{flex:none; font-size:20px; color:var(--slate); font-weight:400;}
+  .faq-modal-major{font-size:11px; font-weight:800; color:var(--orange-deep); margin-bottom:8px;}
+  .faq-modal-q{font-size:16px; font-weight:900; color:var(--navy-2); line-height:1.45; margin-bottom:14px;}
+  .faq-modal-a{font-size:13.5px; color:var(--slate); line-height:1.75; white-space:pre-wrap;}
   .subsection-title:first-child{margin-top:0;}
   .doc-search-result{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:13px 15px; margin-bottom:8px;}
   .doc-search-result .doc-name{font-size:13px; font-weight:800; color:var(--navy-2);}
@@ -1281,16 +1298,20 @@ body.growon{ background:var(--g-navy); }
       <div class="gview" id="view-qna">
 <section class="panel panel-navy" id="qna">
         <div class="panel-head">
-          <div><div class="panel-eyebrow">Q&amp;A</div><h2 class="panel-title">질문센터</h2></div>
+          <div><div class="panel-eyebrow">Q&amp;A</div><h2 class="panel-title">🍯 그로우꿀단지</h2></div>
         </div>
 
-        <div class="edu-tabs" id="qnaTabs" data-reveal>
-          <button class="edu-tab active" data-qtab="ai">🤖 AI 궁금해요</button>
-          <button class="edu-tab" data-qtab="faq">📋 보험FAQ</button>
+        <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
+          <button class="edu-tab active" data-qtab="ai">🤖 AI질문센터</button>
+          <button class="edu-tab" data-qtab="notice">📋 보험고지FAQ</button>
+          <button class="edu-tab" data-qtab="design">📐 보험설계FAQ</button>
+          <button class="edu-tab" data-qtab="starter">🔰 보험스타터FAQ</button>
+          <button class="edu-tab" data-qtab="claim">📮 보험청구FAQ</button>
+          <button class="edu-tab" data-qtab="comp">⚖️ 보상관련FAQ</button>
         </div>
 
         <div class="edu-panel active" id="qna-ai">
-          <div class="subsection-title">📄 보험도우미 — 자료 검색 (AI 요약)</div>
+          <div class="subsection-title">🤖 AI질문센터 — 자료 검색 (AI 요약)</div>
           <div class="qna-form-row" style="margin-bottom:10px;">
             <input type="text" class="claim-search" id="docSearchInput" placeholder="검색어 입력 (예: 암, 치아, 실손...)" style="margin-bottom:0;">
             <button type="button" id="docSearchBtn" style="flex-shrink:0; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:0 18px; font-size:13px; font-weight:700; cursor:pointer;">검색</button>
@@ -1298,16 +1319,11 @@ body.growon{ background:var(--g-navy); }
           <div id="docSearchResults"></div>
         </div>
 
-        <div class="edu-panel" id="qna-faq">
-          <div class="filter-row" id="faqFilterRow" style="margin-bottom:14px;">
-            <button class="filter-pill active" data-fcat="전체">전체</button>
-            <button class="filter-pill" data-fcat="보험가입">보험가입</button>
-            <button class="filter-pill" data-fcat="보상청구">보상청구</button>
-            <button class="filter-pill" data-fcat="사고별제출서류">사고별제출서류</button>
-            <button class="filter-pill" data-fcat="기타">기타</button>
-          </div>
-          <div id="faqList"></div>
-        </div>
+        <div class="edu-panel" id="qna-notice"></div>
+        <div class="edu-panel" id="qna-design"></div>
+        <div class="edu-panel" id="qna-starter"></div>
+        <div class="edu-panel" id="qna-claim"></div>
+        <div class="edu-panel" id="qna-comp"></div>
 
         <!-- 다온지사 게시판: 숨김 처리 (삭제 아님, 추후 재사용 가능) -->
         <div style="display:none;" id="daonBoardHidden">
@@ -1366,7 +1382,7 @@ body.growon{ background:var(--g-navy); }
     <button class="gbtn" data-view="materials">교육센터</button>
     <button class="gbtn" data-view="salesmaterials">영업자료실</button>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
-    <button class="gbtn" data-view="qna">AI 질문센터</button>
+    <button class="gbtn" data-view="qna">🍯 그로우꿀단지</button>
 
     <div class="rail-t">업무링크</div>
 
@@ -1429,6 +1445,15 @@ body.growon{ background:var(--g-navy); }
         <div class="modal-card" style="max-width:420px;">
           <button class="modal-close" id="insurerModalClose">&times;</button>
           <div id="insurerModalBody"></div>
+        </div>
+      </div>
+<div class="modal-backdrop" id="faqModalBackdrop">
+        <div class="modal-card" style="max-width:520px;">
+          <button class="modal-close" id="faqModalClose">&times;</button>
+          <div class="faq-modal-major" id="faqModalMajor"></div>
+          <div class="faq-modal-q" id="faqModalQ"></div>
+          <div class="faq-modal-a" id="faqModalA"></div>
+          <div id="faqModalImg"></div>
         </div>
       </div>
 <div class="modal-backdrop" id="cardnewsModalBackdrop">
@@ -3008,49 +3033,120 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('qna-' + btn.dataset.qtab).classList.add('active');
   });
 
-  // ================= 보험FAQ =================
-  // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, question, answer)
-  const insuranceFaqs = [
-    { category: "사고별제출서류", question: "통원 · 약제비 (실손보험) 청구 시 필요서류는?", answer: "진료비 영수증 / 진료비 세부내역서 / 처방전 (약제비 청구 시) / 3만원 이하 통원의료비는 병원영수증만으로 가능한 경우도 있음 (보험사별 상이)" },
-    { category: "사고별제출서류", question: "입원 · 수술 청구 시 필요서류는?", answer: "입퇴원확인서 / 진단서 / 수술확인서 (수술한 경우) / 진료비 영수증 및 세부내역서" },
-    { category: "사고별제출서류", question: "후유장해 청구 시 필요서류는?", answer: "후유장해진단서 / 장해 관련 검사자료 (X-ray, MRI, CT 등) / 장해 발생 경위서" },
-    { category: "사고별제출서류", question: "자동차사고 청구 시 필요서류는?", answer: "사고사실확인원 (경찰서/보험사 발급) / 정비소 견적서 · 수리비 영수증 / (대인사고) 진단서 · 치료비 영수증 / 사고접수는 보험사 고객센터 또는 앱에서 우선 접수" },
-    { category: "사고별제출서류", question: "화재 · 배상책임 청구 시 필요서류는?", answer: "사고경위서 / 피해물 사진 / 수리 견적서 · 영수증 / (배상책임) 피해자와의 합의서" },
-    { category: "사고별제출서류", question: "사망보험금 청구 시 필요서류는?", answer: "사망진단서 (또는 시체검안서) / 기본증명서 · 가족관계증명서 / 수익자 신분증 / (사고사) 경찰 수사기록 등 사고 입증서류" },
-    { category: "보상청구", question: "보험금 청구 기한이 있나요?", answer: "보험금 청구권은 상법상 원칙적으로 3년의 소멸시효가 적용됩니다. 사고 발생 후 너무 늦지 않게 청구하시는 게 안전합니다." },
-    { category: "보상청구", question: "실손보험 청구 시 필요한 서류는?", answer: "진료비 영수증과 진료비 세부내역서가 기본이며, 통원의료비는 병원 영수증만으로 청구 가능한 경우도 있습니다. 정확한 서류는 보험사별로 다를 수 있어 청구 전 고객센터 확인을 권장합니다." },
-    { category: "보상청구", question: "입원·수술 보험금 청구 서류는?", answer: "입퇴원확인서, 진단서, 수술확인서(수술한 경우), 진료비 영수증 및 세부내역서가 기본적으로 필요합니다." },
-    { category: "보상청구", question: "자동차사고 보험금 청구는 어떻게 하나요?", answer: "사고 접수 후 보험사 담당자가 배정되며, 정비소 견적서·수리비 영수증·(대인사고 시) 진단서 등을 제출합니다. 사고 접수는 보험사 업무지원 센터에서 해당 보험사 고객센터로 바로 전화하실 수 있어요." },
-    { category: "보상청구", question: "보험금 청구는 모바일로도 가능한가요?", answer: "대부분의 보험사가 모바일 앱 또는 홈페이지를 통한 온라인 청구를 지원합니다. 소액 청구는 모바일로 빠르게 처리되는 경우가 많습니다." },
-    { category: "보상청구", question: "청구한 보험금은 언제 지급되나요?", answer: "보험업법상 서류 접수 완료일로부터 원칙적으로 3영업일 이내 지급하며, 조사가 필요한 경우 지급일이 연장될 수 있습니다 (최대 30일, 특별한 사유 시 추가 연장 가능)." },
-    { category: "보상청구", question: "설계사가 대신 청구서를 접수해도 되나요?", answer: "보험사·상품에 따라 설계사 대리 접수가 가능한 경우가 있습니다. 다만 위임 관련 서류가 필요할 수 있어 사전에 해당 보험사 고객센터에 확인하시는 게 좋습니다." },
-    { category: "보상청구", question: "치아보험은 청구 서류가 다른가요?", answer: "치아보험은 치과 진단서, 임플란트/보철 시술확인서, 방사선 사진 등이 추가로 필요한 경우가 많습니다. 일부 보험사는 치아보험 전용 팩스번호를 별도 운영하니 보험사 업무지원 센터에서 확인해주세요." }
+  // ================= 보험FAQ (그로우꿀단지) =================
+  // n8n/Notion 자동화 대상: 이 배열이 Notion「보험FAQ (그로우꿀단지)」DB에서 자동으로 채워집니다.
+  // 각 항목: { major(대분류), minor(소분류), question, answer, image }
+  const faqData = [
+    { major:"보험고지FAQ", minor:"고지의무", question:"계약 전 알릴 의무(고지의무)란 무엇인가요?", answer:"보험 가입 시 청약서상 질문 항목(최근 3개월 내 진단·투약, 5년 내 입원·수술 등)에 사실대로 답할 의무입니다. 위반 시 보험금 지급이 거절되거나 계약이 해지될 수 있습니다. 고객에게 반드시 자필 또는 전자서명으로 직접 작성하도록 안내하세요.", image:"" },
+    { major:"보험고지FAQ", minor:"부담보가이드", question:"부담보(특정부위 부담보)는 어떻게 설정되나요?", answer:"고지된 병력에 대해 특정 부위·질환을 일정 기간(보통 1~5년) 또는 전 기간 보장에서 제외하는 조건부 인수 방식입니다. 부담보 조건이 붙으면 해당 부위 관련 청구는 보장되지 않으므로, 고객에게 조건을 명확히 설명하고 동의를 받아야 합니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"표준체·우량체 인수 기준이 궁금합니다.", answer:"우량체는 비흡연·정상 혈압·정상 BMI 등 건강 기준을 충족하면 보험료 할인이 적용됩니다. 회사마다 기준이 다르니 청약 전 우량체 할인 가능 여부를 확인하세요.", image:"" },
+    { major:"보험설계FAQ", minor:"설계TIP", question:"종신보험 설계 시 유의할 TIP", answer:"주계약 최소화 + 특약 활용으로 보험료 효율을 높이고, 납입면제 조건과 해지환급금 구조를 고객 상황에 맞게 설계하세요.", image:"" },
+    { major:"보험스타터FAQ", minor:"보험용어", question:"'실손' 보험 용어가 헷갈립니다.", answer:"실손의료보험은 실제 부담한 의료비를 보장 한도 내에서 보장하는 보험입니다. 급여·비급여 항목에 따라 자기부담률이 다릅니다.", image:"" },
+    { major:"보험스타터FAQ", minor:"진단코드분류", question:"암 진단코드(C코드)는 어떻게 분류되나요?", answer:"한국표준질병사인분류(KCD)상 악성신생물은 C00~C97, 제자리암은 D00~D09입니다. 진단서상 코드에 따라 암진단비 지급 여부와 금액이 달라집니다.", image:"" },
+    { major:"보험청구FAQ", minor:"보험제출서류", question:"보험금 청구 시 기본 제출서류는?", answer:"청구서, 신분증 사본, 진단서 또는 진료확인서, 진료비 영수증·세부내역서, 통장사본이 기본입니다. 사고 유형에 따라 추가 서류가 필요합니다.", image:"" },
+    { major:"보상관련FAQ", minor:"손해보험사", question:"손해보험사 보상 접수는 어떻게 하나요?", answer:"각 손보사 고객센터 또는 앱으로 사고 접수 후 담당자가 배정됩니다. 보험사 업무지원 센터에서 회사별 고객센터 번호를 확인할 수 있습니다.", image:"" }
   ];
-  let faqCat = '전체';
-  function renderFaq(){
-    const box = document.getElementById('faqList');
+
+  // 대분류 → 패널 id, 소분류 목록 매핑
+  const FAQ_STRUCTURE = {
+    notice:  { major:"보험고지FAQ",   subs:["고지의무","부담보가이드"] },
+    design:  { major:"보험설계FAQ",   subs:["인수가이드","설계TIP","회사별가이드"] },
+    starter: { major:"보험스타터FAQ", subs:["보험용어","진단코드분류","수술비분류"] },
+    claim:   { major:"보험청구FAQ",   subs:["보험제출서류","보상기준"] },
+    comp:    { major:"보상관련FAQ",   subs:["손해보험사","사례"] }
+  };
+
+  const faqState = {}; // panelKey -> { sub, kw }
+
+  function faqPanelHtml(key){
+    const st = FAQ_STRUCTURE[key];
+    const subPills = ['전체', ...st.subs].map((s, i) =>
+      `<button class="filter-pill${i===0?' active':''}" data-fsub="${s}">${s}</button>`).join('');
+    return `
+      <div class="faq-toolbar">
+        <div class="filter-row faq-subrow">${subPills}</div>
+        <div class="faq-search-wrap">
+          <input type="text" class="faq-search" placeholder="🔍 이 게시판에서 검색 (단어 포함)" data-fsearch="${key}">
+        </div>
+      </div>
+      <div class="faq-list" id="faqList-${key}"></div>`;
+  }
+
+  function renderFaqPanel(key){
+    const st = FAQ_STRUCTURE[key];
+    const state = faqState[key] || (faqState[key] = { sub:'전체', kw:'' });
+    let list = faqData.filter(f => f.major === st.major);
+    if(state.sub !== '전체') list = list.filter(f => f.minor === state.sub);
+    if(state.kw){
+      const kw = state.kw.toLowerCase();
+      list = list.filter(f =>
+        (f.question || '').toLowerCase().includes(kw) ||
+        (f.answer || '').toLowerCase().includes(kw) ||
+        (f.minor || '').toLowerCase().includes(kw));
+    }
+    const box = document.getElementById('faqList-' + key);
     if(!box) return;
-    const list = faqCat === '전체' ? insuranceFaqs : insuranceFaqs.filter(f => f.category === faqCat);
     if(!list.length){
-      box.innerHTML = `<div class="cr-empty" style="padding:28px; text-align:center;">등록된 FAQ가 없습니다.<br><span style="font-size:11.5px;">자료를 주시면 채워 드립니다.</span></div>`;
+      box.innerHTML = `<div class="cr-empty" style="padding:28px; text-align:center;">${state.kw ? '검색 결과가 없습니다.' : '등록된 FAQ가 없습니다.'}<br><span style="font-size:11.5px;">자료가 준비되면 채워집니다.</span></div>`;
       return;
     }
-    box.innerHTML = list.map(f => `
-      <div class="claim-menu-item" style="align-items:flex-start; cursor:default;">
-        <div style="width:100%;">
-          <div style="font-size:11px; font-weight:800; color:var(--orange-deep); margin-bottom:4px;">${escapeHtml(f.category)}</div>
-          <div style="font-size:13.5px; font-weight:800; color:var(--navy-2); margin-bottom:4px;">Q. ${escapeHtml(f.question)}</div>
-          <div style="font-size:12.5px; color:var(--slate); line-height:1.6;">A. ${escapeHtml(f.answer)}</div>
+    box.innerHTML = list.map((f) => {
+      const gi = faqData.indexOf(f);
+      return `
+      <div class="faq-row" data-fi="${gi}">
+        <div class="faq-row-main">
+          <span class="faq-minor">${escapeHtml(f.minor)}</span>
+          <span class="faq-q">${escapeHtml(f.question)}</span>
         </div>
-      </div>`).join('');
+        <span class="faq-arrow">›</span>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('.faq-row').forEach(row => {
+      row.addEventListener('click', () => openFaqDetail(Number(row.dataset.fi)));
+    });
   }
-  const _fr = document.getElementById('faqFilterRow');
-  if(_fr) _fr.addEventListener('click', e => {
-    const b = e.target.closest('.filter-pill'); if(!b) return;
-    _fr.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
-    b.classList.add('active'); faqCat = b.dataset.fcat; renderFaq();
+
+  function openFaqDetail(idx){
+    const f = faqData[idx];
+    if(!f) return;
+    document.getElementById('faqModalMajor').textContent = f.major + ' · ' + f.minor;
+    document.getElementById('faqModalQ').textContent = f.question;
+    document.getElementById('faqModalA').textContent = f.answer || '';
+    const imgWrap = document.getElementById('faqModalImg');
+    if(f.image){
+      imgWrap.innerHTML = `<img src="${escapeHtml(f.image)}" alt="" style="width:100%; border-radius:10px; margin-top:14px; cursor:pointer;" onclick="window.open('${escapeHtml(f.image)}','_blank')">`;
+    } else {
+      imgWrap.innerHTML = '';
+    }
+    document.getElementById('faqModalBackdrop').classList.add('open');
+  }
+  function closeFaqModal(){ document.getElementById('faqModalBackdrop').classList.remove('open'); }
+  const _fmc = document.getElementById('faqModalClose');
+  if(_fmc) _fmc.addEventListener('click', closeFaqModal);
+  const _fmb = document.getElementById('faqModalBackdrop');
+  if(_fmb) _fmb.addEventListener('click', (e) => { if(e.target.id === 'faqModalBackdrop') closeFaqModal(); });
+
+  // 각 FAQ 대분류 패널 초기화
+  Object.keys(FAQ_STRUCTURE).forEach(key => {
+    const panel = document.getElementById('qna-' + key);
+    if(!panel) return;
+    panel.innerHTML = faqPanelHtml(key);
+    faqState[key] = { sub:'전체', kw:'' };
+    // 소분류 필터
+    panel.querySelector('.faq-subrow').addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      panel.querySelectorAll('.faq-subrow .filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      faqState[key].sub = b.dataset.fsub;
+      renderFaqPanel(key);
+    });
+    // 검색
+    panel.querySelector('.faq-search').addEventListener('input', (e) => {
+      faqState[key].kw = e.target.value.trim();
+      renderFaqPanel(key);
+    });
+    renderFaqPanel(key);
   });
-  renderFaq();
 
 
   // ================= 영업자료실 =================
