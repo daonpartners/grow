@@ -321,6 +321,48 @@
   .subsection-title{font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 10px; display:flex; align-items:center; gap:6px;}
   /* ===== 그로우꿀단지 FAQ ===== */
   .honey-tabs{flex-wrap:wrap;}
+  .ai-float-btn{position:fixed; right:20px; bottom:22px; z-index:500; display:flex; align-items:center; gap:8px;
+    background:var(--orange); color:#fff; border:none; border-radius:999px; padding:13px 18px; font-size:19px;
+    box-shadow:0 8px 22px rgba(61,79,224,.35); cursor:pointer; transition:.15s;}
+  .ai-float-btn:hover{background:var(--orange-deep); transform:translateY(-2px);}
+  .ai-float-btn span{font-size:11.5px; font-weight:800; line-height:1.3; text-align:left;}
+  @media (max-width:640px){ .ai-float-btn span{display:none;} .ai-float-btn{padding:14px; border-radius:50%;} }
+  /* ===== 질병별 인수가이드 ===== */
+  .disease-notice{background:var(--orange-tint); border-radius:10px; padding:13px 15px; font-size:12.5px; color:var(--navy-2); line-height:1.6; margin-bottom:14px;}
+  .disease-caution{font-size:11px; color:var(--slate); margin-top:6px;}
+  .disease-toolbar{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+  .disease-grouprow{flex-wrap:wrap;}
+  .disease-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px;}
+  .dz-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; cursor:pointer; transition:.13s;}
+  .dz-card:hover{border-color:var(--orange); transform:translateY(-2px);}
+  .dz-card-group{font-size:10px; font-weight:800; color:var(--orange-deep);}
+  .dz-card-name{font-size:15px; font-weight:900; color:var(--navy-2); margin:4px 0 8px;}
+  .dz-card-badge{display:inline-block; font-size:10px; font-weight:800; padding:3px 9px; border-radius:999px; color:#fff;}
+  .dz-badge-일반심사가능{background:#12805A;}
+  .dz-badge-조건부인수가능{background:#D98A0B;}
+  .dz-badge-개별심사필요{background:#B08400;}
+  .dz-badge-간편보험검토{background:#2563EB;}
+  .dz-modal-group{font-size:11px; font-weight:800; color:var(--orange-deep); margin-bottom:4px;}
+  .dz-modal-name{font-size:22px; font-weight:900; color:var(--navy-2);}
+  .dz-modal-badge{margin:10px 0 14px;}
+  .dz-modal-badge span{display:inline-block; font-size:11.5px; font-weight:800; padding:5px 13px; border-radius:999px; color:#fff;}
+  .dz-modal-summary{background:var(--canvas); border-left:4px solid var(--orange); border-radius:9px; padding:13px 15px; font-size:13.5px; font-weight:700; color:var(--navy-2); line-height:1.6; margin-bottom:16px;}
+  .dz-section{margin-bottom:14px;}
+  .dz-section-label{font-size:12px; font-weight:800; color:var(--orange-deep); margin-bottom:5px; display:flex; align-items:center; gap:5px;}
+  .dz-section-body{font-size:13px; color:var(--slate); line-height:1.7;}
+  .dz-modal-foot{border-top:1px solid var(--line); margin-top:16px; padding-top:12px; font-size:11px; color:var(--slate); line-height:1.6;}
+  /* ===== 보험사별 수술비 원본자료 (고정 섹션) ===== */
+  .surgery-pin{background:linear-gradient(135deg,#EEF0FC,#FFFFFF); border:1px solid #D3D7F5; border-radius:14px; padding:16px 18px; margin-bottom:18px;}
+  .surgery-pin-head{display:flex; align-items:flex-start; gap:11px; margin-bottom:12px;}
+  .surgery-pin-icon{font-size:22px; line-height:1;}
+  .surgery-pin-title{font-size:14.5px; font-weight:900; color:var(--navy-2); margin-bottom:3px;}
+  .surgery-pin-desc{font-size:11px; color:var(--slate); line-height:1.5;}
+  .surgery-company-row{flex-wrap:wrap; margin-bottom:12px;}
+  .surgery-thumb-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:8px;}
+  .surgery-thumb{aspect-ratio:3/4; border-radius:8px; overflow:hidden; border:1px solid #D3D7F5; cursor:pointer; background:#fff; position:relative;}
+  .surgery-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .surgery-thumb .surgery-page-no{position:absolute; left:4px; bottom:4px; font-size:9.5px; font-weight:800; color:#fff; background:rgba(20,21,43,.65); padding:2px 6px; border-radius:999px;}
+  .surgery-empty{grid-column:1/-1; text-align:center; padding:20px 10px; font-size:12px; color:var(--slate); background:#fff; border-radius:9px; border:1px dashed #D3D7F5;}
   .faq-toolbar{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
   .faq-subrow{flex-wrap:wrap;}
   .faq-search-wrap{width:100%;}
@@ -1304,28 +1346,78 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
-          <button class="edu-tab active" data-qtab="ai">🤖 AI질문센터</button>
-          <button class="edu-tab" data-qtab="notice">📋 보험고지FAQ</button>
-          <button class="edu-tab" data-qtab="design">📐 보험설계FAQ</button>
-          <button class="edu-tab" data-qtab="starter">🔰 보험스타터FAQ</button>
-          <button class="edu-tab" data-qtab="claim">📮 보험청구FAQ</button>
-          <button class="edu-tab" data-qtab="comp">⚖️ 보상관련FAQ</button>
+          <button class="edu-tab active" data-qtab="disease">🩺 질병·인수가이드</button>
+          <button class="edu-tab" data-qtab="product">📦 보종별가이드</button>
+          <button class="edu-tab" data-qtab="coverage">🛡️ 담보가이드</button>
+          <button class="edu-tab" data-qtab="claim2">📮 보험금청구·보상</button>
+          <button class="edu-tab" data-qtab="clause">📜 약관·판례</button>
+          <button class="edu-tab" data-qtab="center">💬 질문센터</button>
         </div>
 
-        <div class="edu-panel active" id="qna-ai">
+        <div class="edu-panel active" id="qna-disease">
+          <div class="disease-notice">
+            🩺 질병 이름을 선택하면 <b>가입 가능 여부·일반/간편 비교·담보 제한·필요서류</b>를 한눈에 볼 수 있습니다.
+            <div class="disease-caution">※ 최종 가입 여부는 청약 시점 보험사 개별심사 결과에 따라 달라질 수 있습니다.</div>
+          </div>
+          <div class="disease-toolbar">
+            <div class="filter-row disease-grouprow" id="diseaseGroupRow"></div>
+            <input type="text" class="faq-search" id="diseaseSearch" placeholder="🔍 질병명 검색 (예: 고혈압, 갑상선)">
+          </div>
+          <div class="disease-grid" id="diseaseGrid"></div>
+        </div>
+
+        <div class="edu-panel" id="qna-product">
+          <div class="cr-empty" style="padding:40px 16px; text-align:center;">
+            📦 보종별가이드는 준비 중입니다.<br>
+            <span style="font-size:11.5px;">암보험·실손보험·운전자보험 등 상품 종류별 설명 자료가 곧 채워집니다.</span>
+          </div>
+        </div>
+
+        <div class="edu-panel" id="qna-coverage">
+          <div class="surgery-pin">
+            <div class="surgery-pin-head">
+              <span class="surgery-pin-icon">🏥</span>
+              <div>
+                <div class="surgery-pin-title">보험사별 수술비 분류표 (원본자료)</div>
+                <div class="surgery-pin-desc">보험사에서 발행한 질병수술비 분류표 원본입니다. 회사를 선택하면 전체 페이지를 확인할 수 있습니다. (사내교육용 자료 · 고객 제공 금지)</div>
+              </div>
+            </div>
+            <div class="filter-row surgery-company-row" id="surgeryCompanyRow"></div>
+            <div class="surgery-thumb-grid" id="surgeryThumbGrid"></div>
+          </div>
+
+          <div class="disease-notice">
+            🛡️ 담보를 선택하면 <b>지급사유·보장범위·지급횟수·지급한도·제외사항·보험사별차이·청구서류</b>를 한눈에 볼 수 있습니다.
+            <div class="disease-caution">※ 실제 보장 여부는 가입하신 상품의 개별 약관을 반드시 대조 확인해야 합니다.</div>
+          </div>
+          <div class="disease-toolbar">
+            <div class="filter-row disease-grouprow" id="coverageGroupRow"></div>
+            <input type="text" class="faq-search" id="coverageSearch" placeholder="🔍 담보명 검색 (예: 암진단비, 입원일당)">
+          </div>
+          <div class="disease-grid" id="coverageGrid"></div>
+        </div>
+
+        <div class="edu-panel" id="qna-claim2">
+          <div class="faq-area"></div>
+        </div>
+
+        <div class="edu-panel" id="qna-clause">
+          <div class="cr-empty" style="padding:40px 16px; text-align:center;">
+            📜 약관·판례는 준비 중입니다.<br>
+            <span style="font-size:11.5px;">약관 원문·금감원 분쟁조정·법원 판례 자료가 곧 채워집니다.</span>
+          </div>
+        </div>
+
+        <div class="edu-panel" id="qna-center">
           <div class="subsection-title">🤖 AI질문센터 — 자료 검색 (AI 요약)</div>
-          <div class="qna-form-row" style="margin-bottom:10px;">
+          <div class="qna-form-row" style="margin-bottom:16px;">
             <input type="text" class="claim-search" id="docSearchInput" placeholder="검색어 입력 (예: 암, 치아, 실손...)" style="margin-bottom:0;">
             <button type="button" id="docSearchBtn" style="flex-shrink:0; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:0 18px; font-size:13px; font-weight:700; cursor:pointer;">검색</button>
           </div>
-          <div id="docSearchResults"></div>
+          <div id="docSearchResults" style="margin-bottom:20px;"></div>
+          <div class="subsection-title">📋 자주 묻는 질문</div>
+          <div class="faq-area" id="qna-center-faqarea"></div>
         </div>
-
-        <div class="edu-panel" id="qna-notice"></div>
-        <div class="edu-panel" id="qna-design"></div>
-        <div class="edu-panel" id="qna-starter"></div>
-        <div class="edu-panel" id="qna-claim"></div>
-        <div class="edu-panel" id="qna-comp"></div>
 
         <!-- 다온지사 게시판: 숨김 처리 (삭제 아님, 추후 재사용 가능) -->
         <div style="display:none;" id="daonBoardHidden">
@@ -1458,6 +1550,42 @@ body.growon{ background:var(--g-navy); }
           <div id="faqModalImg"></div>
         </div>
       </div>
+<div class="modal-backdrop" id="diseaseModalBackdrop">
+        <div class="modal-card" style="max-width:560px;">
+          <button class="modal-close" id="diseaseModalClose">&times;</button>
+          <div class="dz-modal-group" id="dzModalGroup"></div>
+          <div class="dz-modal-name" id="dzModalName"></div>
+          <div class="dz-modal-badge" id="dzModalBadge"></div>
+          <div class="dz-modal-summary" id="dzModalSummary"></div>
+          <div id="dzModalSections"></div>
+          <div class="dz-modal-foot">
+            <div>기준일: <span id="dzModalDate"></span></div>
+            <div>※ 최종 가입 여부는 청약 시점 보험사 개별심사 결과에 따라 달라질 수 있습니다.</div>
+          </div>
+        </div>
+      </div>
+<div class="modal-backdrop" id="coverageModalBackdrop">
+        <div class="modal-card" style="max-width:560px;">
+          <button class="modal-close" id="coverageModalClose">&times;</button>
+          <div class="dz-modal-group" id="cvModalGroup"></div>
+          <div class="dz-modal-name" id="cvModalName"></div>
+          <div class="dz-modal-summary" id="cvModalSummary"></div>
+          <div id="cvModalSections"></div>
+          <div class="dz-modal-foot">
+            <div>기준일: <span id="cvModalDate"></span></div>
+            <div>※ 실제 보장 여부는 가입하신 상품의 개별 약관을 반드시 대조 확인해야 합니다.</div>
+          </div>
+        </div>
+      </div>
+<div class="alb-lb" id="surgeryLb">
+  <div class="alb-lb-box">
+    <button class="alb-lb-x" id="surgeryLbX">&times;</button>
+    <button class="alb-lb-nav prev" id="surgeryLbPrev">‹</button>
+    <button class="alb-lb-nav next" id="surgeryLbNext">›</button>
+    <img id="surgeryLbImg" src="" alt="">
+    <div class="alb-lb-cap" id="surgeryLbCap"></div>
+  </div>
+</div>
 <div class="modal-backdrop" id="cardnewsModalBackdrop">
         <div class="modal-card">
           <button class="modal-close" id="cardnewsModalClose">&times;</button>
@@ -1515,6 +1643,7 @@ body.growon{ background:var(--g-navy); }
     </div>
   </div>
 </div>
+<button type="button" id="aiFloatBtn" class="ai-float-btn">🤖<span>AI 보험비서에게<br>질문하기</span></button>
 <div class="alb-lb" id="albLb">
   <div class="alb-lb-box">
     <button class="alb-lb-x" id="albLbX">&times;</button>
@@ -3023,6 +3152,19 @@ body.growon{ background:var(--g-navy); }
 
   renderCardPayment();
 
+  /* AI 보험비서 플로팅 버튼: 그로우꿀단지 > 질문센터 탭으로 이동 후 AI 검색창에 포커스 */
+  const _aifb = document.getElementById('aiFloatBtn');
+  if(_aifb) _aifb.addEventListener('click', () => {
+    const qnaNav = document.querySelector('[data-view="qna"]');
+    if(qnaNav) qnaNav.click();
+    setTimeout(() => {
+      const centerTab = document.querySelector('[data-qtab="center"]');
+      if(centerTab) centerTab.click();
+      const input = document.getElementById('docSearchInput');
+      if(input){ input.scrollIntoView({behavior:'smooth', block:'center'}); input.focus(); }
+    }, 150);
+  });
+
 
   // ================= AI 질문센터 탭 전환 =================
   const _qt = document.getElementById('qnaTabs');
@@ -3129,16 +3271,42 @@ body.growon{ background:var(--g-navy); }
     { major:"보험고지FAQ", minor:"자필서명위반", question:"배우자가 동의하고 대신 서명(대필)한 계약은 취소할 수 있나요?", answer:"네. 본인이 직접 서명하지 않았다면 계약 성립일로부터 3개월 이내에 계약자가 취소할 수 있으며, 기납입 보험료를 돌려받을 수 있습니다.", image:"" },
     { major:"보험고지FAQ", minor:"자필서명위반", question:"대필한 계약인데 이미 3개월이 지났다면 영영 취소가 불가능한가요?", answer:"원칙적으로 3개월이 지나면 취소권은 소멸하나, 본인의 체결 의사가 전혀 없었다면 '무권대리'에 의한 무효를 주장할 수 있습니다. 단, 오랫동안 보험료를 냈다면 이를 추인한 것으로 보아 유효한 계약이 될 수 있습니다.", image:"" },
     { major:"보험고지FAQ", minor:"자필서명위반", question:"사망담보가 있는 계약을 배우자가 대필했다면 어떻게 되나요?", answer:"타인의 사망을 보장하는 계약에서 피보험자의 서면 동의(자필서명)가 없다면, 이는 강행규정 위반으로 계약 자체가 무효가 됩니다. 사고 시 보험금 지급도 거절됩니다.", image:"" },
-    { major:"보험고지FAQ", minor:"자필서명위반", question:"설계사가 서명을 대신하라고 권유하여 사고 보상을 못 받게 되었다면?", answer:"설계사의 잘못으로 계약이 무효가 되어 보험금을 못 받게 된 경우, 보험사는 소비자보호법 등에 따라 보험금 상당액에 대한 손해배상책임을 질 수 있습니다.", image:"" }
+    { major:"보험고지FAQ", minor:"자필서명위반", question:"설계사가 서명을 대신하라고 권유하여 사고 보상을 못 받게 되었다면?", answer:"설계사의 잘못으로 계약이 무효가 되어 보험금을 못 받게 된 경우, 보험사는 소비자보호법 등에 따라 보험금 상당액에 대한 손해배상책임을 질 수 있습니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"간편심사보험(유병자보험)의 기본 인수 원칙은 무엇인가요?", answer:"간편심사보험은 보통 3개월 이내 확정진단·의심소견·입원·수술·추가검사 필요소견 여부, N년(1~5년) 이내 입원·수술 이력, 5년 이내 6대질병(암·협심증·심근경색·간경화·뇌졸중·심장판막증)의 진단·입원·수술 이력 이 3가지(3-Q)를 묻어 가입 가능성을 판단합니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"단순 염좌(발목·손목·척추)도 인수가 어려울까요?", answer:"발목·손목·척추 등 단순 염좌는 치료 종료 후 즉시 인수 대상입니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"치핵·치루·치열도 인수 가능한가요?", answer:"14일 이내 입원 치료력만 있다면 경증으로 인수될 수 있으나, 수술 이력이 있는 경우는 상품에 따라 확인이 필요합니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"'고고당플랜'은 어떤 담보에 유리한가요?", answer:"고혈압·고지혈증·당뇨가 있어도 뇌혈관진단비나 협심증진단비 등을 할증 없이 가입할 수 있는 전용 플랜입니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"갑상선암 6년 전 수술로 완치된 경우, 최근 다른 용종을 제거해도 가입될까요?", answer:"수술 후 완치되고 약 복용이 없다면, 이후 발생한 무관한 질환(용종 제거 등)이 있어도 심사를 통해 인수가 가능할 수 있습니다.", image:"" },
+    { major:"보험고지FAQ", minor:"고지의무", question:"경구용 항혈전제 복용도 치료 고지 대상인가요?", answer:"주사제 항혈전제(헤파린 등)가 아닌 경구용 항혈전제(항혈소판제 등)는 직접 치료가 아닌 보조적 요법으로 보아 치료 고지 대상에서 제외될 수 있습니다.", image:"" },
+    { major:"보험고지FAQ", minor:"고지의무", question:"오래된 만성질환의 정기 처방도 3개월 내 치료로 고지해야 하나요?", answer:"5년 전 진단받은 당뇨·고혈압으로 단순히 약 처방만 받기 위해 내원한 것은 3개월 내 '치료' 고지 사항에 해당하지 않는 경우가 많습니다. 새로운 증상이나 진단명 변경 없이 기존 질환의 단순 유지처방이라면 치료로 보지 않는 경우가 많습니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"레켐비 등 표적치매치료제 담보는 어떻게 심사하나요?", answer:"이미 경도인지장애나 치매 진단을 받았거나, 알츠하이머 의심소견·인지기능개선제 복용 이력이 있으면 가입이 매우 어렵습니다. 최근 뇌 MRI·CT 검사결과와 장기요양등급 신청 이력이 핵심 심사 대상입니다.", image:"" },
+    { major:"보험고지FAQ", minor:"고지의무", question:"사기에 의한 고지 위반은 5년이 지나도 계약이 취소될 수 있나요?", answer:"네. 약관상 해지 가능 기간(안날로부터 1개월, 계약일로부터 3년)과 별개로, 암이나 HIV 감염 사실을 숨기는 등 중대한 사기적 고지 위반이 입증되면 가입 후 5년 이내에도 계약이 취소될 수 있습니다.", image:"" },
+    { major:"보험스타터FAQ", minor:"보험용어", question:"치매보험에서 말하는 CDR 척도란 무엇인가요?", answer:"임상치매평가(CDR) 척도로, 0.5점(최경증)·1점(경증)·2점(중등도)·3점 이상(중증)으로 치매의 중증도를 평가합니다. 보험금은 이 단계별로 차등 지급됩니다.", image:"" },
+    { major:"보험스타터FAQ", minor:"보험용어", question:"MMSE와 ADL은 무엇을 평가하는 검사인가요?", answer:"MMSE(간이정신상태검사)는 인지 기능을 평가하는 보조적 검사로 CDR과 종합하여 판단합니다. ADL(일상생활 기본동작)은 이동·식사·목욕 등을 스스로 수행 가능한지 평가하며, 중증 치매나 장기요양등급 판정에 활용됩니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"레켐비 등 표적치매치료제는 어떤 방식으로 보험금을 지급하나요?", answer:"회당 지급형은 투여를 받을 때마다 정액(예: 50만 원)을 지급하며 보통 최대 36회까지 보장합니다. 회차별 차등 지급형은 1·7·13·19회 등 특정 회차에 도달했을 때 비교적 큰 금액을 지급하며, 지정된 회차(예: 7회) 이전에 치료를 중단하면 해당 회차의 보험금은 받을 수 없습니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"표적치매치료제 담보의 아밀로이드베타 양성 확인은 어떻게 하나요?", answer:"PET 검사나 뇌척수액 검사를 통해 아밀로이드베타 양성 여부를 확인합니다. 여기에 약관상 치매(CDR 0.5~1점 등) 및 알츠하이머병 진단이 함께 요구됩니다.", image:"" },
+    { major:"보험설계FAQ", minor:"설계TIP", question:"치매보험 설계 시 보장 공백을 막으려면 어떻게 해야 하나요?", answer:"알츠하이머병 진단 후 실제 치매로 인정되기까지 2~3년의 시차가 발생할 수 있습니다. 이 공백을 막기 위해 알츠하이머병 진단만으로도 보장되는 4대 퇴행성 진단비를 복층으로 설계하는 것이 유리합니다.", image:"" },
+    { major:"보험설계FAQ", minor:"설계TIP", question:"치매보험 가입 시 지정대리청구인 등록이 왜 중요한가요?", answer:"치매가 진행되면 본인이 직접 보험금을 청구하기 어려워지는 경우가 많습니다. 이런 상황에 대비해 가입 시 반드시 대리청구인을 등록해 두어야 청구 공백을 막을 수 있습니다.", image:"" },
+    { major:"보험고지FAQ", minor:"고지의무", question:"간편치매보험 가입 시 특히 확인해야 할 고지 사항은?", answer:"간편(유병자) 치매보험은 3.2.5 또는 1Q/3Q 질문을 활용합니다. 특히 최근 2년 내 인지기능 장애로 인한 추가검사 소견이나, 5년 내 치매·알츠하이머 치료력이 중요한 고지 대상입니다.", image:"" },
+    { major:"보험청구FAQ", minor:"보상기준", question:"레켐비 보험금을 받으려면 어떤 요건을 모두 충족해야 하나요?", answer:"약관에서 정한 다섯 가지 요건을 모두 충족해야 합니다. ①CDR 0.5~1점의 약관상 치매 상태로 확정 진단, ②PET·뇌척수액 검사로 아밀로이드베타 양성 확인, ③예방·임상시험이 아닌 직접 치료 목적 및 식약처 허가 범위 준수, ④약관상 표적치매약물로 정의된 약물, ⑤보장개시일 이후 진단. 다섯 요건 중 하나라도 빠지면 지급이 거절될 수 있습니다.", image:"" },
+    { major:"보험청구FAQ", minor:"보상기준", question:"표적치매치료제 담보는 가입 후 바로 보장되나요?", answer:"아닙니다. 계약일로부터 일정 기간(예: 1년)이 지난 후부터 보장이 시작되는 경우가 많습니다. 이 보장개시일 이전에 진단을 받으면 보험금 지급이 거절될 수 있으므로 가입 시점을 반드시 확인해야 합니다.", image:"" },
+    { major:"보험청구FAQ", minor:"보상기준", question:"예방 목적이나 임상시험으로 레켐비를 투여받아도 보험금이 나오나요?", answer:"아니요. 단순 예방, 임상시험 참여, 연구 목적의 투여는 보장 대상이 아닙니다. 약관에서 정한 치매 상태를 직접 치료하기 위한 목적으로, 식약처가 허가한 효능·효과·투여 대상·투여 방법 범위 내에서 투약해야만 보상이 가능합니다.", image:"" },
+    { major:"보험청구FAQ", minor:"보상기준", question:"레켐비는 모든 단계의 치매 환자에게 허가되나요?", answer:"아니요. 알츠하이머병으로 인한 경도인지장애(MCI) 환자와 초기 또는 경증의 알츠하이머 치매 환자(CDR 0.5~1점)만 대상입니다. 이미 중등도나 중증으로 진행된 치매 환자에게는 사용하지 않으며, 이 범위를 벗어나면 보험 보장도 되지 않습니다.", image:"" },
+    { major:"보험고지FAQ", minor:"고지의무", question:"유사암 중에서도 5년 내 \"암\"으로 고지해야 하는 것이 따로 있나요?", answer:"네. 유사암 중 갑상선암(C73)과 기타피부암(C44)은 5년 내 암 고지 대상에 포함됩니다. 반면 경계성종양, 제자리암, 양성뇌종양은 5년 내 \"암\" 고지 대상은 아니며, 다만 일반 질병 수술·입원 이력 고지에는 해당할 수 있습니다.", image:"" },
+    { major:"보험고지FAQ", minor:"고지의무", question:"부정맥이나 심부전도 5년 내 심장질환으로 고지해야 하나요?", answer:"간편보험의 5년 내 6대 질병 고지 대상은 협심증·심근경색·심장판막증이며, 부정맥(I47~I49)이나 심부전(I50)은 고지 대상에서 제외되는 경우가 많아 인수에 유리합니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"지방종이 있어도 간편보험 가입이 가능한가요?", answer:"수술을 완료했고 총 입원일수가 14일 이내라면 치료 종료 3개월 후부터 경증 질환으로 인수가 가능합니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"탈장 수술 이력이 있으면 인수가 어려운가요?", answer:"입원 14일 이내로 치료가 종료되었다면 즉시 경증으로 인수가 가능한 경우가 많습니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"경증질환 예외 인수는 병력이 여러 개 있어도 다 인정되나요?", answer:"경미 질환 예외 인수는 합산 최대 3개까지 가능하며, 세부 KCD 코드에 따라 제한될 수 있습니다. 4개 이상 해당되면 개별심사로 전환되는 경우가 많습니다.", image:"" },
+    { major:"보험설계FAQ", minor:"인수가이드", question:"과거 암 진단을 받은 고객도 암보험에 가입할 수 있나요?", answer:"암 진단 및 수술 후 5년이 경과하고 그 사이 재발이나 치료 이력이 없다면 가입이 가능합니다. 과거 암 이력이 있더라도 기왕력과 관계없는 새로운 원발암인 경우 보상이 가능하도록 설계할 수 있습니다.", image:"" },
+    { major:"보험설계FAQ", minor:"설계TIP", question:"\"무사고 전환 제도\"란 무엇인가요?", answer:"간편보험 가입 후 일정 기간(예: 1~5년) 동안 입원·수술이나 6대 질병 진단이 없으면 더 저렴한 유병자 플랜으로 전환해 보험료를 낮출 수 있는 제도입니다.", image:"" }
   ];
 
   // 대분류 → 패널 id, 소분류 목록 매핑
   const FAQ_STRUCTURE = {
-    notice:  { major:"보험고지FAQ",   subs:["고지의무","통지의무","자필서명위반"] },
-    design:  { major:"보험설계FAQ",   subs:["인수가이드","부담보가이드","설계TIP","회사별가이드"] },
-    starter: { major:"보험스타터FAQ", subs:["보험용어","진단코드분류","수술비분류"] },
-    claim:   { major:"보험청구FAQ",   subs:["보험제출서류","보상기준"] },
-    comp:    { major:"보상관련FAQ",   subs:["손해보험사","의료과실","사례"] }
+    center: { majors:["보험고지FAQ","보험설계FAQ","보험스타터FAQ"],
+      subs:["고지의무","통지의무","자필서명위반","인수가이드","부담보가이드","설계TIP","회사별가이드","보험용어","진단코드분류","수술비분류"] },
+    claim2: { majors:["보험청구FAQ","보상관련FAQ"],
+      subs:["보험제출서류","보상기준","손해보험사","의료과실","사례"] }
   };
 
   const faqState = {}; // panelKey -> { sub, kw }
@@ -3160,7 +3328,7 @@ body.growon{ background:var(--g-navy); }
   function renderFaqPanel(key){
     const st = FAQ_STRUCTURE[key];
     const state = faqState[key] || (faqState[key] = { sub:'전체', kw:'' });
-    let list = faqData.filter(f => f.major === st.major);
+    let list = faqData.filter(f => st.majors.includes(f.major));
     if(state.sub !== '전체') list = list.filter(f => f.minor === state.sub);
     if(state.kw){
       const kw = state.kw.toLowerCase();
@@ -3215,7 +3383,8 @@ body.growon{ background:var(--g-navy); }
   Object.keys(FAQ_STRUCTURE).forEach(key => {
     const panel = document.getElementById('qna-' + key);
     if(!panel) return;
-    panel.innerHTML = faqPanelHtml(key);
+    const target = panel.querySelector('.faq-area') || panel;
+    target.innerHTML = faqPanelHtml(key);
     faqState[key] = { sub:'전체', kw:'' };
     // 소분류 필터
     panel.querySelector('.faq-subrow').addEventListener('click', (e) => {
@@ -3232,6 +3401,324 @@ body.growon{ background:var(--g-navy); }
     });
     renderFaqPanel(key);
   });
+
+  // ================= 질병별 인수가이드 =================
+  // n8n/Notion 자동화 대상: Notion「질병별 인수가이드 (그로우꿀단지)」DB에서 채워집니다.
+  const diseaseData = [
+    { name:"고혈압", group:"대사·내분비", result:"개별심사 필요",
+      summary:"약 복용 중이어도 3개월 내 입원·수술 없고 혈압이 안정적이면 간편보험 대부분 가능, 상태에 따라 일반심사도 검토",
+      apply:"혈압강하제를 복용 중이더라도 최근 3개월 내 입원·수술·추가검사 소견이 없으면 가입이 가능한 경우가 많습니다. 혈압 수치가 안정적으로 관리되고 합병증이 없다면 일반심사도 검토해볼 수 있습니다.",
+      compare:"혈압이 잘 조절되고 단일제 복용이면 일반심사를 먼저 시도하고, 수치가 높거나 합병증·다수제 복용이면 간편보험을 검토합니다.",
+      limit:"뇌혈관·허혈성심장질환 진단비는 고혈압 상태에 따라 부담보나 개별심사가 될 수 있습니다. 암진단비·질병수술비는 비교적 수월한 편입니다.",
+      docs:"최근 진료기록, 처방전, 투약내역, 혈압기록, 검사결과지",
+      company:"회사별로 간편보험 심사 기준(3.5.5 / 3.10.10 등)과 할증 여부가 다릅니다. 구체 수치는 각 보험사 사전심사로 확인하세요.",
+      date:"2026-07-17" },
+    { name:"당뇨병", group:"대사·내분비", result:"개별심사 필요",
+      summary:"유병기간 10년·당화혈색소 7% 미만·인슐린 미투약이면 전용플랜으로 할증 없이도 가능, 합병증 있으면 개별심사",
+      apply:"2형 당뇨이면서 유병기간 10년 이하, 당화혈색소 7% 미만, 인슐린 미투약 조건을 충족하면 전용 플랜(고고당플랜 등)으로 할증 없이 가입도 가능합니다. 합병증이 있거나 인슐린을 투약 중이면 개별심사가 필요합니다.",
+      compare:"수치가 안정적이고 합병증이 없으면 유병자 전용 일반플랜을, 그 외에는 간편보험을 검토합니다.",
+      limit:"당뇨 합병증(망막·신증 등) 진단비 담보는 병력과 소견에 따라 부담보가 붙을 수 있습니다.",
+      docs:"최근 진료기록, 당화혈색소 검사결과지, 처방전, 투약내역",
+      company:"당화혈색소 기준은 회사별로 다르며, 전용 당뇨 플랜 운영 여부도 차이가 있습니다. 사전심사로 확인하세요.",
+      date:"2026-07-17" },
+    { name:"갑상선결절", group:"대사·내분비", result:"조건부 인수 가능",
+      summary:"수술 완료·입원14일 이내·양성이면 3개월 후 인수 가능, 미수술 결절은 간편보험 유리",
+      apply:"수술로 종양을 완전히 제거했고 총 입원일수가 14일 이내면 치료 종료 3개월 후부터 경증 질환으로 인수가 가능합니다. 수술하지 않은 결절은 표준체에서 부담보가 붙을 수 있으나 간편보험은 수월한 편입니다.",
+      compare:"수술 후 3개월 경과·양성 확인 시 일반심사, 추적관찰 중이거나 미수술 결절은 간편보험이 유리합니다.",
+      limit:"갑상선암(C73)은 수술력·경과기간에 따라 암 관련 담보 부담보가 붙을 수 있습니다.",
+      docs:"초음파 검사결과지, 조직검사 결과(있는 경우), 수술확인서·입퇴원확인서, 최근 진료기록",
+      company:"결절 크기·수술 여부·양성 확인 여부에 따라 회사별 기준이 다릅니다. 사전심사 권장.",
+      date:"2026-07-17" },
+    { name:"대장용종", group:"소화기·간", result:"일반심사 가능",
+      summary:"양성 용종 제거 후 일정 기간 지나면 일반심사 가능, 수술이라 간편보험 고지 필요",
+      apply:"용종 제거는 '수술'에 해당하므로 간편보험의 N년 이내 수술 항목에 고지해야 합니다. 제거 수술 후 입원 5일 이내였고 조직검사에서 양성이 확인되면 즉시 가입이 가능한 경우가 많습니다. 위 용종도 동일한 기준이 적용됩니다.",
+      compare:"양성 용종 제거 후 일정 기간 경과 시 일반심사, 최근 제거했거나 선종이면 간편보험을 검토합니다.",
+      limit:"대부분 양성이라 큰 제한은 없으나, 선종 이상 소견이 있으면 소화기 관련 담보에 부담보가 붙을 수 있습니다.",
+      docs:"내시경 결과지, 조직검사(조직병리) 결과, 수술확인서",
+      company:"용종 개수·크기·조직검사 결과에 따라 회사별 기준이 다릅니다.",
+      date:"2026-07-17" },
+    { name:"허리디스크", group:"근골격계", result:"조건부 인수 가능",
+      summary:"입원일수 15일 이내면 수술 여부 무관 인수 가능, 척추 부위 부담보 가능성 있음",
+      apply:"수술 여부와 관계없이 총 입원일수가 15일 이내면 치료 종료 후 인수가 가능한 경우가 많습니다. 수술 이력이나 장기 치료 중이면 척추 관련 담보에 부담보가 붙을 수 있습니다.",
+      compare:"치료 종료하고 입원일수 조건을 충족하면 일반심사, 수술 이력이 있거나 치료가 길었으면 간편보험을 검토합니다.",
+      limit:"척추 관련 질병수술비·입원일당은 해당 부위 부담보가 붙을 수 있으며, 암·뇌·심장 담보는 보통 영향이 없습니다.",
+      docs:"MRI·X-ray 검사결과지, 최근 진료기록, 수술확인서(수술한 경우)",
+      company:"수술 여부·입원일수·재발 여부에 따라 부담보 범위가 다릅니다.",
+      date:"2026-07-17" },
+    { name:"유방결절", group:"여성·남성", result:"개별심사 필요",
+      summary:"단순 양성 결절은 가입 가능성 높지만, 유방 관련 담보는 부담보·개별심사 가능",
+      apply:"단순 양성 결절(섬유선종 등)이면 가입이 가능한 경우가 많으나, 크기가 크거나 조직검사가 필요한 상태면 유방 관련 담보에 부담보가 붙거나 개별심사가 필요합니다.",
+      compare:"양성 확인되고 추적관찰만 하는 경우 일반심사도 가능하며, 조직검사 예정이거나 크기가 크면 간편보험을 검토합니다.",
+      limit:"유방암 진단비·유방 관련 수술비에 부담보가 붙을 수 있으며, 그 외 담보는 보통 영향이 적습니다.",
+      docs:"유방 초음파·맘모그램 결과지, 조직검사 결과(있는 경우), 최근 진료기록",
+      company:"결절의 BI-RADS 등급과 크기에 따라 회사별 기준이 다릅니다. 사전심사 권장.",
+      date:"2026-07-17" },
+    { name:"자궁근종", group:"여성·남성", result:"조건부 인수 가능",
+      summary:"근종제거술 후 입원 5일 이내·완치면 가입 가능성 높음, 장기치료·재발은 간편보험 검토",
+      apply:"근종제거술 후 입원 5일 이내이고 완치되었다면 가입이 가능한 경우가 많습니다. 치료 기간이 길거나 재발 이력이 있으면 개별심사가 필요합니다.",
+      compare:"근종제거술 후 완치되었으면 일반심사, 치료가 길었거나 재발했으면 간편보험을 검토합니다.",
+      limit:"자궁근종 관련 질병수술비·입원일당은 수술력에 따라 부담보가 붙을 수 있으며, 암·뇌·심장 담보는 보통 영향이 없습니다.",
+      docs:"초음파 검사결과지, 수술확인서·입퇴원확인서, 최근 진료기록",
+      company:"근종 크기·수·개수·재발 여부에 따라 부담보 범위가 다릅니다. 사전심사 권장.",
+      date:"2026-07-17" },
+    { name:"치매", group:"정신·신경계", result:"개별심사 필요",
+      summary:"원인질환(알츠하이머 등) 및 CDR단계로 인수 여부가 갈림, 경도인지장애 단계는 표적치료제 담보 인수가 까다로움",
+      apply:"이미 치매·경도인지장애 진단을 받았거나 인지기능개선제를 복용 중이면 일반 진단비 가입이 어려운 경우가 많습니다. 특히 표적치매치료제(레켐비 등) 담보는 최근 뇌 MRI·CT 결과와 장기요양등급 신청 이력이 핵심 심사 대상입니다.",
+      compare:"간편(유병자)보험은 3.2.5 또는 1Q/3Q 질문을 활용하며, 최근 2년 내 인지기능 장애로 인한 추가검사 소견이나 5년 내 치매·알츠하이머 치료력이 중요한 고지 대상입니다.",
+      limit:"치매진단비·중증치매생활자금·장기요양등급담보는 병력에 따라 개별심사·부담보가 될 수 있습니다. 표적치매치료제 담보는 이미 진단·복약 이력이 있으면 인수가 매우 어렵습니다.",
+      docs:"CDR 평가결과지, MMSE 검사결과지, 뇌 영상검사(MRI·CT) 결과지, 인지기능 관련 처방전(있는 경우)",
+      company:"CDR 최경증(0.5점)부터 보장하는지, 장기요양등급만으로 지급되는지, 표적치매치료제 신담보 유무가 회사별 핵심 차이입니다.",
+      date:"2026-07-17" }
+  ];
+
+  const DISEASE_GROUPS = ["전체","대사·내분비","심장·뇌혈관","소화기·간","근골격계","여성·남성","암·종양","정신·신경계"];
+  const dzState = { group:"전체", kw:"" };
+
+  function dzBadgeClass(result){ return 'dz-badge-' + String(result).replace(/\s/g,''); }
+
+  function renderDiseaseGrid(){
+    let list = diseaseData.slice();
+    if(dzState.group !== "전체") list = list.filter(d => d.group === dzState.group);
+    if(dzState.kw){
+      const kw = dzState.kw.toLowerCase();
+      list = list.filter(d => d.name.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw) || d.group.toLowerCase().includes(kw));
+    }
+    const grid = document.getElementById('diseaseGrid');
+    if(!grid) return;
+    if(!list.length){
+      grid.innerHTML = '<div class="cr-empty" style="grid-column:1/-1; padding:28px; text-align:center;">해당 질병 자료가 없습니다.<br><span style="font-size:11.5px;">자료가 준비되면 추가됩니다.</span></div>';
+      return;
+    }
+    grid.innerHTML = list.map(d => {
+      const gi = diseaseData.indexOf(d);
+      return `
+      <div class="dz-card" data-di="${gi}">
+        <div class="dz-card-group">${escapeHtml(d.group)}</div>
+        <div class="dz-card-name">${escapeHtml(d.name)}</div>
+        <span class="dz-card-badge ${dzBadgeClass(d.result)}">${escapeHtml(d.result)}</span>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.dz-card').forEach(c => {
+      c.addEventListener('click', () => openDiseaseModal(Number(c.dataset.di)));
+    });
+  }
+
+  function openDiseaseModal(idx){
+    const d = diseaseData[idx];
+    if(!d) return;
+    document.getElementById('dzModalGroup').textContent = d.group;
+    document.getElementById('dzModalName').textContent = d.name;
+    document.getElementById('dzModalBadge').innerHTML = `<span class="${dzBadgeClass(d.result)}">${escapeHtml(d.result)}</span>`;
+    document.getElementById('dzModalSummary').textContent = d.summary;
+    document.getElementById('dzModalDate').textContent = d.date;
+    const sections = [
+      ['✅ 가입 가능 여부', d.apply],
+      ['⚖️ 일반보험 vs 간편보험', d.compare],
+      ['🛡️ 담보별 심사·제한', d.limit],
+      ['📄 필요서류', d.docs],
+      ['🏢 회사별 인수현황', d.company]
+    ];
+    document.getElementById('dzModalSections').innerHTML = sections.map(([label, body]) => `
+      <div class="dz-section">
+        <div class="dz-section-label">${label}</div>
+        <div class="dz-section-body">${escapeHtml(body || '-')}</div>
+      </div>`).join('');
+    document.getElementById('diseaseModalBackdrop').classList.add('open');
+  }
+  function closeDiseaseModal(){ document.getElementById('diseaseModalBackdrop').classList.remove('open'); }
+  const _dzc = document.getElementById('diseaseModalClose');
+  if(_dzc) _dzc.addEventListener('click', closeDiseaseModal);
+  const _dzb = document.getElementById('diseaseModalBackdrop');
+  if(_dzb) _dzb.addEventListener('click', (e) => { if(e.target.id === 'diseaseModalBackdrop') closeDiseaseModal(); });
+
+  // 질환군 필터 칩 생성
+  const _dgr = document.getElementById('diseaseGroupRow');
+  if(_dgr){
+    _dgr.innerHTML = DISEASE_GROUPS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-dgroup="${g}">${g}</button>`).join('');
+    _dgr.addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      _dgr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      dzState.group = b.dataset.dgroup;
+      renderDiseaseGrid();
+    });
+  }
+  const _dzs = document.getElementById('diseaseSearch');
+  if(_dzs) _dzs.addEventListener('input', (e) => { dzState.kw = e.target.value.trim(); renderDiseaseGrid(); });
+  renderDiseaseGrid();
+
+  const coverageData = [
+    { name:"암진단비", category:"진단비", payCause:"암보장개시일(통상 계약일로부터 90일 경과한 다음날) 이후에 '암'으로 진단 확정된 경우", scope:"KCD상 악성신생물(C00~C97)을 암으로 분류하며, 유사암(기타피부암·갑상선암·제자리암·경계성종양)은 약관에서 별도로 정한 분류표를 따릅니다.", payCount:"최초 1회한 지급 후 소멸", payLimit:"가입금액 전액(1~2년 이내 발생 시 50% 감액 지급하는 상품 존재)", exclude:"진단 확정은 해부병리·임상병리 전문의에 의해야 하며, 단순 '의증'이거나 조직검사 결과가 없으면 지급되지 않습니다.", company:"DB손해보험은 유사암에 대해 면책기간 없이 가입 즉시 100% 보장하는 등 회사별 차이가 큽니다.", docs:"진단서, 조직검사 결과지(Pathology Report)", summary:"계약일 90일 경과 후 암 진단확정 시 최초 1회 정액 지급, 1~2년 이내는 감액기간 존재", date:"2026-07-17" },
+    { name:"유사암진단비", category:"진단비", payCause:"유사암(기타피부암 C44, 갑상선암 C73, 제자리암 D00~D09, 경계성종양 D37~D48) 진단확정", scope:"일반암보다 낮은 금액으로 지급되도록 보험사가 별도로 분류. 상품에 따라 제외되기도 함", payCount:"각 분류별 최초 1회씩 지급하는 상품이 많음", payLimit:"일반암 대비 낮은 비율(통상 10~20%)로 설계되는 경우가 많음", exclude:"조직검사 결과 없는 의증은 제외", company:"면책기간 유무·지급비율이 회사별로 상이(예: DB손보 면책없이 100%)", docs:"진단서, 조직검사 결과지", summary:"기타피부암·갑상선암·제자리암·경계성종양 보장, 계약일부터 즉시 보장하는 경우가 많음", date:"2026-07-17" },
+    { name:"뇌혈관질환진단비", category:"진단비", payCause:"보험기간 중 해당 질병으로 진단 확정된 경우", scope:"뇌출혈(I60~I62, 약9%) < 뇌졸중(I60~I63,I65,I66, 약66%) < 뇌혈관질환(I60~I69, 전체). I64·I67·I68·I69는 뇌졸중 담보에서 제외되는 경우가 많아 주의 필요. 산정특례는 I60~I67 외 S06(외상성뇌출혈)·Q28.0~Q28.3까지 확대", payCount:"최초 1회한(산정특례진단비는 매년 등록 시 연간 1회한 반복보장)", payLimit:"가입금액 전액", exclude:"외상성 뇌출혈(S06), 일과성 허혈발작(G45) 등은 기본 담보에서 제외될 수 있습니다.", company:"담보명(뇌혈관질환/뇌졸중/뇌출혈)에 따라 실제 보장 범위가 완전히 다르므로 반드시 확인", docs:"진단서, CT/MRI 판독지, 뇌혈관조영술 결과지", summary:"뇌혈관질환(I60~I69)이 가장 넓고 뇌졸중, 뇌출혈 순으로 좁아짐. 담보명에 따라 보장범위가 크게 달라짐", date:"2026-07-17" },
+    { name:"허혈성심장질환진단비", category:"진단비", payCause:"보험기간 중 해당 질병으로 진단 확정된 경우", scope:"급성심근경색(I21~I23, 약12%) < 허혈성심장질환(I20~I25, 협심증포함 66%이상). 부정맥(I47~I49)·심부전(I50) 포함 특정심혈관 담보 존재. 산정특례는 I20~I25 외 I30~I51·D15.1·S25~S26까지 확대", payCount:"최초 1회한(산정특례진단비는 연 1회한 반복)", payLimit:"가입금액 전액", exclude:"변이형 협심증(I20.1)은 혈관조영술상 협착이 거의 없거나 혈관연축검사 음성 시 면책 통보되는 분쟁이 잦습니다. 전형적 증상과 주치의 확정진단으로 대응합니다.", company:"협심증(I20) 포함 여부로 보장범위가 크게 갈림", docs:"진단서, 심전도·심장초음파, 관상동맥조영술 결과지, 심장효소검사 결과", summary:"급성심근경색만 담보하면 약12%만 보장, 협심증 포함된 허혈성심장질환 담보가 대부분 필요", date:"2026-07-17" },
+    { name:"치매진단비", category:"진단비", payCause:"치매 보장개시일 이후 치매로 진단 확정되고 CDR 척도 점수 및 상태지속기간(통상 90일 이상) 요건 충족", scope:"CDR 척도 0.5점(최경증)·1점(경증)·2점(중등도)·3점 이상(중증)으로 세분화되며, 단계별로 차등 지급합니다. 3점 이상 중증은 상태지속기간(90~180일)을 요구하는 경우가 많습니다.", payCount:"중증도 단계별 최초 1회", payLimit:"단계별 가입금액 차등", exclude:"단순 노화로 인한 기억력저하, 우울증에 의한 가성치매, 알코올성 치매 등은 약관에 따라 제외될 수 있습니다.", company:"레켐비 등 표적치매치료제 신담보 운영 여부가 회사별로 다릅니다(라이나생명 등).", docs:"진단서, CDR 평가결과지, MMSE 검사결과지, 뇌 영상검사(MRI·CT) 결과지", summary:"치매 보장개시일 이후 진단 + CDR척도(0.5~3점 이상) + 상태지속기간 충족 시 지급, 최경증부터 중증까지 단계별 차등", date:"2026-07-17" },
+    { name:"질병수술비", category:"수술비", payCause:"질병 치료를 직접 목적으로 수술(절단·절제 등)을 받은 경우", scope:"질병으로 인한 수술 전반을 포괄 보장", payCount:"수술 시마다(매회) 지급이 일반적 (60일 이내 2회 이상 수술은 1회로 간주하는 조항 확인 필요)", payLimit:"가입금액 기준 정액", exclude:"흡인·천자·생검, 미용성형, 피임 목적 수술 등은 제외", company:"회사별 수술 정의·제외 항목이 상이", docs:"수술확인서 또는 수술기록지", summary:"질병 치료 목적 수술 시 포괄적으로 보장하는 기본 수술비 담보", date:"2026-07-17" },
+    { name:"상해수술비", category:"수술비", payCause:"상해 치료를 직접 목적으로 수술을 받은 경우", scope:"사고로 인한 수술 전반", payCount:"수술 시마다 지급이 일반적", payLimit:"가입금액 기준 정액", exclude:"미용 목적 수술 등은 제외", company:"질병수술비와 통합 설계되는 상품도 있어 확인 필요", docs:"수술확인서, 사고경위서(필요시)", summary:"상해(사고) 치료 목적 수술 시 보장, 질병수술비와 별도 담보로 설계되는 경우가 많음", date:"2026-07-17" },
+    { name:"종수술비(1~9종)", category:"수술비", payCause:"약관 수술분류표상 1~9종에 해당하는 수술을 받은 경우", scope:"종별로 지급배수가 다름(고종수술일수록 고액)", payCount:"수술 시마다 지급", payLimit:"종별 배수 × 기준금액", exclude:"분류표에 없는 시술은 지급 제외", company:"종수술비 포함 범위(치질·제왕절개·요실금 등)가 회사별 강점 포인트", docs:"수술확인서·수술기록지", summary:"수술 난이도·부위에 따라 1~9종으로 차등 지급, 치질·제왕절개·요실금까지 포함하는 상품이 많아 보장범위 넓음", date:"2026-07-17" },
+    { name:"암수술비", category:"수술비", payCause:"암 직접치료 목적의 수술", scope:"개복·복강경·다빈치로봇수술 등 암 절제 수술 포함", payCount:"수술 시마다 또는 최초 1회(상품별 상이)", payLimit:"가입금액 기준 정액", exclude:"진단·검사 목적 조직검사(생검)만으로는 지급 제외", company:"다빈치 로봇수술 별도 담보 운영 여부가 회사별로 다름", docs:"수술확인서, 조직검사 결과지", summary:"암의 직접적인 치료를 목적으로 하는 수술에 한해 지급", date:"2026-07-17" },
+    { name:"항암약물치료비", category:"치료비", payCause:"암 직접 치료 목적의 항암 약물치료", scope:"1세대(세포독성)·2세대(표적항암)·3세대(면역항암) 약물치료 포함", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이, 암주요치료비와 통합 설계되는 경우 많음", exclude:"식이요법·면역력강화치료·호르몬관련치료는 제외될 수 있습니다.", company:"면역항암제 등 고가 치료 보장 여부가 회사별 차이 포인트", docs:"진단서, 치료확인서, 약제비 영수증", summary:"암 직접 치료를 위해 약물치료(항암제 투여)를 받은 경우 지급", date:"2026-07-17" },
+    { name:"표적항암약물허가치료비", category:"치료비", payCause:"식약처 허가 범위 내 표적항암제 투여", scope:"허가초과(오프라벨) 사용은 보장 제외되는 경우가 많음", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이", exclude:"허가 범위를 벗어난 표적치료는 제외", company:"허가범위 인정 기준이 회사별로 다를 수 있어 사전확인 필요", docs:"진단서, 처방전, 치료확인서", summary:"식약처 허가 효능·효과 범위 내에서 표적항암제를 투여받은 경우 지급", date:"2026-07-17" },
+    { name:"항암방사선치료비", category:"치료비", payCause:"암 직접 치료 목적의 방사선 치료", scope:"세기조절방사선치료, 양성자치료, 중입자치료 등 비급여 신의료기술 포함", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이", exclude:"완화·통증경감 목적 방사선은 상품에 따라 제외될 수 있습니다.", company:"양성자·중입자 치료 보장 여부가 회사별 강점 차이", docs:"진단서, 치료확인서, 치료비 영수증", summary:"암 직접 치료를 위해 방사선 치료를 받은 경우 지급, 세기조절방사선·양성자·중입자 치료 등 고액 비급여 포함", date:"2026-07-17" },
+    { name:"다빈치로봇수술비", category:"치료비", payCause:"다빈치 등 로봇을 이용한 암 수술을 받은 경우", scope:"로봇수술 전용 정액 지급", payCount:"수술 시마다 또는 최초 1회", payLimit:"가입금액 기준 정액(비급여라 고액)", exclude:"로봇을 이용하지 않은 일반 수술은 해당 없음", company:"로봇수술 담보 유무·한도가 회사별 상품 차별점", docs:"수술확인서, 수술기록지, 진료비 영수증", summary:"로봇을 이용한 암 수술 시 지급되는 고액 비급여 수술 담보, 산정특례 혜택을 받지 못해 정액담보 필요성이 큼", date:"2026-07-17" },
+    { name:"2대질환(뇌·심)주요치료비", category:"치료비", payCause:"뇌혈관질환(I60~I69) 또는 허혈성심장질환(I20~I25)으로 수술, 혈전용해치료, 종합병원 중환자실 치료를 받은 경우", scope:"진단비와 달리 재발 시 반복 보장 가능(연간 다회, 최대 10년). 순환계통합치료비는 부정맥(I47~I49)·심부전(I50) 등 51~62종까지 확대 보장", payCount:"연간 1회~다회(회사별 상이)", payLimit:"삼성생명 순환계 6천만(연간다회,51종)/2대치료비 2천만 · 한화생명 순환계통합 1억(연13회) · 신한라이프 통합건강보험ONE 9천만(52종,연5회) · 미래에셋 M-케어 5천만(61종) · 라이나생명 레켐비플랜(치매신약 3,500만 한시강화) · 현대해상 퍼펙트플러스 1.45억(업계최고), 2대치료비 70%선지급 5백만 · 메리츠화재 I코드·S코드 포함 신담보 · 삼성화재 내돈내삼1640 6.5천만, 2대치료비 50%선지급 · DB손보 나에게맞춘간편 52종 1.05억,50%선지급 · 롯데손보 4060종합 1.5억(업계최고),연2회+50%선지급 (2026.07 기준, 변경될 수 있음)", exclude:"항응고제·항혈소판제 등 간접(재발방지) 치료는 대부분 제외, 혈전용해제(직접치료)는 보장됩니다.", company:"위 보장한도 참고. 회사별 차이가 매우 크므로 반드시 최신 자료로 확인", docs:"진단서, 수술확인서 또는 치료확인서, 중환자실 입퇴실확인서(해당시)", summary:"뇌혈관·허혈성심장질환의 수술·혈전용해치료·중환자실치료를 실제비용과 무관하게 정액 지급, 진단비 소멸 후 재발 대비에 유리", date:"2026-07-17" },
+    { name:"입원일당", category:"입원간병", payCause:"질병 또는 상해 치료를 위해 병원에 입원한 경우", scope:"첫날부터 또는 4일째부터 보장하는 상품으로 구분", payCount:"입원일수만큼 매일 지급", payLimit:"1회 입원당 최대 180일 한도", exclude:"피로·권태·심신허약 안정치료, 단순 산후기 입원 등은 제외", company:"보장 개시일(1일째 vs 4일째)이 회사·상품별로 다름", docs:"입퇴원확인서", summary:"질병·상해 치료를 위해 입원한 경우 1일당 정액 지급, 1회 입원당 최대 180일 한도가 일반적", date:"2026-07-17" },
+    { name:"간병인사용일당", category:"입원간병", payCause:"입원 중 간병인 사용 비용 발생", scope:"실제 고용 확인 필요", payCount:"사용일수만큼 지급", payLimit:"1회 입원당 최대 180일 한도가 일반적", exclude:"가족의 간병(고용관계 없음)은 제외되는 경우가 많음", company:"실비형·정액형 여부가 회사별로 다름", docs:"입퇴원확인서, 간병인 사용 영수증", summary:"입원 중 실제 간병인을 고용해 비용이 발생한 경우 실비 또는 정액 지급", date:"2026-07-17" },
+    { name:"간호간병통합서비스", category:"입원간병", payCause:"간호간병통합서비스 병동 입원 치료", scope:"해당 병동 이용 확인 필요", payCount:"입원일수만큼 지급", payLimit:"1회 입원당 최대 180일 한도가 일반적", exclude:"일반병동 입원은 별도 입원일당으로 청구", company:"담보 신설 여부·한도가 회사별로 다름", docs:"입퇴원확인서(병동 명시)", summary:"간호간병통합서비스 병동 이용 시 지급되는 담보", date:"2026-07-17" },
+    { name:"일상생활배상책임", category:"배상책임", payCause:"피보험자가 일상생활 중 타인의 신체·재물에 손해를 입혀 법률상 배상책임 부담", scope:"누수사고, 반려동물 사고, 가족 구성원의 실수 등", payCount:"사고 건별 지급", payLimit:"대인·대물 한도 내 실손해액(자기부담금 제외)", exclude:"고의 사고, 세대를 같이하는 친족에 대한 배상, 업무 중 사고는 제외", company:"한도·자기부담금이 회사별로 다름", docs:"사고경위서, 피해물 사진, 합의서·수리견적서", summary:"일상생활 중(누수, 가족 실수 등) 타인에게 손해를 입혀 법률상 배상책임을 부담한 경우 보장", date:"2026-07-17" },
+    { name:"시설소유관리자배상책임", category:"배상책임", payCause:"소유·관리 시설 내 사고로 타인에게 손해를 입혀 배상책임 부담", scope:"상가, 사무실 등 소유·관리 시설 내 사고", payCount:"사고 건별 지급", payLimit:"대인·대물 한도 내 실손해액", exclude:"고의 사고, 업무 수행 자체의 하자로 인한 사고는 별도 담보 필요할 수 있음", company:"업종별 특약 여부가 회사별로 다름", docs:"사고경위서, 피해물 사진, 시설 소유·관리 증빙", summary:"소유·관리하는 시설 내에서 발생한 사고에 대한 법률상 배상책임 보장", date:"2026-07-17" },
+    { name:"임차자화재배상책임", category:"배상책임", payCause:"임차 건물에서 화재가 발생해 임대인에게 손해를 입힌 경우", scope:"임차 부동산의 화재사고", payCount:"사고 건별 지급", payLimit:"대물 한도 내 실손해액", exclude:"고의 방화 등은 제외", company:"임차자 특약 포함 여부가 회사별로 다름", docs:"화재사실확인원, 임대차계약서, 피해 견적서", summary:"빌린 건물에서 발생한 화재로 임대인에게 손해를 끼친 경우의 배상책임 보장", date:"2026-07-17" },
+    { name:"음식물·생산물배상책임", category:"배상책임", payCause:"판매·제공한 음식물 또는 생산물의 결함으로 타인에게 손해를 입힌 경우", scope:"음식점 등 음식물 제공업, 제조업의 생산물 결함사고", payCount:"사고 건별 지급", payLimit:"대인·대물 한도 내 실손해액", exclude:"고의적 결함, 정상 사용법 위반으로 인한 사고는 제외", company:"업종 특화 여부가 회사별로 다름", docs:"사고경위서, 피해 진단서·영수증", summary:"제공한 음식물이나 제품의 결함으로 타인에게 손해를 끼친 경우의 배상책임 보장", date:"2026-07-17" },
+    { name:"중증치매생활자금", category:"치료비", payCause:"CDR 3점 이상 중증치매 진단 확정 및 상태지속기간 요건 충족", scope:"일시금 진단비와 별도로 생존 시 매월 또는 매년 정기 지급", payCount:"생존확인 시 정기 반복 지급(월 또는 연 단위)", payLimit:"최저보증기간이 있는 상품이 많아 확인 필요", exclude:"경증·중등도 치매는 해당하지 않으며 중증(CDR3 이상)에 한함", company:"지급 주기(월/연)·최저보증기간·생존확인 방식이 회사별로 다름", docs:"진단서, CDR 평가결과지, 생존확인서(정기지급 시)", summary:"중증치매 진단 시 일시금 외에 매월 또는 매년 생활비를 정기적으로 지급", date:"2026-07-17" },
+    { name:"장기요양등급담보", category:"입원간병", payCause:"국민건강보험공단으로부터 장기요양등급(1~5등급 또는 인지지원등급) 판정을 받은 경우", scope:"치매로 인한 등급뿐 아니라 신체 기능 저하로 인한 등급도 포함", payCount:"등급 판정 시 진단비 또는 재가·시설급여 지원금 지급", payLimit:"등급별 가입금액 차등", exclude:"등급 판정을 받지 못한 단순 노쇠·경증 상태는 제외", company:"보장 등급 범위(1~5등급 전체 vs 중증 등급만)가 회사별로 다름", docs:"장기요양등급 판정서, 진단서(필요시)", summary:"치매뿐 아니라 신체기능 저하로 공단 장기요양등급(1~5등급, 인지지원등급)을 받은 경우 지급", date:"2026-07-17" }
+  ];
+
+  // ================= 담보가이드 =================
+  const COVERAGE_GROUPS = ["전체","진단비","수술비","치료비","입원간병","배상책임"];
+  const cvState = { group:"전체", kw:"" };
+
+  function renderCoverageGrid(){
+    let list = coverageData.slice();
+    if(cvState.group !== "전체") list = list.filter(d => d.category === cvState.group);
+    if(cvState.kw){
+      const kw = cvState.kw.toLowerCase();
+      list = list.filter(d => d.name.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw) || d.category.toLowerCase().includes(kw));
+    }
+    const grid = document.getElementById('coverageGrid');
+    if(!grid) return;
+    if(!list.length){
+      grid.innerHTML = '<div class="cr-empty" style="grid-column:1/-1; padding:28px; text-align:center;">해당 담보 자료가 없습니다.<br><span style="font-size:11.5px;">자료가 준비되면 추가됩니다.</span></div>';
+      return;
+    }
+    grid.innerHTML = list.map(d => {
+      const gi = coverageData.indexOf(d);
+      return `
+      <div class="dz-card" data-ci="${gi}">
+        <div class="dz-card-group">${escapeHtml(d.category)}</div>
+        <div class="dz-card-name">${escapeHtml(d.name)}</div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.dz-card').forEach(c => {
+      c.addEventListener('click', () => openCoverageModal(Number(c.dataset.ci)));
+    });
+  }
+
+  function openCoverageModal(idx){
+    const d = coverageData[idx];
+    if(!d) return;
+    document.getElementById('cvModalGroup').textContent = d.category;
+    document.getElementById('cvModalName').textContent = d.name;
+    document.getElementById('cvModalSummary').textContent = d.summary;
+    document.getElementById('cvModalDate').textContent = d.date;
+    const sections = [
+      ['💰 지급사유', d.payCause],
+      ['📐 보장범위', d.scope],
+      ['🔁 지급횟수', d.payCount],
+      ['📊 지급한도', d.payLimit],
+      ['🚫 보장하지 않는 사항', d.exclude],
+      ['🏢 보험사별 차이', d.company],
+      ['📄 청구서류', d.docs]
+    ];
+    document.getElementById('cvModalSections').innerHTML = sections.map(([label, body]) => `
+      <div class="dz-section">
+        <div class="dz-section-label">${label}</div>
+        <div class="dz-section-body">${escapeHtml(body || '-')}</div>
+      </div>`).join('');
+    document.getElementById('coverageModalBackdrop').classList.add('open');
+  }
+  function closeCoverageModal(){ document.getElementById('coverageModalBackdrop').classList.remove('open'); }
+  const _cvc = document.getElementById('coverageModalClose');
+  if(_cvc) _cvc.addEventListener('click', closeCoverageModal);
+  const _cvb = document.getElementById('coverageModalBackdrop');
+  if(_cvb) _cvb.addEventListener('click', (e) => { if(e.target.id === 'coverageModalBackdrop') closeCoverageModal(); });
+
+  const _cgr = document.getElementById('coverageGroupRow');
+  if(_cgr){
+    _cgr.innerHTML = COVERAGE_GROUPS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-cgroup="${g}">${g}</button>`).join('');
+    _cgr.addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      _cgr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      cvState.group = b.dataset.cgroup;
+      renderCoverageGrid();
+    });
+  }
+  const _cvs = document.getElementById('coverageSearch');
+  if(_cvs) _cvs.addEventListener('input', (e) => { cvState.kw = e.target.value.trim(); renderCoverageGrid(); });
+  renderCoverageGrid();
+
+  // ================= 보험사별 수술비 분류표 (원본자료 이미지) =================
+  const SURGERY_COMPANIES = [
+    { key:"kb",       label:"KB손보",   pages:5, ext:"jpg", title:"116대 질병수술비 분류표" },
+    { key:"hyundai",  label:"현대해상", pages:5, ext:"jpg", title:"질병 수술보장 분류표" },
+    { key:"samsung",  label:"삼성화재", pages:1, ext:"jpg", title:"115대 질병수술비" },
+    { key:"heungkuk", label:"흥국화재", pages:2, ext:"jpg", title:"신142대수술비" },
+    { key:"db",       label:"DB손보",   pages:1, ext:"jpg", title:"119대 질병수술비 분류표" },
+    { key:"hanwha",   label:"한화손보", pages:1, ext:"jpg", title:"124대 질병수술비" },
+    { key:"lotte",    label:"롯데손보", pages:1, ext:"jpg", title:"142대 수술비" },
+    { key:"meritz",   label:"메리츠",   pages:1, ext:"jpg", title:"131대 질병(다빈도64대질병) 분류표" }
+  ];
+  let surgeryActiveCompany = SURGERY_COMPANIES[0].key;
+  let surgeryLbIdx = 0;
+
+  function surgeryImages(companyKey){
+    const c = SURGERY_COMPANIES.find(x => x.key === companyKey);
+    if(!c) return [];
+    const list = [];
+    for(let i = 1; i <= c.pages; i++){
+      list.push({ url: `assets/surgery/${c.key}/${i}.${c.ext}`, caption: `${c.label} · ${c.title} (${i}/${c.pages})` });
+    }
+    return list;
+  }
+
+  function renderSurgeryThumbs(){
+    const grid = document.getElementById('surgeryThumbGrid');
+    if(!grid) return;
+    const images = surgeryImages(surgeryActiveCompany);
+    if(!images.length){
+      grid.innerHTML = '<div class="surgery-empty">자료 준비 중입니다.</div>';
+      return;
+    }
+    grid.innerHTML = images.map((img, i) => `
+      <div class="surgery-thumb" data-si="${i}">
+        <img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.caption)}" loading="lazy">
+        <span class="surgery-page-no">${i + 1}/${images.length}</span>
+      </div>`).join('');
+    grid.querySelectorAll('.surgery-thumb').forEach(el => {
+      el.addEventListener('click', () => surgeryLbOpen(Number(el.dataset.si)));
+    });
+  }
+
+  function surgeryLbOpen(i){
+    const images = surgeryImages(surgeryActiveCompany);
+    if(!images.length) return;
+    surgeryLbIdx = (i + images.length) % images.length;
+    const img = images[surgeryLbIdx];
+    document.getElementById('surgeryLbImg').src = img.url;
+    document.getElementById('surgeryLbCap').textContent = img.caption;
+    document.getElementById('surgeryLb').classList.add('open');
+  }
+  const _slx = document.getElementById('surgeryLbX');
+  if(_slx) _slx.addEventListener('click', () => document.getElementById('surgeryLb').classList.remove('open'));
+  const _slb = document.getElementById('surgeryLb');
+  if(_slb) _slb.addEventListener('click', (e) => { if(e.target.id === 'surgeryLb') _slb.classList.remove('open'); });
+  const _slp = document.getElementById('surgeryLbPrev');
+  if(_slp) _slp.addEventListener('click', (e) => { e.stopPropagation(); surgeryLbOpen(surgeryLbIdx - 1); });
+  const _sln = document.getElementById('surgeryLbNext');
+  if(_sln) _sln.addEventListener('click', (e) => { e.stopPropagation(); surgeryLbOpen(surgeryLbIdx + 1); });
+
+  const _scr = document.getElementById('surgeryCompanyRow');
+  if(_scr){
+    _scr.innerHTML = SURGERY_COMPANIES.map((c, i) => `<button class="filter-pill${i===0?' active':''}" data-company="${c.key}">${c.label}${c.pages ? '' : ' (준비중)'}</button>`).join('');
+    _scr.addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      _scr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      surgeryActiveCompany = b.dataset.company;
+      renderSurgeryThumbs();
+    });
+  }
+  renderSurgeryThumbs();
 
 
   // ================= 영업자료실 =================
