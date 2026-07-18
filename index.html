@@ -385,6 +385,12 @@
   .driver-img-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;}
   .driver-img-empty{aspect-ratio:4/3; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:#fff; border:1px dashed #D3D7F5; border-radius:10px; font-size:12px; color:var(--slate); line-height:1.6;}
   .driver-img-empty span{font-size:10.5px; margin-top:4px;}
+  .driver-menu{display:flex; flex-direction:column; gap:7px;}
+  .driver-menu-item{display:flex; align-items:center; gap:10px; width:100%; background:#fff; border:1px solid #D3D7F5; border-radius:10px; padding:12px 14px; cursor:pointer; font-family:inherit; text-align:left; transition:.13s;}
+  .driver-menu-item:hover{border-color:var(--orange); background:#F3F4FE;}
+  .dm-icon{flex:none; font-size:16px;}
+  .dm-label{flex:1; font-size:13px; font-weight:700; color:var(--navy-2);}
+  .dm-arrow{flex:none; font-size:19px; color:var(--slate); font-weight:400;}
   .faq-toolbar{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
   .faq-subrow{flex-wrap:wrap;}
   .faq-search-wrap{width:100%;}
@@ -1410,31 +1416,51 @@ body.growon{ background:var(--g-navy); }
                 <div class="driver-img-label">📈 운전자보험 변천사 (2009~2024)</div>
                 <img class="driver-img driver-img-wide" data-full="assets/driver/history.jpg" data-cap="운전자보험 변천사" src="assets/driver/history.jpg" alt="운전자보험 변천사">
               </div>
-              <div class="driver-img-grid">
-                <div class="driver-img-block">
-                  <div class="driver-img-label">📋 주요보장 한눈에 보기</div>
-                  <img class="driver-img" data-full="assets/driver/overview.jpg" data-cap="운전자보험 주요 담보 한눈에 보기" src="assets/driver/overview.jpg" alt="주요보장">
+              <div class="driver-menu">
+                <button type="button" class="driver-menu-item" data-full="assets/driver/overview.jpg" data-cap="운전자보험 주요 담보 한눈에 보기">
+                  <span class="dm-icon">📋</span><span class="dm-label">주요보장 한눈에 보기</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/driver/fine.jpg" data-cap="대인벌금">
+                  <span class="dm-icon">⚖️</span><span class="dm-label">벌금(대인·대물)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/driver/support.jpg" data-cap="교통사고처리지원금">
+                  <span class="dm-icon">🤝</span><span class="dm-label">교통사고처리지원금</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/driver/lawyer.jpg" data-cap="변호사선임비용">
+                  <span class="dm-icon">👨‍⚖️</span><span class="dm-label">변호사선임비용</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/driver/lawyer_update.jpg" data-cap="변호사선임비용 변경사항(2026.01~)">
+                  <span class="dm-icon">🆕</span><span class="dm-label">변호사선임비용 변경사항(2026.01~)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/driver/injury.jpg" data-cap="자동차부상치료비">
+                  <span class="dm-icon">🚑</span><span class="dm-label">자동차부상치료비</span><span class="dm-arrow">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="surgInsurePinsWrap" style="display:none;">
+            <div class="surgery-pin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">💉</span>
+                <div>
+                  <div class="surgery-pin-title">수술비보험 가이드</div>
+                  <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                 </div>
-                <div class="driver-img-block">
-                  <div class="driver-img-label">⚖️ 벌금(대인·대물)</div>
-                  <img class="driver-img" data-full="assets/driver/fine.jpg" data-cap="대인벌금" src="assets/driver/fine.jpg" alt="벌금">
-                </div>
-                <div class="driver-img-block">
-                  <div class="driver-img-label">🤝 교통사고처리지원금</div>
-                  <img class="driver-img" data-full="assets/driver/support.jpg" data-cap="교통사고처리지원금" src="assets/driver/support.jpg" alt="교통사고처리지원금">
-                </div>
-                <div class="driver-img-block">
-                  <div class="driver-img-label">👨‍⚖️ 변호사선임비용</div>
-                  <img class="driver-img" data-full="assets/driver/lawyer.jpg" data-cap="변호사선임비용" src="assets/driver/lawyer.jpg" alt="변호사선임비용">
-                </div>
-                <div class="driver-img-block">
-                  <div class="driver-img-label">🆕 변호사선임비용 변경사항(2026.01~)</div>
-                  <img class="driver-img" data-full="assets/driver/lawyer_update.jpg" data-cap="변호사선임비용 변경사항(2026.01~)" src="assets/driver/lawyer_update.jpg" alt="변호사선임비용 변경사항">
-                </div>
-                <div class="driver-img-block">
-                  <div class="driver-img-label">🚑 자동차부상치료비</div>
-                  <img class="driver-img" data-full="assets/driver/injury.jpg" data-cap="자동차부상치료비" src="assets/driver/injury.jpg" alt="자동차부상치료비">
-                </div>
+              </div>
+              <div class="driver-menu">
+                <button type="button" class="driver-menu-item" data-full="assets/surginsure/grade15.jpg" data-cap="1-5종 수술비란?">
+                  <span class="dm-icon">🔢</span><span class="dm-label">1-5종 수술비란?</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/surginsure/ndae.jpg" data-cap="N대 수술비란?">
+                  <span class="dm-icon">🎯</span><span class="dm-label">N대 수술비란?</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/surginsure/compare.jpg" data-cap="수술비 보험의 종류와 보장범위">
+                  <span class="dm-icon">📊</span><span class="dm-label">수술비 보험의 종류와 보장범위 비교</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="driver-menu-item" data-full="assets/surginsure/combo.jpg" data-cap="3종 수술비로 빈틈없이 대비하기">
+                  <span class="dm-icon">🛡️</span><span class="dm-label">3종(수술비+시술비+N대) 함께 준비하는 이유</span><span class="dm-arrow">›</span>
+                </button>
               </div>
             </div>
           </div>
@@ -3931,6 +3957,8 @@ body.growon{ background:var(--g-navy); }
   function toggleDriverPins(){
     const wrap = document.getElementById('driverPinsWrap');
     if(wrap) wrap.style.display = (pdState.cat === '운전자보험') ? 'block' : 'none';
+    const wrap2 = document.getElementById('surgInsurePinsWrap');
+    if(wrap2) wrap2.style.display = (pdState.cat === '수술비보험') ? 'block' : 'none';
   }
   if(_pgr){
     _pgr.innerHTML = PRODUCT_CATS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-pcat="${g}">${g}</button>`).join('');
@@ -3944,10 +3972,10 @@ body.growon{ background:var(--g-navy); }
     });
   }
   toggleDriverPins();
-  document.querySelectorAll('.driver-img').forEach(img => {
-    img.addEventListener('click', () => {
-      document.getElementById('surgeryLbImg').src = img.dataset.full;
-      document.getElementById('surgeryLbCap').textContent = img.dataset.cap;
+  document.querySelectorAll('.driver-img, .driver-menu-item').forEach(el => {
+    el.addEventListener('click', () => {
+      document.getElementById('surgeryLbImg').src = el.dataset.full;
+      document.getElementById('surgeryLbCap').textContent = el.dataset.cap;
       document.getElementById('surgeryLbPrev').style.display = 'none';
       document.getElementById('surgeryLbNext').style.display = 'none';
       document.getElementById('surgeryLb').classList.add('open');
