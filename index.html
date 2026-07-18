@@ -363,6 +363,28 @@
   .surgery-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
   .surgery-thumb .surgery-page-no{position:absolute; left:4px; bottom:4px; font-size:9.5px; font-weight:800; color:#fff; background:rgba(20,21,43,.65); padding:2px 6px; border-radius:999px;}
   .surgery-empty{grid-column:1/-1; text-align:center; padding:20px 10px; font-size:12px; color:var(--slate); background:#fff; border-radius:9px; border:1px dashed #D3D7F5;}
+  /* ===== 종수술비 등급표 ===== */
+  .grade-pin{background:linear-gradient(135deg,#EEF0FC,#FFFFFF); border:1px solid #D3D7F5; border-radius:14px; padding:16px 18px; margin-bottom:18px;}
+  .grade-table-wrap{overflow-x:auto; margin-top:12px; border-radius:10px; border:1px solid #D3D7F5;}
+  .grade-table{width:100%; border-collapse:collapse; background:#fff; font-size:12px;}
+  .grade-table th{background:var(--navy-2); color:#fff; font-size:11.5px; font-weight:800; padding:9px 10px; text-align:left; white-space:nowrap;}
+  .grade-table td{padding:9px 10px; border-top:1px solid #EDF0FC; vertical-align:top; line-height:1.6;}
+  .grade-table tr:nth-child(even) td{background:#F8F9FE;}
+  .grade-badge{display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:22px; padding:0 6px; border-radius:999px; font-size:11px; font-weight:900; color:#fff;}
+  .grade-1{background:#2FBF71;} .grade-2{background:#5A9BF0;} .grade-3{background:#5A6BF0;} .grade-4{background:#E08A2A;} .grade-5{background:#D6493D;}
+  .grade-compare-wrap{margin-top:16px;}
+  .grade-compare-title{font-size:12px; font-weight:800; color:var(--navy-2); margin-bottom:8px;}
+  .grade-compare-table th{background:#3D4FE0;}
+  .grade-compare-table td{font-size:11.5px;}
+  /* ===== 운전자보험 이미지 갤러리 ===== */
+  .driver-img-block{margin-bottom:14px;}
+  .driver-img-label{font-size:12px; font-weight:800; color:var(--navy-2); margin-bottom:6px;}
+  .driver-img{width:100%; border-radius:10px; border:1px solid #D3D7F5; cursor:pointer; display:block; transition:.15s;}
+  .driver-img:hover{border-color:var(--orange); opacity:.92;}
+  .driver-img-wide{max-height:420px; object-fit:contain; background:#fff;}
+  .driver-img-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;}
+  .driver-img-empty{aspect-ratio:4/3; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:#fff; border:1px dashed #D3D7F5; border-radius:10px; font-size:12px; color:var(--slate); line-height:1.6;}
+  .driver-img-empty span{font-size:10.5px; margin-top:4px;}
   .faq-toolbar{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
   .faq-subrow{flex-wrap:wrap;}
   .faq-search-wrap{width:100%;}
@@ -1367,25 +1389,60 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-panel" id="qna-product">
-          <div class="cr-empty" style="padding:40px 16px; text-align:center;">
-            📦 보종별가이드는 준비 중입니다.<br>
-            <span style="font-size:11.5px;">암보험·실손보험·운전자보험 등 상품 종류별 설명 자료가 곧 채워집니다.</span>
+          <div class="disease-notice">
+            📦 보종을 선택하면 <b>주요담보·특징·가입 시 확인사항·비교/유의사항</b>을 한눈에 볼 수 있습니다.
           </div>
+          <div class="disease-toolbar">
+            <div class="filter-row disease-grouprow" id="productGroupRow"></div>
+            <input type="text" class="faq-search" id="productSearch" placeholder="🔍 게시물 검색 (예: 실손, 운전자보험)">
+          </div>
+
+          <div id="driverPinsWrap" style="display:none;">
+            <div class="surgery-pin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">🚗</span>
+                <div>
+                  <div class="surgery-pin-title">운전자보험 변천사 & 담보 가이드</div>
+                  <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
+                </div>
+              </div>
+              <div class="driver-img-block">
+                <div class="driver-img-label">📈 운전자보험 변천사 (2009~2024)</div>
+                <img class="driver-img driver-img-wide" data-full="assets/driver/history.jpg" data-cap="운전자보험 변천사" src="assets/driver/history.jpg" alt="운전자보험 변천사">
+              </div>
+              <div class="driver-img-grid">
+                <div class="driver-img-block">
+                  <div class="driver-img-label">📋 주요보장 한눈에 보기</div>
+                  <img class="driver-img" data-full="assets/driver/overview.jpg" data-cap="운전자보험 주요 담보 한눈에 보기" src="assets/driver/overview.jpg" alt="주요보장">
+                </div>
+                <div class="driver-img-block">
+                  <div class="driver-img-label">⚖️ 벌금(대인·대물)</div>
+                  <img class="driver-img" data-full="assets/driver/fine.jpg" data-cap="대인벌금" src="assets/driver/fine.jpg" alt="벌금">
+                </div>
+                <div class="driver-img-block">
+                  <div class="driver-img-label">🤝 교통사고처리지원금</div>
+                  <img class="driver-img" data-full="assets/driver/support.jpg" data-cap="교통사고처리지원금" src="assets/driver/support.jpg" alt="교통사고처리지원금">
+                </div>
+                <div class="driver-img-block">
+                  <div class="driver-img-label">👨‍⚖️ 변호사선임비용</div>
+                  <img class="driver-img" data-full="assets/driver/lawyer.jpg" data-cap="변호사선임비용" src="assets/driver/lawyer.jpg" alt="변호사선임비용">
+                </div>
+                <div class="driver-img-block">
+                  <div class="driver-img-label">🆕 변호사선임비용 변경사항(2026.01~)</div>
+                  <img class="driver-img" data-full="assets/driver/lawyer_update.jpg" data-cap="변호사선임비용 변경사항(2026.01~)" src="assets/driver/lawyer_update.jpg" alt="변호사선임비용 변경사항">
+                </div>
+                <div class="driver-img-block">
+                  <div class="driver-img-label">🚑 자동차부상치료비</div>
+                  <img class="driver-img" data-full="assets/driver/injury.jpg" data-cap="자동차부상치료비" src="assets/driver/injury.jpg" alt="자동차부상치료비">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="disease-grid" id="productGrid"></div>
         </div>
 
         <div class="edu-panel" id="qna-coverage">
-          <div class="surgery-pin">
-            <div class="surgery-pin-head">
-              <span class="surgery-pin-icon">🏥</span>
-              <div>
-                <div class="surgery-pin-title">보험사별 N대수술비 (원본자료)</div>
-                <div class="surgery-pin-desc">보험사에서 발행한 질병수술비 분류표 원본입니다. 회사를 선택하면 전체 페이지를 확인할 수 있습니다. (사내교육용 자료 · 고객 제공 금지)</div>
-              </div>
-            </div>
-            <div class="filter-row surgery-company-row" id="surgeryCompanyRow"></div>
-            <div class="surgery-thumb-grid" id="surgeryThumbGrid"></div>
-          </div>
-
           <div class="disease-notice">
             🛡️ 담보를 선택하면 <b>지급사유·보장범위·지급횟수·지급한도·제외사항·보험사별차이·청구서류</b>를 한눈에 볼 수 있습니다.
             <div class="disease-caution">※ 실제 보장 여부는 가입하신 상품의 개별 약관을 반드시 대조 확인해야 합니다.</div>
@@ -1394,6 +1451,38 @@ body.growon{ background:var(--g-navy); }
             <div class="filter-row disease-grouprow" id="coverageGroupRow"></div>
             <input type="text" class="faq-search" id="coverageSearch" placeholder="🔍 담보명 검색 (예: 암진단비, 입원일당)">
           </div>
+
+          <div id="surgeryPinsWrap" style="display:none;">
+            <div class="surgery-pin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">🏥</span>
+                <div>
+                  <div class="surgery-pin-title">보험사별 N대수술비 (원본자료)</div>
+                  <div class="surgery-pin-desc">보험사에서 발행한 질병수술비 분류표 원본입니다. 회사를 선택하면 전체 페이지를 확인할 수 있습니다. (사내교육용 자료 · 고객 제공 금지)</div>
+                </div>
+              </div>
+              <div class="filter-row surgery-company-row" id="surgeryCompanyRow"></div>
+              <div class="surgery-thumb-grid" id="surgeryThumbGrid"></div>
+            </div>
+
+            <div class="grade-pin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">📊</span>
+                <div>
+                  <div class="surgery-pin-title">종수술비 등급표 (1~5종 예시)</div>
+                  <div class="surgery-pin-desc">종 숫자는 의학적 중증도가 아닌 회사가 정한 지급등급입니다. 실제 종수는 반드시 가입 당시 약관으로 확인하세요.</div>
+                </div>
+              </div>
+              <div class="grade-table-wrap">
+                <table class="grade-table" id="gradeTable"></table>
+              </div>
+              <div class="grade-compare-wrap">
+                <div class="grade-compare-title">체계별 비교</div>
+                <table class="grade-table grade-compare-table" id="gradeCompareTable"></table>
+              </div>
+            </div>
+          </div>
+
           <div class="disease-grid" id="coverageGrid"></div>
         </div>
 
@@ -1586,6 +1675,18 @@ body.growon{ background:var(--g-navy); }
     <div class="alb-lb-cap" id="surgeryLbCap"></div>
   </div>
 </div>
+<div class="modal-backdrop" id="productModalBackdrop">
+        <div class="modal-card" style="max-width:560px;">
+          <button class="modal-close" id="productModalClose">&times;</button>
+          <div class="dz-modal-group" id="pdModalGroup"></div>
+          <div class="dz-modal-name" id="pdModalName"></div>
+          <div class="dz-modal-summary" id="pdModalSummary"></div>
+          <div id="pdModalSections"></div>
+          <div class="dz-modal-foot">
+            <div>기준일: <span id="pdModalDate"></span></div>
+          </div>
+        </div>
+      </div>
 <div class="modal-backdrop" id="cardnewsModalBackdrop">
         <div class="modal-card">
           <button class="modal-close" id="cardnewsModalClose">&times;</button>
@@ -3300,7 +3401,7 @@ body.growon{ background:var(--g-navy); }
     { major:"보험설계FAQ", minor:"인수가이드", question:"과거 암 진단을 받은 고객도 암보험에 가입할 수 있나요?", answer:"암 진단 및 수술 후 5년이 경과하고 그 사이 재발이나 치료 이력이 없다면 가입이 가능합니다. 과거 암 이력이 있더라도 기왕력과 관계없는 새로운 원발암인 경우 보상이 가능하도록 설계할 수 있습니다.", image:"" },
     { major:"보험설계FAQ", minor:"설계TIP", question:"\"무사고 전환 제도\"란 무엇인가요?", answer:"간편보험 가입 후 일정 기간(예: 1~5년) 동안 입원·수술이나 6대 질병 진단이 없으면 더 저렴한 유병자 플랜으로 전환해 보험료를 낮출 수 있는 제도입니다.", image:"" },
     { major:"보험스타터FAQ", minor:"보험용어", question:"종수술비는 실손의료비와 어떻게 다른가요?", answer:"실손의료비는 실제 발생한 병원비를 실비로 보상하지만, 종수술비는 약관의 수술분류표에서 정한 종에 따라 미리 정해진 금액을 정액 지급합니다. 3종이고 가입금액이 100만 원이면 실제 수술비가 50만 원이든 500만 원이든 원칙적으로 100만 원을 지급합니다.", image:"" },
-    { major:"보험설계FAQ", minor:"설계TIP", question:"1~5종 수술비와 1~7·8종 수술비 중 어떤 게 더 유리한가요?", answer:"상하관계가 아니라 서로 보완하는 별도 담보입니다. 1~5종은 비급여 수술이나 하이푸·맘모톰 같은 특정 비급여 시술에 유리하고, 1~7·8종은 급여 수술·시술이나 심장·뇌 등 고난도 수술에서 큰 금액을 받기에 유리합니다. 종이 많다고 무조건 좋은 게 아니므로 두 유형을 함께 설계하는 것이 안전합니다.", image:"" },
+    { major:"보험설계FAQ", minor:"설계TIP", question:"1~5종 수술비와 1~7·8종 수술비 중 어떤 게 더 유리한가요?", answer:"판단 기준 자체가 다르므로 보장받고자 하는 수술 종류에 따라 유불리가 갈립니다. 1~5종은 수술 방법(관혈·비관혈)과 난이도로 종을 매겨 전통적인 개복·개흉 등 관혈 수술에 4~5종 높은 보장을 두는 경우가 많습니다. 1~8종은 ADRG(수술시술코드) 일치 여부로 종을 매겨 카테터·내시경 등 비관혈 최신 시술에 6~8종 높은 보장을 두는 경우가 많습니다. 예시: TAVI(경피적 대동맥판 삽입술)는 1~5종에서 3종이지만 1~8종에서는 최고등급인 8종(코드 F021)으로 분류됩니다. 뇌혈관 경피적 혈전제거술은 1~5종에서 3종, 1~8종에서는 6종(코드 B027)으로 분류됩니다. 정리하면 전통적인 대수술 위주로 가성비 있게 대비하려면 1~5종, TAVI·로봇수술 등 최신 비관혈 시술까지 두텁게 보장받고 싶다면 1~8종이 유리합니다. 두 유형을 함께 설계하는 것이 가장 안전합니다.", image:"" },
     { major:"보험청구FAQ", minor:"보상기준", question:"같은 입원에서 두 가지 수술을 받으면 종수술비는 어떻게 지급되나요?", answer:"동일 입원에서 두 가지 이상 수술을 받으면 가장 높은 종 하나만 지급하는 상품이 많습니다. 예를 들어 DB손해보험 약관 예시에서는 유방재건술(3종)과 유방절제술(7종)을 함께 받으면 높은 등급인 7종 수술비만 지급합니다.", image:"" },
     { major:"보험청구FAQ", minor:"보상기준", question:"1~7·8종 수술비 청구 시 왜 진료비 세부내역서 확인이 중요한가요?", answer:"1~7·8종은 수술명이 아니라 실제 발생한 급여 수술·시술코드(ADRG 등)로 종을 판단하는 상품이 많습니다. 진료비 세부내역서에서 급여 여부와 수술·시술코드를 확인해야 정확한 종수와 지급액을 알 수 있습니다.", image:"" }
   ];
@@ -3559,7 +3660,7 @@ body.growon{ background:var(--g-navy); }
     { name:"치매진단비", category:"진단비", payCause:"치매 보장개시일 이후 치매로 진단 확정되고 CDR 척도 점수 및 상태지속기간(통상 90일 이상) 요건 충족", scope:"CDR 척도 0.5점(최경증)·1점(경증)·2점(중등도)·3점 이상(중증)으로 세분화되며, 단계별로 차등 지급합니다. 3점 이상 중증은 상태지속기간(90~180일)을 요구하는 경우가 많습니다.", payCount:"중증도 단계별 최초 1회", payLimit:"단계별 가입금액 차등", exclude:"단순 노화로 인한 기억력저하, 우울증에 의한 가성치매, 알코올성 치매 등은 약관에 따라 제외될 수 있습니다.", company:"레켐비 등 표적치매치료제 신담보 운영 여부가 회사별로 다릅니다(라이나생명 등).", docs:"진단서, CDR 평가결과지, MMSE 검사결과지, 뇌 영상검사(MRI·CT) 결과지", summary:"치매 보장개시일 이후 진단 + CDR척도(0.5~3점 이상) + 상태지속기간 충족 시 지급, 최경증부터 중증까지 단계별 차등", date:"2026-07-17" },
     { name:"질병수술비", category:"수술비", payCause:"질병 치료를 직접 목적으로 수술(절단·절제 등)을 받은 경우", scope:"질병으로 인한 수술 전반을 포괄 보장", payCount:"수술 시마다(매회) 지급이 일반적 (60일 이내 2회 이상 수술은 1회로 간주하는 조항 확인 필요)", payLimit:"가입금액 기준 정액", exclude:"흡인·천자·생검, 미용성형, 피임 목적 수술 등은 제외", company:"회사별 수술 정의·제외 항목이 상이", docs:"수술확인서 또는 수술기록지", summary:"질병 치료 목적 수술 시 포괄적으로 보장하는 기본 수술비 담보", date:"2026-07-17" },
     { name:"상해수술비", category:"수술비", payCause:"상해 치료를 직접 목적으로 수술을 받은 경우", scope:"사고로 인한 수술 전반", payCount:"수술 시마다 지급이 일반적", payLimit:"가입금액 기준 정액", exclude:"미용 목적 수술 등은 제외", company:"질병수술비와 통합 설계되는 상품도 있어 확인 필요", docs:"수술확인서, 사고경위서(필요시)", summary:"상해(사고) 치료 목적 수술 시 보장, 질병수술비와 별도 담보로 설계되는 경우가 많음", date:"2026-07-17" },
-    { name:"종수술비(1~3종·1~5종·1~7종·1~8종)", category:"수술비", payCause:"질병 또는 상해로 약관에서 정한 종수술을 받은 경우 정액 지급합니다. 1~5종은 수술명·신체부위·수술방법으로 판단하고, 1~7·8종은 실제 발생한 급여 수술·시술코드(ADRG 등)로 판단하는 상품이 많아 같은 수술도 담보 종류에 따라 결과가 달라질 수 있습니다.", scope:"1~3종: 과거 생명보험에서 약 20년간 쓰이던 3단계 분류, 2006년경 1~5종 체계로 개편되어 현재는 오래된 계약에서만 확인됨. 1~5종: 수술명·부위·방법 기준 세분화(백내장 관혈수술 vs 레이저수술처럼 방법이 다르면 종이 갈림). 1~7종: 회사별 수술·시술코드 기준, 급여 수술 중심 상품 존재. 1~8종: 국민건강보험 급여항목 발생여부 + KDRG/ADRG 코드로 판단하는 최근 손보 상품. 예시: 삼성화재 자료상 대장용종제거는 1~5종·1~8종 모두 1종으로 동일하지만, 무릎인공관절치환술은 1~5종 2종·1~8종 3종, 심장 관혈수술은 1~5종 5종·1~8종 8종으로 서로 다르게 분류됨(특정 상품 예시).", payCount:"동일 입원에서 두 가지 이상 수술을 받으면 가장 높은 종 하나만 지급하는 상품이 많습니다. 1~7·8종은 하나의 수술코드당 연간 횟수 제한(예: 연 3회)을 두는 경우가 많고, 1회 입원 또는 1회 통원당 1회로 제한하는 경우도 있습니다.", payLimit:"종수·금액은 상품마다 전혀 다릅니다. 예시(특정 상품): 1~5종 15만·30만·60만·100만·500만원 또는 20만·50만·100만·500만·1000만원. 1~7종(메리츠 예시): 1종 30만·2종 30만·3종 50만·4종 100만·5종 200만·6종 300만·7종 1000만원. \"5종이면 무조건 1000만원\"이라는 설명은 틀립니다.", exclude:"치핵수술, 제왕절개, 요실금수술, 선천성 질환수술, 비급여 수술, 체외충격파쇄석술, 내시경·카테터 수술 포함 여부가 회사·상품별로 크게 다릅니다. 1~8종은 급여 수술·시술 중심이라 비급여 신의료기술이 제외되는 경우가 많고, 1~5종은 반대로 비급여도 정의 충족 시 보장되는 상품이 있습니다.", company:"DB손해보험 1~8종 약관 예시: 같은 입원에서 유방재건술(3종)과 유방절제술(7종)을 함께 받으면 높은 등급인 7종 수술비만 지급합니다. 삼성화재는 KCD 진단코드와 ADRG 수술시술코드를 함께 확인하도록 안내합니다. 메리츠화재 1~7종은 수술코드당 연간 3회 등 자체 제한을 둡니다. 회사마다 코드표·금액·제한이 전부 다르므로 반드시 가입 당시 약관 원문으로 확인해야 합니다.", docs:"수술확인서 또는 수술기록지가 기본이며, 1~7·8종은 진료비 세부내역서(수술·시술코드, 급여 여부, ADRG 코드 확인용)가 특히 중요합니다.", summary:"종 숫자는 의학적 중증도가 아닌 회사가 정한 보험금 지급등급. 1~5종은 수술명·부위·방법 기준, 1~7·8종은 급여 수술·시술코드(ADRG 등) 기준으로 판단방식이 전혀 달라 종이 많다고 무조건 유리한 게 아닙니다.", date:"2026-07-17" },
+    { name:"종수술비(1~3종·1~5종·1~7종·1~8종)", category:"수술비", payCause:"질병 또는 상해로 약관에서 정한 종수술을 받은 경우 정액 지급합니다. 1~5종은 수술명·신체부위·수술방법으로 판단하고, 1~7·8종은 실제 발생한 급여 수술·시술코드(ADRG 등)로 판단하는 상품이 많아 같은 수술도 담보 종류에 따라 결과가 달라질 수 있습니다.", scope:"1~5종은 수술명·부위·방법 기준, 1~7·8종은 급여 수술·시술코드(ADRG 등) 기준으로 판단방식이 전혀 다릅니다. 1종부터 5종까지 각 등급별 실제 수술 예시는 위 [종수술비 등급표]에서 확인할 수 있습니다.", payCount:"동일 입원에서 두 가지 이상 수술을 받으면 가장 높은 종 하나만 지급하는 상품이 많습니다. 1~7·8종은 하나의 수술코드당 연간 횟수 제한(예: 연 3회)을 두는 경우가 많고, 1회 입원 또는 1회 통원당 1회로 제한하는 경우도 있습니다.", payLimit:"종수·금액은 상품마다 전혀 다릅니다. 예시(특정 상품): 1~5종 15만·30만·60만·100만·500만원 또는 20만·50만·100만·500만·1000만원. 1~7종(메리츠 예시): 1종 30만·2종 30만·3종 50만·4종 100만·5종 200만·6종 300만·7종 1000만원. \"5종이면 무조건 1000만원\"이라는 설명은 틀립니다.", exclude:"흡인·천자·신경차단(Nerve Block)·단순 절개·배농은 수술로 인정되지 않습니다. 미용성형·피임 목적 수술, 생검 등 검사·진단 목적 시술도 원칙적으로 제외됩니다. 치핵·제왕절개·요실금·선천성질환·비급여 수술 포함 여부는 회사·상품별로 다릅니다.", company:"DB손해보험 1~8종 약관 예시: 같은 입원에서 유방재건술(3종)과 유방절제술(7종)을 함께 받으면 높은 등급인 7종 수술비만 지급합니다. 삼성화재는 KCD 진단코드와 ADRG 수술시술코드를 함께 확인하도록 안내합니다. 메리츠화재 1~7종은 수술코드당 연간 3회 등 자체 제한을 둡니다. 회사마다 코드표·금액·제한이 전부 다르므로 반드시 가입 당시 약관 원문으로 확인해야 합니다.", docs:"수술확인서 또는 수술기록지가 기본이며, 1~7·8종은 진료비 세부내역서(수술·시술코드, 급여 여부, ADRG 코드 확인용)가 특히 중요합니다.", summary:"종 숫자는 의학적 중증도가 아닌 회사가 정한 보험금 지급등급. 1~5종은 수술명·부위·방법 기준, 1~7·8종은 급여 수술·시술코드(ADRG 등) 기준으로 판단방식이 전혀 달라 종이 많다고 무조건 유리한 게 아닙니다.", date:"2026-07-17" },
     { name:"암수술비", category:"수술비", payCause:"암 직접치료 목적의 수술", scope:"개복·복강경·다빈치로봇수술 등 암 절제 수술 포함", payCount:"수술 시마다 또는 최초 1회(상품별 상이)", payLimit:"가입금액 기준 정액", exclude:"진단·검사 목적 조직검사(생검)만으로는 지급 제외", company:"다빈치 로봇수술 별도 담보 운영 여부가 회사별로 다름", docs:"수술확인서, 조직검사 결과지", summary:"암의 직접적인 치료를 목적으로 하는 수술에 한해 지급", date:"2026-07-17" },
     { name:"항암약물치료비", category:"치료비", payCause:"암 직접 치료 목적의 항암 약물치료", scope:"1세대(세포독성)·2세대(표적항암)·3세대(면역항암) 약물치료 포함", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이, 암주요치료비와 통합 설계되는 경우 많음", exclude:"식이요법·면역력강화치료·호르몬관련치료는 제외될 수 있습니다.", company:"면역항암제 등 고가 치료 보장 여부가 회사별 차이 포인트", docs:"진단서, 치료확인서, 약제비 영수증", summary:"암 직접 치료를 위해 약물치료(항암제 투여)를 받은 경우 지급", date:"2026-07-17" },
     { name:"표적항암약물허가치료비", category:"치료비", payCause:"식약처 허가 범위 내 표적항암제 투여", scope:"허가초과(오프라벨) 사용은 보장 제외되는 경우가 많음", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이", exclude:"허가 범위를 벗어난 표적치료는 제외", company:"허가범위 인정 기준이 회사별로 다를 수 있어 사전확인 필요", docs:"진단서, 처방전, 치료확인서", summary:"식약처 허가 효능·효과 범위 내에서 표적항암제를 투여받은 경우 지급", date:"2026-07-17" },
@@ -3637,6 +3738,10 @@ body.growon{ background:var(--g-navy); }
   if(_cvb) _cvb.addEventListener('click', (e) => { if(e.target.id === 'coverageModalBackdrop') closeCoverageModal(); });
 
   const _cgr = document.getElementById('coverageGroupRow');
+  function toggleSurgeryPins(){
+    const wrap = document.getElementById('surgeryPinsWrap');
+    if(wrap) wrap.style.display = (cvState.group === '수술비') ? 'block' : 'none';
+  }
   if(_cgr){
     _cgr.innerHTML = COVERAGE_GROUPS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-cgroup="${g}">${g}</button>`).join('');
     _cgr.addEventListener('click', (e) => {
@@ -3645,8 +3750,10 @@ body.growon{ background:var(--g-navy); }
       b.classList.add('active');
       cvState.group = b.dataset.cgroup;
       renderCoverageGrid();
+      toggleSurgeryPins();
     });
   }
+  toggleSurgeryPins();
   const _cvs = document.getElementById('coverageSearch');
   if(_cvs) _cvs.addEventListener('input', (e) => { cvState.kw = e.target.value.trim(); renderCoverageGrid(); });
   renderCoverageGrid();
@@ -3700,6 +3807,8 @@ body.growon{ background:var(--g-navy); }
     const img = images[surgeryLbIdx];
     document.getElementById('surgeryLbImg').src = img.url;
     document.getElementById('surgeryLbCap').textContent = img.caption;
+    document.getElementById('surgeryLbPrev').style.display = '';
+    document.getElementById('surgeryLbNext').style.display = '';
     document.getElementById('surgeryLb').classList.add('open');
   }
   const _slx = document.getElementById('surgeryLbX');
@@ -3723,6 +3832,130 @@ body.growon{ background:var(--g-navy); }
     });
   }
   renderSurgeryThumbs();
+
+  // ================= 종수술비 등급표 =================
+  const GRADE_1_5 = [
+    { g:1, examples:"치핵, 탈장(서혜부·대퇴·배꼽), 편도절제술, 축농증(부비동염) 수술, 유방 양성종양제거, 맘모톰, 하지정맥류(베나실 등 정맥내치료), 결막·눈꺼풀 양성종양, 갑상선 미세침흡인, 단순 종양적출" },
+    { g:2, examples:"충수절제술(맹장), 자궁·난소·난관 관혈수술, 대동맥류를 제외한 말초혈관수술, 디스크 신경성형술, 담낭절제술(복강경), 편도 및 아데노이드 동시절제, 사시교정술, 관절경 반월상연골 수술" },
+    { g:3, examples:"녹내장 관혈수술, 척추·골반 관혈수술, 뇌·심장 내시경 및 카테터 수술(TAVI, 스텐트삽입술 등), 간암 하이푸(고강도집속초음파), 체외충격파쇄석술 이외의 요관경수술, 갑상선 부분절제술" },
+    { g:4, examples:"위절제술(개복), 간장·췌장 관혈수술, 폐·기관지·흉막 관혈수술, 신장 부분·전체 절제술(개복), 전립선 전절제술(개복), 자궁근종 개복적출술" },
+    { g:5, examples:"뇌 관혈수술(개두술), 심장 관혈수술(개심술, 관상동맥우회술), 장기이식술(간·신장·심장 등), 악성신생물(암) 관혈적 근치수술, 식도 전절제술" }
+  ];
+  const GRADE_COMPARE = [
+    { sys:"1~3종", basis:"약관 수술분류표(수술명 기준)", era:"과거 생명보험(2006년경까지)", note:"관혈수술 중심, 오래된 계약에서만 확인" },
+    { sys:"1~5종", basis:"수술명·부위·수술방법(관혈/비관혈)", era:"생명보험 및 손해보험 전반", note:"가장 대중적, 관혈수술에 4~5종 높은 보장" },
+    { sys:"1~7종", basis:"회사별 수술·시술코드", era:"최근 손해보험", note:"급여 수술 중심 상품 존재, 코드당 연간 횟수 제한 많음" },
+    { sys:"1~8종", basis:"ADRG(수술시술코드) 일치 여부", era:"최근 손해보험", note:"카테터·내시경 등 비관혈 최신 시술에 6~8종 높은 보장" }
+  ];
+
+  function renderGradeTable(){
+    const t = document.getElementById('gradeTable');
+    if(!t) return;
+    t.innerHTML = '<tr><th style="width:70px;">종</th><th>주요 수술 예시</th></tr>' +
+      GRADE_1_5.map(r => `<tr><td><span class="grade-badge grade-${r.g}">${r.g}종</span></td><td>${escapeHtml(r.examples)}</td></tr>`).join('');
+  }
+  function renderGradeCompareTable(){
+    const t = document.getElementById('gradeCompareTable');
+    if(!t) return;
+    t.innerHTML = '<tr><th style="width:70px;">체계</th><th>판단기준</th><th>주 사용시기</th><th>특징</th></tr>' +
+      GRADE_COMPARE.map(r => `<tr><td><b>${escapeHtml(r.sys)}</b></td><td>${escapeHtml(r.basis)}</td><td>${escapeHtml(r.era)}</td><td>${escapeHtml(r.note)}</td></tr>`).join('');
+  }
+  renderGradeTable();
+  renderGradeCompareTable();
+
+  const productData = [
+    { title:"암보험 가입 시 확인할 담보", category:"암보험", summary:"일반암진단비 하나만 볼 게 아니라 유사암·재진단암·수술비·치료비까지 함께 봐야 실제 암 투병 시 공백이 없습니다.", feature:"① 일반암진단비: 계약일 90일 경과 후 보장, 1~2년 내 발생 시 50% 감액 지급하는 상품이 많음. ② 유사암진단비: 기타피부암·갑상선암·제자리암·경계성종양, 일반암 대비 10~20% 수준. ③ 특정암·재진단암: 3대특정암(간·폐·췌장 등) 고액 보장, 완치 후 재발·전이 시 재진단암으로 추가 지급. ④ 암수술비·항암치료비: 수술뿐 아니라 항암약물·방사선·표적항암·다빈치로봇수술비까지 별도 담보로 존재.", check:"유사암 지급비율(10%인지 20%인지), 재진단암 재진단 인정 요건(전이·재발 구분), 항암치료비 지급 기간(5년·10년 한도), 갱신형인지 비갱신형인지, 표적항암제·다빈치로봇수술 등 고가 비급여 치료 담보 포함 여부.", compare:"\"암보험 하나면 끝\"이 아니라 진단비+수술비+치료비 조합으로 설계해야 실제 치료 전 과정을 보장받을 수 있습니다. 면책기간(90일)과 감액기간(1~2년)은 회사가 달라도 대부분 공통 적용됩니다.", date:"2026-07-17" },
+    { title:"실손보험 세대별 차이", category:"실손의료보험", summary:"1~4세대는 자기부담률·보장기간·비급여 관리 방식이 전혀 달라, 가입 시기에 따라 보장 내용이 크게 갈립니다.", feature:"① 1세대(2009년 이전): 자기부담금 0~20%로 낮고 갱신 없이 종신 보장되는 상품도 있어 보장이 가장 후함. ② 2세대(2009~2017): 100세 만기 갱신형, 급여·비급여 통합 자기부담 80%. ③ 3세대(2017~2021): 급여·비급여 분리, 도수치료 등 일부 비급여는 특약으로 분리, 15년 갱신·5년 재가입 구조. ④ 4세대(2021년~): 급여·비급여 완전 분리, 비급여 이용량에 따라 보험료 할증(최대 300%)되는 비급여 할증제 도입, 보험료는 가장 저렴.", check:"현재 가입된 세대가 몇 세대인지 먼저 확인. 4세대로 전환 시 보험료는 낮아지지만 비급여 치료를 자주 받으면 할증돼 오히려 불리할 수 있습니다. 1~2세대는 보장이 후한 대신 보험료가 비싸 무리하게 해지·전환을 권하면 안 됩니다.", compare:"\"무조건 4세대로 갈아타는 게 유리하다\"는 설명은 틀립니다. 고객의 병력·비급여 치료 빈도에 따라 기존 세대 유지가 더 유리한 경우가 많아 전환 전 반드시 비교가 필요합니다.", date:"2026-07-17" },
+    { title:"간병보험 가입 시 주의사항", category:"간병·치매보험", summary:"간병보험은 실제 간병인을 고용해야 지급되는 상품과, 장기요양등급만 받으면 지급되는 상품으로 구조가 크게 나뉩니다.", feature:"① 간병인사용일당: 실제 간병인을 고용한 비용을 실비 또는 정액으로 지급, 가족의 무급 간병은 대상이 아닌 경우가 많음. ② 장기요양등급담보: 국민건강보험공단의 장기요양등급(1~5등급, 인지지원등급) 판정만 받으면 간병인 고용 여부와 무관하게 지급. ③ 중증치매생활자금: 중증치매(CDR 3점 이상) 진단 시 일시금 외에 매월·매년 생활비 지급.", check:"\"간병보험\"이라는 이름만 보지 말고 실제 지급조건이 간병인 고용 실비형인지, 등급 판정형인지 반드시 확인. 등급 판정형이 청구가 더 간편한 편입니다. 갱신형 여부와 갱신 시 보험료 인상폭도 확인이 필요합니다.", compare:"고령 고객일수록 장기요양등급담보를 우선 검토하는 것이 청구 편의성 면에서 유리한 경우가 많습니다. 간병인사용일당은 실제 간병인 고용 영수증 등 증빙이 필요해 청구 문턱이 상대적으로 높습니다.", date:"2026-07-17" },
+    { title:"운전자보험의 주요 보장", category:"운전자보험", summary:"운전자보험은 자동차보험과 별개로, 교통사고로 인한 형사·민사 책임과 벌금·행정처분을 보완하는 보험입니다.", feature:"① 교통사고처리지원금(형사합의금): 중대법규위반이나 사망사고 등으로 형사합의가 필요할 때 지급. ② 변호사선임비용: 교통사고로 기소되거나 피해자와 분쟁 시 변호사 선임 비용 지원. ③ 벌금: 교통사고로 벌금형이 확정된 경우 지급(한도 내). ④ 면허정지·취소 위로금: 행정처분으로 면허가 정지·취소된 경우 지급. ⑤ 자동차사고부상치료비: 사고로 인한 본인 부상 치료비를 상해등급별로 지급.", check:"12대 중과실(신호위반, 중앙선침범, 음주운전 등) 사고 시 일부 담보가 면책되는지 확인이 필수입니다. 자동차보험의 자기신체사고·자동차상해와 보장이 겹치는 부분이 있는지도 비교해야 합니다.", compare:"운전자보험은 자동차보험을 대체하는 것이 아니라 형사·행정 리스크를 보완하는 보험입니다. 대인·대물 배상은 자동차보험 영역이므로 두 보험의 역할을 명확히 구분해 설명해야 합니다.", date:"2026-07-17" },
+    { title:"상가화재보험 필수담보", category:"화재보험", summary:"상가는 화재 직접손해 외에도 임대인·임차인 간 배상책임, 휴업손실까지 함께 대비해야 실질적인 보장이 됩니다.", feature:"① 화재직접손해: 화재·폭발·파열로 상가 건물·집기비품이 입은 직접적인 손해 보장. ② 화재대물배상책임: 화재로 이웃 점포·건물에 손해를 끼친 경우 배상(일정 규모 이상 다중이용업소는 신체손해배상특약부화재보험 가입이 의무인 경우가 있음). ③ 임차자배상책임: 임차한 상가에서 화재가 발생해 건물주(임대인)에게 손해를 끼친 경우 배상. ④ 시설소유관리자배상책임: 상가 시설 관리 소홀로 방문객이 다친 경우 배상. ⑤ 휴업손실담보: 화재로 영업이 중단된 기간의 손실을 보장하는 특약(상품에 따라 선택).", check:"업종에 따라 신체손해배상특약부화재보험 가입이 법적 의무인지 우선 확인해야 합니다(일정 면적 이상 다중이용업소 등). 임차인인지 소유주인지에 따라 필요한 배상책임 담보가 달라집니다.", compare:"화재직접손해만 가입하고 배상책임을 빠뜨리면, 정작 이웃 점포나 임대인에게 손해를 끼쳤을 때 별도로 거액을 배상해야 할 수 있어 배상책임 담보가 실무상 더 중요한 경우가 많습니다.", date:"2026-07-17" },
+    { title:"연금보험과 연금저축 비교", category:"연금보험", summary:"연금보험은 보험사 상품으로 비과세 혜택이, 연금저축은 세액공제 혜택이 핵심이라 목적에 따라 선택이 달라집니다.", feature:"① 연금보험(보험사): 10년 이상 유지 등 요건 충족 시 보험차익 비과세, 세액공제는 없음. 종신형 수령 시 평생 연금 수령 가능. ② 연금저축(보험사·증권사·은행): 연간 400만~600만 원 한도로 세액공제(13.2~16.5%) 혜택, 대신 연금 수령 시 연금소득세(3.3~5.5%) 과세.", check:"당장 세액공제(연말정산 환급)가 필요한지, 노후에 비과세로 목돈을 받고 싶은지에 따라 상품 선택이 갈립니다. 중도해지 시 연금저축은 그동안 받은 세액공제분을 기타소득세(16.5%)로 추징당하는 불이익이 있습니다.", compare:"\"연금이니까 다 같다\"고 설명하면 안 됩니다. 연금보험은 비과세, 연금저축은 세액공제로 세제 혜택의 성격 자체가 다르므로 고객의 현재 소득·은퇴 시점 자금 계획에 맞춰 구분해 제안해야 합니다.", date:"2026-07-17" }
+  ];
+
+  // ================= 보종별가이드 =================
+  const PRODUCT_CATS = ["전체","건강보험","암보험","실손의료보험","수술비보험","간병·치매보험","어린이·태아보험","운전자보험","자동차보험","화재보험","배상책임보험","연금보험","종신보험","치아보험","펫보험"];
+  const pdState = { cat:"전체", kw:"" };
+
+  function renderProductGrid(){
+    let list = productData.slice();
+    if(pdState.cat !== "전체") list = list.filter(d => d.category === pdState.cat);
+    if(pdState.kw){
+      const kw = pdState.kw.toLowerCase();
+      list = list.filter(d => d.title.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw) || d.category.toLowerCase().includes(kw));
+    }
+    const grid = document.getElementById('productGrid');
+    if(!grid) return;
+    if(!list.length){
+      grid.innerHTML = '<div class="cr-empty" style="grid-column:1/-1; padding:28px; text-align:center;">해당 보종 자료가 없습니다.<br><span style="font-size:11.5px;">자료가 준비되면 추가됩니다.</span></div>';
+      return;
+    }
+    grid.innerHTML = list.map(d => {
+      const gi = productData.indexOf(d);
+      return `
+      <div class="dz-card" data-pi="${gi}">
+        <div class="dz-card-group">${escapeHtml(d.category)}</div>
+        <div class="dz-card-name" style="font-size:13.5px;">${escapeHtml(d.title)}</div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.dz-card').forEach(c => {
+      c.addEventListener('click', () => openProductModal(Number(c.dataset.pi)));
+    });
+  }
+
+  function openProductModal(idx){
+    const d = productData[idx];
+    if(!d) return;
+    document.getElementById('pdModalGroup').textContent = d.category;
+    document.getElementById('pdModalName').textContent = d.title;
+    document.getElementById('pdModalSummary').textContent = d.summary;
+    document.getElementById('pdModalDate').textContent = d.date;
+    const sections = [
+      ['📋 주요담보 및 특징', d.feature],
+      ['✅ 가입 시 확인사항', d.check],
+      ['⚖️ 비교·유의사항', d.compare]
+    ];
+    document.getElementById('pdModalSections').innerHTML = sections.map(([label, body]) => `
+      <div class="dz-section">
+        <div class="dz-section-label">${label}</div>
+        <div class="dz-section-body">${escapeHtml(body || '-')}</div>
+      </div>`).join('');
+    document.getElementById('productModalBackdrop').classList.add('open');
+  }
+  function closeProductModal(){ document.getElementById('productModalBackdrop').classList.remove('open'); }
+  const _pdc = document.getElementById('productModalClose');
+  if(_pdc) _pdc.addEventListener('click', closeProductModal);
+  const _pdb = document.getElementById('productModalBackdrop');
+  if(_pdb) _pdb.addEventListener('click', (e) => { if(e.target.id === 'productModalBackdrop') closeProductModal(); });
+
+  const _pgr = document.getElementById('productGroupRow');
+  function toggleDriverPins(){
+    const wrap = document.getElementById('driverPinsWrap');
+    if(wrap) wrap.style.display = (pdState.cat === '운전자보험') ? 'block' : 'none';
+  }
+  if(_pgr){
+    _pgr.innerHTML = PRODUCT_CATS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-pcat="${g}">${g}</button>`).join('');
+    _pgr.addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      _pgr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      pdState.cat = b.dataset.pcat;
+      renderProductGrid();
+      toggleDriverPins();
+    });
+  }
+  toggleDriverPins();
+  document.querySelectorAll('.driver-img').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('surgeryLbImg').src = img.dataset.full;
+      document.getElementById('surgeryLbCap').textContent = img.dataset.cap;
+      document.getElementById('surgeryLbPrev').style.display = 'none';
+      document.getElementById('surgeryLbNext').style.display = 'none';
+      document.getElementById('surgeryLb').classList.add('open');
+    });
+  });
+  const _pds = document.getElementById('productSearch');
+  if(_pds) _pds.addEventListener('input', (e) => { pdState.kw = e.target.value.trim(); renderProductGrid(); });
+  renderProductGrid();
 
 
   // ================= 영업자료실 =================
