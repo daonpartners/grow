@@ -1263,27 +1263,6 @@ body.growon{ background:var(--g-navy); }
         </div>
       </section>
       </div>
-      <div class="gview" id="view-salesmaterials">
-<section class="panel" id="salesmaterials">
-        <div class="panel-head">
-          <div><div class="panel-eyebrow">Sales Materials</div><h2 class="panel-title">영업자료실</h2></div>
-        </div>
-
-        <div class="edu-tabs" id="smTabs" data-reveal>
-          <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
-          <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
-          <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
-          <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
-          <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
-        </div>
-
-        <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
-        <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
-        <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
-        <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
-        <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
-      </section>
-      </div>
       <div class="gview" id="view-materials">
 <section class="panel" id="materials">
         <div class="panel-head">
@@ -1291,7 +1270,6 @@ body.growon{ background:var(--g-navy); }
         </div>
         <div class="edu-tabs" id="eduTabs" data-reveal>
           <button class="edu-tab active" data-tab="lecture">🎬 강의실</button>
-          <button class="edu-tab" data-tab="archive">📁 자료실</button>
         </div>
 
         <div class="edu-panel active" id="edu-lecture">
@@ -1306,27 +1284,6 @@ body.growon{ background:var(--g-navy); }
             <button class="filter-pill" data-lcat="기타">기타</button>
           </div>
           <div class="lecture-grid" id="lectureGrid" data-reveal></div>
-        </div>
-
-        <div class="edu-panel" id="edu-archive">
-          <div class="filter-row" id="filterRow" data-reveal>
-            <button class="filter-pill active" data-cat="전체">전체</button>
-            <button class="filter-pill" data-cat="실손보험">실손보험</button>
-            <button class="filter-pill" data-cat="암">암</button>
-            <button class="filter-pill" data-cat="뇌.심">뇌·심</button>
-            <button class="filter-pill" data-cat="수술비.기타">수술비·기타</button>
-            <button class="filter-pill" data-cat="운전자.상해">운전자·상해</button>
-            <button class="filter-pill" data-cat="치아.펫.태아">치아·펫·태아</button>
-            <button class="filter-pill" data-cat="자동차">자동차</button>
-            <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상·중대재해단체</button>
-            <button class="filter-pill" data-cat="후유장해.치매.간병">후유장해·치매·간병</button>
-            <button class="filter-pill" data-cat="고지의무.보상사례">고지의무·보상사례</button>
-            <button class="filter-pill" data-cat="세일즈">세일즈</button>
-            <button class="filter-pill" data-cat="DB스크립트">DB스크립트</button>
-            <button class="filter-pill" data-cat="CEO.법인.세금">CEO·법인·세금</button>
-            <button class="filter-pill" data-cat="연금.종신">연금·종신</button>
-          </div>
-          <div class="doc-grid" id="docGrid" data-reveal></div>
         </div>
 
         <!-- 자료실 상세보기 모달 -->
@@ -1383,28 +1340,15 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
-          <button class="edu-tab active" data-qtab="disease">🩺 질병·인수가이드</button>
-          <button class="edu-tab" data-qtab="guide">📚 보험가이드</button>
-          <button class="edu-tab" data-qtab="claim2">📮 보험금청구·보상</button>
-          <button class="edu-tab" data-qtab="clause">📜 약관·판례</button>
-          <button class="edu-tab" data-qtab="center">💬 질문센터</button>
+          <button class="edu-tab active" data-qtab="guide">📚 보험가이드</button>
+          <button class="edu-tab" data-qtab="underwrite">🔎 가입·인수 가이드</button>
+          <button class="edu-tab" data-qtab="claim2">📮 보상·청구 가이드</button>
+          <button class="edu-tab" data-qtab="sales">🗣️ 상담·영업자료</button>
+          <button class="edu-tab" data-qtab="archive">🗂️ 서식·다운로드</button>
+          <button class="edu-tab" data-qtab="center">💬 FAQ·AI 질문</button>
         </div>
 
-        <div class="edu-panel active" id="qna-disease">
-          <div class="disease-notice">
-            🩺 질병 이름을 선택하면 <b>가입 가능 여부·일반/간편 비교·담보 제한·필요서류</b>를 한눈에 볼 수 있습니다.
-            <div class="disease-caution">※ 최종 가입 여부는 청약 시점 보험사 개별심사 결과에 따라 달라질 수 있습니다.</div>
-          </div>
-          <div class="guide-search-top">
-            <input type="text" class="faq-search guide-search-input" id="diseaseSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 고혈압, 갑상선)">
-          </div>
-          <div class="disease-toolbar">
-            <div class="filter-row disease-grouprow" id="diseaseGroupRow"></div>
-          </div>
-          <div class="disease-grid" id="diseaseGrid"></div>
-        </div>
-
-        <div class="edu-panel" id="qna-guide">
+        <div class="edu-panel active" id="qna-guide">
           <div class="disease-notice">
             📚 카테고리를 선택하거나 검색하면 관련 담보·상품 가이드를 볼 수 있습니다.
           </div>
@@ -1451,6 +1395,8 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
+
+
           <div id="surgInsurePinsWrap" style="display:none;">
             <div class="surgery-pin">
               <div class="surgery-pin-head">
@@ -1476,6 +1422,8 @@ body.growon{ background:var(--g-navy); }
               </div>
             </div>
           </div>
+
+
 
           <div id="surgeryPinsWrap" style="display:none;">
             <div class="surgery-pin">
@@ -1508,6 +1456,8 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
+
+
           <div id="brainHeartPinsWrap" style="display:none;">
             <div class="surgery-pin">
               <div class="surgery-pin-head">
@@ -1527,6 +1477,8 @@ body.growon{ background:var(--g-navy); }
               </div>
             </div>
           </div>
+
+
 
           <div id="cancerPinsWrap" style="display:none;">
             <div class="surgery-pin">
@@ -1553,6 +1505,8 @@ body.growon{ background:var(--g-navy); }
               </div>
             </div>
           </div>
+
+
 
           <div id="dementiaCarePinsWrap" style="display:none;">
             <div class="guide-box-row">
@@ -1600,18 +1554,79 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
+
+
           <div class="disease-grid" id="guideGrid"></div>
+        </div>
+
+        <div class="edu-panel" id="qna-underwrite">
+          <div class="disease-notice">
+            🔎 가입 전 확인해야 할 <b>고지·통지의무, 인수·부담보 기준, 설계 팁</b>을 한 곳에서 확인하세요.
+          </div>
+          <div class="guide-search-top">
+            <input type="text" class="faq-search guide-search-input" id="underwriteSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 고지의무, 고혈압, 부담보)">
+          </div>
+          <div class="disease-toolbar">
+            <div class="filter-row disease-grouprow" id="underwriteGroupRow"></div>
+          </div>
+          <div id="underwriteFaqWrap">
+            <div class="faq-list" id="underwriteFaqList"></div>
+          </div>
+          <div id="underwriteDiseaseWrap" style="display:none;">
+            <div class="subsection-title" style="margin-top:18px;">🩺 유병자(질병력자) 가입 가능 여부</div>
+            <div class="disease-grid" id="underwriteDiseaseGrid"></div>
+          </div>
         </div>
 
         <div class="edu-panel" id="qna-claim2">
           <div class="faq-area"></div>
         </div>
 
-        <div class="edu-panel" id="qna-clause">
-          <div class="cr-empty" style="padding:40px 16px; text-align:center;">
-            📜 약관·판례는 준비 중입니다.<br>
-            <span style="font-size:11.5px;">약관 원문·금감원 분쟁조정·법원 판례 자료가 곧 채워집니다.</span>
+        <div class="edu-panel" id="qna-sales">
+<div id="salesmaterials">
+        <div class="panel-head">
+          <div><div class="panel-eyebrow">Sales Materials</div><h2 class="panel-title">영업자료실</h2></div>
+        </div>
+
+        <div class="edu-tabs" id="smTabs" data-reveal>
+          <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
+          <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
+          <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
+          <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
+          <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
+        </div>
+
+        <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
+        <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
+        <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
+        <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
+        <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
+      </div>
+        </div>
+
+        <div class="edu-panel" id="qna-archive">
+<div class="edu-panel" id="edu-archive">
+          <div class="filter-row" id="filterRow" data-reveal>
+            <button class="filter-pill active" data-cat="전체">전체</button>
+            <button class="filter-pill" data-cat="실손보험">실손보험</button>
+            <button class="filter-pill" data-cat="암">암</button>
+            <button class="filter-pill" data-cat="뇌.심">뇌·심</button>
+            <button class="filter-pill" data-cat="수술비.기타">수술비·기타</button>
+            <button class="filter-pill" data-cat="운전자.상해">운전자·상해</button>
+            <button class="filter-pill" data-cat="치아.펫.태아">치아·펫·태아</button>
+            <button class="filter-pill" data-cat="자동차">자동차</button>
+            <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상·중대재해단체</button>
+            <button class="filter-pill" data-cat="후유장해.치매.간병">후유장해·치매·간병</button>
+            <button class="filter-pill" data-cat="고지의무.보상사례">고지의무·보상사례</button>
+            <button class="filter-pill" data-cat="세일즈">세일즈</button>
+            <button class="filter-pill" data-cat="DB스크립트">DB스크립트</button>
+            <button class="filter-pill" data-cat="CEO.법인.세금">CEO·법인·세금</button>
+            <button class="filter-pill" data-cat="연금.종신">연금·종신</button>
           </div>
+          <div class="doc-grid" id="docGrid" data-reveal></div>
+        </div>
+
+        
         </div>
 
         <div class="edu-panel" id="qna-center">
@@ -1673,9 +1688,8 @@ body.growon{ background:var(--g-navy); }
 
   <div class="gcol" id="colRight">
     <div class="rail-t">주요 메뉴</div>
-    <button class="gbtn" data-view="qna">🍯 그로우꿀단지</button>
+    <button class="gbtn" data-view="qna">🏢 그로우보험실무센터</button>
     <button class="gbtn" data-view="materials">교육센터</button>
-    <button class="gbtn" data-view="salesmaterials">영업자료실</button>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
 
     <div class="rail-t">업무링크</div>
@@ -3524,8 +3538,10 @@ body.growon{ background:var(--g-navy); }
 
   // 대분류 → 패널 id, 소분류 목록 매핑
   const FAQ_STRUCTURE = {
+    underwrite: { majors:["보험고지FAQ","보험설계FAQ"],
+      subs:["고지의무","통지의무","인수가이드","부담보가이드","설계TIP"] },
     center: { majors:["보험고지FAQ","보험설계FAQ","보험스타터FAQ"],
-      subs:["고지의무","통지의무","자필서명위반","인수가이드","부담보가이드","설계TIP","회사별가이드","보험용어","진단코드분류","수술비분류"] },
+      subs:["자필서명위반","회사별가이드","보험용어","진단코드분류","수술비분류"] },
     claim2: { majors:["보험청구FAQ","보상관련FAQ"],
       subs:["보험제출서류","보상기준","손해보험사","의료과실","사례"] }
   };
@@ -3604,6 +3620,7 @@ body.growon{ background:var(--g-navy); }
 
   // 각 FAQ 대분류 패널 초기화
   Object.keys(FAQ_STRUCTURE).forEach(key => {
+    if(key === 'underwrite') return;
     const panel = document.getElementById('qna-' + key);
     if(!panel) return;
     const target = panel.querySelector('.faq-area') || panel;
@@ -3997,23 +4014,24 @@ body.growon{ background:var(--g-navy); }
   if(_pdb) _pdb.addEventListener('click', (e) => { if(e.target.id === 'productModalBackdrop') closeProductModal(); });
 
   // ---- 신규 통합 카테고리 매핑 ----
-  const GUIDE_CATS = ["암","뇌/심","수술비","간병/치매","어린이/태아","운전자","자동차","화재/배상","연금/종신","치아/펫"];
+  // ================= 보종별 가이드 =================
+  // ================= 보험가이드 (보종별+담보 통합) =================
+  const GUIDE_CATS = ["암","뇌·심장질환","치매·간병","수술비","실손보험","운전자보험","자동차보험","화재보험","배상책임보험","종신·정기보험","연금보험","태아·어린이보험","치아보험","펫보험"];
   const COV_CAT_MAP = {
     "암진단비":"암", "유사암진단비":"암", "암수술비":"암", "항암약물치료비":"암", "표적항암약물허가치료비":"암", "항암방사선치료비":"암", "다빈치로봇수술비":"암",
-    "뇌혈관질환진단비":"뇌/심", "허혈성심장질환진단비":"뇌/심", "2대질환(뇌·심)주요치료비":"뇌/심",
+    "뇌혈관질환진단비":"뇌·심장질환", "허혈성심장질환진단비":"뇌·심장질환", "2대질환(뇌·심)주요치료비":"뇌·심장질환",
     "질병수술비":"수술비", "상해수술비":"수술비", "종수술비(1~3종·1~5종·1~7종·1~8종)":"수술비",
-    "치매진단비":"간병/치매", "입원일당":"간병/치매", "간병인사용일당":"간병/치매", "간호간병통합서비스":"간병/치매", "중증치매생활자금":"간병/치매", "장기요양등급담보":"간병/치매",
-    "일상생활배상책임":"화재/배상", "시설소유관리자배상책임":"화재/배상", "임차자화재배상책임":"화재/배상", "음식물·생산물배상책임":"화재/배상"
+    "치매진단비":"치매·간병", "입원일당":"치매·간병", "간병인사용일당":"치매·간병", "간호간병통합서비스":"치매·간병", "중증치매생활자금":"치매·간병", "장기요양등급담보":"치매·간병",
+    "일상생활배상책임":"배상책임보험", "시설소유관리자배상책임":"배상책임보험", "임차자화재배상책임":"배상책임보험", "음식물·생산물배상책임":"배상책임보험"
   };
   const PROD_CAT_MAP = {
     "암보험 가입 시 확인할 담보":"암",
-    "실손보험 세대별 차이":"수술비",
-    "간병보험 가입 시 주의사항":"간병/치매",
-    "운전자보험의 주요 보장":"운전자",
-    "상가화재보험 필수담보":"화재/배상",
-    "연금보험과 연금저축 비교":"연금/종신"
+    "실손보험 세대별 차이":"실손보험",
+    "간병보험 가입 시 주의사항":"치매·간병",
+    "운전자보험의 주요 보장":"운전자보험",
+    "상가화재보험 필수담보":"화재보험",
+    "연금보험과 연금저축 비교":"연금보험"
   };
-
   const guideState = { cat: GUIDE_CATS[0], kw: "" };
 
   function buildGuideList(){
@@ -4053,20 +4071,42 @@ body.growon{ background:var(--g-navy); }
     const isSearching = !!guideState.kw;
     const cat = guideState.cat;
     const dWrap = document.getElementById('driverPinsWrap');
-    if(dWrap) dWrap.style.display = (!isSearching && cat === '운전자') ? 'block' : 'none';
+    if(dWrap) dWrap.style.display = (!isSearching && cat === '운전자보험') ? 'block' : 'none';
     const siWrap = document.getElementById('surgInsurePinsWrap');
     if(siWrap) siWrap.style.display = (!isSearching && cat === '수술비') ? 'block' : 'none';
     const sWrap = document.getElementById('surgeryPinsWrap');
     if(sWrap) sWrap.style.display = (!isSearching && cat === '수술비') ? 'block' : 'none';
+    const bhWrap = document.getElementById('brainHeartPinsWrap');
+    if(bhWrap) bhWrap.style.display = (!isSearching && cat === '뇌·심장질환') ? 'block' : 'none';
     const cWrap = document.getElementById('cancerPinsWrap');
     if(cWrap) cWrap.style.display = (!isSearching && cat === '암') ? 'block' : 'none';
-    const bhWrap = document.getElementById('brainHeartPinsWrap');
-    if(bhWrap) bhWrap.style.display = (!isSearching && cat === '뇌/심') ? 'block' : 'none';
     const dcWrap = document.getElementById('dementiaCarePinsWrap');
-    if(dcWrap) dcWrap.style.display = (!isSearching && cat === '간병/치매') ? 'block' : 'none';
+    if(dcWrap) dcWrap.style.display = (!isSearching && cat === '치매·간병') ? 'block' : 'none';
   }
 
-  // ---- 이미지 갤러리 (다중 페이지) ----
+  const _ggr = document.getElementById('guideGroupRow');
+  if(_ggr){
+    _ggr.innerHTML = GUIDE_CATS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-gcat="${g}">${g}</button>`).join('');
+    _ggr.addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      _ggr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      guideState.cat = b.dataset.gcat;
+      guideState.kw = '';
+      const _gs0 = document.getElementById('guideSearch');
+      if(_gs0) _gs0.value = '';
+      renderGuideGrid();
+      toggleGuidePins();
+    });
+  }
+  const _gs = document.getElementById('guideSearch');
+  if(_gs) _gs.addEventListener('input', (e) => {
+    guideState.kw = e.target.value.trim();
+    if(guideState.kw && _ggr) _ggr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    renderGuideGrid();
+    toggleGuidePins();
+  });
+
   const LB_GALLERIES = {
     brainHeartDiagnosis: { title:"뇌/심장 진단코드", images:[
       { url:"assets/brainheart/diagnosis1.jpg", caption:"뇌/심장 관련 질환 진단코드" }
@@ -4107,29 +4147,6 @@ body.growon{ background:var(--g-navy); }
     });
   });
 
-  const _ggr = document.getElementById('guideGroupRow');
-  if(_ggr){
-    _ggr.innerHTML = GUIDE_CATS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-gcat="${g}">${g}</button>`).join('');
-    _ggr.addEventListener('click', (e) => {
-      const b = e.target.closest('.filter-pill'); if(!b) return;
-      _ggr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-      b.classList.add('active');
-      guideState.cat = b.dataset.gcat;
-      guideState.kw = '';
-      const _gs0 = document.getElementById('guideSearch');
-      if(_gs0) _gs0.value = '';
-      renderGuideGrid();
-      toggleGuidePins();
-    });
-  }
-  const _gs = document.getElementById('guideSearch');
-  if(_gs) _gs.addEventListener('input', (e) => {
-    guideState.kw = e.target.value.trim();
-    if(guideState.kw && _ggr) _ggr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    renderGuideGrid();
-    toggleGuidePins();
-  });
-
   document.querySelectorAll('.driver-img, .driver-menu-item').forEach(el => {
     el.addEventListener('click', () => {
       lbOpen([{ url: el.dataset.full, caption: el.dataset.cap }], 0);
@@ -4138,6 +4155,100 @@ body.growon{ background:var(--g-navy); }
 
   renderGuideGrid();
   toggleGuidePins();
+
+  // ================= 가입·인수 가이드 =================
+  const UW_CATS = ["고지의무","통지의무","인수가이드","부담보가이드","설계TIP"];
+  const uwState = { cat: UW_CATS[0], kw: "" };
+
+  function renderUnderwritePanel(){
+    const showDisease = (uwState.cat === '인수가이드' && !uwState.kw);
+    const faqWrap = document.getElementById('underwriteFaqWrap');
+    const dzWrap = document.getElementById('underwriteDiseaseWrap');
+    if(dzWrap) dzWrap.style.display = showDisease ? 'block' : 'none';
+    if(faqWrap) faqWrap.style.display = 'block';
+    if(showDisease) renderUnderwriteDisease();
+
+    const box = document.getElementById('underwriteFaqList');
+    if(!box) return;
+    let list = faqData.filter(f => FAQ_STRUCTURE.underwrite.majors.includes(f.major) && FAQ_STRUCTURE.underwrite.subs.includes(f.minor));
+    if(uwState.kw){
+      const kw = uwState.kw.toLowerCase();
+      list = list.filter(f => (f.question||'').toLowerCase().includes(kw) || (f.answer||'').toLowerCase().includes(kw) || (f.minor||'').toLowerCase().includes(kw));
+      // 검색 시 질병 데이터도 함께 검색해서 같이 보여줌
+      const dzMatches = diseaseData.filter(d => d.name.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw));
+      if(dzMatches.length){
+        renderUnderwriteDisease(dzMatches);
+        if(dzWrap) dzWrap.style.display = 'block';
+      } else if(dzWrap) dzWrap.style.display = 'none';
+    } else {
+      list = list.filter(f => f.minor === uwState.cat);
+    }
+    if(!list.length){
+      box.innerHTML = '<div class="cr-empty" style="padding:28px; text-align:center;">해당 자료가 없습니다.</div>';
+      return;
+    }
+    box.innerHTML = list.map((f) => {
+      const gi = faqData.indexOf(f);
+      return `
+      <div class="faq-row" data-fi="${gi}">
+        <div class="faq-row-main">
+          <span class="faq-minor">${escapeHtml(f.minor)}</span>
+          <span class="faq-q">${escapeHtml(f.question)}</span>
+        </div>
+        <span class="faq-arrow">›</span>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('.faq-row').forEach(row => {
+      row.addEventListener('click', () => openFaqDetail(Number(row.dataset.fi)));
+    });
+  }
+
+  function renderUnderwriteDisease(customList){
+    const grid = document.getElementById('underwriteDiseaseGrid');
+    if(!grid) return;
+    let list = customList || diseaseData.slice();
+    if(!customList && uwState.kw){
+      const kw = uwState.kw.toLowerCase();
+      list = list.filter(d => d.name.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw));
+    }
+    if(!list.length){
+      grid.innerHTML = '<div class="cr-empty" style="grid-column:1/-1; padding:28px; text-align:center;">해당 질병 자료가 없습니다.</div>';
+      return;
+    }
+    grid.innerHTML = list.map(d => {
+      const gi = diseaseData.indexOf(d);
+      return `
+      <div class="dz-card" data-di="${gi}">
+        <div class="dz-card-group">${escapeHtml(d.group)}</div>
+        <div class="dz-card-name">${escapeHtml(d.name)}</div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.dz-card').forEach(c => {
+      c.addEventListener('click', () => openDiseaseModal(Number(c.dataset.di)));
+    });
+  }
+
+  const _uwr = document.getElementById('underwriteGroupRow');
+  if(_uwr){
+    _uwr.innerHTML = UW_CATS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-uwcat="${g}">${g}</button>`).join('');
+    _uwr.addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      _uwr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      uwState.cat = b.dataset.uwcat;
+      uwState.kw = '';
+      const _uws0 = document.getElementById('underwriteSearch');
+      if(_uws0) _uws0.value = '';
+      renderUnderwritePanel();
+    });
+  }
+  const _uws = document.getElementById('underwriteSearch');
+  if(_uws) _uws.addEventListener('input', (e) => {
+    uwState.kw = e.target.value.trim();
+    if(uwState.kw && _uwr) _uwr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    renderUnderwritePanel();
+  });
+  renderUnderwritePanel();
 
 
   // ================= 영업자료실 =================
