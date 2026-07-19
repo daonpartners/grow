@@ -391,10 +391,17 @@
   .dm-icon{flex:none; font-size:16px;}
   .dm-label{flex:1; font-size:13px; font-weight:700; color:var(--navy-2);}
   .dm-arrow{flex:none; font-size:19px; color:var(--slate); font-weight:400;}
+  .guide-box-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px;}
+  .guide-box{margin-bottom:0;}
+  .lb-menu-item{display:flex; align-items:center; gap:10px; width:100%; background:#fff; border:1px solid #D3D7F5; border-radius:10px; padding:12px 14px; cursor:pointer; font-family:inherit; text-align:left; transition:.13s;}
+  .lb-menu-item:hover{border-color:var(--orange); background:#F3F4FE;}
   .faq-toolbar{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
   .faq-subrow{flex-wrap:wrap;}
   .faq-search-wrap{width:100%;}
   .faq-search{width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:9px; font-size:13px; background:#fff;}
+  .guide-search-top{margin-bottom:12px;}
+  .guide-search-input{padding:13px 16px; font-size:14px; font-weight:600; border:2px solid var(--navy-2); border-radius:11px; box-shadow:0 2px 8px rgba(20,21,43,.06);}
+  .guide-search-input:focus{outline:none; border-color:var(--orange); box-shadow:0 0 0 3px rgba(224,138,42,.15);}
   .faq-search:focus{outline:none; border-color:var(--orange);}
   .faq-list{display:flex; flex-direction:column; gap:7px;}
   .faq-row{display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:13px 15px; cursor:pointer; transition:.13s;}
@@ -1375,8 +1382,7 @@ body.growon{ background:var(--g-navy); }
 
         <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
           <button class="edu-tab active" data-qtab="disease">🩺 질병·인수가이드</button>
-          <button class="edu-tab" data-qtab="product">📦 보종별가이드</button>
-          <button class="edu-tab" data-qtab="coverage">🛡️ 담보가이드</button>
+          <button class="edu-tab" data-qtab="guide">📚 보험가이드</button>
           <button class="edu-tab" data-qtab="claim2">📮 보험금청구·보상</button>
           <button class="edu-tab" data-qtab="clause">📜 약관·판례</button>
           <button class="edu-tab" data-qtab="center">💬 질문센터</button>
@@ -1387,20 +1393,24 @@ body.growon{ background:var(--g-navy); }
             🩺 질병 이름을 선택하면 <b>가입 가능 여부·일반/간편 비교·담보 제한·필요서류</b>를 한눈에 볼 수 있습니다.
             <div class="disease-caution">※ 최종 가입 여부는 청약 시점 보험사 개별심사 결과에 따라 달라질 수 있습니다.</div>
           </div>
+          <div class="guide-search-top">
+            <input type="text" class="faq-search guide-search-input" id="diseaseSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 고혈압, 갑상선)">
+          </div>
           <div class="disease-toolbar">
             <div class="filter-row disease-grouprow" id="diseaseGroupRow"></div>
-            <input type="text" class="faq-search" id="diseaseSearch" placeholder="🔍 질병명 검색 (예: 고혈압, 갑상선)">
           </div>
           <div class="disease-grid" id="diseaseGrid"></div>
         </div>
 
-        <div class="edu-panel" id="qna-product">
+        <div class="edu-panel" id="qna-guide">
           <div class="disease-notice">
-            📦 보종을 선택하면 <b>주요담보·특징·가입 시 확인사항·비교/유의사항</b>을 한눈에 볼 수 있습니다.
+            📚 카테고리를 선택하거나 검색하면 관련 담보·상품 가이드를 볼 수 있습니다.
+          </div>
+          <div class="guide-search-top">
+            <input type="text" class="faq-search guide-search-input" id="guideSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 암진단비, 실손, 운전자보험)">
           </div>
           <div class="disease-toolbar">
-            <div class="filter-row disease-grouprow" id="productGroupRow"></div>
-            <input type="text" class="faq-search" id="productSearch" placeholder="🔍 게시물 검색 (예: 실손, 운전자보험)">
+            <div class="filter-row disease-grouprow" id="guideGroupRow"></div>
           </div>
 
           <div id="driverPinsWrap" style="display:none;">
@@ -1465,19 +1475,6 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
-          <div class="disease-grid" id="productGrid"></div>
-        </div>
-
-        <div class="edu-panel" id="qna-coverage">
-          <div class="disease-notice">
-            🛡️ 담보를 선택하면 <b>지급사유·보장범위·지급횟수·지급한도·제외사항·보험사별차이·청구서류</b>를 한눈에 볼 수 있습니다.
-            <div class="disease-caution">※ 실제 보장 여부는 가입하신 상품의 개별 약관을 반드시 대조 확인해야 합니다.</div>
-          </div>
-          <div class="disease-toolbar">
-            <div class="filter-row disease-grouprow" id="coverageGroupRow"></div>
-            <input type="text" class="faq-search" id="coverageSearch" placeholder="🔍 담보명 검색 (예: 암진단비, 입원일당)">
-          </div>
-
           <div id="surgeryPinsWrap" style="display:none;">
             <div class="surgery-pin">
               <div class="surgery-pin-head">
@@ -1509,7 +1506,73 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
-          <div class="disease-grid" id="coverageGrid"></div>
+          <div id="cancerPinsWrap" style="display:none;">
+            <div class="surgery-pin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">🎗️</span>
+                <div>
+                  <div class="surgery-pin-title">암 가이드</div>
+                  <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
+                </div>
+              </div>
+              <div class="driver-menu">
+                <button type="button" class="lb-menu-item" data-gallery="cancerAll">
+                  <span class="dm-icon">🩺</span><span class="dm-label">암의 모든 것</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="cancerSurgery">
+                  <span class="dm-icon">🔪</span><span class="dm-label">암수술 한눈에 정리</span><span class="dm-arrow">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="dementiaCarePinsWrap" style="display:none;">
+            <div class="guide-box-row">
+              <div class="surgery-pin guide-box">
+                <div class="surgery-pin-head">
+                  <span class="surgery-pin-icon">🧠</span>
+                  <div>
+                    <div class="surgery-pin-title">치매가이드</div>
+                    <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
+                  </div>
+                </div>
+                <div class="driver-menu">
+                  <button type="button" class="lb-menu-item" data-gallery="dementiaMain">
+                    <span class="dm-icon">📋</span><span class="dm-label">치매</span><span class="dm-arrow">›</span>
+                  </button>
+                  <button type="button" class="lb-menu-item" data-gallery="dementiaTreatment">
+                    <span class="dm-icon">💊</span><span class="dm-label">치료비 (레켐비)</span><span class="dm-arrow">›</span>
+                  </button>
+                </div>
+              </div>
+              <div class="surgery-pin guide-box">
+                <div class="surgery-pin-head">
+                  <span class="surgery-pin-icon">🏥</span>
+                  <div>
+                    <div class="surgery-pin-title">간병진단비가이드</div>
+                    <div class="surgery-pin-desc">자료 준비 중입니다.</div>
+                  </div>
+                </div>
+                <div class="driver-menu">
+                  <div class="driver-img-empty" style="aspect-ratio:auto; padding:24px 10px;">이미지 자료 준비 중<br><span>자료 주시면 채워드립니다</span></div>
+                </div>
+              </div>
+              <div class="surgery-pin guide-box">
+                <div class="surgery-pin-head">
+                  <span class="surgery-pin-icon">💵</span>
+                  <div>
+                    <div class="surgery-pin-title">간병인일당가이드</div>
+                    <div class="surgery-pin-desc">자료 준비 중입니다.</div>
+                  </div>
+                </div>
+                <div class="driver-menu">
+                  <div class="driver-img-empty" style="aspect-ratio:auto; padding:24px 10px;">이미지 자료 준비 중<br><span>자료 주시면 채워드립니다</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="disease-grid" id="guideGrid"></div>
         </div>
 
         <div class="edu-panel" id="qna-claim2">
@@ -1524,12 +1587,6 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-panel" id="qna-center">
-          <div class="subsection-title">🤖 AI질문센터 — 자료 검색 (AI 요약)</div>
-          <div class="qna-form-row" style="margin-bottom:16px;">
-            <input type="text" class="claim-search" id="docSearchInput" placeholder="검색어 입력 (예: 암, 치아, 실손...)" style="margin-bottom:0;">
-            <button type="button" id="docSearchBtn" style="flex-shrink:0; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:0 18px; font-size:13px; font-weight:700; cursor:pointer;">검색</button>
-          </div>
-          <div id="docSearchResults" style="margin-bottom:20px;"></div>
           <div class="subsection-title">📋 자주 묻는 질문</div>
           <div class="faq-area" id="qna-center-faqarea"></div>
         </div>
@@ -2798,8 +2855,10 @@ body.growon{ background:var(--g-navy); }
   }
 
   async function runDocSearch(){
-    const kw = document.getElementById('docSearchInput').value.trim();
+    const inputEl = document.getElementById('docSearchInput');
     const box = document.getElementById('docSearchResults');
+    if(!inputEl || !box) return;
+    const kw = inputEl.value.trim();
     if(!kw){ box.innerHTML = ''; return; }
     box.innerHTML = `<div class="doc-empty-note">검색 중입니다...</div>`;
     try{
@@ -2823,8 +2882,10 @@ body.growon{ background:var(--g-navy); }
       box.innerHTML = `<div class="doc-empty-note">네트워크 오류로 검색에 실패했습니다.</div>`;
     }
   }
-  document.getElementById('docSearchBtn').addEventListener('click', runDocSearch);
-  document.getElementById('docSearchInput').addEventListener('keydown', e => { if(e.key === 'Enter') runDocSearch(); });
+  const _dsb = document.getElementById('docSearchBtn');
+  if(_dsb) _dsb.addEventListener('click', runDocSearch);
+  const _dsi = document.getElementById('docSearchInput');
+  if(_dsi) _dsi.addEventListener('keydown', e => { if(e.key === 'Enter') runDocSearch(); });
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
@@ -3279,7 +3340,7 @@ body.growon{ background:var(--g-navy); }
 
   renderCardPayment();
 
-  /* AI 보험비서 플로팅 버튼: 그로우꿀단지 > 질문센터 탭으로 이동 후 AI 검색창에 포커스 */
+  /* AI 보험비서 플로팅 버튼: 그로우꿀단지 > 질문센터 탭으로 이동 후 검색창에 포커스 */
   const _aifb = document.getElementById('aiFloatBtn');
   if(_aifb) _aifb.addEventListener('click', () => {
     const qnaNav = document.querySelector('[data-view="qna"]');
@@ -3287,7 +3348,7 @@ body.growon{ background:var(--g-navy); }
     setTimeout(() => {
       const centerTab = document.querySelector('[data-qtab="center"]');
       if(centerTab) centerTab.click();
-      const input = document.getElementById('docSearchInput');
+      const input = document.querySelector('#qna-center .faq-search');
       if(input){ input.scrollIntoView({behavior:'smooth', block:'center'}); input.focus(); }
     }, 150);
   });
@@ -3444,29 +3505,30 @@ body.growon{ background:var(--g-navy); }
 
   function faqPanelHtml(key){
     const st = FAQ_STRUCTURE[key];
-    const subPills = ['전체', ...st.subs].map((s, i) =>
+    const subPills = st.subs.map((s, i) =>
       `<button class="filter-pill${i===0?' active':''}" data-fsub="${s}">${s}</button>`).join('');
     return `
+      <div class="guide-search-top">
+        <input type="text" class="faq-search guide-search-input" placeholder="🔍 전체 카테고리에서 검색 (단어 포함)" data-fsearch="${key}">
+      </div>
       <div class="faq-toolbar">
         <div class="filter-row faq-subrow">${subPills}</div>
-        <div class="faq-search-wrap">
-          <input type="text" class="faq-search" placeholder="🔍 이 게시판에서 검색 (단어 포함)" data-fsearch="${key}">
-        </div>
       </div>
       <div class="faq-list" id="faqList-${key}"></div>`;
   }
 
   function renderFaqPanel(key){
     const st = FAQ_STRUCTURE[key];
-    const state = faqState[key] || (faqState[key] = { sub:'전체', kw:'' });
+    const state = faqState[key] || (faqState[key] = { sub:st.subs[0], kw:'' });
     let list = faqData.filter(f => st.majors.includes(f.major));
-    if(state.sub !== '전체') list = list.filter(f => f.minor === state.sub);
     if(state.kw){
       const kw = state.kw.toLowerCase();
       list = list.filter(f =>
         (f.question || '').toLowerCase().includes(kw) ||
         (f.answer || '').toLowerCase().includes(kw) ||
         (f.minor || '').toLowerCase().includes(kw));
+    } else {
+      list = list.filter(f => f.minor === state.sub);
     }
     const box = document.getElementById('faqList-' + key);
     if(!box) return;
@@ -3516,18 +3578,24 @@ body.growon{ background:var(--g-navy); }
     if(!panel) return;
     const target = panel.querySelector('.faq-area') || panel;
     target.innerHTML = faqPanelHtml(key);
-    faqState[key] = { sub:'전체', kw:'' };
+    const st = FAQ_STRUCTURE[key];
+    faqState[key] = { sub:st.subs[0], kw:'' };
+    const subrow = panel.querySelector('.faq-subrow');
+    const searchInput = panel.querySelector('.faq-search');
     // 소분류 필터
-    panel.querySelector('.faq-subrow').addEventListener('click', (e) => {
+    subrow.addEventListener('click', (e) => {
       const b = e.target.closest('.filter-pill'); if(!b) return;
-      panel.querySelectorAll('.faq-subrow .filter-pill').forEach(p => p.classList.remove('active'));
+      subrow.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
       b.classList.add('active');
       faqState[key].sub = b.dataset.fsub;
+      faqState[key].kw = '';
+      searchInput.value = '';
       renderFaqPanel(key);
     });
     // 검색
-    panel.querySelector('.faq-search').addEventListener('input', (e) => {
+    searchInput.addEventListener('input', (e) => {
       faqState[key].kw = e.target.value.trim();
+      if(faqState[key].kw) subrow.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
       renderFaqPanel(key);
     });
     renderFaqPanel(key);
@@ -3599,20 +3667,29 @@ body.growon{ background:var(--g-navy); }
       limit:"치매진단비·중증치매생활자금·장기요양등급담보는 병력에 따라 개별심사·부담보가 될 수 있습니다. 표적치매치료제 담보는 이미 진단·복약 이력이 있으면 인수가 매우 어렵습니다.",
       docs:"CDR 평가결과지, MMSE 검사결과지, 뇌 영상검사(MRI·CT) 결과지, 인지기능 관련 처방전(있는 경우)",
       company:"CDR 최경증(0.5점)부터 보장하는지, 장기요양등급만으로 지급되는지, 표적치매치료제 신담보 유무가 회사별 핵심 차이입니다.",
+      date:"2026-07-17" },
+    { name:"암(악성신생물)", group:"암·종양", result:"개별심사 필요",
+      summary:"완치 후 5년 무재발이면 가입 가능성이 열리고, 기왕력과 무관한 새로운 원발암은 별도 보장 설계가 가능합니다. 유사암(갑상선암·기타피부암)은 일반암과 별개로 5년 내 고지 대상입니다.",
+      apply:"암 진단 및 수술 후 5년이 경과하고 그 사이 재발이나 치료 이력이 없다면 일반심사도 검토할 수 있습니다. 완치 후 5년 이내이거나 현재 치료 중인 경우 신규 암보험 가입은 매우 어렵습니다.",
+      compare:"완치 후 5년 경과·재발 없음이 확인되면 일반심사를 먼저 시도하고, 그 전이거나 병력이 복잡하면 간편보험도 인수가 어려운 경우가 많아 개별심사(전산심사)가 필수입니다.",
+      limit:"과거 암과 무관한 새로운 원발암은 기왕력과 관계없이 보상 가능하도록 설계할 수 있으나, 기존 암의 재발·전이는 대부분 면책됩니다. 유사암(갑상선암 C73, 기타피부암 C44)은 5년 내 별도 고지 대상이며 일반암 대비 낮은 비율(10~20%)로 지급됩니다. 경계성종양·제자리암·양성뇌종양은 5년 내 \"암\" 고지 대상은 아니지만 일반 질병 수술·입원 이력으로는 고지 대상이 될 수 있습니다.",
+      docs:"조직검사 결과지(병리 리포트), 진단서, 수술확인서·입퇴원확인서, 최근 5년간 추적관찰(정기검진) 기록",
+      company:"완치 판정 기준(5년 무재발 인정 범위)과 새로운 원발암 인정 기준이 회사별로 다릅니다. 무사고 전환 제도(1~5년 무사고 시 유병자 플랜 전환) 운영 여부도 차이가 있어 사전심사가 필요합니다.",
       date:"2026-07-17" }
   ];
 
-  const DISEASE_GROUPS = ["전체","대사·내분비","심장·뇌혈관","소화기·간","근골격계","여성·남성","암·종양","정신·신경계"];
-  const dzState = { group:"전체", kw:"" };
+  const DISEASE_GROUPS = ["대사·내분비","심장·뇌혈관","소화기·간","근골격계","여성·남성","암·종양","정신·신경계"];
+  const dzState = { group:"대사·내분비", kw:"" };
 
   function dzBadgeClass(result){ return 'dz-badge-' + String(result).replace(/\s/g,''); }
 
   function renderDiseaseGrid(){
     let list = diseaseData.slice();
-    if(dzState.group !== "전체") list = list.filter(d => d.group === dzState.group);
     if(dzState.kw){
       const kw = dzState.kw.toLowerCase();
       list = list.filter(d => d.name.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw) || d.group.toLowerCase().includes(kw));
+    } else {
+      list = list.filter(d => d.group === dzState.group);
     }
     const grid = document.getElementById('diseaseGrid');
     if(!grid) return;
@@ -3671,11 +3748,17 @@ body.growon{ background:var(--g-navy); }
       _dgr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
       b.classList.add('active');
       dzState.group = b.dataset.dgroup;
+      dzState.kw = '';
+      if(_dzs) _dzs.value = '';
       renderDiseaseGrid();
     });
   }
   const _dzs = document.getElementById('diseaseSearch');
-  if(_dzs) _dzs.addEventListener('input', (e) => { dzState.kw = e.target.value.trim(); renderDiseaseGrid(); });
+  if(_dzs) _dzs.addEventListener('input', (e) => {
+    dzState.kw = e.target.value.trim();
+    if(dzState.kw && _dgr) _dgr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    renderDiseaseGrid();
+  });
   renderDiseaseGrid();
 
   const coverageData = [
@@ -3687,7 +3770,7 @@ body.growon{ background:var(--g-navy); }
     { name:"질병수술비", category:"수술비", payCause:"질병 치료를 직접 목적으로 수술(절단·절제 등)을 받은 경우", scope:"질병으로 인한 수술 전반을 포괄 보장", payCount:"수술 시마다(매회) 지급이 일반적 (60일 이내 2회 이상 수술은 1회로 간주하는 조항 확인 필요)", payLimit:"가입금액 기준 정액", exclude:"흡인·천자·생검, 미용성형, 피임 목적 수술 등은 제외", company:"회사별 수술 정의·제외 항목이 상이", docs:"수술확인서 또는 수술기록지", summary:"질병 치료 목적 수술 시 포괄적으로 보장하는 기본 수술비 담보", date:"2026-07-17" },
     { name:"상해수술비", category:"수술비", payCause:"상해 치료를 직접 목적으로 수술을 받은 경우", scope:"사고로 인한 수술 전반", payCount:"수술 시마다 지급이 일반적", payLimit:"가입금액 기준 정액", exclude:"미용 목적 수술 등은 제외", company:"질병수술비와 통합 설계되는 상품도 있어 확인 필요", docs:"수술확인서, 사고경위서(필요시)", summary:"상해(사고) 치료 목적 수술 시 보장, 질병수술비와 별도 담보로 설계되는 경우가 많음", date:"2026-07-17" },
     { name:"종수술비(1~3종·1~5종·1~7종·1~8종)", category:"수술비", payCause:"질병 또는 상해로 약관에서 정한 종수술을 받은 경우 정액 지급합니다. 1~5종은 수술명·신체부위·수술방법으로 판단하고, 1~7·8종은 실제 발생한 급여 수술·시술코드(ADRG 등)로 판단하는 상품이 많아 같은 수술도 담보 종류에 따라 결과가 달라질 수 있습니다.", scope:"1~5종은 수술명·부위·방법 기준, 1~7·8종은 급여 수술·시술코드(ADRG 등) 기준으로 판단방식이 전혀 다릅니다. 1종부터 5종까지 각 등급별 실제 수술 예시는 위 [종수술비 등급표]에서 확인할 수 있습니다.", payCount:"동일 입원에서 두 가지 이상 수술을 받으면 가장 높은 종 하나만 지급하는 상품이 많습니다. 1~7·8종은 하나의 수술코드당 연간 횟수 제한(예: 연 3회)을 두는 경우가 많고, 1회 입원 또는 1회 통원당 1회로 제한하는 경우도 있습니다.", payLimit:"종수·금액은 상품마다 전혀 다릅니다. 예시(특정 상품): 1~5종 15만·30만·60만·100만·500만원 또는 20만·50만·100만·500만·1000만원. 1~7종(메리츠 예시): 1종 30만·2종 30만·3종 50만·4종 100만·5종 200만·6종 300만·7종 1000만원. \"5종이면 무조건 1000만원\"이라는 설명은 틀립니다.", exclude:"흡인·천자·신경차단(Nerve Block)·단순 절개·배농은 수술로 인정되지 않습니다. 미용성형·피임 목적 수술, 생검 등 검사·진단 목적 시술도 원칙적으로 제외됩니다. 치핵·제왕절개·요실금·선천성질환·비급여 수술 포함 여부는 회사·상품별로 다릅니다.", company:"DB손해보험 1~8종 약관 예시: 같은 입원에서 유방재건술(3종)과 유방절제술(7종)을 함께 받으면 높은 등급인 7종 수술비만 지급합니다. 삼성화재는 KCD 진단코드와 ADRG 수술시술코드를 함께 확인하도록 안내합니다. 메리츠화재 1~7종은 수술코드당 연간 3회 등 자체 제한을 둡니다. 회사마다 코드표·금액·제한이 전부 다르므로 반드시 가입 당시 약관 원문으로 확인해야 합니다.", docs:"수술확인서 또는 수술기록지가 기본이며, 1~7·8종은 진료비 세부내역서(수술·시술코드, 급여 여부, ADRG 코드 확인용)가 특히 중요합니다.", summary:"종 숫자는 의학적 중증도가 아닌 회사가 정한 보험금 지급등급. 1~5종은 수술명·부위·방법 기준, 1~7·8종은 급여 수술·시술코드(ADRG 등) 기준으로 판단방식이 전혀 달라 종이 많다고 무조건 유리한 게 아닙니다.", date:"2026-07-17" },
-    { name:"암수술비", category:"수술비", payCause:"암 직접치료 목적의 수술", scope:"개복·복강경·다빈치로봇수술 등 암 절제 수술 포함", payCount:"수술 시마다 또는 최초 1회(상품별 상이)", payLimit:"가입금액 기준 정액", exclude:"진단·검사 목적 조직검사(생검)만으로는 지급 제외", company:"다빈치 로봇수술 별도 담보 운영 여부가 회사별로 다름", docs:"수술확인서, 조직검사 결과지", summary:"암의 직접적인 치료를 목적으로 하는 수술에 한해 지급", date:"2026-07-17" },
+    { name:"암수술비", category:"수술비", payCause:"암 직접치료 목적의 수술", scope:"암수술은 암세포가 특정 부위에 국한되어 있을 때 종양·주변조직·림프절 등을 물리적으로 제거하는 국소치료입니다. 목적에 따라 6가지로 분류됩니다: ①진단·병기결정수술(조직채취로 암 확진·침범범위·전이여부 확인), ②근치수술(암과 주변조직·필요시 림프절까지 최대한 완전 제거해 완치 목표), ③축소수술(종양크기·암세포량을 줄여 항암·방사선치료 효과를 높임), ④예방수술(유전적 고위험군에서 암 발생 위험이 높은 장기를 미리 제거), ⑤완화수술(통증·출혈·폐색 등 암으로 인한 증상을 줄여 삶의 질을 높임), ⑥재건수술(암 제거 후 기능과 외형을 복원, 예: 유방재건술).\n\n접근방법 5종: ①관혈수술(절제술) - 피부를 절개해 병변을 직접 노출 후 제거하는 전통적 방식, 개복·개흉 수술 포함, 광범위 절제·림프절절제 가능하나 회복기간이 긴 편. ②복강경·흉강경수술 - 1cm 내외 작은 구멍으로 내시경 기구를 넣어 수술, 통증·흉터가 적고 회복이 빠른 최소절개수술. ③다빈치 로봇수술 - 의사가 콘솔에서 로봇팔을 원격조정, 10~15배 확대된 3D 시야로 정밀도가 높지만 비급여 부담이 큼. ④내시경수술 - 외부 절개 없이 내시경으로 점막하층 병변을 절제, 위·대장·식도 등 조기암 치료에 주로 활용. ⑤방사선수술 - 감마나이프·사이버나이프처럼 고선량 방사선을 정밀 조사, 칼 없이 수술과 유사한 치료효과를 기대.", payCount:"수술 시마다 또는 최초 1회(상품별 상이)", payLimit:"다빈치 로봇수술 평균 700만~1,500만원(병원·난이도별 차이 큼). 로봇수술 세부예시: 갑상선절제술 700만~1,700만원, 폐수술 700만~1,000만원, 자궁부속기절제술 500만~1,000만원. 하이푸(HIFU) 등 기타 신의료기술 평균 약 648만원. 암종별 평균 치료비: 간암 6,622만원, 췌장암 6,371만원, 폐암 4,657만원, 식도암 4,326만원. 신의료기술 활용 암수술은 정밀도가 높지만 비급여 항목이 많아 비용부담이 커질 수 있습니다.", exclude:"조직검사(생검), 단순 흡인, 천자, 마취료 등은 일반적인 수술 보상 범위에서 제외될 수 있습니다. 로봇수술·감마나이프·사이버나이프 등은 명칭에 '수술'이 있어도 가입 상품 약관상 수술 정의에 해당하는지 반드시 확인해야 합니다. 기본 암수술비 외에 다빈치로봇암수술비·암주요치료비 등 특약으로 고액 비급여 수술비를 보완하는 것이 중요합니다.", company:"다빈치 로봇수술 별도 담보 운영 여부가 회사별로 다름", docs:"수술확인서, 조직검사 결과지", summary:"암의 직접적인 치료를 목적으로 하는 수술에 한해 지급", date:"2026-07-17" },
     { name:"항암약물치료비", category:"치료비", payCause:"암 직접 치료 목적의 항암 약물치료", scope:"1세대(세포독성)·2세대(표적항암)·3세대(면역항암) 약물치료 포함", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이, 암주요치료비와 통합 설계되는 경우 많음", exclude:"식이요법·면역력강화치료·호르몬관련치료는 제외될 수 있습니다.", company:"면역항암제 등 고가 치료 보장 여부가 회사별 차이 포인트", docs:"진단서, 치료확인서, 약제비 영수증", summary:"암 직접 치료를 위해 약물치료(항암제 투여)를 받은 경우 지급", date:"2026-07-17" },
     { name:"표적항암약물허가치료비", category:"치료비", payCause:"식약처 허가 범위 내 표적항암제 투여", scope:"허가초과(오프라벨) 사용은 보장 제외되는 경우가 많음", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이", exclude:"허가 범위를 벗어난 표적치료는 제외", company:"허가범위 인정 기준이 회사별로 다를 수 있어 사전확인 필요", docs:"진단서, 처방전, 치료확인서", summary:"식약처 허가 효능·효과 범위 내에서 표적항암제를 투여받은 경우 지급", date:"2026-07-17" },
     { name:"항암방사선치료비", category:"치료비", payCause:"암 직접 치료 목적의 방사선 치료", scope:"세기조절방사선치료, 양성자치료, 중입자치료 등 비급여 신의료기술 포함", payCount:"치료 회차별 또는 연간 정액", payLimit:"상품별 상이", exclude:"완화·통증경감 목적 방사선은 상품에 따라 제외될 수 있습니다.", company:"양성자·중입자 치료 보장 여부가 회사별 강점 차이", docs:"진단서, 치료확인서, 치료비 영수증", summary:"암 직접 치료를 위해 방사선 치료를 받은 경우 지급, 세기조절방사선·양성자·중입자 치료 등 고액 비급여 포함", date:"2026-07-17" },
@@ -3704,36 +3787,7 @@ body.growon{ background:var(--g-navy); }
     { name:"장기요양등급담보", category:"입원간병", payCause:"국민건강보험공단으로부터 장기요양등급(1~5등급 또는 인지지원등급) 판정을 받은 경우", scope:"치매로 인한 등급뿐 아니라 신체 기능 저하로 인한 등급도 포함", payCount:"등급 판정 시 진단비 또는 재가·시설급여 지원금 지급", payLimit:"등급별 가입금액 차등", exclude:"등급 판정을 받지 못한 단순 노쇠·경증 상태는 제외", company:"보장 등급 범위(1~5등급 전체 vs 중증 등급만)가 회사별로 다름", docs:"장기요양등급 판정서, 진단서(필요시)", summary:"치매뿐 아니라 신체기능 저하로 공단 장기요양등급(1~5등급, 인지지원등급)을 받은 경우 지급", date:"2026-07-17" }
   ];
 
-  // ================= 담보가이드 =================
-  const COVERAGE_GROUPS = ["전체","진단비","수술비","치료비","입원간병","배상책임"];
-  const cvState = { group:"전체", kw:"" };
-
-  function renderCoverageGrid(){
-    let list = coverageData.slice();
-    if(cvState.group !== "전체") list = list.filter(d => d.category === cvState.group);
-    if(cvState.kw){
-      const kw = cvState.kw.toLowerCase();
-      list = list.filter(d => d.name.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw) || d.category.toLowerCase().includes(kw));
-    }
-    const grid = document.getElementById('coverageGrid');
-    if(!grid) return;
-    if(!list.length){
-      grid.innerHTML = '<div class="cr-empty" style="grid-column:1/-1; padding:28px; text-align:center;">해당 담보 자료가 없습니다.<br><span style="font-size:11.5px;">자료가 준비되면 추가됩니다.</span></div>';
-      return;
-    }
-    grid.innerHTML = list.map(d => {
-      const gi = coverageData.indexOf(d);
-      return `
-      <div class="dz-card" data-ci="${gi}">
-        <div class="dz-card-group">${escapeHtml(d.category)}</div>
-        <div class="dz-card-name">${escapeHtml(d.name)}</div>
-      </div>`;
-    }).join('');
-    grid.querySelectorAll('.dz-card').forEach(c => {
-      c.addEventListener('click', () => openCoverageModal(Number(c.dataset.ci)));
-    });
-  }
-
+  // ================= 보험가이드 (보종별+담보 통합) =================
   function openCoverageModal(idx){
     const d = coverageData[idx];
     if(!d) return;
@@ -3763,27 +3817,6 @@ body.growon{ background:var(--g-navy); }
   const _cvb = document.getElementById('coverageModalBackdrop');
   if(_cvb) _cvb.addEventListener('click', (e) => { if(e.target.id === 'coverageModalBackdrop') closeCoverageModal(); });
 
-  const _cgr = document.getElementById('coverageGroupRow');
-  function toggleSurgeryPins(){
-    const wrap = document.getElementById('surgeryPinsWrap');
-    if(wrap) wrap.style.display = (cvState.group === '수술비') ? 'block' : 'none';
-  }
-  if(_cgr){
-    _cgr.innerHTML = COVERAGE_GROUPS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-cgroup="${g}">${g}</button>`).join('');
-    _cgr.addEventListener('click', (e) => {
-      const b = e.target.closest('.filter-pill'); if(!b) return;
-      _cgr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-      b.classList.add('active');
-      cvState.group = b.dataset.cgroup;
-      renderCoverageGrid();
-      toggleSurgeryPins();
-    });
-  }
-  toggleSurgeryPins();
-  const _cvs = document.getElementById('coverageSearch');
-  if(_cvs) _cvs.addEventListener('input', (e) => { cvState.kw = e.target.value.trim(); renderCoverageGrid(); });
-  renderCoverageGrid();
-
   // ================= 보험사별 수술비 분류표 (원본자료 이미지) =================
   const SURGERY_COMPANIES = [
     { key:"kb",       label:"KB손보",   pages:5, ext:"jpg", title:"116대 질병수술비 분류표" },
@@ -3796,7 +3829,6 @@ body.growon{ background:var(--g-navy); }
     { key:"meritz",   label:"메리츠",   pages:1, ext:"jpg", title:"131대 질병(다빈도64대질병) 분류표" }
   ];
   let surgeryActiveCompany = SURGERY_COMPANIES[0].key;
-  let surgeryLbIdx = 0;
 
   function surgeryImages(companyKey){
     const c = SURGERY_COMPANIES.find(x => x.key === companyKey);
@@ -3822,19 +3854,23 @@ body.growon{ background:var(--g-navy); }
         <span class="surgery-page-no">${i + 1}/${images.length}</span>
       </div>`).join('');
     grid.querySelectorAll('.surgery-thumb').forEach(el => {
-      el.addEventListener('click', () => surgeryLbOpen(Number(el.dataset.si)));
+      el.addEventListener('click', () => lbOpen(surgeryImages(surgeryActiveCompany), Number(el.dataset.si)));
     });
   }
 
-  function surgeryLbOpen(i){
-    const images = surgeryImages(surgeryActiveCompany);
-    if(!images.length) return;
-    surgeryLbIdx = (i + images.length) % images.length;
-    const img = images[surgeryLbIdx];
+  // ---- 제네릭 라이트박스 (여러 이미지 갤러리에서 공용으로 사용) ----
+  let lbImages = [];
+  let lbIdx = 0;
+  function lbOpen(images, idx){
+    if(!images || !images.length) return;
+    lbImages = images;
+    lbIdx = (idx + images.length) % images.length;
+    const img = lbImages[lbIdx];
     document.getElementById('surgeryLbImg').src = img.url;
     document.getElementById('surgeryLbCap').textContent = img.caption;
-    document.getElementById('surgeryLbPrev').style.display = '';
-    document.getElementById('surgeryLbNext').style.display = '';
+    const showNav = lbImages.length > 1;
+    document.getElementById('surgeryLbPrev').style.display = showNav ? '' : 'none';
+    document.getElementById('surgeryLbNext').style.display = showNav ? '' : 'none';
     document.getElementById('surgeryLb').classList.add('open');
   }
   const _slx = document.getElementById('surgeryLbX');
@@ -3842,9 +3878,9 @@ body.growon{ background:var(--g-navy); }
   const _slb = document.getElementById('surgeryLb');
   if(_slb) _slb.addEventListener('click', (e) => { if(e.target.id === 'surgeryLb') _slb.classList.remove('open'); });
   const _slp = document.getElementById('surgeryLbPrev');
-  if(_slp) _slp.addEventListener('click', (e) => { e.stopPropagation(); surgeryLbOpen(surgeryLbIdx - 1); });
+  if(_slp) _slp.addEventListener('click', (e) => { e.stopPropagation(); lbOpen(lbImages, lbIdx - 1); });
   const _sln = document.getElementById('surgeryLbNext');
-  if(_sln) _sln.addEventListener('click', (e) => { e.stopPropagation(); surgeryLbOpen(surgeryLbIdx + 1); });
+  if(_sln) _sln.addEventListener('click', (e) => { e.stopPropagation(); lbOpen(lbImages, lbIdx + 1); });
 
   const _scr = document.getElementById('surgeryCompanyRow');
   if(_scr){
@@ -3898,36 +3934,6 @@ body.growon{ background:var(--g-navy); }
     { title:"연금보험과 연금저축 비교", category:"연금보험", summary:"연금보험은 보험사 상품으로 비과세 혜택이, 연금저축은 세액공제 혜택이 핵심이라 목적에 따라 선택이 달라집니다.", feature:"① 연금보험(보험사): 10년 이상 유지 등 요건 충족 시 보험차익 비과세, 세액공제는 없음. 종신형 수령 시 평생 연금 수령 가능. ② 연금저축(보험사·증권사·은행): 연간 400만~600만 원 한도로 세액공제(13.2~16.5%) 혜택, 대신 연금 수령 시 연금소득세(3.3~5.5%) 과세.", check:"당장 세액공제(연말정산 환급)가 필요한지, 노후에 비과세로 목돈을 받고 싶은지에 따라 상품 선택이 갈립니다. 중도해지 시 연금저축은 그동안 받은 세액공제분을 기타소득세(16.5%)로 추징당하는 불이익이 있습니다.", compare:"\"연금이니까 다 같다\"고 설명하면 안 됩니다. 연금보험은 비과세, 연금저축은 세액공제로 세제 혜택의 성격 자체가 다르므로 고객의 현재 소득·은퇴 시점 자금 계획에 맞춰 구분해 제안해야 합니다.", date:"2026-07-17" }
   ];
 
-  // ================= 보종별가이드 =================
-  const PRODUCT_CATS = ["전체","건강보험","암보험","실손의료보험","수술비보험","간병·치매보험","어린이·태아보험","운전자보험","자동차보험","화재보험","배상책임보험","연금보험","종신보험","치아보험","펫보험"];
-  const pdState = { cat:"전체", kw:"" };
-
-  function renderProductGrid(){
-    let list = productData.slice();
-    if(pdState.cat !== "전체") list = list.filter(d => d.category === pdState.cat);
-    if(pdState.kw){
-      const kw = pdState.kw.toLowerCase();
-      list = list.filter(d => d.title.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw) || d.category.toLowerCase().includes(kw));
-    }
-    const grid = document.getElementById('productGrid');
-    if(!grid) return;
-    if(!list.length){
-      grid.innerHTML = '<div class="cr-empty" style="grid-column:1/-1; padding:28px; text-align:center;">해당 보종 자료가 없습니다.<br><span style="font-size:11.5px;">자료가 준비되면 추가됩니다.</span></div>';
-      return;
-    }
-    grid.innerHTML = list.map(d => {
-      const gi = productData.indexOf(d);
-      return `
-      <div class="dz-card" data-pi="${gi}">
-        <div class="dz-card-group">${escapeHtml(d.category)}</div>
-        <div class="dz-card-name" style="font-size:13.5px;">${escapeHtml(d.title)}</div>
-      </div>`;
-    }).join('');
-    grid.querySelectorAll('.dz-card').forEach(c => {
-      c.addEventListener('click', () => openProductModal(Number(c.dataset.pi)));
-    });
-  }
-
   function openProductModal(idx){
     const d = productData[idx];
     if(!d) return;
@@ -3953,37 +3959,130 @@ body.growon{ background:var(--g-navy); }
   const _pdb = document.getElementById('productModalBackdrop');
   if(_pdb) _pdb.addEventListener('click', (e) => { if(e.target.id === 'productModalBackdrop') closeProductModal(); });
 
-  const _pgr = document.getElementById('productGroupRow');
-  function toggleDriverPins(){
-    const wrap = document.getElementById('driverPinsWrap');
-    if(wrap) wrap.style.display = (pdState.cat === '운전자보험') ? 'block' : 'none';
-    const wrap2 = document.getElementById('surgInsurePinsWrap');
-    if(wrap2) wrap2.style.display = (pdState.cat === '수술비보험') ? 'block' : 'none';
+  // ---- 신규 통합 카테고리 매핑 ----
+  const GUIDE_CATS = ["암","뇌/심","수술비","간병/치매","어린이/태아","운전자","자동차","화재/배상","연금/종신","치아/펫"];
+  const COV_CAT_MAP = {
+    "암진단비":"암", "유사암진단비":"암", "암수술비":"암", "항암약물치료비":"암", "표적항암약물허가치료비":"암", "항암방사선치료비":"암", "다빈치로봇수술비":"암",
+    "뇌혈관질환진단비":"뇌/심", "허혈성심장질환진단비":"뇌/심", "2대질환(뇌·심)주요치료비":"뇌/심",
+    "질병수술비":"수술비", "상해수술비":"수술비", "종수술비(1~3종·1~5종·1~7종·1~8종)":"수술비",
+    "치매진단비":"간병/치매", "입원일당":"간병/치매", "간병인사용일당":"간병/치매", "간호간병통합서비스":"간병/치매", "중증치매생활자금":"간병/치매", "장기요양등급담보":"간병/치매",
+    "일상생활배상책임":"화재/배상", "시설소유관리자배상책임":"화재/배상", "임차자화재배상책임":"화재/배상", "음식물·생산물배상책임":"화재/배상"
+  };
+  const PROD_CAT_MAP = {
+    "암보험 가입 시 확인할 담보":"암",
+    "실손보험 세대별 차이":"수술비",
+    "간병보험 가입 시 주의사항":"간병/치매",
+    "운전자보험의 주요 보장":"운전자",
+    "상가화재보험 필수담보":"화재/배상",
+    "연금보험과 연금저축 비교":"연금/종신"
+  };
+
+  const guideState = { cat: GUIDE_CATS[0], kw: "" };
+
+  function buildGuideList(){
+    const covItems = coverageData.map((d, i) => ({ src:"coverage", idx:i, name:d.name, cat:COV_CAT_MAP[d.name] || "기타", summary:d.summary }));
+    const prodItems = productData.map((d, i) => ({ src:"product", idx:i, name:d.title, cat:PROD_CAT_MAP[d.title] || "기타", summary:d.summary }));
+    return covItems.concat(prodItems);
   }
-  if(_pgr){
-    _pgr.innerHTML = PRODUCT_CATS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-pcat="${g}">${g}</button>`).join('');
-    _pgr.addEventListener('click', (e) => {
-      const b = e.target.closest('.filter-pill'); if(!b) return;
-      _pgr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-      b.classList.add('active');
-      pdState.cat = b.dataset.pcat;
-      renderProductGrid();
-      toggleDriverPins();
+
+  function renderGuideGrid(){
+    const grid = document.getElementById('guideGrid');
+    if(!grid) return;
+    let list = buildGuideList();
+    if(guideState.kw){
+      const kw = guideState.kw.toLowerCase();
+      list = list.filter(d => d.name.toLowerCase().includes(kw) || (d.summary||'').toLowerCase().includes(kw) || d.cat.toLowerCase().includes(kw));
+    } else {
+      list = list.filter(d => d.cat === guideState.cat);
+    }
+    if(!list.length){
+      grid.innerHTML = '<div class="cr-empty" style="grid-column:1/-1; padding:28px; text-align:center;">해당 자료가 없습니다.<br><span style="font-size:11.5px;">자료가 준비되면 추가됩니다.</span></div>';
+      return;
+    }
+    grid.innerHTML = list.map(d => `
+      <div class="dz-card" data-src="${d.src}" data-idx="${d.idx}">
+        <div class="dz-card-group">${escapeHtml(d.cat)}</div>
+        <div class="dz-card-name" style="font-size:13.5px;">${escapeHtml(d.name)}</div>
+      </div>`).join('');
+    grid.querySelectorAll('.dz-card').forEach(c => {
+      c.addEventListener('click', () => {
+        if(c.dataset.src === 'coverage') openCoverageModal(Number(c.dataset.idx));
+        else openProductModal(Number(c.dataset.idx));
+      });
     });
   }
-  toggleDriverPins();
-  document.querySelectorAll('.driver-img, .driver-menu-item').forEach(el => {
+
+  function toggleGuidePins(){
+    const isSearching = !!guideState.kw;
+    const cat = guideState.cat;
+    const dWrap = document.getElementById('driverPinsWrap');
+    if(dWrap) dWrap.style.display = (!isSearching && cat === '운전자') ? 'block' : 'none';
+    const siWrap = document.getElementById('surgInsurePinsWrap');
+    if(siWrap) siWrap.style.display = (!isSearching && cat === '수술비') ? 'block' : 'none';
+    const sWrap = document.getElementById('surgeryPinsWrap');
+    if(sWrap) sWrap.style.display = (!isSearching && cat === '수술비') ? 'block' : 'none';
+    const cWrap = document.getElementById('cancerPinsWrap');
+    if(cWrap) cWrap.style.display = (!isSearching && cat === '암') ? 'block' : 'none';
+    const dcWrap = document.getElementById('dementiaCarePinsWrap');
+    if(dcWrap) dcWrap.style.display = (!isSearching && cat === '간병/치매') ? 'block' : 'none';
+  }
+
+  // ---- 이미지 갤러리 (다중 페이지) ----
+  const LB_GALLERIES = {
+    cancerAll: { title:"암의 모든 것", images:[
+      { url:"assets/cancerguide/all1.jpg", caption:"암의 모든 것 (1/2)" },
+      { url:"assets/cancerguide/all2.jpg", caption:"암의 모든 것 (2/2)" }
+    ]},
+    cancerSurgery: { title:"암수술 한눈에 정리", images:[
+      { url:"assets/cancerguide/surgery1.jpg", caption:"암수술 한눈에 정리 (1/2)" },
+      { url:"assets/cancerguide/surgery2.jpg", caption:"암수술 한눈에 정리 (2/2)" }
+    ]},
+    dementiaMain: { title:"치매보험 한눈에 정리", images:[
+      { url:"assets/dementiaguide/1.jpg", caption:"치매보험 한눈에 정리 (1/2)" },
+      { url:"assets/dementiaguide/2.jpg", caption:"치매보험 한눈에 정리 (2/2)" }
+    ]},
+    dementiaTreatment: { title:"레켐비(표적치매치료제) 지급요건", images:[
+      { url:"assets/dementiaguide/treatment1.jpg", caption:"레켐비 보험금 지급 5가지 핵심요건" }
+    ]}
+  };
+  document.querySelectorAll('.lb-menu-item').forEach(el => {
     el.addEventListener('click', () => {
-      document.getElementById('surgeryLbImg').src = el.dataset.full;
-      document.getElementById('surgeryLbCap').textContent = el.dataset.cap;
-      document.getElementById('surgeryLbPrev').style.display = 'none';
-      document.getElementById('surgeryLbNext').style.display = 'none';
-      document.getElementById('surgeryLb').classList.add('open');
+      const g = LB_GALLERIES[el.dataset.gallery];
+      if(g) lbOpen(g.images, 0);
     });
   });
-  const _pds = document.getElementById('productSearch');
-  if(_pds) _pds.addEventListener('input', (e) => { pdState.kw = e.target.value.trim(); renderProductGrid(); });
-  renderProductGrid();
+
+  const _ggr = document.getElementById('guideGroupRow');
+  if(_ggr){
+    _ggr.innerHTML = GUIDE_CATS.map((g, i) => `<button class="filter-pill${i===0?' active':''}" data-gcat="${g}">${g}</button>`).join('');
+    _ggr.addEventListener('click', (e) => {
+      const b = e.target.closest('.filter-pill'); if(!b) return;
+      _ggr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      guideState.cat = b.dataset.gcat;
+      guideState.kw = '';
+      const _gs0 = document.getElementById('guideSearch');
+      if(_gs0) _gs0.value = '';
+      renderGuideGrid();
+      toggleGuidePins();
+    });
+  }
+  const _gs = document.getElementById('guideSearch');
+  if(_gs) _gs.addEventListener('input', (e) => {
+    guideState.kw = e.target.value.trim();
+    if(guideState.kw && _ggr) _ggr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    renderGuideGrid();
+    toggleGuidePins();
+  });
+
+  document.querySelectorAll('.driver-img, .driver-menu-item').forEach(el => {
+    el.addEventListener('click', () => {
+      lbOpen([{ url: el.dataset.full, caption: el.dataset.cap }], 0);
+    });
+  });
+
+  renderGuideGrid();
+  toggleGuidePins();
 
 
   // ================= 영업자료실 =================
