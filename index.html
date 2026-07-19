@@ -1336,7 +1336,7 @@ body.growon{ background:var(--g-navy); }
       <div class="gview" id="view-qna">
 <section class="panel panel-navy" id="qna">
         <div class="panel-head">
-          <div><div class="panel-eyebrow">Q&amp;A</div><h2 class="panel-title">🍯 그로우꿀단지</h2></div>
+          <div><h2 class="panel-title">🍯 그로우꿀단지</h2></div>
         </div>
 
         <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
@@ -1385,12 +1385,14 @@ body.growon{ background:var(--g-navy); }
                 <button type="button" class="driver-menu-item" data-full="assets/driver/lawyer.jpg" data-cap="변호사선임비용">
                   <span class="dm-icon">👨‍⚖️</span><span class="dm-label">변호사선임비용</span><span class="dm-arrow">›</span>
                 </button>
-                <button type="button" class="driver-menu-item" data-full="assets/driver/lawyer_update.jpg" data-cap="변호사선임비용 변경사항(2026.01~)">
-                  <span class="dm-icon">🆕</span><span class="dm-label">변호사선임비용 변경사항(2026.01~)</span><span class="dm-arrow">›</span>
-                </button>
                 <button type="button" class="driver-menu-item" data-full="assets/driver/injury.jpg" data-cap="자동차부상치료비">
                   <span class="dm-icon">🚑</span><span class="dm-label">자동차부상치료비</span><span class="dm-arrow">›</span>
                 </button>
+              </div>
+
+              <div class="driver-img-block" style="margin-top:18px;">
+                <div class="driver-img-label">🆕 변호사선임비용 변경사항(2026.01~)</div>
+                <img class="driver-img" data-full="assets/driver/lawyer_update.jpg" data-cap="변호사선임비용 변경사항(2026.01~)" src="assets/driver/lawyer_update.jpg" alt="변호사선임비용 변경사항">
               </div>
             </div>
           </div>
@@ -1414,10 +1416,10 @@ body.growon{ background:var(--g-navy); }
                   <span class="dm-icon">🎯</span><span class="dm-label">N대 수술비란?</span><span class="dm-arrow">›</span>
                 </button>
                 <button type="button" class="driver-menu-item" data-full="assets/surginsure/compare.jpg" data-cap="수술비 보험의 종류와 보장범위">
-                  <span class="dm-icon">📊</span><span class="dm-label">수술비 보험의 종류와 보장범위 비교</span><span class="dm-arrow">›</span>
+                  <span class="dm-icon">📊</span><span class="dm-label">수술비 보험의 종류와 보장범위</span><span class="dm-arrow">›</span>
                 </button>
-                <button type="button" class="driver-menu-item" data-full="assets/surginsure/combo.jpg" data-cap="3종 수술비로 빈틈없이 대비하기">
-                  <span class="dm-icon">🛡️</span><span class="dm-label">3종(수술비+시술비+N대) 함께 준비하는 이유</span><span class="dm-arrow">›</span>
+                <button type="button" class="driver-menu-item" data-full="assets/surginsure/combo.jpg" data-cap="3종 수술비로 수술·시술·반복치료까지 빈틈없이 대비하자!">
+                  <span class="dm-icon">🛡️</span><span class="dm-label">3종 수술비로 수술·시술·반복치료까지 빈틈없이 대비하자!</span><span class="dm-arrow">›</span>
                 </button>
               </div>
             </div>
@@ -1569,12 +1571,12 @@ body.growon{ background:var(--g-navy); }
           <div class="disease-toolbar">
             <div class="filter-row disease-grouprow" id="underwriteGroupRow"></div>
           </div>
+          <div id="underwriteDiseaseWrap" style="display:none; margin-bottom:20px;">
+            <div class="subsection-title">🩺 유병자(질병력자) 가입 가능 여부</div>
+            <div class="disease-grid" id="underwriteDiseaseGrid"></div>
+          </div>
           <div id="underwriteFaqWrap">
             <div class="faq-list" id="underwriteFaqList"></div>
-          </div>
-          <div id="underwriteDiseaseWrap" style="display:none;">
-            <div class="subsection-title" style="margin-top:18px;">🩺 유병자(질병력자) 가입 가능 여부</div>
-            <div class="disease-grid" id="underwriteDiseaseGrid"></div>
           </div>
         </div>
 
