@@ -327,6 +327,28 @@
   .ai-float-btn:hover{background:var(--orange-deep); transform:translateY(-2px);}
   .ai-float-btn span{font-size:11.5px; font-weight:800; line-height:1.3; text-align:left;}
   @media (max-width:640px){ .ai-float-btn span{display:none;} .ai-float-btn{padding:14px; border-radius:50%;} }
+  /* ===== AI 보험비서 채팅 팝업 ===== */
+  .ai-chat-card{max-width:480px; display:flex; flex-direction:column; height:min(640px,80vh); padding:0; overflow:hidden;}
+  .ai-chat-head{display:flex; align-items:center; gap:10px; padding:20px 22px 14px; border-bottom:1px solid var(--line); flex:none;}
+  .ai-chat-icon{font-size:24px;}
+  .ai-chat-title{font-weight:900; font-size:15px; color:var(--navy-2);}
+  .ai-chat-sub{font-size:11px; color:var(--slate); margin-top:1px;}
+  .ai-chat-body{flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:12px;}
+  .ai-chat-empty{margin:auto; text-align:center; font-size:12.5px; color:var(--slate); line-height:1.7;}
+  .ai-chat-empty span{font-size:11px; opacity:.75;}
+  .ai-msg{max-width:88%; padding:11px 14px; border-radius:13px; font-size:12.5px; line-height:1.6; white-space:pre-wrap;}
+  .ai-msg-user{align-self:flex-end; background:var(--navy-2); color:#fff; border-bottom-right-radius:3px;}
+  .ai-msg-bot{align-self:flex-start; background:#F1F2FB; color:var(--ink); border-bottom-left-radius:3px;}
+  .ai-msg-bot.loading{color:var(--slate); font-style:italic;}
+  .ai-msg-sources{margin-top:8px; padding-top:8px; border-top:1px solid rgba(0,0,0,.08); font-size:10.5px; display:flex; flex-direction:column; gap:4px;}
+  .ai-msg-sources a{color:var(--orange-deep); text-decoration:none; font-weight:700;}
+  .ai-msg-sources a:hover{text-decoration:underline;}
+  .ai-chat-input-row{display:flex; gap:8px; padding:14px 16px; border-top:1px solid var(--line); flex:none;}
+  .ai-chat-input{flex:1; padding:11px 14px; border:1px solid var(--line); border-radius:10px; font-size:13px;}
+  .ai-chat-input:focus{outline:none; border-color:var(--orange);}
+  .ai-chat-send{flex:none; background:var(--navy-2); color:#fff; border:none; border-radius:10px; padding:0 18px; font-size:13px; font-weight:800; cursor:pointer;}
+  .ai-chat-send:hover{background:var(--orange-deep);}
+  .ai-chat-send:disabled{opacity:.5; cursor:default;}
   /* ===== 질병별 인수가이드 ===== */
   .disease-notice{background:var(--orange-tint); border-radius:10px; padding:13px 15px; font-size:12.5px; color:var(--navy-2); line-height:1.6; margin-bottom:14px;}
   .disease-caution{font-size:11px; color:var(--slate); margin-top:6px;}
@@ -1873,6 +1895,27 @@ body.growon{ background:var(--g-navy); }
   </div>
 </div>
 <button type="button" id="aiFloatBtn" class="ai-float-btn">🤖<span>AI 보험비서에게<br>질문하기</span></button>
+
+<div class="modal-backdrop" id="aiChatModalBackdrop">
+  <div class="modal-card ai-chat-card">
+    <button class="modal-close" id="aiChatModalClose">&times;</button>
+    <div class="ai-chat-head">
+      <span class="ai-chat-icon">🤖</span>
+      <div>
+        <div class="ai-chat-title">AI 보험비서</div>
+        <div class="ai-chat-sub">등록된 자료를 근거로만 답변합니다</div>
+      </div>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody">
+      <div class="ai-chat-empty">궁금하신 내용을 입력해보세요.<br><span>예: 유사암 지급비율이 어떻게 되나요?</span></div>
+    </div>
+    <div class="ai-chat-input-row">
+      <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="질문을 입력하세요...">
+      <button type="button" id="aiChatSend" class="ai-chat-send">전송</button>
+    </div>
+  </div>
+</div>
+
 <div class="alb-lb" id="albLb">
   <div class="alb-lb-box">
     <button class="alb-lb-x" id="albLbX">&times;</button>
@@ -2899,38 +2942,69 @@ body.growon{ background:var(--g-navy); }
     return `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:6px; margin-top:8px;">${images.map(src => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">`).join('')}</div>`;
   }
 
-  async function runDocSearch(){
-    const inputEl = document.getElementById('docSearchInput');
-    const box = document.getElementById('docSearchResults');
-    if(!inputEl || !box) return;
-    const kw = inputEl.value.trim();
-    if(!kw){ box.innerHTML = ''; return; }
-    box.innerHTML = `<div class="doc-empty-note">검색 중입니다...</div>`;
+  function aiChatAddMsg(role, text, sources){
+    const body = document.getElementById('aiChatBody');
+    if(!body) return null;
+    const empty = body.querySelector('.ai-chat-empty');
+    if(empty) empty.remove();
+    const div = document.createElement('div');
+    div.className = 'ai-msg ' + (role === 'user' ? 'ai-msg-user' : 'ai-msg-bot');
+    div.textContent = text;
+    if(sources && sources.length){
+      const srcBox = document.createElement('div');
+      srcBox.className = 'ai-msg-sources';
+      srcBox.innerHTML = sources.map(s => s.link
+        ? `<a href="${escapeHtml(s.link)}" target="_blank" rel="noopener">📄 ${escapeHtml(s.name || '자료')} 원문 열기 →</a>`
+        : `<span>📄 ${escapeHtml(s.name || '')}</span>`).join('');
+      div.appendChild(srcBox);
+    }
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return div;
+  }
+
+  async function aiChatSend(){
+    const input = document.getElementById('aiChatInput');
+    const sendBtn = document.getElementById('aiChatSend');
+    if(!input) return;
+    const q = input.value.trim();
+    if(!q) return;
+    aiChatAddMsg('user', q);
+    input.value = '';
+    input.disabled = true;
+    if(sendBtn) sendBtn.disabled = true;
+    const loadingEl = aiChatAddMsg('bot', 'AI가 자료를 확인하고 있습니다...');
+    if(loadingEl) loadingEl.classList.add('loading');
     try{
       const res = await fetch(DOC_AI_SEARCH_WEBHOOK, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ query: kw })
+        body: JSON.stringify({ query: q })
       });
       const data = await res.json();
+      if(loadingEl) loadingEl.remove();
       if(!data.success){
-        box.innerHTML = `<div class="doc-empty-note">검색 중 오류가 발생했습니다.</div>`;
-        return;
+        aiChatAddMsg('bot', '답변을 가져오는 중 오류가 발생했습니다.');
+      } else {
+        aiChatAddMsg('bot', data.answer || '답변을 찾지 못했습니다.', data.sources);
       }
-      const sourcesHtml = (data.sources && data.sources.length)
-        ? data.sources.map(s => s.link ? `<a href="${s.link}" target="_blank" rel="noopener">📄 ${escapeHtml(s.name || '')} 원문 열기 →</a>` : `<span>📄 ${escapeHtml(s.name || '')}</span>`).join('<br>')
-        : '';
-      box.innerHTML = `<div class="doc-search-result">
-        <div class="doc-snippet" style="font-size:13px; white-space:pre-wrap;">${escapeHtml(data.answer || '')}</div>
-        ${sourcesHtml ? `<div style="margin-top:10px;">${sourcesHtml}</div>` : ''}
-      </div>`;
     } catch(err){
-      box.innerHTML = `<div class="doc-empty-note">네트워크 오류로 검색에 실패했습니다.</div>`;
+      if(loadingEl) loadingEl.remove();
+      aiChatAddMsg('bot', '네트워크 오류로 답변을 가져오지 못했습니다.');
+    } finally {
+      input.disabled = false;
+      if(sendBtn) sendBtn.disabled = false;
+      input.focus();
     }
   }
-  const _dsb = document.getElementById('docSearchBtn');
-  if(_dsb) _dsb.addEventListener('click', runDocSearch);
-  const _dsi = document.getElementById('docSearchInput');
-  if(_dsi) _dsi.addEventListener('keydown', e => { if(e.key === 'Enter') runDocSearch(); });
+  const _aics = document.getElementById('aiChatSend');
+  if(_aics) _aics.addEventListener('click', aiChatSend);
+  const _aici = document.getElementById('aiChatInput');
+  if(_aici) _aici.addEventListener('keydown', e => { if(e.key === 'Enter') aiChatSend(); });
+  function closeAiChatModal(){ document.getElementById('aiChatModalBackdrop').classList.remove('open'); }
+  const _aicc = document.getElementById('aiChatModalClose');
+  if(_aicc) _aicc.addEventListener('click', closeAiChatModal);
+  const _aicb = document.getElementById('aiChatModalBackdrop');
+  if(_aicb) _aicb.addEventListener('click', (e) => { if(e.target.id === 'aiChatModalBackdrop') closeAiChatModal(); });
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
@@ -3385,17 +3459,12 @@ body.growon{ background:var(--g-navy); }
 
   renderCardPayment();
 
-  /* AI 보험비서 플로팅 버튼: 그로우꿀단지 > 질문센터 탭으로 이동 후 검색창에 포커스 */
+  /* AI 보험비서 플로팅 버튼: AI 채팅 팝업 오픈 */
   const _aifb = document.getElementById('aiFloatBtn');
   if(_aifb) _aifb.addEventListener('click', () => {
-    const qnaNav = document.querySelector('[data-view="qna"]');
-    if(qnaNav) qnaNav.click();
-    setTimeout(() => {
-      const centerTab = document.querySelector('[data-qtab="center"]');
-      if(centerTab) centerTab.click();
-      const input = document.querySelector('#qna-center .faq-search');
-      if(input){ input.scrollIntoView({behavior:'smooth', block:'center'}); input.focus(); }
-    }, 150);
+    document.getElementById('aiChatModalBackdrop').classList.add('open');
+    const input = document.getElementById('aiChatInput');
+    if(input) setTimeout(() => input.focus(), 150);
   });
 
 
