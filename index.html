@@ -621,6 +621,8 @@
   .alb-lb img{max-width:92vw; max-height:78vh; border-radius:10px; display:block;}
   .alb-lb-box{position:relative; text-align:center;}
   .alb-lb-cap{color:#fff; font-size:13px; font-weight:800; margin-top:12px;}
+  .lb-download-btn{display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:9px 20px; background:var(--orange); color:#fff; font-size:12.5px; font-weight:800; border-radius:999px; text-decoration:none; cursor:pointer; transition:.15s;}
+  .lb-download-btn:hover{background:#c97a1e; transform:translateY(-1px);}
   .alb-lb-sub{color:#B9C4D9; font-size:11px; font-weight:700; margin-top:3px;}
   .alb-lb-x{position:absolute; top:-14px; right:-8px; background:none; border:none; color:#fff; font-size:30px; line-height:1; cursor:pointer;}
   .alb-lb-nav{position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.14); border:none; color:#fff; font-size:24px; width:44px; height:44px; border-radius:50%; cursor:pointer;}
@@ -1671,10 +1673,10 @@ body.growon{ background:var(--g-navy); }
 
   <div class="gcol" id="colRight">
     <div class="rail-t">주요 메뉴</div>
+    <button class="gbtn" data-view="qna">🍯 그로우꿀단지</button>
     <button class="gbtn" data-view="materials">교육센터</button>
     <button class="gbtn" data-view="salesmaterials">영업자료실</button>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
-    <button class="gbtn" data-view="qna">🍯 그로우꿀단지</button>
 
     <div class="rail-t">업무링크</div>
 
@@ -1782,6 +1784,7 @@ body.growon{ background:var(--g-navy); }
     <button class="alb-lb-nav next" id="surgeryLbNext">›</button>
     <img id="surgeryLbImg" src="" alt="">
     <div class="alb-lb-cap" id="surgeryLbCap"></div>
+    <a id="surgeryLbDownload" class="lb-download-btn" download title="이미지 다운로드">⬇ 다운로드</a>
   </div>
 </div>
 <div class="modal-backdrop" id="productModalBackdrop">
@@ -3586,7 +3589,8 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('faqModalA').textContent = f.answer || '';
     const imgWrap = document.getElementById('faqModalImg');
     if(f.image){
-      imgWrap.innerHTML = `<img src="${escapeHtml(f.image)}" alt="" style="width:100%; border-radius:10px; margin-top:14px; cursor:pointer;" onclick="window.open('${escapeHtml(f.image)}','_blank')">`;
+      imgWrap.innerHTML = `<img src="${escapeHtml(f.image)}" alt="" style="width:100%; border-radius:10px; margin-top:14px; cursor:pointer;" onclick="window.open('${escapeHtml(f.image)}','_blank')">
+        <a href="${escapeHtml(f.image)}" download class="lb-download-btn" style="margin-top:10px;">⬇ 다운로드</a>`;
     } else {
       imgWrap.innerHTML = '';
     }
@@ -3897,6 +3901,13 @@ body.growon{ background:var(--g-navy); }
     const showNav = lbImages.length > 1;
     document.getElementById('surgeryLbPrev').style.display = showNav ? '' : 'none';
     document.getElementById('surgeryLbNext').style.display = showNav ? '' : 'none';
+    const dlBtn = document.getElementById('surgeryLbDownload');
+    if(dlBtn){
+      dlBtn.href = img.url;
+      const safeName = (img.caption || 'image').replace(/\//g, '-').replace(/[\\:*?"<>|]/g, '').trim();
+      const ext = (img.url.split('.').pop() || 'jpg').split('?')[0];
+      dlBtn.setAttribute('download', safeName + '.' + ext);
+    }
     document.getElementById('surgeryLb').classList.add('open');
   }
   const _slx = document.getElementById('surgeryLbX');
