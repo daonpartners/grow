@@ -1530,7 +1530,22 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
-
+          <div id="firePinsWrap" style="display:none;">
+            <div class="surgery-pin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">🔥</span>
+                <div>
+                  <div class="surgery-pin-title">화재보험 가이드</div>
+                  <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
+                </div>
+              </div>
+              <div class="driver-menu">
+                <button type="button" class="lb-menu-item" data-gallery="fireGuide">
+                  <span class="dm-icon">🏢</span><span class="dm-label">화재보험 가이드 (건물급수·화재요율·업종별담보)</span><span class="dm-arrow">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
 
           <div id="dementiaCarePinsWrap" style="display:none;">
             <div class="guide-box-row">
@@ -3942,7 +3957,7 @@ body.growon{ background:var(--g-navy); }
     { key:"samsung",  label:"삼성화재", pages:1, ext:"jpg", title:"115대 질병수술비" },
     { key:"heungkuk", label:"흥국화재", pages:2, ext:"jpg", title:"신142대수술비" },
     { key:"db",       label:"DB손보",   pages:1, ext:"jpg", title:"119대 질병수술비 분류표" },
-    { key:"hanwha",   label:"한화손보", pages:1, ext:"jpg", title:"124대 질병수술비" },
+    { key:"hanwha",   label:"한화손보", pages:2, ext:"jpg", title:"124대 질병 분류표" },
     { key:"lotte",    label:"롯데손보", pages:1, ext:"jpg", title:"142대 수술비" },
     { key:"meritz",   label:"메리츠",   pages:1, ext:"jpg", title:"131대 질병(다빈도64대질병) 분류표" }
   ];
@@ -4153,6 +4168,8 @@ body.growon{ background:var(--g-navy); }
     if(cWrap) cWrap.style.display = (!isSearching && cat === '암') ? 'block' : 'none';
     const dcWrap = document.getElementById('dementiaCarePinsWrap');
     if(dcWrap) dcWrap.style.display = (!isSearching && cat === '치매·간병') ? 'block' : 'none';
+    const fWrap = document.getElementById('firePinsWrap');
+    if(fWrap) fWrap.style.display = (!isSearching && cat === '화재보험') ? 'block' : 'none';
   }
 
   const _ggr = document.getElementById('guideGroupRow');
@@ -4179,6 +4196,10 @@ body.growon{ background:var(--g-navy); }
   });
 
   const LB_GALLERIES = {
+    fireGuide: { title:"화재보험 가이드", images:[
+      { url:"assets/fireguide/fire1.jpg", caption:"화재보험 가입 전 반드시 알아야 할 건물급수·화재요율 완벽정리" },
+      { url:"assets/fireguide/fire2.jpg", caption:"화재보험 가입 A to Z - 업종별 필수담보·고객확인질문·유의사항 (2/2)" }
+    ]},
     brainHeartDiagnosis: { title:"뇌/심장 진단코드", images:[
       { url:"assets/brainheart/diagnosis1.jpg", caption:"뇌/심장 관련 질환 진단코드" }
     ]},
