@@ -1,126 +1,133 @@
 {
-  "date": "2026-07-13",
-  "dateLabel": "2026.07.13(월)",
+  "date": "2026-07-20",
+  "dateLabel": "2026.07.20(월)",
   "weather": [
     {
       "city": "서울",
-      "min": 24,
-      "max": 33,
-      "code": 3
+      "min": 22,
+      "max": 25,
+      "code": 63
     },
     {
       "city": "부산",
       "min": 26,
-      "max": 31,
-      "code": 3
+      "max": 30,
+      "code": 63
     },
     {
       "city": "대구",
       "min": 25,
-      "max": 34,
-      "code": 1
+      "max": 33,
+      "code": 51
     },
     {
       "city": "인천",
-      "min": 25,
-      "max": 31,
-      "code": 2
+      "min": 22,
+      "max": 25,
+      "code": 63
     },
     {
       "city": "광주",
-      "min": 26,
-      "max": 31,
-      "code": 1
+      "min": 25,
+      "max": 30,
+      "code": 55
     },
     {
       "city": "대전",
-      "min": 24,
-      "max": 34,
-      "code": 1
+      "min": 23,
+      "max": 31,
+      "code": 61
     },
     {
       "city": "강릉",
-      "min": 26,
-      "max": 37,
-      "code": 2
+      "min": 22,
+      "max": 24,
+      "code": 51
     },
     {
       "city": "제주",
-      "min": 26,
-      "max": 32,
-      "code": 0
+      "min": 25,
+      "max": 33,
+      "code": 3
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,880.97",
-      "diff": "-594.97",
+      "value": "6,820.60",
+      "diff": "-463.81",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "801.59",
-      "diff": "-35.84",
+      "value": "791.84",
+      "diff": "-37.59",
       "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,506.98",
-      "diff": "+1.07",
+      "value": "1,486.67",
+      "diff": "+7.82",
       "dir": "up"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "74.5",
-      "diff": "+3.0",
+      "value": "84.3",
+      "diff": "+1.8",
       "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "737,914",
-      "diff": "-7,228",
-      "dir": "down"
+      "value": "716,981",
+      "diff": "+1,525",
+      "dir": "up"
     }
   ],
   "trends": [
-    "박지원",
-    "코스피 주가",
-    "전인화"
+    "파리 생제르맹 fc",
+    "스페인 축구 국가대표팀 대 아르헨티나 축구 국가대표팀 통계",
+    "육아"
   ],
   "news": [
     {
-      "cat": "경제",
-      "title": "7월부터 국민연금 보험료 인상",
-      "summary": "7월부터 국민연금 기준소득월액 상한과 하한이 조정되어 보험료가 인상된다. 고소득 가입자는 월 2만900원 증가하며, 전체 가입자의 86%는 영향이 없다.",
-      "url": "https://n.news.naver.com/article/009/0005706102",
-      "host": "n.news.naver.com"
+      "cat": "사회",
+      "title": "GA 법적 대응 증가, SNS 비방 문제",
+      "summary": "GA 업계의 설계사 영입 경쟁이 SNS로 확대되며 비방과 허위정보 유포가 분쟁 요인으로 떠오르고 있다.",
+      "url": "https://www.insjournal.co.kr/news/articleView.html?idxno=32285",
+      "host": "insjournal.co.kr"
     },
     {
       "cat": "보험",
-      "title": "에즈금융서비스, 허위사실 유포 법적 대응",
-      "summary": "에즈금융서비스가 허위사실 유포에 대해 법적 대응을 시작했다. 김앤장과 함께 손해배상 청구 및 가압류 절차를 진행 중이다.",
-      "url": "http://www.fins.co.kr/news/articleView.html?idxno=109127",
-      "host": "fins.co.kr"
-    },
-    {
-      "cat": "사회",
-      "title": "당뇨병 환자, 80세 이상 치매 사망 증가",
-      "summary": "당뇨병 환자의 치매 사망률이 80세 이상에서 급증하고 있다는 연구 결과가 발표됐다. 이는 당뇨병 치료 발전으로 수명이 늘어난 반면, 치매가 새로운 건강 부담으로 떠오르고 있음을 시사한다.",
-      "url": "https://v.daum.net/v/20260712210148518?from=newsbot&botref=CN2&botevent=q",
-      "host": "v.daum.net"
+      "title": "판매수수료 공개, 설계사 긴장",
+      "summary": "소비자가 보험 설계사에게 판매수수료를 확인할 수 있는 제도가 도입됐다. 이에 따라 설계사들은 추천 이유를 더 명확히 설명해야 할 의무가 생겼다.",
+      "url": "https://n.news.naver.com/article/243/0000100582?sid=101",
+      "host": "n.news.naver.com"
     },
     {
       "cat": "생활",
-      "title": "여름철 신장 건강, 물 섭취 중요",
-      "summary": "여름철 갈증을 느끼기 전에 물을 충분히 마시는 것이 신장 건강에 중요하다. 탈수 예방을 위해 적절한 수분 섭취가 필요하며, 만성 질환자는 주의해야 한다.",
-      "url": "https://v.daum.net/v/20260712173128553?from=newsbot&botref=CN2&botevent=q",
+      "title": "전자레인지 사용 시 미세플라스틱 주의",
+      "summary": "플라스틱 용기를 전자레인지에 가열하면 미세플라스틱이 방출될 수 있다. 유리나 도자기 용기로 옮겨 데우는 것이 좋다.",
+      "url": "https://v.daum.net/v/20260720050246190?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "사회",
+      "title": "치매 환자 요양원과 병원 선택 기준",
+      "summary": "치매 환자의 요양원과 요양병원 선택은 몸 상태와 의료 관찰 필요성에 따라 달라진다. 안정적이면 요양원, 잦은 처치가 필요하면 요양병원이 적합하다.",
+      "url": "https://v.daum.net/v/20260719232151272?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "사회",
+      "title": "차세대 항암 플랫폼 RPT 상용화 속도",
+      "summary": "차세대 항암 플랫폼 RPT가 국내에서 상용화되고 있으며, 여러 제약사가 임상을 진행 중이다. RPT는 암세포를 직접 공격하는 방식으로 치료 효과를 높일 수 있다.",
+      "url": "https://v.daum.net/v/20260719180814112?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "신뢰는 쌓기 어렵고 무너지기는 쉽다",
-    "author": "워런 버핏"
+    "text": "작은 일을 참지 못하면 큰 계획을 그르친다",
+    "author": "공자"
   },
-  "updatedAt": "2026-07-13T13:53:51.000Z"
+  "updatedAt": "2026-07-20T07:50:39.000Z"
 }
