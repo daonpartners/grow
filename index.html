@@ -1175,7 +1175,7 @@ body.growon{ background:var(--g-navy); }
               <option value="다온">다온</option>
               <option value="도약">도약</option>
               <option value="동행">동행</option>
-              <option value="광주">광주</option>
+              <option value="혁신">혁신</option>
             </select>
             <input type="text" id="fcName" placeholder="본인 이름 (담당FC에 등록된 이름과 동일하게)" autocomplete="off">
             <input type="password" id="fcCode" placeholder="지사 조회 코드" autocomplete="off">
@@ -3285,11 +3285,11 @@ body.growon{ background:var(--g-navy); }
 
 
   const gBranches = [
-    { name:'광명지사', city:'광명',   x:208, y:206, addr:'경기 광명시',   lx:-11, ly:14 },
-    { name:'동행지사', city:'인천검단', x:168, y:190, addr:'인천 검단',    lx:-11, ly:4 },
-    { name:'도약지사', city:'남양주',  x:262, y:190, addr:'경기 남양주시', lx:11,  ly:4 },
-    { name:'다온지사', city:'천안아산', x:224, y:268, addr:'충남 천안·아산', lx:11, ly:4 },
-    { name:'광주지사', city:'광주',   x:198, y:430, addr:'전라남도 광주', lx:-11, ly:4 }
+    { name:'광명지사', city:'광명',   x:208, y:206, addr:'경기도 광명시 일직로 12번길 21 SH&01프라자 503,504호', manager:'황경호 (사업부총괄대표)', phone:'010-6301-6808', lx:-11, ly:14 },
+    { name:'동행지사', city:'인천검단', x:168, y:190, addr:'인천광역시 검단구 완정로 165번안길 1 이편한프라자 503,504호', manager:'허준', phone:'010-9116-4634', lx:-11, ly:4 },
+    { name:'도약지사', city:'남양주',  x:262, y:190, addr:'경기 남양주시 다산중앙로123번길 21-3 다산역리더스타워 301호', manager:'박진근', phone:'010-5271-4491', lx:11,  ly:4 },
+    { name:'다온지사', city:'천안아산', x:224, y:268, addr:'충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C301호', manager:'김화진', phone:'010-4007-7901', lx:11, ly:4 },
+    { name:'혁신지사', city:'광주',   x:198, y:430, addr:'광주광역시 광산구 하남을로24 우솔빌딩 3층 302호', manager:'양길성', phone:'010-2972-3966', lx:-11, ly:4 }
   ];
   function gMapSvg(){
     const pins = gBranches.map((b,i)=>{
@@ -3313,18 +3313,29 @@ body.growon{ background:var(--g-navy); }
       <div class="map-wrap">
         <div>${gMapSvg()}</div>
         <div><h4 style="font-size:14px;font-weight:900;margin-bottom:10px;">지사 목록</h4>
-          ${gBranches.map((b,i)=>`<div class="branch" data-bi="${i}"><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.addr)}</span></div>`).join('')}
-          <div class="gnote">지사별 주소·연락처를 주시면 채워 드립니다.</div>
+          ${gBranches.map((b,i)=>`<div class="branch" data-bi="${i}"><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.manager||'')} · ${escapeHtml(b.phone||'')}</span></div>`).join('')}
         </div>
       </div>
+      <div class="branch-detail" id="branchDetail" style="display:none; margin-top:16px; padding:16px 18px; background:#f6f8ff; border:1px solid var(--line); border-radius:12px;"></div>
       <div style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
         <div class="panel-eyebrow">Grow Album</div>
         <h2 class="panel-title" style="font-size:17px;">그로우앨범</h2>
         <div class="alb-grid" id="albGridMini"></div>
       </div>`;
+    function showBranchDetail(i){
+      const b = gBranches[i]; if(!b) return;
+      const d = document.getElementById('branchDetail');
+      if(!d) return;
+      d.style.display = 'block';
+      d.innerHTML = `<div style="font-size:15px; font-weight:900; color:var(--navy-2); margin-bottom:8px;">${escapeHtml(b.name)}</div>
+        <div style="font-size:13px; color:var(--slate); line-height:1.7;">
+          📍 ${escapeHtml(b.addr)}<br>
+          👤 지사장 ${escapeHtml(b.manager||'')}<br>
+          📞 ${escapeHtml(b.phone||'')}
+        </div>`;
+    }
     box.querySelectorAll('.branch,.pin-g').forEach(el=>{
-      el.addEventListener('click',()=>{ const b=gBranches[Number(el.dataset.bi)];
-        if(b) alert(b.name+'\n'+b.addr+'\n\n상세 정보를 등록해 주세요.'); });
+      el.addEventListener('click',()=> showBranchDetail(Number(el.dataset.bi)));
     });
   }
   function showView(v){
@@ -4775,9 +4786,9 @@ body.growon{ background:var(--g-navy); }
   ];
   const ADMIN_ACCOUNTS = {
     'grow26':     { role: 'admin' },
-    'doyak2026':  { role: 'manager', branch: '도약', label: '도약지사장' },
+    'dy2026':     { role: 'manager', branch: '도약', label: '도약지사장' },
     'dh2026':     { role: 'manager', branch: '동행', label: '동행지사장' },
-    'gj2026':     { role: 'manager', branch: '광주', label: '광주지사장' }
+    'hs2026':     { role: 'manager', branch: '혁신', label: '혁신지사장' }
   };
 
   let admRole = '';
@@ -5455,7 +5466,7 @@ body.growon{ background:var(--g-navy); }
   const DB_BOARD_FEED   = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-board';
   const DB_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-post';
   const DB_APPLY_WEBHOOK= 'https://daonpartners.app.n8n.cloud/webhook/daon-db-apply';
-  const DB_BRANCHES = ['광명','다온','도약','동행','광주'];
+  const DB_BRANCHES = ['광명','다온','도약','동행','혁신'];
 
   let dbbPosts = [];
   let dbbLoaded = false;
