@@ -1608,6 +1608,50 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
+          <div id="liabilityPinsWrap" style="display:none;">
+            <div class="surgery-pin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">⚖️</span>
+                <div>
+                  <div class="surgery-pin-title">배상책임보험 완벽정리</div>
+                  <div class="surgery-pin-desc">보종별 정의·가입대상·보상범위·과태료·상담포인트를 이미지로 정리했습니다. 클릭하면 크게 볼 수 있습니다.</div>
+                </div>
+              </div>
+              <div class="driver-menu">
+                <button type="button" class="lb-menu-item" data-gallery="liabilityFood">
+                  <span class="dm-icon">🍽️</span><span class="dm-label">음식물배상책임보험 (임의보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityLessee">
+                  <span class="dm-icon">🏠</span><span class="dm-label">임차자배상책임보험 (임의보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityPremises">
+                  <span class="dm-icon">🏢</span><span class="dm-label">시설소유(관리)자배상책임보험 (임의보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityPlayground">
+                  <span class="dm-icon">🛝</span><span class="dm-label">어린이놀이시설배상책임보험 (의무보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityAcademy">
+                  <span class="dm-icon">🏫</span><span class="dm-label">학원배상책임보험 (의무보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityElevator">
+                  <span class="dm-icon">🛗</span><span class="dm-label">승강기사고배상책임보험 (의무보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityGas">
+                  <span class="dm-icon">🔥</span><span class="dm-label">가스사고배상책임보험 (의무보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityDisaster">
+                  <span class="dm-icon">🚨</span><span class="dm-label">재난배상책임보험 (의무보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilityMultiuse">
+                  <span class="dm-icon">🏬</span><span class="dm-label">다중이용업소화재배상책임보험 (의무보험)</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="liabilitySpecial">
+                  <span class="dm-icon">🏙️</span><span class="dm-label">특수건물특약부화재보험 (의무보험)</span><span class="dm-arrow">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div id="dementiaCarePinsWrap" style="display:none;">
             <div class="guide-box-row">
               <div class="surgery-pin guide-box">
@@ -4314,6 +4358,8 @@ body.growon{ background:var(--g-navy); }
     if(dcWrap) dcWrap.style.display = (!isSearching && cat === '치매·간병') ? 'block' : 'none';
     const fWrap = document.getElementById('firePinsWrap');
     if(fWrap) fWrap.style.display = (!isSearching && cat === '화재보험') ? 'block' : 'none';
+    const lWrap = document.getElementById('liabilityPinsWrap');
+    if(lWrap) lWrap.style.display = (!isSearching && cat === '배상책임보험') ? 'block' : 'none';
   }
 
   const _ggr = document.getElementById('guideGroupRow');
@@ -4377,6 +4423,36 @@ body.growon{ background:var(--g-navy); }
     ]},
     dementiaTreatment: { title:"레켐비(표적치매치료제) 지급요건", images:[
       { url:"assets/dementiaguide/treatment1.jpg", caption:"레켐비 보험금 지급 5가지 핵심요건" }
+    ]},
+    liabilityFood: { title:"음식물배상책임보험", images:[
+      { url:"assets/liabilityguide/food.jpg", caption:"음식물배상책임보험 - 식중독·이물질 사고를 대비하는 음식점 핵심 임의 담보" }
+    ]},
+    liabilityLessee: { title:"임차자배상책임보험", images:[
+      { url:"assets/liabilityguide/lessee.jpg", caption:"임차자배상책임보험 - 임차한 건물에 대한 화재손해를 대비하는 핵심 임의 담보" }
+    ]},
+    liabilityPlayground: { title:"어린이놀이시설배상책임보험", images:[
+      { url:"assets/liabilityguide/playground.jpg", caption:"어린이놀이시설배상책임보험 - 놀이시설 이용 중 사고에 대비하는 법정 의무보험" }
+    ]},
+    liabilityAcademy: { title:"학원배상책임보험", images:[
+      { url:"assets/liabilityguide/academy.jpg", caption:"학원배상책임보험 - 수강생 사고에 대비하는 학원 관련 의무 보장" }
+    ]},
+    liabilityPremises: { title:"시설소유(관리)자배상책임보험", images:[
+      { url:"assets/liabilityguide/premises.jpg", caption:"시설소유(관리)자배상책임보험 - 사업장 내 고객 사고를 대비하는 대표적인 임의 배상담보" }
+    ]},
+    liabilityElevator: { title:"승강기사고배상책임보험", images:[
+      { url:"assets/liabilityguide/elevator.jpg", caption:"승강기사고배상책임보험 - 승강기 이용 중 사고에 대비하는 법정 의무보험" }
+    ]},
+    liabilityGas: { title:"가스사고배상책임보험", images:[
+      { url:"assets/liabilityguide/gas.jpg", caption:"가스사고배상책임보험 - 가스 사고로 인한 대인·대물 손해를 대비하는 법정 의무보험" }
+    ]},
+    liabilityDisaster: { title:"재난배상책임보험", images:[
+      { url:"assets/liabilityguide/disaster.jpg", caption:"재난배상책임보험 - 화재·폭발·붕괴 사고에 대비하는 법정 의무보험" }
+    ]},
+    liabilityMultiuse: { title:"다중이용업소화재배상책임보험", images:[
+      { url:"assets/liabilityguide/multiuse.jpg", caption:"다중이용업소화재배상책임보험 - 다중이용업소의 화재·폭발 사고에 대비하는 법정 의무보험" }
+    ]},
+    liabilitySpecial: { title:"특수건물특약부화재보험", images:[
+      { url:"assets/liabilityguide/special.jpg", caption:"특수건물특약부화재보험 - 특수건물의 화재손해와 대인·대물배상을 대비하는 법정 의무보험" }
     ]}
   };
   document.querySelectorAll('.lb-menu-item').forEach(el => {
