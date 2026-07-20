@@ -848,7 +848,15 @@ body.growon{ background:var(--g-navy); }
   .gi-decl-d{font-size:12.5px; line-height:1.85; margin-top:10px; opacity:.9;}
   .gi-foot{font-size:11.5px; line-height:1.75; color:var(--slate); margin-top:18px; padding-top:14px; border-top:1px dashed var(--line);}
 .map-wrap{display:grid; grid-template-columns:1fr 250px; gap:18px; align-items:start;}
-.kmap{width:100%; height:auto;}
+.kmap-box{position:relative;}
+.branch-popup{position:absolute; z-index:20; min-width:180px; max-width:220px; background:#fff; border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 10px 28px rgba(15,39,64,.22); padding:12px 14px; transform:translate(-50%,-116%); pointer-events:auto;}
+.branch-popup::after{content:""; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); width:14px; height:14px; background:#fff;
+  border-right:1px solid var(--line); border-bottom:1px solid var(--line); border-radius:0 0 3px 0; transform:translateX(-50%) rotate(45deg);}
+.branch-popup-x{position:absolute; top:4px; right:7px; border:none; background:none; font-size:16px; line-height:1; color:#9AA6B8; cursor:pointer; padding:2px;}
+.branch-popup-name{font-size:13.5px; font-weight:900; color:var(--navy-2); margin-bottom:6px; padding-right:14px;}
+.branch-popup-line{font-size:11.5px; color:#5A6B80; line-height:1.6;}
+.kmap{width:100%; height:auto; display:block;}
 .kmap .region{fill:#E8EDF3; stroke:#fff; stroke-width:1.5;}
 .pin{fill:var(--g-orange); stroke:#fff; stroke-width:2; cursor:pointer;}
 .pin:hover{fill:var(--g-orange-deep);}
@@ -3286,7 +3294,7 @@ body.growon{ background:var(--g-navy); }
 
   const gBranches = [
     { name:'광명지사', city:'광명',   x:208, y:206, addr:'경기도 광명시 일직로 12번길 21 SH&01프라자 503,504호', manager:'황경호 (사업부총괄대표)', phone:'010-6301-6808', lx:-11, ly:14 },
-    { name:'동행지사', city:'인천검단', x:168, y:190, addr:'인천광역시 검단구 완정로 165번안길 1 이편한프라자 503,504호', manager:'허준', phone:'010-9116-4634', lx:-11, ly:4 },
+    { name:'동행지사', city:'인천', x:168, y:190, addr:'인천광역시 검단구 완정로 165번안길 1 이편한프라자 503,504호', manager:'허준', phone:'010-9116-4634', lx:-11, ly:4 },
     { name:'도약지사', city:'남양주',  x:262, y:190, addr:'경기 남양주시 다산중앙로123번길 21-3 다산역리더스타워 301호', manager:'박진근', phone:'010-5271-4491', lx:11,  ly:4 },
     { name:'다온지사', city:'천안아산', x:224, y:268, addr:'충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C301호', manager:'김화진', phone:'010-4007-7901', lx:11, ly:4 },
     { name:'혁신지사', city:'광주',   x:198, y:430, addr:'광주광역시 광산구 하남을로24 우솔빌딩 3층 302호', manager:'양길성', phone:'010-2972-3966', lx:-11, ly:4 }
@@ -3311,31 +3319,42 @@ body.growon{ background:var(--g-navy); }
     box.innerHTML = `
       <div class="panel-head"><div><div class="panel-eyebrow">Grow On</div><h2 class="panel-title">전국지사안내</h2></div></div>
       <div class="map-wrap">
-        <div>${gMapSvg()}</div>
+        <div class="kmap-box" id="kmapBox">${gMapSvg()}</div>
         <div><h4 style="font-size:14px;font-weight:900;margin-bottom:10px;">지사 목록</h4>
           ${gBranches.map((b,i)=>`<div class="branch" data-bi="${i}"><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.manager||'')} · ${escapeHtml(b.phone||'')}</span></div>`).join('')}
         </div>
       </div>
-      <div class="branch-detail" id="branchDetail" style="display:none; margin-top:16px; padding:16px 18px; background:#f6f8ff; border:1px solid var(--line); border-radius:12px;"></div>
       <div style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
         <div class="panel-eyebrow">Grow Album</div>
         <h2 class="panel-title" style="font-size:17px;">그로우앨범</h2>
         <div class="alb-grid" id="albGridMini"></div>
       </div>`;
-    function showBranchDetail(i){
+    function showBranchPopup(i){
       const b = gBranches[i]; if(!b) return;
-      const d = document.getElementById('branchDetail');
-      if(!d) return;
-      d.style.display = 'block';
-      d.innerHTML = `<div style="font-size:15px; font-weight:900; color:var(--navy-2); margin-bottom:8px;">${escapeHtml(b.name)}</div>
-        <div style="font-size:13px; color:var(--slate); line-height:1.7;">
-          📍 ${escapeHtml(b.addr)}<br>
-          👤 지사장 ${escapeHtml(b.manager||'')}<br>
-          📞 ${escapeHtml(b.phone||'')}
-        </div>`;
+      const kbox = document.getElementById('kmapBox');
+      if(!kbox) return;
+      let pop = document.getElementById('branchPopup');
+      if(!pop){
+        pop = document.createElement('div');
+        pop.className = 'branch-popup';
+        pop.id = 'branchPopup';
+        kbox.appendChild(pop);
+      }
+      pop.style.left = (b.x / 460 * 100) + '%';
+      pop.style.top = (b.y / 560 * 100) + '%';
+      pop.innerHTML = `<button type="button" class="branch-popup-x" id="branchPopupX">&times;</button>
+        <div class="branch-popup-name">${escapeHtml(b.name)}</div>
+        <div class="branch-popup-line">📍 ${escapeHtml(b.addr)}</div>
+        <div class="branch-popup-line">📞 ${escapeHtml(b.phone||'')}</div>`;
+      const xBtn = document.getElementById('branchPopupX');
+      if(xBtn) xBtn.addEventListener('click', (e) => { e.stopPropagation(); pop.remove(); });
     }
     box.querySelectorAll('.branch,.pin-g').forEach(el=>{
-      el.addEventListener('click',()=> showBranchDetail(Number(el.dataset.bi)));
+      el.addEventListener('click',(e)=>{ e.stopPropagation(); showBranchPopup(Number(el.dataset.bi)); });
+    });
+    document.addEventListener('click', (e) => {
+      const pop = document.getElementById('branchPopup');
+      if(pop && !pop.contains(e.target) && !e.target.closest('.branch,.pin-g')) pop.remove();
     });
   }
   function showView(v){
