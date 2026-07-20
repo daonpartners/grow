@@ -701,6 +701,50 @@
   @media (max-width:480px){ .modal-tile{max-width:calc(33.333% - 7px);} }
   .modal-empty{font-size:12px; color:var(--slate); text-align:center; padding:20px;}
 
+  /* ===== 상담·영업자료 게시판 ===== */
+  .sm-adminbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    background:#f6f8ff; border:1px dashed var(--line); border-radius:10px; padding:10px 12px; margin-bottom:12px;}
+  .sm-adminwho{font-size:12px; font-weight:700; color:var(--slate);}
+  .sm-newbtn{background:var(--orange); color:#fff; border:none; border-radius:9px; padding:9px 15px;
+    font-size:12.5px; font-weight:800; cursor:pointer;}
+  .sm-newbtn:hover{background:var(--orange-deep);}
+  .sm-by{font-size:11px; color:var(--slate); margin-left:6px; white-space:nowrap;}
+  .sm-edit,.sm-del{border:1px solid var(--line); background:#fff; border-radius:8px; padding:5px 10px;
+    font-size:11.5px; font-weight:700; cursor:pointer; margin-left:5px; color:var(--navy-2);}
+  .sm-edit:hover{border-color:var(--orange); color:var(--orange-deep);}
+  .sm-del:hover{border-color:#d9534f; color:#d9534f;}
+  .modal-card.sm-form-card{max-width:460px;}
+  .sm-form-row{margin-top:14px;}
+  .sm-form-row label{display:block; font-size:12px; font-weight:800; color:var(--navy-2); margin-bottom:6px;}
+  .sm-form-row label b{color:var(--orange-deep);}
+  .sm-form-row input[type=text]{width:100%; box-sizing:border-box; padding:11px 13px; border:1px solid var(--line);
+    border-radius:10px; font-size:13px;}
+  .sm-form-row input[type=text]:focus{outline:none; border-color:var(--orange);}
+  .sm-form-row input[type=file]{width:100%; box-sizing:border-box; font-size:12px;}
+  .sm-form-hint{font-size:11px; color:var(--slate); margin-top:6px;}
+  .sm-form-msg{font-size:12px; font-weight:700; margin-top:12px; min-height:16px;}
+  .sm-form-submit{width:100%; margin-top:14px; background:var(--navy-2); color:#fff; border:none;
+    border-radius:10px; padding:13px; font-size:13.5px; font-weight:800; cursor:pointer;}
+  .sm-form-submit:hover{background:var(--orange-deep);}
+  .sm-form-submit:disabled{opacity:.55; cursor:default;}
+  @media (max-width:640px){
+    .sm-adminbar{flex-direction:column; align-items:stretch;}
+    .sm-newbtn{width:100%; padding:11px;}
+    .sm-by{display:none;}
+  }
+
+  /* ===== AI 채팅 모달 : 모바일 전송버튼 노출 보정 ===== */
+  .modal-card.ai-chat-card{max-width:480px; padding:0; display:flex; flex-direction:column; height:min(640px,80vh); overflow:hidden;}
+  .modal-card.ai-chat-card .ai-chat-input-row{display:flex; align-items:center; gap:8px; padding:12px 14px; border-top:1px solid var(--line); flex:none; box-sizing:border-box;}
+  .modal-card.ai-chat-card .ai-chat-input{flex:1 1 auto; min-width:0; width:100%; box-sizing:border-box;}
+  .modal-card.ai-chat-card .ai-chat-send{flex:0 0 auto; white-space:nowrap; min-width:62px; height:42px;}
+  @media (max-width:640px){
+    .modal-card.ai-chat-card{height:min(640px,86vh);}
+    .modal-card.ai-chat-card .ai-chat-input-row{padding:10px 10px calc(10px + env(safe-area-inset-bottom));}
+    .modal-card.ai-chat-card .ai-chat-input{font-size:16px; padding:10px 12px;}
+    .modal-card.ai-chat-card .ai-chat-send{min-width:56px; padding:0 12px; font-size:13px;}
+  }
+
   [data-reveal]{opacity:0; transform:translateY(8px); animation:reveal .45s ease forwards;}
   @keyframes reveal{ to{opacity:1; transform:translateY(0);} }
   @media (prefers-reduced-motion:reduce){ [data-reveal]{animation:none; opacity:1; transform:none;} }
@@ -1367,7 +1411,7 @@ body.growon{ background:var(--g-navy); }
           <button class="edu-tab" data-qtab="claim2">📮 보상·청구 가이드</button>
           <button class="edu-tab" data-qtab="sales">🗣️ 상담·영업자료</button>
           <button class="edu-tab" data-qtab="archive">🗂️ 서식·다운로드</button>
-          <button class="edu-tab" data-qtab="center">💬 FAQ·AI 질문</button>
+          <button class="edu-tab" data-qtab="center">💬 FAQ</button>
         </div>
 
         <div class="edu-panel active" id="qna-guide">
@@ -1623,10 +1667,6 @@ body.growon{ background:var(--g-navy); }
 
         <div class="edu-panel" id="qna-sales">
 <div id="salesmaterials">
-        <div class="panel-head">
-          <div><div class="panel-eyebrow">Sales Materials</div><h2 class="panel-title">영업자료실</h2></div>
-        </div>
-
         <div class="edu-tabs" id="smTabs" data-reveal>
           <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
           <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
@@ -1910,6 +1950,29 @@ body.growon{ background:var(--g-navy); }
   </div>
 </div>
 <button type="button" id="aiFloatBtn" class="ai-float-btn">🤖<span>AI 보험비서에게<br>질문하기</span></button>
+
+<div class="modal-backdrop" id="smFormBackdrop">
+  <div class="modal-card sm-form-card">
+    <button class="modal-close" id="smFormClose">&times;</button>
+    <div class="panel-eyebrow">상담·영업자료</div>
+    <h2 class="panel-title" id="smFormTitle">새 자료 등록</h2>
+    <div class="sm-form-row">
+      <label>제목 <b>*</b></label>
+      <input type="text" id="smFormName" placeholder="예) 2026 어린이보험 카드뉴스 3종">
+    </div>
+    <div class="sm-form-row">
+      <label>설명 (선택)</label>
+      <input type="text" id="smFormMeta" placeholder="예) A4 2p · 상담 시 태블릿용">
+    </div>
+    <div class="sm-form-row">
+      <label>파일</label>
+      <input type="file" id="smFormFile" accept="image/*,.pdf,.zip,.7z,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.hwp,.hwpx">
+      <div class="sm-form-hint" id="smFormFileHint">이미지 · PDF · 문서 · 압축파일 (최대 25MB)</div>
+    </div>
+    <div class="sm-form-msg" id="smFormMsg"></div>
+    <button type="button" class="sm-form-submit" id="smFormSubmit">등록</button>
+  </div>
+</div>
 
 <div class="modal-backdrop" id="aiChatModalBackdrop">
   <div class="modal-card ai-chat-card">
@@ -3014,7 +3077,12 @@ body.growon{ background:var(--g-navy); }
   const _aics = document.getElementById('aiChatSend');
   if(_aics) _aics.addEventListener('click', aiChatSend);
   const _aici = document.getElementById('aiChatInput');
-  if(_aici) _aici.addEventListener('keydown', e => { if(e.key === 'Enter') aiChatSend(); });
+  if(_aici) _aici.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    if(e.isComposing || e.keyCode === 229) return; /* 한글 입력 조합중 중복전송 방지 */
+    e.preventDefault();
+    aiChatSend();
+  });
   function closeAiChatModal(){ document.getElementById('aiChatModalBackdrop').classList.remove('open'); }
   const _aicc = document.getElementById('aiChatModalClose');
   if(_aicc) _aicc.addEventListener('click', closeAiChatModal);
@@ -4345,6 +4413,11 @@ body.growon{ background:var(--g-navy); }
 
   // ================= 영업자료실 =================
   // n8n/Notion/Drive 자동화 대상: 폴더별 배열이 자동으로 채워집니다. (name, type, meta, link)
+  /* 자유게시판 방식: sales/sales.json 에서 불러옵니다. 지사장 이상이면 게시/수정/삭제 가능 */
+  const SALES_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/grow-sales-post';
+  const SALES_JSON    = 'sales/sales.json';
+  const SALES_MAX_MB  = 25;
+
   const salesMaterials = {
     cardnews:   [], // 이미지, 압축파일
     leaflet:    [], // pdf파일, 이미지
@@ -4357,27 +4430,96 @@ body.growon{ background:var(--g-navy); }
     consulting: '컨설팅자료', industry: '업종별 제안서'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
+
+  function smTypeOf(filename, mime){
+    const n = (filename||'').toLowerCase();
+    if((mime||'').startsWith('image/') || /\.(png|jpe?g|gif|webp)$/.test(n)) return 'image';
+    if(/\.(zip|7z|rar)$/.test(n)) return 'zip';
+    if(/\.pdf$/.test(n)) return 'pdf';
+    return 'doc';
+  }
+  /* 게시 권한: 관리자(본부) + 지사장 모두 허용 */
+  function smCanEdit(){ return sessionStorage.getItem('growAdmin') === '1'; }
+  function smWhoAmI(){
+    return sessionStorage.getItem('growName') || sessionStorage.getItem('growLabel') || '관리자';
+  }
+
+  async function loadSalesMaterials(){
+    try{
+      const res = await fetch(SALES_JSON + '?t=' + Date.now(), { cache:'no-store' });
+      if(!res.ok) throw new Error('no file');
+      const data = await res.json();
+      Object.keys(salesMaterials).forEach(k => { salesMaterials[k] = []; });
+      const rows = Array.isArray(data) ? data : (data.items || []);
+      rows.forEach(r => {
+        const key = r.folder;
+        if(!salesMaterials[key]) return;
+        salesMaterials[key].push({
+          id:   r.id || '',
+          name: r.name || r.title || '(제목없음)',
+          type: r.type || smTypeOf(r.name, r.mime),
+          meta: r.meta || '',
+          link: r.link || '',
+          author: r.author || '',
+          date: r.date || ''
+        });
+      });
+      /* 최신글이 위로 */
+      Object.keys(salesMaterials).forEach(k => {
+        salesMaterials[k].sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+      });
+    }catch(e){
+      /* sales.json 이 아직 없으면 빈 목록으로 표시 */
+    }
+    Object.keys(salesMaterials).forEach(renderSmFolder);
+  }
+
   function renderSmFolder(key){
     const box = document.getElementById('smList-' + key);
     if(!box) return;
     const list = salesMaterials[key] || [];
+    const canEdit = smCanEdit();
+
+    const bar = canEdit
+      ? `<div class="sm-adminbar">
+           <span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span>
+           <button type="button" class="sm-newbtn" data-newkey="${key}">＋ 새 글 등록</button>
+         </div>`
+      : '';
+
     if(!list.length){
-      box.innerHTML = `<div class="cr-empty" style="padding:28px; text-align:center;">${escapeHtml(smFolderLabel[key])} 자료가 없습니다.<br><span style="font-size:11.5px;">자료를 주시면 채워 드립니다.</span></div>`;
+      box.innerHTML = bar + `<div class="cr-empty" style="padding:28px; text-align:center;">${escapeHtml(smFolderLabel[key])} 자료가 없습니다.${canEdit ? '<br><span style="font-size:11.5px;">위 «＋ 새 글 등록» 으로 올려주세요.</span>' : '<br><span style="font-size:11.5px;">자료가 등록되면 이곳에 표시됩니다.</span>'}</div>`;
+      smBindFolder(box);
       return;
     }
-    box.innerHTML = list.map((f, idx) => `
+
+    box.innerHTML = bar + list.map((f, idx) => `
       <div class="sm-item" data-idx="${idx}" data-key="${key}" ${f.type === 'image' ? 'style="cursor:pointer;"' : ''}>
         <span class="sm-icon">${smIcon[f.type] || '📁'}</span>
         <span class="sm-name">${escapeHtml(f.name)}</span>
         ${f.meta ? `<span class="sm-meta">${escapeHtml(f.meta)}</span>` : ''}
+        ${f.author || f.date ? `<span class="sm-by">${escapeHtml([f.author, (f.date||'').slice(0,10)].filter(Boolean).join(' · '))}</span>` : ''}
         ${f.type === 'image' ? `<span class="sm-view">🔍 확인</span>` : ''}
         <a class="sm-dl" href="${escapeHtml(f.link||'#')}" download="${escapeHtml(f.name||'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">다운로드</a>
+        ${canEdit ? `<button type="button" class="sm-edit" data-ekey="${key}" data-eidx="${idx}" onclick="event.stopPropagation()">수정</button>
+        <button type="button" class="sm-del" data-dkey="${key}" data-didx="${idx}" onclick="event.stopPropagation()">삭제</button>` : ''}
       </div>`).join('');
+    smBindFolder(box);
+  }
+
+  function smBindFolder(box){
     box.querySelectorAll('.sm-item[style*="cursor:pointer"]').forEach(el => {
       el.addEventListener('click', () => smPreviewOpen(el.dataset.key, Number(el.dataset.idx)));
     });
+    const nb = box.querySelector('.sm-newbtn');
+    if(nb) nb.addEventListener('click', () => smOpenForm(nb.dataset.newkey, null));
+    box.querySelectorAll('.sm-edit').forEach(b => {
+      b.addEventListener('click', () => smOpenForm(b.dataset.ekey, Number(b.dataset.eidx)));
+    });
+    box.querySelectorAll('.sm-del').forEach(b => {
+      b.addEventListener('click', () => smDelete(b.dataset.dkey, Number(b.dataset.didx)));
+    });
   }
-  Object.keys(salesMaterials).forEach(renderSmFolder);
 
   /* 영업자료실 이미지 미리보기 (카드뉴스 등). 같은 도메인 파일이라 다운로드 버튼이 실제로 저장까지 됩니다. */
   let smPreviewKey = '', smPreviewIdx = 0;
@@ -4411,6 +4553,141 @@ body.growon{ background:var(--g-navy); }
     btn.classList.add('active');
     document.getElementById('sm-' + btn.dataset.smtab).classList.add('active');
   });
+
+  /* ===== 상담·영업자료 게시판 : 등록 / 수정 / 삭제 ===== */
+  let smFormKey = '', smFormIdx = null;
+
+  function smOpenForm(key, idx){
+    if(!smCanEdit()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    smFormKey = key; smFormIdx = (idx === null || idx === undefined) ? null : idx;
+    const editing = smFormIdx !== null;
+    const f = editing ? (salesMaterials[key] || [])[smFormIdx] : null;
+    document.getElementById('smFormTitle').textContent =
+      (editing ? '자료 수정 · ' : '새 자료 등록 · ') + (smFolderLabel[key] || '');
+    document.getElementById('smFormName').value = f ? (f.name || '') : '';
+    document.getElementById('smFormMeta').value = f ? (f.meta || '') : '';
+    document.getElementById('smFormFile').value = '';
+    document.getElementById('smFormFileHint').textContent = editing
+      ? '파일을 바꾸지 않으려면 비워두세요. (최대 ' + SALES_MAX_MB + 'MB)'
+      : '이미지 · PDF · 문서 · 압축파일 (최대 ' + SALES_MAX_MB + 'MB)';
+    const msg = document.getElementById('smFormMsg');
+    msg.textContent = ''; msg.style.color = '';
+    document.getElementById('smFormSubmit').disabled = false;
+    document.getElementById('smFormSubmit').textContent = editing ? '수정 저장' : '등록';
+    document.getElementById('smFormBackdrop').classList.add('open');
+  }
+  function smCloseForm(){ document.getElementById('smFormBackdrop').classList.remove('open'); }
+
+  /* 이미지는 최대 1600px / JPEG 82% 로 리사이즈해서 전송 (n8n 메모리 보호) */
+  function smReadFile(file){
+    return new Promise((resolve, reject) => {
+      const isImg = (file.type || '').startsWith('image/') && !/gif$/i.test(file.type);
+      if(!isImg){
+        const fr = new FileReader();
+        fr.onload = () => resolve({ data: String(fr.result).split(',')[1], mime: file.type || 'application/octet-stream', filename: file.name });
+        fr.onerror = () => reject(new Error('파일을 읽지 못했습니다.'));
+        fr.readAsDataURL(file);
+        return;
+      }
+      const fr = new FileReader();
+      fr.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const max = 1600;
+          let w = img.width, h = img.height;
+          if(w > max || h > max){ const r = Math.min(max/w, max/h); w = Math.round(w*r); h = Math.round(h*r); }
+          const cv = document.createElement('canvas');
+          cv.width = w; cv.height = h;
+          const ctx = cv.getContext('2d');
+          ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+          ctx.drawImage(img, 0, 0, w, h);
+          const url = cv.toDataURL('image/jpeg', 0.82);
+          const base = (file.name || 'image').replace(/\.[^.]+$/, '');
+          resolve({ data: url.split(',')[1], mime: 'image/jpeg', filename: base + '.jpg' });
+        };
+        img.onerror = () => reject(new Error('이미지를 처리하지 못했습니다.'));
+        img.src = String(fr.result);
+      };
+      fr.onerror = () => reject(new Error('파일을 읽지 못했습니다.'));
+      fr.readAsDataURL(file);
+    });
+  }
+
+  const _smfs = document.getElementById('smFormSubmit');
+  if(_smfs) _smfs.addEventListener('click', async () => {
+    const msg = document.getElementById('smFormMsg');
+    const btn = document.getElementById('smFormSubmit');
+    const name = document.getElementById('smFormName').value.trim();
+    const meta = document.getElementById('smFormMeta').value.trim();
+    const fileEl = document.getElementById('smFormFile');
+    const file = fileEl.files && fileEl.files[0];
+    const editing = smFormIdx !== null;
+
+    if(!name){ msg.textContent = '제목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    if(!editing && !file){ msg.textContent = '파일을 선택해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    if(file && file.size > SALES_MAX_MB * 1024 * 1024){
+      msg.textContent = '파일이 너무 큽니다. ' + SALES_MAX_MB + 'MB 이하로 올려주세요.';
+      msg.style.color = 'var(--orange-deep)'; return;
+    }
+
+    btn.disabled = true; btn.textContent = '전송 중...';
+    msg.textContent = '전송 중입니다. 창을 닫지 마세요.'; msg.style.color = 'var(--slate)';
+
+    try{
+      const payload = {
+        action: editing ? 'update' : 'create',
+        folder: smFormKey,
+        name: name,
+        meta: meta,
+        author: smWhoAmI(),
+        branch: sessionStorage.getItem('growBranch') || '',
+        role: sessionStorage.getItem('growRole') || ''
+      };
+      if(editing) payload.id = (salesMaterials[smFormKey][smFormIdx] || {}).id || '';
+      if(file){
+        const f = await smReadFile(file);
+        payload.filename = f.filename;
+        payload.mime = f.mime;
+        payload.data = f.data;
+        payload.type = smTypeOf(f.filename, f.mime);
+      }
+      const res = await fetch(SALES_WEBHOOK, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      msg.textContent = '완료되었습니다. 목록을 새로고침합니다.'; msg.style.color = 'green';
+      setTimeout(async () => { smCloseForm(); await loadSalesMaterials(); }, 900);
+    }catch(err){
+      msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류') + ' · 잠시 후 다시 시도해주세요.';
+      msg.style.color = 'var(--orange-deep)';
+      btn.disabled = false; btn.textContent = editing ? '수정 저장' : '등록';
+    }
+  });
+
+  async function smDelete(key, idx){
+    if(!smCanEdit()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    const f = (salesMaterials[key] || [])[idx];
+    if(!f) return;
+    if(!confirm('«' + f.name + '»\n\n정말 삭제하시겠습니까? 삭제하면 되돌릴 수 없습니다.')) return;
+    try{
+      const res = await fetch(SALES_WEBHOOK, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'delete', folder:key, id:f.id || '', name:f.name, author: smWhoAmI() })
+      });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      await loadSalesMaterials();
+    }catch(err){
+      alert('삭제에 실패했습니다: ' + (err.message || '네트워크 오류'));
+    }
+  }
+
+  const _smfx = document.getElementById('smFormClose');
+  if(_smfx) _smfx.addEventListener('click', smCloseForm);
+  const _smfb = document.getElementById('smFormBackdrop');
+  if(_smfb) _smfb.addEventListener('click', (e) => { if(e.target.id === 'smFormBackdrop') smCloseForm(); });
+
+  loadSalesMaterials();
+  window.reloadSalesMaterials = loadSalesMaterials;
 
 
   // ================= 관리자센터 =================
@@ -4507,6 +4784,7 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('adminBody').style.display = 'block';
     applyAdminRole();
     loadAdminFeed();
+    if(window.reloadSalesMaterials) window.reloadSalesMaterials();
   }
 
   function admSaveSession(){
