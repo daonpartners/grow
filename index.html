@@ -412,6 +412,8 @@
   .driver-menu{display:flex; flex-direction:column; gap:7px;}
   .driver-menu-item{display:flex; align-items:center; gap:10px; width:100%; background:#fff; border:1px solid #D3D7F5; border-radius:10px; padding:12px 14px; cursor:pointer; font-family:inherit; text-align:left; transition:.13s;}
   .driver-menu-item:hover{border-color:var(--orange); background:#F3F4FE;}
+  .driver-board-item{display:flex; align-items:center; gap:10px; width:100%; background:#fff; border:1px solid #D3D7F5; border-radius:10px; padding:12px 14px; cursor:pointer; font-family:inherit; text-align:left; transition:.13s;}
+  .driver-board-item:hover{border-color:var(--orange); background:#F3F4FE;}
   .dm-icon{flex:none; font-size:16px;}
   .dm-label{flex:1; font-size:13px; font-weight:700; color:var(--navy-2);}
   .dm-arrow{flex:none; font-size:19px; color:var(--slate); font-weight:400;}
@@ -1471,8 +1473,15 @@ body.growon{ background:var(--g-navy); }
               </div>
 
               <div class="driver-img-block" style="margin-top:18px;">
-                <div class="driver-img-label">🆕 변호사선임비용 변경사항(2026.01~)</div>
-                <img class="driver-img" data-full="assets/driver/lawyer_update.jpg" data-cap="변호사선임비용 변경사항(2026.01~)" src="assets/driver/lawyer_update.jpg" alt="변호사선임비용 변경사항">
+                <div class="driver-img-label">📌 게시판 (변경사항)</div>
+                <div class="driver-menu">
+                  <button type="button" class="driver-menu-item" data-full="assets/driver/lawyer_update.jpg" data-cap="변호사선임비용 변경(2026.01~)">
+                    <span class="dm-icon">🆕</span><span class="dm-label">변호사선임비용변경(2026.01~)</span><span class="dm-arrow">›</span>
+                  </button>
+                  <button type="button" class="driver-board-item" data-product="3">
+                    <span class="dm-icon">📋</span><span class="dm-label">운전자보험의 주요보장</span><span class="dm-arrow">›</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -4465,6 +4474,11 @@ body.growon{ background:var(--g-navy); }
   document.querySelectorAll('.driver-img, .driver-menu-item').forEach(el => {
     el.addEventListener('click', () => {
       lbOpen([{ url: el.dataset.full, caption: el.dataset.cap }], 0);
+    });
+  });
+  document.querySelectorAll('.driver-board-item[data-product]').forEach(el => {
+    el.addEventListener('click', () => {
+      openProductModal(Number(el.dataset.product));
     });
   });
 
