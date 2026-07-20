@@ -357,6 +357,12 @@
   .disease-toolbar{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
   .disease-grouprow{flex-wrap:wrap;}
   .disease-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px;}
+  #guideGrid{display:flex; flex-direction:column; gap:8px;}
+  .gd-board-item{display:flex; align-items:center; gap:10px; width:100%; background:#fff; border:1px solid var(--line); border-radius:10px; padding:12px 14px; cursor:pointer; transition:.13s;}
+  .gd-board-item:hover{border-color:var(--orange); background:#F3F4FE; transform:none;}
+  .gd-board-tag{font-size:10px; font-weight:800; color:var(--orange-deep); background:var(--orange-tint); padding:3px 8px; border-radius:999px; flex-shrink:0; white-space:nowrap;}
+  .gd-board-name{font-size:13.5px; font-weight:800; color:var(--navy-2); flex:1; min-width:0;}
+  .gd-board-arrow{font-size:16px; color:var(--slate); flex-shrink:0;}
   .dz-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; cursor:pointer; transition:.13s;}
   .dz-card:hover{border-color:var(--orange); transform:translateY(-2px);}
   .dz-card-group{font-size:10px; font-weight:800; color:var(--orange-deep);}
@@ -4318,8 +4324,13 @@ body.growon{ background:var(--g-navy); }
   const guideState = { cat: GUIDE_CATS[0], kw: "" };
 
   function buildGuideList(){
+    /* 이미 해당 카테고리 게시판(핀즈랩) 안에 개별 게시글로 들어가 있는 항목은
+       여기서 중복 표시하지 않도록 제외합니다. */
+    const DUPLICATE_IN_BOARD = ["운전자보험의 주요 보장"];
     const covItems = coverageData.map((d, i) => ({ src:"coverage", idx:i, name:d.name, cat:COV_CAT_MAP[d.name] || "기타", summary:d.summary }));
-    const prodItems = productData.map((d, i) => ({ src:"product", idx:i, name:d.title, cat:PROD_CAT_MAP[d.title] || "기타", summary:d.summary }));
+    const prodItems = productData
+      .map((d, i) => ({ src:"product", idx:i, name:d.title, cat:PROD_CAT_MAP[d.title] || "기타", summary:d.summary }))
+      .filter(d => !DUPLICATE_IN_BOARD.includes(d.name));
     return covItems.concat(prodItems);
   }
 
@@ -4338,11 +4349,12 @@ body.growon{ background:var(--g-navy); }
       return;
     }
     grid.innerHTML = list.map(d => `
-      <div class="dz-card" data-src="${d.src}" data-idx="${d.idx}">
-        <div class="dz-card-group">${escapeHtml(d.cat)}</div>
-        <div class="dz-card-name" style="font-size:13.5px;">${escapeHtml(d.name)}</div>
+      <div class="gd-board-item" data-src="${d.src}" data-idx="${d.idx}">
+        <span class="gd-board-tag">${escapeHtml(d.cat)}</span>
+        <span class="gd-board-name">${escapeHtml(d.name)}</span>
+        <span class="gd-board-arrow">›</span>
       </div>`).join('');
-    grid.querySelectorAll('.dz-card').forEach(c => {
+    grid.querySelectorAll('.gd-board-item').forEach(c => {
       c.addEventListener('click', () => {
         if(c.dataset.src === 'coverage') openCoverageModal(Number(c.dataset.idx));
         else openProductModal(Number(c.dataset.idx));
