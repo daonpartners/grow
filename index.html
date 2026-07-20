@@ -2044,9 +2044,9 @@ body.growon{ background:var(--g-navy); }
       <input type="text" id="smFormMeta" placeholder="예) A4 2p · 상담 시 태블릿용">
     </div>
     <div class="sm-form-row">
-      <label>파일</label>
-      <input type="file" id="smFormFile" accept="image/*,.pdf,.zip,.7z,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.hwp,.hwpx">
-      <div class="sm-form-hint" id="smFormFileHint">이미지 · PDF · 문서 · 압축파일 (최대 25MB)</div>
+      <label>파일 (여러 장 선택 가능)</label>
+      <input type="file" id="smFormFile" multiple accept="image/*,.pdf,.zip,.7z,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.hwp,.hwpx">
+      <div class="sm-form-hint" id="smFormFileHint">이미지는 여러 장 한 번에 선택 가능 (각 파일 최대 25MB)</div>
     </div>
     <div class="sm-form-msg" id="smFormMsg"></div>
     <button type="button" class="sm-form-submit" id="smFormSubmit">등록</button>
@@ -4645,12 +4645,14 @@ body.growon{ background:var(--g-navy); }
       rows.forEach(r => {
         const key = r.folder;
         if(!salesMaterials[key]) return;
+        let links = Array.isArray(r.links) ? r.links.filter(x => x && x.link) : [];
+        if(!links.length && r.link) links = [{ link: r.link, type: r.type || smTypeOf(r.name, r.mime) }];
         salesMaterials[key].push({
           id:   r.id || '',
           name: r.name || r.title || '(제목없음)',
-          type: r.type || smTypeOf(r.name, r.mime),
+          type: r.type || (links[0] && links[0].type) || smTypeOf(r.name, r.mime),
           meta: r.meta || '',
-          link: r.link || '',
+          links: links,
           author: r.author || '',
           date: r.date || ''
         });
@@ -4684,23 +4686,29 @@ body.growon{ background:var(--g-navy); }
       return;
     }
 
-    box.innerHTML = bar + list.map((f, idx) => `
-      <div class="sm-item" data-idx="${idx}" data-key="${key}" ${f.type === 'image' ? 'style="cursor:pointer;"' : ''}>
+    box.innerHTML = bar + list.map((f, idx) => {
+      const imgCount = (f.links || []).filter(l => l.type === 'image').length;
+      const firstLink = (f.links && f.links[0] && f.links[0].link) || '#';
+      const hasImages = imgCount > 0;
+      return `
+      <div class="sm-item" data-idx="${idx}" data-key="${key}" ${hasImages ? 'style="cursor:pointer;"' : ''}>
         <span class="sm-icon">${smIcon[f.type] || '📁'}</span>
         <span class="sm-name">${escapeHtml(f.name)}</span>
+        ${imgCount > 1 ? `<span class="sm-meta">🖼️ ${imgCount}장</span>` : ''}
         ${f.meta ? `<span class="sm-meta">${escapeHtml(f.meta)}</span>` : ''}
         ${f.author || f.date ? `<span class="sm-by">${escapeHtml([f.author, (f.date||'').slice(0,10)].filter(Boolean).join(' · '))}</span>` : ''}
-        ${f.type === 'image' ? `<span class="sm-view">🔍 확인</span>` : ''}
-        <a class="sm-dl" href="${escapeHtml(f.link||'#')}" download="${escapeHtml(f.name||'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">다운로드</a>
+        ${hasImages ? `<span class="sm-view">🔍 확인</span>` : ''}
+        <a class="sm-dl" href="${escapeHtml(firstLink)}" download="${escapeHtml(f.name||'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">다운로드</a>
         ${canEdit ? `<button type="button" class="sm-edit" data-ekey="${key}" data-eidx="${idx}" onclick="event.stopPropagation()">수정</button>
         <button type="button" class="sm-del" data-dkey="${key}" data-didx="${idx}" onclick="event.stopPropagation()">삭제</button>` : ''}
-      </div>`).join('');
+      </div>`;
+    }).join('');
     smBindFolder(box);
   }
 
   function smBindFolder(box){
     box.querySelectorAll('.sm-item[style*="cursor:pointer"]').forEach(el => {
-      el.addEventListener('click', () => smPreviewOpen(el.dataset.key, Number(el.dataset.idx)));
+      el.addEventListener('click', () => smPreviewOpen(el.dataset.key, Number(el.dataset.idx), 0));
     });
     const nb = box.querySelector('.sm-newbtn');
     if(nb) nb.addEventListener('click', () => smOpenForm(nb.dataset.newkey, null));
@@ -4712,18 +4720,25 @@ body.growon{ background:var(--g-navy); }
     });
   }
 
-  /* 영업자료실 이미지 미리보기 (카드뉴스 등). 같은 도메인 파일이라 다운로드 버튼이 실제로 저장까지 됩니다. */
-  let smPreviewKey = '', smPreviewIdx = 0;
-  function smPreviewOpen(key, idx){
-    const list = (salesMaterials[key] || []).filter(f => f.type === 'image');
+  /* 영업자료실 이미지 미리보기 (카드뉴스 등). 게시물 하나에 첨부된 이미지들끼리만 넘겨봅니다. */
+  let smPreviewKey = '', smPreviewItemIdx = 0, smPreviewIdx = 0;
+  function smPreviewOpen(key, itemIdx, imgIdx){
+    const item = (salesMaterials[key] || [])[itemIdx];
+    if(!item) return;
+    const list = (item.links || []).filter(l => l.type === 'image');
     if(!list.length) return;
     smPreviewKey = key;
-    smPreviewIdx = ((salesMaterials[key] || []).slice(0, idx + 1).filter(f => f.type === 'image').length - 1 + list.length) % list.length;
+    smPreviewItemIdx = itemIdx;
+    smPreviewIdx = ((imgIdx % list.length) + list.length) % list.length;
     const f = list[smPreviewIdx];
     document.getElementById('smLbImg').src = f.link;
-    document.getElementById('smLbCap').textContent = f.name || '';
+    document.getElementById('smLbCap').textContent = item.name + (list.length > 1 ? ` (${smPreviewIdx + 1}/${list.length})` : '');
     document.getElementById('smLbDl').href = f.link;
-    document.getElementById('smLbDl').setAttribute('download', f.name || '');
+    document.getElementById('smLbDl').setAttribute('download', item.name || '');
+    const showNav = list.length > 1;
+    const _p = document.getElementById('smLbPrev'), _n = document.getElementById('smLbNext');
+    if(_p) _p.style.display = showNav ? '' : 'none';
+    if(_n) _n.style.display = showNav ? '' : 'none';
     document.getElementById('smLb').classList.add('open');
   }
   const _smlx = document.getElementById('smLbX');
@@ -4731,10 +4746,10 @@ body.growon{ background:var(--g-navy); }
   const _smlb = document.getElementById('smLb');
   if(_smlb) _smlb.addEventListener('click', (e) => { if(e.target.id === 'smLb') _smlb.classList.remove('open'); });
   const _smlp = document.getElementById('smLbPrev');
-  if(_smlp) _smlp.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewIdx - 1); });
+  if(_smlp) _smlp.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewItemIdx, smPreviewIdx - 1); });
   const _smln = document.getElementById('smLbNext');
-  if(_smln) _smln.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewIdx + 1); });
-  attachLbSwipe('smLb', () => smPreviewOpen(smPreviewKey, smPreviewIdx - 1), () => smPreviewOpen(smPreviewKey, smPreviewIdx + 1));
+  if(_smln) _smln.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewItemIdx, smPreviewIdx + 1); });
+  attachLbSwipe('smLb', () => smPreviewOpen(smPreviewKey, smPreviewItemIdx, smPreviewIdx - 1), () => smPreviewOpen(smPreviewKey, smPreviewItemIdx, smPreviewIdx + 1));
 
   const _smt = document.getElementById('smTabs');
   if(_smt) _smt.addEventListener('click', (e) => {
@@ -4760,8 +4775,8 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('smFormMeta').value = f ? (f.meta || '') : '';
     document.getElementById('smFormFile').value = '';
     document.getElementById('smFormFileHint').textContent = editing
-      ? '파일을 바꾸지 않으려면 비워두세요. (최대 ' + SALES_MAX_MB + 'MB)'
-      : '이미지 · PDF · 문서 · 압축파일 (최대 ' + SALES_MAX_MB + 'MB)';
+      ? '파일을 바꾸지 않으려면 비워두세요. 새로 선택하면 기존 첨부를 대체합니다. (여러 장 선택 가능, 각 최대 ' + SALES_MAX_MB + 'MB)'
+      : '이미지는 여러 장 한 번에 선택 가능 · PDF·문서·압축파일은 1개 (각 최대 ' + SALES_MAX_MB + 'MB)';
     const msg = document.getElementById('smFormMsg');
     msg.textContent = ''; msg.style.color = '';
     document.getElementById('smFormSubmit').disabled = false;
@@ -4812,18 +4827,27 @@ body.growon{ background:var(--g-navy); }
     const name = document.getElementById('smFormName').value.trim();
     const meta = document.getElementById('smFormMeta').value.trim();
     const fileEl = document.getElementById('smFormFile');
-    const file = fileEl.files && fileEl.files[0];
+    const files = fileEl.files ? Array.from(fileEl.files) : [];
     const editing = smFormIdx !== null;
+    const SALES_MAX_FILES = 20;
 
     if(!name){ msg.textContent = '제목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
-    if(!editing && !file){ msg.textContent = '파일을 선택해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
-    if(file && file.size > SALES_MAX_MB * 1024 * 1024){
-      msg.textContent = '파일이 너무 큽니다. ' + SALES_MAX_MB + 'MB 이하로 올려주세요.';
+    if(!editing && !files.length){ msg.textContent = '파일을 선택해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    if(files.length > SALES_MAX_FILES){
+      msg.textContent = '한 번에 최대 ' + SALES_MAX_FILES + '장까지 올릴 수 있습니다.';
+      msg.style.color = 'var(--orange-deep)'; return;
+    }
+    const tooBig = files.find(f => f.size > SALES_MAX_MB * 1024 * 1024);
+    if(tooBig){
+      msg.textContent = '"' + tooBig.name + '" 파일이 너무 큽니다. ' + SALES_MAX_MB + 'MB 이하로 올려주세요.';
       msg.style.color = 'var(--orange-deep)'; return;
     }
 
     btn.disabled = true; btn.textContent = '전송 중...';
-    msg.textContent = '전송 중입니다. 창을 닫지 마세요.'; msg.style.color = 'var(--slate)';
+    msg.textContent = files.length > 1
+      ? `전송 중입니다 (0/${files.length}). 창을 닫지 마세요.`
+      : '전송 중입니다. 창을 닫지 마세요.';
+    msg.style.color = 'var(--slate)';
 
     try{
       const payload = {
@@ -4836,12 +4860,14 @@ body.growon{ background:var(--g-navy); }
         role: sessionStorage.getItem('growRole') || ''
       };
       if(editing) payload.id = (salesMaterials[smFormKey][smFormIdx] || {}).id || '';
-      if(file){
-        const f = await smReadFile(file);
-        payload.filename = f.filename;
-        payload.mime = f.mime;
-        payload.data = f.data;
-        payload.type = smTypeOf(f.filename, f.mime);
+      if(files.length){
+        const readFiles = [];
+        for(let i = 0; i < files.length; i++){
+          const f = await smReadFile(files[i]);
+          readFiles.push({ filename: f.filename, mime: f.mime, data: f.data, type: smTypeOf(f.filename, f.mime) });
+          if(files.length > 1) msg.textContent = `전송 준비 중 (${i + 1}/${files.length})...`;
+        }
+        payload.files = readFiles;
       }
       const res = await fetch(SALES_WEBHOOK, {
         method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
