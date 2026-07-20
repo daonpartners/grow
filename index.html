@@ -1358,6 +1358,7 @@ body.growon{ background:var(--g-navy); }
         </div>
         <div class="edu-tabs" id="eduTabs" data-reveal>
           <button class="edu-tab active" data-tab="lecture">🎬 강의실</button>
+          <button class="edu-tab" data-tab="materialboard">📁 자료실</button>
         </div>
 
         <div class="edu-panel active" id="edu-lecture">
@@ -1372,6 +1373,10 @@ body.growon{ background:var(--g-navy); }
             <button class="filter-pill" data-lcat="기타">기타</button>
           </div>
           <div class="lecture-grid" id="lectureGrid" data-reveal></div>
+        </div>
+
+        <div class="edu-panel" id="edu-materialboard">
+          <div id="smList-eduArchive"></div>
         </div>
 
         <!-- 자료실 상세보기 모달 -->
@@ -4615,10 +4620,11 @@ body.growon{ background:var(--g-navy); }
     pitch:      [], // 상담화법
     consulting: [], // 컨설팅자료
     industry:   [], // 업종별 제안서
+    eduArchive: [], // 교육센터 자료실
   };
   const smFolderLabel = {
     cardnews: '카드뉴스', leaflet: '리플렛', pitch: '상담화법',
-    consulting: '컨설팅자료', industry: '업종별 제안서'
+    consulting: '컨설팅자료', industry: '업종별 제안서', eduArchive: '자료실'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
 
