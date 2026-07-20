@@ -1,3 +1,35 @@
 {
-  "items": []
+  "items": [
+    {
+      "id": "1784535925595",
+      "folder": "pitch",
+      "name": "화법카드(화재)",
+      "meta": "업종별 화재보험 화법카드",
+      "type": "image",
+      "links": [
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/pitch/1784535925595_0_ChatGPT_Image_2026년_7월_20일_오후_05_08_32.jpg",
+          "type": "image"
+        },
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/pitch/1784535925595_1_ChatGPT_Image_2026년_7월_20일_오후_05_05_01.jpg",
+          "type": "image"
+        },
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/pitch/1784535925595_2_ChatGPT_Image_2026년_7월_20일_오후_05_02_19.jpg",
+          "type": "image"
+        },
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/pitch/1784535925595_3_ChatGPT_Image_2026년_7월_20일_오후_04_58_04.jpg",
+          "type": "image"
+        },
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/pitch/1784535925595_4_ChatGPT_Image_2026년_7월_20일_오후_04_44_30.jpg",
+          "type": "image"
+        }
+      ],
+      "author": "김화진",
+      "date": "2026-07-20T08:25:25.595Z"
+    }
+  ]
 }
