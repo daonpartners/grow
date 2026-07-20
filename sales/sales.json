@@ -1,3 +1,23 @@
 {
-  "items": []
+  "items": [
+    {
+      "id": "1784535192081",
+      "folder": "cardnews",
+      "name": "다중이미지 테스트 게시물",
+      "meta": "자동확인용",
+      "type": "image",
+      "links": [
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/cardnews/1784535192081_0_test1.jpg",
+          "type": "image"
+        },
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/cardnews/1784535192081_1_test2.jpg",
+          "type": "image"
+        }
+      ],
+      "author": "Claude 자동화팀",
+      "date": "2026-07-20T08:13:12.081Z"
+    }
+  ]
 }
