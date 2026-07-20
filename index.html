@@ -647,11 +647,15 @@
   .lb-download-btn:hover{background:#c97a1e; transform:translateY(-1px);}
   .alb-lb-sub{color:#B9C4D9; font-size:11px; font-weight:700; margin-top:3px;}
   .alb-lb-x{position:absolute; top:-14px; right:-8px; background:none; border:none; color:#fff; font-size:30px; line-height:1; cursor:pointer;}
-  .alb-lb-nav{position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.14); border:none; color:#fff; font-size:24px; width:44px; height:44px; border-radius:50%; cursor:pointer;}
+  .alb-lb-nav{position:fixed; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.14); border:none; color:#fff; font-size:24px; width:44px; height:44px; border-radius:50%; cursor:pointer; z-index:230; display:flex; align-items:center; justify-content:center;}
   .alb-lb-nav:hover{background:rgba(255,255,255,.28);}
-  .alb-lb-nav.prev{left:-58px;}
-  .alb-lb-nav.next{right:-58px;}
-  @media(max-width:820px){ .alb-lb-nav.prev{left:4px;} .alb-lb-nav.next{right:4px;} }
+  .alb-lb-nav.prev{left:14px;}
+  .alb-lb-nav.next{right:14px;}
+  @media(max-width:820px){
+    .alb-lb-nav{width:48px; height:48px; font-size:26px; background:rgba(0,0,0,.45); box-shadow:0 2px 10px rgba(0,0,0,.35);}
+    .alb-lb-nav.prev{left:8px;}
+    .alb-lb-nav.next{right:8px;}
+  }
 
   .alb-up{background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:15px 17px;}
   .alb-up input[type=file]{width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; background:#fff; margin-bottom:8px; font-family:inherit;}
@@ -1569,6 +1573,9 @@ body.growon{ background:var(--g-navy); }
                 </button>
                 <button type="button" class="lb-menu-item" data-gallery="cancerSimilar">
                   <span class="dm-icon">🔍</span><span class="dm-label">유사암 완전정리</span><span class="dm-arrow">›</span>
+                </button>
+                <button type="button" class="lb-menu-item" data-gallery="cancerSimilarDocs">
+                  <span class="dm-icon">📄</span><span class="dm-label">유사암 서류확인 가이드</span><span class="dm-arrow">›</span>
                 </button>
               </div>
             </div>
@@ -3539,6 +3546,7 @@ body.growon{ background:var(--g-navy); }
   if(_cplp) _cplp.addEventListener('click', (e) => { e.stopPropagation(); cardPayOpen(cardPayIdx - 1); });
   const _cpln = document.getElementById('cardPayLbNext');
   if(_cpln) _cpln.addEventListener('click', (e) => { e.stopPropagation(); cardPayOpen(cardPayIdx + 1); });
+  attachLbSwipe('cardPayLb', () => cardPayOpen(cardPayIdx - 1), () => cardPayOpen(cardPayIdx + 1));
 
   renderCardPayment();
 
@@ -4085,10 +4093,31 @@ body.growon{ background:var(--g-navy); }
   if(_slx) _slx.addEventListener('click', () => document.getElementById('surgeryLb').classList.remove('open'));
   const _slb = document.getElementById('surgeryLb');
   if(_slb) _slb.addEventListener('click', (e) => { if(e.target.id === 'surgeryLb') _slb.classList.remove('open'); });
+  // ---- 라이트박스 공용 스와이프(좌우 밀기) 지원 : 모바일에서 화살표 대신 사진을 밀어서 넘길 수 있음 ----
+  function attachLbSwipe(containerId, prevFn, nextFn){
+    const el = document.getElementById(containerId);
+    if(!el) return;
+    let sx = 0, sy = 0, tracking = false;
+    el.addEventListener('touchstart', (e) => {
+      if(e.touches.length !== 1) return;
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
+    }, { passive:true });
+    el.addEventListener('touchend', (e) => {
+      if(!tracking) return;
+      tracking = false;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - sx, dy = t.clientY - sy;
+      if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5){
+        if(dx < 0) nextFn(); else prevFn();
+      }
+    }, { passive:true });
+  }
+
   const _slp = document.getElementById('surgeryLbPrev');
   if(_slp) _slp.addEventListener('click', (e) => { e.stopPropagation(); lbOpen(lbImages, lbIdx - 1); });
   const _sln = document.getElementById('surgeryLbNext');
   if(_sln) _sln.addEventListener('click', (e) => { e.stopPropagation(); lbOpen(lbImages, lbIdx + 1); });
+  attachLbSwipe('surgeryLb', () => lbOpen(lbImages, lbIdx - 1), () => lbOpen(lbImages, lbIdx + 1));
 
   const _scr = document.getElementById('surgeryCompanyRow');
   if(_scr){
@@ -4291,6 +4320,9 @@ body.growon{ background:var(--g-navy); }
       { url:"assets/cancerguide/similar2.jpg", caption:"유사암 완전정리 - 진단과 판단기준 (2/3)" },
       { url:"assets/cancerguide/similar3.jpg", caption:"유사암 완전정리 - 보장포인트와 상담유의사항 (3/3)" },
       { url:"assets/cancerguide/similarsummary.jpg", caption:"유사암 완벽정리 - 한 장 요약" }
+    ]},
+    cancerSimilarDocs: { title:"유사암 서류확인 가이드", images:[
+      { url:"assets/cancerguide/similardocs.png", caption:"유사암 서류확인 가이드 - 정의·병리보고서 핵심 문구·암 종류별 확인 문구" }
     ]},
     dementiaMain: { title:"치매보험 한눈에 정리", images:[
       { url:"assets/dementiaguide/1.jpg", caption:"치매보험 한눈에 정리 (1/2)" },
@@ -4543,6 +4575,7 @@ body.growon{ background:var(--g-navy); }
   if(_smlp) _smlp.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewIdx - 1); });
   const _smln = document.getElementById('smLbNext');
   if(_smln) _smln.addEventListener('click', (e) => { e.stopPropagation(); smPreviewOpen(smPreviewKey, smPreviewIdx + 1); });
+  attachLbSwipe('smLb', () => smPreviewOpen(smPreviewKey, smPreviewIdx - 1), () => smPreviewOpen(smPreviewKey, smPreviewIdx + 1));
 
   const _smt = document.getElementById('smTabs');
   if(_smt) _smt.addEventListener('click', (e) => {
@@ -5314,6 +5347,7 @@ body.growon{ background:var(--g-navy); }
   if(_albP) _albP.addEventListener('click', (e) => { e.stopPropagation(); albOpen(albIdx - 1); });
   const _albN = document.getElementById('albLbNext');
   if(_albN) _albN.addEventListener('click', (e) => { e.stopPropagation(); albOpen(albIdx + 1); });
+  attachLbSwipe('albLb', () => albOpen(albIdx - 1), () => albOpen(albIdx + 1));
   document.addEventListener('keydown', (e) => {
     const lb = document.getElementById('albLb');
     if(!lb || !lb.classList.contains('open')) return;
