@@ -1,126 +1,133 @@
 {
-  "date": "2026-07-23",
-  "dateLabel": "2026.07.23(목)",
+  "date": "2026-07-24",
+  "dateLabel": "2026.07.24(금)",
   "weather": [
     {
       "city": "서울",
-      "min": 25,
-      "max": 28,
-      "code": 61
+      "min": 24,
+      "max": 31,
+      "code": 2
     },
     {
       "city": "부산",
       "min": 25,
-      "max": 32,
-      "code": 1
+      "max": 33,
+      "code": 0
     },
     {
       "city": "대구",
-      "min": 25,
-      "max": 34,
-      "code": 51
+      "min": 24,
+      "max": 35,
+      "code": 1
     },
     {
       "city": "인천",
       "min": 25,
-      "max": 27,
-      "code": 63
+      "max": 29,
+      "code": 51
     },
     {
       "city": "광주",
-      "min": 26,
-      "max": 31,
-      "code": 51
+      "min": 23,
+      "max": 33,
+      "code": 1
     },
     {
       "city": "대전",
       "min": 24,
-      "max": 31,
-      "code": 53
+      "max": 33,
+      "code": 1
     },
     {
       "city": "강릉",
-      "min": 25,
-      "max": 35,
-      "code": 2
+      "min": 22,
+      "max": 31,
+      "code": 3
     },
     {
       "city": "제주",
-      "min": 26,
-      "max": 33,
-      "code": 0
+      "min": 25,
+      "max": 30,
+      "code": 1
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,797.70",
-      "diff": "+281.43",
+      "value": "7,096.89",
+      "diff": "+348.94",
       "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "751.09",
-      "diff": "+1.45",
+      "value": "790.28",
+      "diff": "+36.94",
       "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,476.31",
-      "diff": "-3.41",
+      "value": "1,474.12",
+      "diff": "-1.51",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "87.4",
-      "diff": "+2.5",
+      "value": "92.5",
+      "diff": "+5.6",
       "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "733,878",
-      "diff": "+7,582",
-      "dir": "up"
+      "value": "720,117",
+      "diff": "-17,657",
+      "dir": "down"
     }
   ],
   "trends": [
-    "spcx",
-    "나스닥 지수",
-    "김혜성"
+    "vix",
+    "tsla",
+    "살인"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "GA 익월 선지급, ‘1200%룰’ 위반 가능성",
-      "summary": "GA가 13차월 시책을 익월 선지급할 경우 ‘1200%룰’ 위반 소지가 있다는 지적이 나왔다. 지급 시점과 모집계약 연동 여부에 따라 위반 여부가 판단될 수 있다.",
-      "url": "https://www.insjournal.co.kr/news/articleView.html?idxno=32362",
-      "host": "insjournal.co.kr"
+      "title": "교차모집 보험설계사 실업급여 수혜",
+      "summary": "교차모집 보험설계사와 공제모집인이 고용보험 적용 대상에 포함된다. 이는 사회안전망 강화를 위한 조치로, 실업급여 수혜가 가능해진다.",
+      "url": "https://www.lcnews.co.kr/news/articleView.html?idxno=205347",
+      "host": "lcnews.co.kr"
     },
     {
       "cat": "보험",
-      "title": "보험사들, 여름철 보험료 인하 경쟁",
-      "summary": "KB손보, 메리츠, 롯데 등 보험사들이 여름철을 맞아 보험료를 인하하고 영업 지원을 강화하고 있다. 전문가들은 가격 할인 외에도 상품 차별화와 서비스 혁신이 필요하다고 지적했다.",
-      "url": "https://www.shinailbo.co.kr/news/articleView.html?idxno=5043169",
-      "host": "shinailbo.co.kr"
+      "title": "교차모집 보험설계사 실업급여 수혜",
+      "summary": "교차모집 보험설계사와 공제모집인이 고용보험 적용 대상에 포함된다. 이번 개정안은 사회안전망 강화를 목표로 하고 있다.",
+      "url": "https://www.lcnews.co.kr/news/articleView.html?idxno=205347",
+      "host": "lcnews.co.kr"
     },
     {
-      "cat": "사회",
-      "title": "임신 합병증, 출산 후 혈관 위험",
-      "summary": "임신 중 합병증을 겪은 여성은 출산 후에도 말초동맥질환 위험이 높아진다고 연구 결과가 나타났다. 특히 임신성 당뇨병을 경험한 여성의 위험이 가장 크게 증가했다.",
-      "url": "https://v.daum.net/v/20260723024650921?from=newsbot&botref=CN2&botevent=q",
+      "cat": "생활",
+      "title": "정일우, 뇌동맥류 극복 이야기",
+      "summary": "배우 정일우가 뇌동맥류 진단 후 극심한 두통을 경험한 이야기를 전하며 건강 관리의 중요성을 강조했다.",
+      "url": "https://v.daum.net/v/20260724044129806?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     },
     {
       "cat": "생활",
-      "title": "과민성 방광, 보톡스로 치료 가능",
-      "summary": "과민성 방광은 급박뇨가 특징이며, 보톡스 주사로 치료할 수 있다. 치료 후 만족도가 높지만, 드물게 요로 감염이 발생할 수 있다.",
-      "url": "https://v.daum.net/v/20260723004113416?from=newsbot&botref=CN2&botevent=q",
+      "title": "어두운 곳에서 스마트폰 사용 주의",
+      "summary": "어두운 환경에서 스마트폰 사용 시 급성폐쇄각녹내장 발작 위험이 있다. 증상이 나타나면 즉시 안과 진료를 받아야 한다.",
+      "url": "https://v.daum.net/v/20260723233136118?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "당류와 암 위험, 섭취 방식이 중요",
+      "summary": "암 전문의는 단 음식을 무조건 피하기보다는 건강한 종류를 선택하는 것이 중요하다고 강조했다. 특히 첨가당이 많은 음료는 비만을 유발해 암 위험을 높일 수 있다.",
+      "url": "https://v.daum.net/v/20260723230448989?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "큰 그릇은 늦게 이루어진다",
+    "text": "남을 아는 자는 지혜롭고 자신을 아는 자는 밝다",
     "author": "노자"
   },
-  "updatedAt": "2026-07-23T07:10:38.000Z"
+  "updatedAt": "2026-07-24T07:16:33.000Z"
 }
