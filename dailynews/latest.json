@@ -1,133 +1,133 @@
 {
-  "date": "2026-07-24",
-  "dateLabel": "2026.07.24(금)",
+  "date": "2026-07-27",
+  "dateLabel": "2026.07.27(월)",
   "weather": [
     {
       "city": "서울",
-      "min": 24,
-      "max": 31,
-      "code": 2
+      "min": 25,
+      "max": 30,
+      "code": 53
     },
     {
       "city": "부산",
-      "min": 25,
-      "max": 33,
-      "code": 0
+      "min": 26,
+      "max": 34,
+      "code": 2
     },
     {
       "city": "대구",
-      "min": 24,
-      "max": 35,
-      "code": 1
+      "min": 26,
+      "max": 36,
+      "code": 3
     },
     {
       "city": "인천",
-      "min": 25,
+      "min": 26,
       "max": 29,
-      "code": 51
+      "code": 53
     },
     {
       "city": "광주",
-      "min": 23,
+      "min": 25,
       "max": 33,
-      "code": 1
+      "code": 2
     },
     {
       "city": "대전",
-      "min": 24,
-      "max": 33,
-      "code": 1
+      "min": 25,
+      "max": 32,
+      "code": 3
     },
     {
       "city": "강릉",
-      "min": 22,
+      "min": 25,
       "max": 31,
-      "code": 3
+      "code": 2
     },
     {
       "city": "제주",
       "min": 25,
       "max": 30,
-      "code": 1
+      "code": 2
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "7,096.89",
-      "diff": "+348.94",
-      "dir": "up"
+      "value": "6,690.62",
+      "diff": "-107.08",
+      "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "790.28",
-      "diff": "+36.94",
-      "dir": "up"
+      "value": "748.22",
+      "diff": "-2.87",
+      "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,474.12",
-      "diff": "-1.51",
+      "value": "1,459.42",
+      "diff": "-14.62",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "92.5",
-      "diff": "+5.6",
-      "dir": "up"
+      "value": "84.6",
+      "diff": "-4.8",
+      "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "720,117",
-      "diff": "-17,657",
+      "value": "719,341",
+      "diff": "-3,545",
       "dir": "down"
     }
   ],
   "trends": [
-    "vix",
-    "tsla",
-    "살인"
+    "오타니 쇼헤이",
+    "west indies vs pakistan",
+    "테니스"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "교차모집 보험설계사 실업급여 수혜",
-      "summary": "교차모집 보험설계사와 공제모집인이 고용보험 적용 대상에 포함된다. 이는 사회안전망 강화를 위한 조치로, 실업급여 수혜가 가능해진다.",
-      "url": "https://www.lcnews.co.kr/news/articleView.html?idxno=205347",
-      "host": "lcnews.co.kr"
+      "title": "우리금융, 동양생명 완전자회사 편입",
+      "summary": "우리금융이 동양생명을 완전자회사로 편입하며 보험사업 확대를 추진한다. 동양생명과 ABL생명은 통합 가능성을 열어두고 경쟁력 강화를 모색 중이다.",
+      "url": "https://www.seoulfn.com/news/articleView.html?idxno=634117",
+      "host": "seoulfn.com"
     },
     {
-      "cat": "보험",
-      "title": "교차모집 보험설계사 실업급여 수혜",
-      "summary": "교차모집 보험설계사와 공제모집인이 고용보험 적용 대상에 포함된다. 이번 개정안은 사회안전망 강화를 목표로 하고 있다.",
-      "url": "https://www.lcnews.co.kr/news/articleView.html?idxno=205347",
-      "host": "lcnews.co.kr"
+      "cat": "경제",
+      "title": "신한금융, 롯데손보 인수 추진",
+      "summary": "신한금융이 롯데손보 인수를 통해 성장 전략을 이어가고 있다. 그러나 자본확충과 통합 비용 부담이 우려되고 있다.",
+      "url": "https://n.news.naver.com/article/243/0000100881?sid=101",
+      "host": "n.news.naver.com"
     },
     {
       "cat": "생활",
-      "title": "정일우, 뇌동맥류 극복 이야기",
-      "summary": "배우 정일우가 뇌동맥류 진단 후 극심한 두통을 경험한 이야기를 전하며 건강 관리의 중요성을 강조했다.",
-      "url": "https://v.daum.net/v/20260724044129806?from=newsbot&botref=CN2&botevent=q",
+      "title": "여름철 식중독, 해동법 주의 필요",
+      "summary": "냉동육을 실온에서 해동하면 세균이 증식할 위험이 있다. 안전한 해동 방법으로는 냉장고에서 천천히 녹이는 것이 권장된다.",
+      "url": "https://v.daum.net/v/20260727050316450?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     },
     {
       "cat": "생활",
-      "title": "어두운 곳에서 스마트폰 사용 주의",
-      "summary": "어두운 환경에서 스마트폰 사용 시 급성폐쇄각녹내장 발작 위험이 있다. 증상이 나타나면 즉시 안과 진료를 받아야 한다.",
-      "url": "https://v.daum.net/v/20260723233136118?from=newsbot&botref=CN2&botevent=q",
+      "title": "흡연만으로도 지방간 위험 증가",
+      "summary": "흡연이 20·30대 젊은 성인의 지방간 발생 위험을 높인다는 연구 결과가 발표됐다. 비만이나 과음이 없는 경우에도 흡연의 영향이 뚜렷하게 나타났다.",
+      "url": "https://v.daum.net/v/20260726210209318?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     },
     {
       "cat": "생활",
-      "title": "당류와 암 위험, 섭취 방식이 중요",
-      "summary": "암 전문의는 단 음식을 무조건 피하기보다는 건강한 종류를 선택하는 것이 중요하다고 강조했다. 특히 첨가당이 많은 음료는 비만을 유발해 암 위험을 높일 수 있다.",
-      "url": "https://v.daum.net/v/20260723230448989?from=newsbot&botref=CN2&botevent=q",
+      "title": "오후 간식, 오이와 방울토마토 추천",
+      "summary": "체중 관리를 위해 오후 간식으로 오이와 방울토마토가 적합하다고 전해진다. 저녁 과식을 막고 포만감을 유지하는 데 도움이 된다.",
+      "url": "https://v.daum.net/v/20260726190337536?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "남을 아는 자는 지혜롭고 자신을 아는 자는 밝다",
-    "author": "노자"
+    "text": "신뢰는 쌓기 어렵고 무너지기는 쉽다",
+    "author": "워런 버핏"
   },
-  "updatedAt": "2026-07-24T07:16:33.000Z"
+  "updatedAt": "2026-07-27T07:26:54.000Z"
 }
