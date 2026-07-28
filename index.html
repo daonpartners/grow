@@ -1052,6 +1052,7 @@ body.growon{ background:var(--g-navy); }
             <div><div class="panel-eyebrow">Schedule</div><h2 class="panel-title">그로우사업부 일정</h2></div>
             <div class="panel-count" id="scheduleCount">이번 달 0건</div>
           </div>
+          <div id="scheduleAdminBar" style="display:none; margin-bottom:12px;"></div>
           <div class="month-label" id="monthLabel"></div>
           <div class="month-dow-row"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
           <div class="month-grid" id="monthGrid" data-reveal></div>
@@ -1909,6 +1910,35 @@ body.growon{ background:var(--g-navy); }
             <div class="notice-list scroll-box" id="noticeBoardList" style="margin-top:16px;"></div>
           </div>
         </div>
+<div class="modal-backdrop" id="noticeFormBackdrop">
+  <div class="modal-card sm-form-card">
+    <button class="modal-close" id="noticeFormClose">&times;</button>
+    <div class="panel-eyebrow">공지사항</div>
+    <h2 class="panel-title" id="noticeFormTitle2">새 공지 등록</h2>
+    <div class="sm-form-row">
+      <label>분류</label>
+      <select id="noticeFormTag" style="width:100%; box-sizing:border-box; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px;">
+        <option value="전체공지">전체공지</option>
+        <option value="지사공지">지사공지</option>
+        <option value="긴급">긴급</option>
+      </select>
+    </div>
+    <div class="sm-form-row">
+      <label>제목 <b>*</b></label>
+      <input type="text" id="noticeFormTitleInput" placeholder="예) 8월 상품개정 안내">
+    </div>
+    <div class="sm-form-row">
+      <label>내용 (선택)</label>
+      <textarea id="noticeFormContent" rows="5" style="width:100%; box-sizing:border-box; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px; font-family:inherit; resize:vertical;" placeholder="본문 내용"></textarea>
+    </div>
+    <div class="sm-form-row" style="display:flex; align-items:center; gap:8px;">
+      <input type="checkbox" id="noticeFormPinned" style="width:16px; height:16px;">
+      <label style="margin:0;">상단 고정</label>
+    </div>
+    <div class="sm-form-msg" id="noticeFormMsg2"></div>
+    <button type="button" class="sm-form-submit" id="noticeFormSubmit">등록</button>
+  </div>
+</div>
 <div class="modal-backdrop" id="dayModalBackdrop">
         <div class="modal-card">
           <button class="modal-close" id="dayModalClose">&times;</button>
@@ -1916,6 +1946,41 @@ body.growon{ background:var(--g-navy); }
           <div id="dayModalList" style="margin-top:16px;"></div>
         </div>
       </div>
+<div class="modal-backdrop" id="scheduleFormBackdrop">
+  <div class="modal-card sm-form-card">
+    <button class="modal-close" id="scheduleFormClose">&times;</button>
+    <div class="panel-eyebrow">그로우사업부 일정</div>
+    <h2 class="panel-title" id="scheduleFormTitle2">새 일정 등록</h2>
+    <div class="sm-form-row">
+      <label>제목 <b>*</b></label>
+      <input type="text" id="scheduleFormTitleInput" placeholder="예) 삼성화재 교육">
+    </div>
+    <div class="sm-form-row">
+      <label>날짜 <b>*</b></label>
+      <input type="date" id="scheduleFormDate" style="width:100%; box-sizing:border-box; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px;">
+    </div>
+    <div class="sm-form-row">
+      <label>구분</label>
+      <select id="scheduleFormCat" style="width:100%; box-sizing:border-box; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px;">
+        <option value="교육">교육</option>
+        <option value="행사">행사</option>
+        <option value="회의">회의</option>
+        <option value="시상">시상</option>
+        <option value="LIVE">LIVE</option>
+      </select>
+    </div>
+    <div class="sm-form-row">
+      <label>시간 (선택)</label>
+      <input type="text" id="scheduleFormTime" placeholder="예) 13시 30분">
+    </div>
+    <div class="sm-form-row">
+      <label>장소 (선택)</label>
+      <input type="text" id="scheduleFormPlace" placeholder="예) ZOOM교육">
+    </div>
+    <div class="sm-form-msg" id="scheduleFormMsg2"></div>
+    <button type="button" class="sm-form-submit" id="scheduleFormSubmit">등록</button>
+  </div>
+</div>
 <div class="modal-backdrop" id="insurerModalBackdrop">
         <div class="modal-card" style="max-width:420px;">
           <button class="modal-close" id="insurerModalClose">&times;</button>
@@ -2134,10 +2199,12 @@ body.growon{ background:var(--g-navy); }
 
   // ================= 공지/일정 스크롤 표시는 CSS로 처리 =================
 
-  // ================= 공지사항 =================
-  // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
-  const notices = [
+  // ================= 공지사항 (게시판화: 관리자센터에서 등록/수정/삭제) =================
+  const NOTICE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/grow-notice-board';
+  const NOTICE_JSON = 'board/notices.json';
+  let notices = [
     {
+        "id": "seed-1",
         "tag": "전체공지",
         "title": "[손사 강의] 메리츠 7월 6일 13시",
         "date": "2026.07.05 게시",
@@ -2146,6 +2213,7 @@ body.growon{ background:var(--g-navy); }
         "images": []
     },
     {
+        "id": "seed-2",
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
@@ -2154,6 +2222,7 @@ body.growon{ background:var(--g-navy); }
         "images": []
     },
     {
+        "id": "seed-3",
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
@@ -2162,6 +2231,7 @@ body.growon{ background:var(--g-navy); }
         "images": []
     },
     {
+        "id": "seed-4",
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
@@ -2172,11 +2242,14 @@ body.growon{ background:var(--g-navy); }
 ];
 
   function noticeRowHtml(n, idx){
+    const canEdit = smCanEdit();
     return `
-      <div class="notice${n.pinned ? ' pinned' : ''}" data-idx="${idx}" style="cursor:pointer;">
-        <span class="tag ${n.tag}">${n.tag}</span>
-        <div class="notice-body"><div class="notice-title">${n.title}</div><div class="notice-meta">${n.date}</div></div>
+      <div class="notice${n.pinned ? ' pinned' : ''}" data-idx="${idx}">
+        <span class="tag ${n.tag}">${escapeHtml(n.tag)}</span>
+        <div class="notice-body" style="cursor:pointer;" data-openidx="${idx}"><div class="notice-title">${escapeHtml(n.title)}</div><div class="notice-meta">${escapeHtml(n.date)}${n.author ? ' · ' + escapeHtml(n.author) : ''}</div></div>
         ${n.pinned ? '<span class="pin-mark">상단고정</span>' : ''}
+        ${canEdit ? `<button type="button" class="sm-edit" data-neidx="${idx}" onclick="event.stopPropagation()">수정</button>
+        <button type="button" class="sm-del" data-ndidx="${idx}" onclick="event.stopPropagation()">삭제</button>` : ''}
       </div>
     `;
   }
@@ -2185,23 +2258,51 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('noticeList').innerHTML = list.length === 0
       ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
       : noticeRowHtml(list[0], 0);
+    bindNoticeRows(document.getElementById('noticeList'));
   }
+  function bindNoticeRows(container){
+    container.querySelectorAll('[data-openidx]').forEach(el => {
+      el.addEventListener('click', () => openNoticeModal(notices[Number(el.dataset.openidx)]));
+    });
+    container.querySelectorAll('.sm-edit[data-neidx]').forEach(el => {
+      el.addEventListener('click', () => noticeOpenForm(Number(el.dataset.neidx)));
+    });
+    container.querySelectorAll('.sm-del[data-ndidx]').forEach(el => {
+      el.addEventListener('click', () => noticeDelete(Number(el.dataset.ndidx)));
+    });
+  }
+  async function loadNotices(){
+    try{
+      const res = await fetch(NOTICE_JSON + '?t=' + Date.now(), { cache:'no-store' });
+      if(res.ok){
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : (data.items || []);
+        if(rows.length) notices = rows.slice().sort((a,b) => String(b.sortKey||b.date||'').localeCompare(String(a.sortKey||a.date||'')));
+      }
+    }catch(e){ /* 초기 하드코딩 값 유지 */ }
+    renderNotices(notices);
+  }
+  window.reloadNotices = loadNotices;
   renderNotices(notices);
+  loadNotices();
 
   document.getElementById('noticeBoardOpenBtn').addEventListener('click', () => {
-    document.getElementById('noticeBoardList').innerHTML = notices.length === 0
-      ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
-      : notices.map((n, idx) => noticeRowHtml(n, idx)).join('');
+    renderNoticeBoardList();
     document.getElementById('noticeBoardModalBackdrop').classList.add('open');
   });
+  function renderNoticeBoardList(){
+    const canEdit = smCanEdit();
+    const bar = canEdit ? `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn" id="noticeNewBtn">＋ 새 공지 등록</button></div>` : '';
+    document.getElementById('noticeBoardList').innerHTML = bar + (notices.length === 0
+      ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
+      : notices.map((n, idx) => noticeRowHtml(n, idx)).join(''));
+    bindNoticeRows(document.getElementById('noticeBoardList'));
+    const nb = document.getElementById('noticeNewBtn');
+    if(nb) nb.addEventListener('click', () => noticeOpenForm(null));
+  }
   function closeNoticeBoardModal(){ document.getElementById('noticeBoardModalBackdrop').classList.remove('open'); }
   document.getElementById('noticeBoardModalClose').addEventListener('click', closeNoticeBoardModal);
   document.getElementById('noticeBoardModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'noticeBoardModalBackdrop') closeNoticeBoardModal(); });
-  document.getElementById('noticeBoardList').addEventListener('click', (e) => {
-    const row = e.target.closest('.notice');
-    if(!row) return;
-    openNoticeModal(notices[Number(row.dataset.idx)]);
-  });
 
   function openNoticeModal(n){
     document.getElementById('noticeModalTitle').textContent = n.title || '';
@@ -2218,13 +2319,67 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('noticeModalBackdrop').classList.add('open');
   }
   function closeNoticeModal(){ document.getElementById('noticeModalBackdrop').classList.remove('open'); }
-  document.getElementById('noticeList').addEventListener('click', (e) => {
-    const row = e.target.closest('.notice');
-    if(!row) return;
-    openNoticeModal(notices[Number(row.dataset.idx)]);
-  });
   document.getElementById('noticeModalClose').addEventListener('click', closeNoticeModal);
   document.getElementById('noticeModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'noticeModalBackdrop') closeNoticeModal(); });
+
+  /* ===== 공지사항 등록/수정/삭제 ===== */
+  let noticeFormIdx = null;
+  function noticeOpenForm(idx){
+    if(!smCanEdit()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    noticeFormIdx = (idx === null || idx === undefined) ? null : idx;
+    const editing = noticeFormIdx !== null;
+    const n = editing ? notices[noticeFormIdx] : null;
+    document.getElementById('noticeFormTitle2').textContent = editing ? '공지 수정' : '새 공지 등록';
+    document.getElementById('noticeFormTag').value = n ? (n.tag || '전체공지') : '전체공지';
+    document.getElementById('noticeFormTitleInput').value = n ? (n.title || '') : '';
+    document.getElementById('noticeFormContent').value = n ? (n.content || '') : '';
+    document.getElementById('noticeFormPinned').checked = !!(n && n.pinned);
+    document.getElementById('noticeFormMsg2').textContent = '';
+    document.getElementById('noticeFormSubmit').disabled = false;
+    document.getElementById('noticeFormSubmit').textContent = editing ? '수정 저장' : '등록';
+    document.getElementById('noticeFormBackdrop').classList.add('open');
+  }
+  function noticeCloseForm(){ document.getElementById('noticeFormBackdrop').classList.remove('open'); }
+  document.getElementById('noticeFormClose').addEventListener('click', noticeCloseForm);
+  document.getElementById('noticeFormBackdrop').addEventListener('click', (e) => { if(e.target.id === 'noticeFormBackdrop') noticeCloseForm(); });
+  document.getElementById('noticeFormSubmit').addEventListener('click', async () => {
+    const msg = document.getElementById('noticeFormMsg2');
+    const btn = document.getElementById('noticeFormSubmit');
+    const title = document.getElementById('noticeFormTitleInput').value.trim();
+    const tag = document.getElementById('noticeFormTag').value;
+    const content = document.getElementById('noticeFormContent').value.trim();
+    const pinned = document.getElementById('noticeFormPinned').checked;
+    const editing = noticeFormIdx !== null;
+    if(!title){ msg.textContent = '제목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    btn.disabled = true; btn.textContent = '전송 중...';
+    msg.textContent = '전송 중입니다...'; msg.style.color = 'var(--slate)';
+    try{
+      const payload = {
+        action: editing ? 'update' : 'create',
+        id: editing ? (notices[noticeFormIdx].id || '') : '',
+        tag: tag, title: title, content: content, pinned: pinned,
+        author: smWhoAmI()
+      };
+      const res = await fetch(NOTICE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      msg.textContent = '완료되었습니다.'; msg.style.color = 'green';
+      setTimeout(async () => { noticeCloseForm(); await loadNotices(); renderNoticeBoardList(); }, 800);
+    }catch(err){
+      msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류');
+      msg.style.color = 'var(--orange-deep)';
+      btn.disabled = false; btn.textContent = editing ? '수정 저장' : '등록';
+    }
+  });
+  async function noticeDelete(idx){
+    if(!smCanEdit()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    const n = notices[idx]; if(!n) return;
+    if(!confirm('«' + n.title + '»\n\n정말 삭제하시겠습니까?')) return;
+    try{
+      const res = await fetch(NOTICE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'delete', id: n.id || '', author: smWhoAmI() }) });
+      if(!res.ok) throw new Error('서버 오류');
+      await loadNotices(); renderNoticeBoardList();
+    }catch(err){ alert('삭제 실패: ' + (err.message || '네트워크 오류')); }
+  }
 
   // ================= 카드뉴스 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (date, category, title, summary, image, content, links:[{name,url}]) — 최신순 정렬
@@ -2350,11 +2505,12 @@ body.growon{ background:var(--g-navy); }
     renderCardnews(cardNews);
   })();
 
-  // ================= 그로우사업부 일정 =================
-  // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
+  // ================= 그로우사업부 일정 (게시판화: 관리자센터에서 등록/수정/삭제) =================
   // 항목: { title, dateStart(ISO), time, place, cat }
   // cat(구분, 선택): 교육 / 행사 / 회의 / 시상 / LIVE — 생략하면 배지 없이 표시됩니다.
-  const schedule = [
+  const SCHEDULE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/grow-notice-board';
+  const SCHEDULE_JSON = 'board/schedule.json';
+  let schedule = [
     {
         "title": "삼성화재 교육",
         "cat": "LIVE",
@@ -2508,6 +2664,33 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('weekGroups').innerHTML = weekHtml;
   }
   renderSchedule(schedule);
+  function renderScheduleAdminBar(){
+    const bar = document.getElementById('scheduleAdminBar');
+    if(!bar) return;
+    if(smCanEdit()){
+      bar.style.display = 'block';
+      bar.innerHTML = `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn" id="scheduleNewBtn">＋ 새 일정 등록</button></div>`;
+      const nb = document.getElementById('scheduleNewBtn');
+      if(nb) nb.addEventListener('click', () => scheduleOpenForm(null));
+    } else {
+      bar.style.display = 'none';
+      bar.innerHTML = '';
+    }
+  }
+  renderScheduleAdminBar();
+  async function loadSchedule(){
+    try{
+      const res = await fetch(SCHEDULE_JSON + '?t=' + Date.now(), { cache:'no-store' });
+      if(res.ok){
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : (data.items || []);
+        if(rows.length) schedule = rows;
+      }
+    }catch(e){ /* 초기 하드코딩 값 유지 */ }
+    renderSchedule(schedule);
+  }
+  window.reloadSchedule = loadSchedule;
+  loadSchedule();
 
   document.getElementById('monthGrid').addEventListener('click', (e) => {
     const cell = e.target.closest('.month-cell.has-events');
@@ -2516,18 +2699,96 @@ body.growon{ background:var(--g-navy); }
     const events = (currentEventsByDate[dKey] || []).slice().sort((a,b) => new Date(a.dateStart) - new Date(b.dateStart));
     const d = new Date(dKey);
     document.getElementById('dayModalTitle').textContent = `${d.getMonth()+1}월 ${d.getDate()}일 일정`;
+    const canEdit = smCanEdit();
     document.getElementById('dayModalList').innerHTML = events.map(ev => {
       const meta = [ev.time, ev.place].filter(Boolean).join(' · ');
-      return `<div style="background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px;">
-        ${meta ? `<div style="font-size:11.5px; font-weight:700; color:var(--orange-deep);">${escapeHtml(meta)}</div>` : ''}
-        <div style="font-size:13.5px; font-weight:700; color:var(--navy-2); margin-top:${meta ? '4px' : '0'};">${escapeHtml(ev.title)}</div>
+      const idx = schedule.indexOf(ev);
+      return `<div style="background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+        <div>
+          ${meta ? `<div style="font-size:11.5px; font-weight:700; color:var(--orange-deep);">${escapeHtml(meta)}</div>` : ''}
+          <div style="font-size:13.5px; font-weight:700; color:var(--navy-2); margin-top:${meta ? '4px' : '0'};">${escapeHtml(ev.title)}</div>
+        </div>
+        ${canEdit ? `<div style="flex-shrink:0; display:flex; gap:5px;">
+          <button type="button" class="sm-edit" data-seidx="${idx}">수정</button>
+          <button type="button" class="sm-del" data-sdidx="${idx}">삭제</button>
+        </div>` : ''}
       </div>`;
     }).join('') || '<div class="doc-empty-note">일정이 없습니다.</div>';
+    document.getElementById('dayModalList').querySelectorAll('.sm-edit[data-seidx]').forEach(el => {
+      el.addEventListener('click', () => scheduleOpenForm(Number(el.dataset.seidx)));
+    });
+    document.getElementById('dayModalList').querySelectorAll('.sm-del[data-sdidx]').forEach(el => {
+      el.addEventListener('click', () => scheduleDelete(Number(el.dataset.sdidx)));
+    });
     document.getElementById('dayModalBackdrop').classList.add('open');
   });
   function closeDayModal(){ document.getElementById('dayModalBackdrop').classList.remove('open'); }
   document.getElementById('dayModalClose').addEventListener('click', closeDayModal);
   document.getElementById('dayModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'dayModalBackdrop') closeDayModal(); });
+
+  /* ===== 일정 등록/수정/삭제 ===== */
+  let scheduleFormIdx = null;
+  function scheduleOpenForm(idx){
+    if(!smCanEdit()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    scheduleFormIdx = (idx === null || idx === undefined) ? null : idx;
+    const editing = scheduleFormIdx !== null;
+    const ev = editing ? schedule[scheduleFormIdx] : null;
+    document.getElementById('scheduleFormTitle2').textContent = editing ? '일정 수정' : '새 일정 등록';
+    document.getElementById('scheduleFormTitleInput').value = ev ? (ev.title || '') : '';
+    document.getElementById('scheduleFormCat').value = ev ? (ev.cat || '교육') : '교육';
+    document.getElementById('scheduleFormDate').value = ev ? (ev.dateStart || '') : '';
+    document.getElementById('scheduleFormTime').value = ev ? (ev.time || '') : '';
+    document.getElementById('scheduleFormPlace').value = ev ? (ev.place || '') : '';
+    document.getElementById('scheduleFormMsg2').textContent = '';
+    document.getElementById('scheduleFormSubmit').disabled = false;
+    document.getElementById('scheduleFormSubmit').textContent = editing ? '수정 저장' : '등록';
+    document.getElementById('scheduleFormBackdrop').classList.add('open');
+  }
+  function scheduleCloseForm(){ document.getElementById('scheduleFormBackdrop').classList.remove('open'); }
+  document.getElementById('scheduleFormClose').addEventListener('click', scheduleCloseForm);
+  document.getElementById('scheduleFormBackdrop').addEventListener('click', (e) => { if(e.target.id === 'scheduleFormBackdrop') scheduleCloseForm(); });
+  document.getElementById('scheduleFormSubmit').addEventListener('click', async () => {
+    const msg = document.getElementById('scheduleFormMsg2');
+    const btn = document.getElementById('scheduleFormSubmit');
+    const title = document.getElementById('scheduleFormTitleInput').value.trim();
+    const cat = document.getElementById('scheduleFormCat').value;
+    const dateStart = document.getElementById('scheduleFormDate').value;
+    const time = document.getElementById('scheduleFormTime').value.trim();
+    const place = document.getElementById('scheduleFormPlace').value.trim();
+    const editing = scheduleFormIdx !== null;
+    if(!title){ msg.textContent = '제목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    if(!dateStart){ msg.textContent = '날짜를 선택해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    btn.disabled = true; btn.textContent = '전송 중...';
+    msg.textContent = '전송 중입니다...'; msg.style.color = 'var(--slate)';
+    try{
+      const payload = {
+        kind: 'event',
+        action: editing ? 'update' : 'create',
+        id: editing ? (schedule[scheduleFormIdx].id || '') : '',
+        title: title, cat: cat, dateStart: dateStart, time: time, place: place,
+        author: smWhoAmI()
+      };
+      const res = await fetch(SCHEDULE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      msg.textContent = '완료되었습니다.'; msg.style.color = 'green';
+      setTimeout(async () => { scheduleCloseForm(); closeDayModal(); await loadSchedule(); }, 800);
+    }catch(err){
+      msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류');
+      msg.style.color = 'var(--orange-deep)';
+      btn.disabled = false; btn.textContent = editing ? '수정 저장' : '등록';
+    }
+  });
+  async function scheduleDelete(idx){
+    if(!smCanEdit()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    const ev = schedule[idx]; if(!ev) return;
+    if(!confirm('«' + ev.title + '»\n\n정말 삭제하시겠습니까?')) return;
+    try{
+      const res = await fetch(SCHEDULE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ kind:'event', action:'delete', id: ev.id || '', author: smWhoAmI() }) });
+      if(!res.ok) throw new Error('서버 오류');
+      closeDayModal();
+      await loadSchedule();
+    }catch(err){ alert('삭제 실패: ' + (err.message || '네트워크 오류')); }
+  }
 
   // ================= 사업소개 =================
   // showPosts: true 인 센터에만 게시물 목록이 표시됩니다. (현재 비즈니스파트너스만)
@@ -2728,70 +2989,70 @@ body.growon{ background:var(--g-navy); }
         "title": "7월 영업전략 브리핑",
         "content": "이달의 보험영업전략 브리핑_2026년 7월",
         "date": "2026.07.06 게시",
-        "link": "https://drive.google.com/file/d/1s-McnwQvzcCgfbmCrKyxx9wxyumSyMCC/view?usp=sharing",
+        "link": "https://drive.google.com/uc?export=download&id=1s-McnwQvzcCgfbmCrKyxx9wxyumSyMCC",
         "images": []
     },
     {
         "title": "7월 영업전략(손보)",
         "content": "이달의 보험사별 판매전략_2026년 7월_손해보험",
         "date": "2026.07.06 게시",
-        "link": "https://drive.google.com/open?id=1jmfDg76W0YOqWofGj-hJbG86T2z7YsZt&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1jmfDg76W0YOqWofGj-hJbG86T2z7YsZt",
         "images": []
     },
     {
         "title": "7월 영업전략(생보)",
         "content": "이달의 보험사별 판매전략_2026년 7월_생명보험",
         "date": "2026.07.06 게시",
-        "link": "https://drive.google.com/open?id=1yA2teiVLlAcfMdc7cs9FAP-IEobHW1Oe&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1yA2teiVLlAcfMdc7cs9FAP-IEobHW1Oe",
         "images": []
     },
     {
         "title": "6월 영업전략(생보) (5)",
         "content": "이달의 생보소식지_2026년 6월",
         "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_",
         "images": []
     },
     {
         "title": "6월 영업전략(생보) (4)",
         "content": "이달의 생보소식지_2026년 6월",
         "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_",
         "images": []
     },
     {
         "title": "6월 영업전략(생보) (3)",
         "content": "이달의 생보소식지_2026년 6월",
         "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_",
         "images": []
     },
     {
         "title": "6월 영업전략(생보) (2)",
         "content": "이달의 생보소식지_2026년 6월",
         "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_",
         "images": []
     },
     {
         "title": "6월 영업전략(생보) (1)",
         "content": "이달의 생보소식지_2026년 6월",
         "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_",
         "images": []
     },
     {
         "title": "6월 영업전략(생보)",
         "content": "이달의 생보소식지_2026년 6월",
         "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1_ZAAiSDjKK78TB2UQhfT0uXiS6Nu3-Y_",
         "images": []
     },
     {
         "title": "6월 영업전략 브리핑",
         "content": "이달의 보험영업전략 브리핑_2026년 6월",
         "date": "2026.06.17 게시",
-        "link": "https://drive.google.com/open?id=1m_MpqwSqyXhumvVBkvQ177LLErj9C5-R&usp=drive_fs",
+        "link": "https://drive.google.com/uc?export=download&id=1m_MpqwSqyXhumvVBkvQ177LLErj9C5-R",
         "images": []
     }
 ];
@@ -2807,7 +3068,7 @@ body.growon{ background:var(--g-navy); }
           <h3 class="strategy-title">${escapeHtml(p.title)}</h3>
           <p class="strategy-body">${escapeHtml(p.content)}</p>
           ${galleryHtml(p.images)}
-          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:12px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">📎 자료 보기</a>` : ''}
+          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:12px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">⬇️ 파일 다운로드</a>` : ''}
         </div>
       `;
     }
@@ -2822,7 +3083,7 @@ body.growon{ background:var(--g-navy); }
           <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}</div>
           <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(p.content)}</div>
           ${galleryHtml(p.images)}
-          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">📎 자료 보기</a>` : ''}
+          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">⬇️ 파일 다운로드</a>` : ''}
         </div>
       `).join('');
     document.getElementById('strategyModalBackdrop').classList.add('open');
@@ -5013,6 +5274,9 @@ body.growon{ background:var(--g-navy); }
     applyAdminRole();
     loadAdminFeed();
     if(window.reloadSalesMaterials) window.reloadSalesMaterials();
+    if(window.reloadNotices) window.reloadNotices();
+    if(window.reloadSchedule) window.reloadSchedule();
+    if(typeof renderScheduleAdminBar === 'function') renderScheduleAdminBar();
   }
 
   function admSaveSession(){
