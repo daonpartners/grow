@@ -1,133 +1,105 @@
 {
-  "date": "2026-07-27",
-  "dateLabel": "2026.07.27(월)",
+  "date": "2026-07-28",
+  "dateLabel": "2026.07.28(화)",
   "weather": [
     {
       "city": "서울",
       "min": 25,
-      "max": 30,
-      "code": 53
-    },
-    {
-      "city": "부산",
-      "min": 26,
-      "max": 34,
-      "code": 2
-    },
-    {
-      "city": "대구",
-      "min": 26,
-      "max": 36,
+      "max": 31,
       "code": 3
     },
     {
-      "city": "인천",
-      "min": 26,
-      "max": 29,
-      "code": 53
+      "city": "부산",
+      "min": 25,
+      "max": 35,
+      "code": 3
     },
     {
-      "city": "광주",
+      "city": "대구",
       "min": 25,
       "max": 33,
       "code": 2
     },
     {
-      "city": "대전",
+      "city": "인천",
       "min": 25,
+      "max": 28,
+      "code": 3
+    },
+    {
+      "city": "광주",
+      "min": 24,
       "max": 32,
       "code": 3
     },
     {
-      "city": "강릉",
-      "min": 25,
+      "city": "대전",
+      "min": 24,
       "max": 31,
+      "code": 3
+    },
+    {
+      "city": "강릉",
+      "min": 26,
+      "max": 32,
       "code": 2
     },
     {
       "city": "제주",
       "min": 25,
       "max": 30,
-      "code": 2
+      "code": 1
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,690.62",
-      "diff": "-107.08",
+      "value": "6,023.66",
+      "diff": "-732.09",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "748.22",
-      "diff": "-2.87",
+      "value": "705.85",
+      "diff": "-59.01",
       "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,459.42",
-      "diff": "-14.62",
-      "dir": "down"
+      "value": "1,460.18",
+      "diff": "+2.17",
+      "dir": "up"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "84.6",
-      "diff": "-4.8",
+      "value": "81.2",
+      "diff": "-1.4",
       "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "719,341",
-      "diff": "-3,545",
+      "value": "713,395",
+      "diff": "-2,843",
       "dir": "down"
     }
   ],
   "trends": [
-    "오타니 쇼헤이",
-    "west indies vs pakistan",
-    "테니스"
+    "재혼",
+    "주가 대폭락",
+    "김한나"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "우리금융, 동양생명 완전자회사 편입",
-      "summary": "우리금융이 동양생명을 완전자회사로 편입하며 보험사업 확대를 추진한다. 동양생명과 ABL생명은 통합 가능성을 열어두고 경쟁력 강화를 모색 중이다.",
-      "url": "https://www.seoulfn.com/news/articleView.html?idxno=634117",
-      "host": "seoulfn.com"
-    },
-    {
-      "cat": "경제",
-      "title": "신한금융, 롯데손보 인수 추진",
-      "summary": "신한금융이 롯데손보 인수를 통해 성장 전략을 이어가고 있다. 그러나 자본확충과 통합 비용 부담이 우려되고 있다.",
-      "url": "https://n.news.naver.com/article/243/0000100881?sid=101",
-      "host": "n.news.naver.com"
-    },
-    {
-      "cat": "생활",
-      "title": "여름철 식중독, 해동법 주의 필요",
-      "summary": "냉동육을 실온에서 해동하면 세균이 증식할 위험이 있다. 안전한 해동 방법으로는 냉장고에서 천천히 녹이는 것이 권장된다.",
-      "url": "https://v.daum.net/v/20260727050316450?from=newsbot&botref=CN2&botevent=q",
-      "host": "v.daum.net"
-    },
-    {
-      "cat": "생활",
-      "title": "흡연만으로도 지방간 위험 증가",
-      "summary": "흡연이 20·30대 젊은 성인의 지방간 발생 위험을 높인다는 연구 결과가 발표됐다. 비만이나 과음이 없는 경우에도 흡연의 영향이 뚜렷하게 나타났다.",
-      "url": "https://v.daum.net/v/20260726210209318?from=newsbot&botref=CN2&botevent=q",
-      "host": "v.daum.net"
-    },
-    {
-      "cat": "생활",
-      "title": "오후 간식, 오이와 방울토마토 추천",
-      "summary": "체중 관리를 위해 오후 간식으로 오이와 방울토마토가 적합하다고 전해진다. 저녁 과식을 막고 포만감을 유지하는 데 도움이 된다.",
-      "url": "https://v.daum.net/v/20260726190337536?from=newsbot&botref=CN2&botevent=q",
+      "title": "보험사 CEO 신년사, 전환 강조",
+      "summary": "보험사 CEO들은 신년사에서 소비자 보호와 질적 성장을 강조하며 방향 전환을 선언했다. 이는 감독 환경 변화에 대한 대응으로 해석된다.",
+      "url": "https://v.daum.net/v/20260107070323747",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "신뢰는 쌓기 어렵고 무너지기는 쉽다",
-    "author": "워런 버핏"
+    "text": "오늘 할 일을 내일로 미루지 마라",
+    "author": "서양 격언"
   },
-  "updatedAt": "2026-07-27T07:26:54.000Z"
+  "updatedAt": "2026-07-28T16:38:11.000Z"
 }
