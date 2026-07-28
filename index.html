@@ -2722,6 +2722,7 @@ body.growon{ background:var(--g-navy); }
       }
     }catch(e){ /* 초기 하드코딩 값 유지 */ }
     renderSchedule(schedule);
+    if(typeof renderHomeSchedule === 'function') renderHomeSchedule();
   }
   window.reloadSchedule = loadSchedule;
   loadSchedule();
@@ -3818,6 +3819,7 @@ body.growon{ background:var(--g-navy); }
       <ellipse class="region" cx="150" cy="520" rx="34" ry="17"/>
       ${pins}</svg>`;
   }
+  let homeScheduleOffset = 0;
   function renderHome(){
     const box=document.getElementById('view-home'); if(!box) return;
     box.innerHTML = `
@@ -3829,10 +3831,25 @@ body.growon{ background:var(--g-navy); }
         </div>
       </div>
       <div style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
+        <div class="panel-eyebrow">Schedule</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; margin-bottom:12px;">
+          <h2 class="panel-title" style="font-size:17px; margin:0; white-space:nowrap;">그로우사업부 일정</h2>
+          <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+            <button type="button" id="homeSchedPrev" style="background:none; border:1px solid var(--line); border-radius:8px; width:28px; height:28px; font-size:14px; cursor:pointer; color:var(--navy-2); flex-shrink:0;">‹</button>
+            <span id="homeSchedLabel" style="font-size:12.5px; font-weight:800; color:var(--navy-2); min-width:64px; text-align:center; white-space:nowrap;"></span>
+            <button type="button" id="homeSchedNext" style="background:none; border:1px solid var(--line); border-radius:8px; width:28px; height:28px; font-size:14px; cursor:pointer; color:var(--navy-2); flex-shrink:0;">›</button>
+          </div>
+        </div>
+        <div id="homeSchedList"></div>
+      </div>
+      <div style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
         <div class="panel-eyebrow">Grow Album</div>
         <h2 class="panel-title" style="font-size:17px;">그로우앨범</h2>
         <div class="alb-grid" id="albGridMini"></div>
       </div>`;
+    document.getElementById('homeSchedPrev').addEventListener('click', () => { homeScheduleOffset--; renderHomeSchedule(); });
+    document.getElementById('homeSchedNext').addEventListener('click', () => { homeScheduleOffset++; renderHomeSchedule(); });
+    renderHomeSchedule();
     function showBranchPopup(i){
       const b = gBranches[i]; if(!b) return;
       const kbox = document.getElementById('kmapBox');
@@ -3861,6 +3878,39 @@ body.growon{ background:var(--g-navy); }
       if(pop && !pop.contains(e.target) && !e.target.closest('.branch,.pin-g')) pop.remove();
     });
   }
+  function renderHomeSchedule(){
+    const label = document.getElementById('homeSchedLabel');
+    const list = document.getElementById('homeSchedList');
+    if(!label || !list) return;
+    const base = new Date();
+    const viewDate = new Date(base.getFullYear(), base.getMonth() + homeScheduleOffset, 1);
+    const vy = viewDate.getFullYear(), vm = viewDate.getMonth();
+    label.textContent = `${vy}년 ${vm+1}월`;
+    const items = schedule
+      .filter(e => { if(!e.dateStart) return false; const d = new Date(e.dateStart); return d.getFullYear() === vy && d.getMonth() === vm; })
+      .slice()
+      .sort((a,b) => new Date(a.dateStart) - new Date(b.dateStart));
+    if(!items.length){
+      list.innerHTML = '<div class="doc-empty-note">등록된 일정이 없습니다.</div>';
+      return;
+    }
+    list.innerHTML = items.map(ev => {
+      const d = new Date(ev.dateStart);
+      const meta = [ev.time, ev.place].filter(Boolean).join(' · ');
+      return `<div style="display:flex; gap:10px; align-items:flex-start; padding:9px 0; border-bottom:1px solid var(--line);">
+        <div style="flex:none; width:42px; text-align:center;">
+          <div style="font-size:15px; font-weight:900; color:var(--orange-deep); line-height:1;">${d.getDate()}</div>
+          <div style="font-size:10px; color:var(--slate); margin-top:2px;">${['일','월','화','수','목','금','토'][d.getDay()]}</div>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:13px; font-weight:700; color:var(--navy-2);">${escapeHtml(ev.title)}</div>
+          ${meta ? `<div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(meta)}</div>` : ''}
+        </div>
+        ${ev.cat ? `<span class="tag 전체공지" style="flex:none; font-size:10px;">${escapeHtml(ev.cat)}</span>` : ''}
+      </div>`;
+    }).join('');
+  }
+  window.reloadHomeSchedule = renderHomeSchedule;
   function showView(v){
     document.querySelectorAll('.gview').forEach(s=>s.classList.remove('on'));
     const t=document.getElementById('view-'+v); if(t) t.classList.add('on');
