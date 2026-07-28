@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "id": "seed-1",
+      "tag": "전체공지",
+      "title": "[손사 강의] 메리츠 7월 6일 13시",
+      "date": "2026.07.05 게시",
+      "pinned": true,
+      "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
+      "images": []
+    },
+    {
+      "id": "seed-2",
+      "tag": "지사공지",
+      "title": "산모교실 행사공지",
+      "date": "2026.07.02 게시",
+      "pinned": false,
+      "content": "",
+      "images": []
+    },
+    {
+      "id": "seed-3",
+      "tag": "긴급",
+      "title": "7월 상품 개정 관련 필수 안내사항",
+      "date": "2026.07.01 게시",
+      "pinned": false,
+      "content": "",
+      "images": []
+    },
+    {
+      "id": "seed-4",
+      "tag": "전체공지",
+      "title": "하반기 지사장 워크숍 일정 안내",
+      "date": "2026.06.28 게시",
+      "pinned": false,
+      "content": "",
+      "images": []
+    }
+  ]
+}
