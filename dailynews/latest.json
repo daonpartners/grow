@@ -66,8 +66,8 @@
     },
     {
       "label": "환율(USD)",
-      "value": "1,453.50",
-      "diff": "-10.94",
+      "value": "1,453.62",
+      "diff": "-10.82",
       "dir": "down"
     },
     {
@@ -78,8 +78,8 @@
     },
     {
       "label": "금(돈)",
-      "value": "706,014",
-      "diff": "-13,382",
+      "value": "706,072",
+      "diff": "-13,324",
       "dir": "down"
     }
   ],
@@ -90,16 +90,37 @@
   ],
   "news": [
     {
-      "cat": "생활",
-      "title": "더위, 온열질환 위험 신호 주의",
-      "summary": "여름철 더위로 인한 온열질환은 초기 대응이 중요하다. 어지러움과 땀은 위험 신호로, 즉각적인 조치가 필요하다.",
-      "url": "https://v.daum.net/v/20260729043414045?from=newsbot&botref=CN2&botevent=q",
+      "cat": "사회",
+      "title": "암 환자, 정보 부족과 소통 어려움",
+      "summary": "암 환자들은 치료 과정에서 정보와 소통의 부족으로 어려움을 겪고 있다. 연구팀은 맞춤형 설명과 지원 체계의 필요성을 강조했다.",
+      "url": "https://v.daum.net/v/20260729043433057?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "유전자와 AI로 질병 예측하는 검진",
+      "summary": "유전자 검사와 AI를 활용한 건강검진이 증가하고 있다. 연령대별로 필요한 검사 항목을 선택하는 것이 중요하다.",
+      "url": "https://v.daum.net/v/20260729060142265?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "보험",
+      "title": "금감원, 유병자보험 고지기준 재정립",
+      "summary": "금감원이 간편심사보험의 고지기준을 명확히 하며 유병자보험 판매 관행에 변화가 예상된다. 보험사들은 가입 기준을 완화하고 보장을 강화한 상품을 출시하고 있다.",
+      "url": "http://www.fins.co.kr/news/articleView.html?idxno=109361",
+      "host": "fins.co.kr"
+    },
+    {
+      "cat": "보험",
+      "title": "KDB생명 본입찰 임박, 유력 후보는?",
+      "summary": "KDB생명이 8월 초 본입찰을 앞두고 흥국생명과 한국투자금융지주가 유력 후보로 거론되고 있다. 인수 후 자본확충이 관건으로, 본입찰 참여 여부와 제시가격이 중요할 전망이다.",
+      "url": "https://www.polinews.co.kr/news/articleView.html?idxno=738197",
+      "host": "polinews.co.kr"
     }
   ],
   "quote": {
     "text": "백 번 듣는 것이 한 번 보는 것만 못하다",
     "author": "한서"
   },
-  "updatedAt": "2026-07-29T06:51:01.000Z"
+  "updatedAt": "2026-07-29T06:52:52.000Z"
 }
