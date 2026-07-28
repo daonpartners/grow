@@ -1922,9 +1922,13 @@ body.growon{ background:var(--g-navy); }
       <textarea id="strategyFormContent" rows="4" style="width:100%; box-sizing:border-box; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px; font-family:inherit; resize:vertical;" placeholder="이달의 보험영업전략 브리핑_2026년 8월"></textarea>
     </div>
     <div class="sm-form-row">
+      <label>파일 (선택)</label>
+      <input type="file" id="strategyFormFile" accept=".pdf,.zip,.7z,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.hwp,.hwpx,image/*">
+      <div class="sm-form-hint" id="strategyFormFileHint">파일을 올리면 자동으로 다운로드 링크가 만들어집니다 (최대 25MB). 이미 링크가 있으면 아래에 직접 입력하셔도 됩니다.</div>
+    </div>
+    <div class="sm-form-row">
       <label>다운로드 링크 (선택)</label>
       <input type="text" id="strategyFormLink" placeholder="https://drive.google.com/uc?export=download&id=...">
-      <div class="sm-form-hint">구글 드라이브 파일 ID로 링크를 만들 때는 uc?export=download&id=파일ID 형식을 쓰면 바로 다운로드됩니다.</div>
     </div>
     <div class="sm-form-msg" id="strategyFormMsg2"></div>
     <button type="button" class="sm-form-submit" id="strategyFormSubmit">등록</button>
@@ -1937,6 +1941,16 @@ body.growon{ background:var(--g-navy); }
             <div style="font-size:12px; color:var(--slate); margin-top:6px;" id="noticeModalMeta"></div>
             <div id="noticeModalGallery" style="display:none; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:16px;"></div>
             <div style="font-size:13.5px; color:var(--navy-2); line-height:1.7; margin-top:16px; white-space:pre-wrap;" id="noticeModalContent"></div>
+          </div>
+        </div>
+<div class="modal-backdrop" id="strategyDetailModalBackdrop">
+          <div class="modal-card">
+            <button class="modal-close" id="strategyDetailModalClose">&times;</button>
+            <div class="modal-title" id="strategyDetailTitle">영업전략 제목</div>
+            <div style="font-size:12px; color:var(--slate); margin-top:6px;" id="strategyDetailMeta"></div>
+            <div id="strategyDetailGallery" style="display:none; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:16px;"></div>
+            <div style="font-size:13.5px; color:var(--navy-2); line-height:1.7; margin-top:16px; white-space:pre-wrap;" id="strategyDetailContent"></div>
+            <div id="strategyDetailLinkWrap" style="margin-top:16px;"></div>
           </div>
         </div>
 <div class="modal-backdrop" id="noticeBoardModalBackdrop">
@@ -2317,7 +2331,7 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('noticeCount').textContent = `전체 ${list.length}건`;
     document.getElementById('noticeList').innerHTML = list.length === 0
       ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
-      : noticeRowHtml(list[0], 0);
+      : list.slice(0, 5).map((n, idx) => noticeRowHtml(n, idx)).join('');
     bindNoticeRows(document.getElementById('noticeList'));
   }
   function bindNoticeRows(container){
@@ -3155,19 +3169,38 @@ body.growon{ background:var(--g-navy); }
     const latestBox = document.getElementById('strategyLatest');
     if(strategyPosts.length === 0){
       latestBox.innerHTML = '<div class="doc-empty-note">아직 등록된 영업전략이 없습니다.</div>';
-    } else {
-      const p = strategyPosts[0];
-      latestBox.innerHTML = `
-        <div class="strategy-card">
-          <span class="tag 전체공지">${escapeHtml(p.date)}</span>
-          <h3 class="strategy-title">${escapeHtml(p.title)}</h3>
-          <p class="strategy-body">${escapeHtml(p.content)}</p>
-          ${galleryHtml(p.images)}
-          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:12px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">⬇️ 파일 다운로드</a>` : ''}
-        </div>
-      `;
+      return;
     }
+    latestBox.innerHTML = strategyPosts.slice(0, 5).map((p, idx) => `
+      <div class="notice" data-stidx="${idx}" style="cursor:pointer;">
+        <span class="tag 전체공지">${escapeHtml(p.date)}</span>
+        <div class="notice-body"><div class="notice-title">${escapeHtml(p.title)}</div><div class="notice-meta">${escapeHtml(p.content || '')}</div></div>
+      </div>
+    `).join('');
+    latestBox.querySelectorAll('[data-stidx]').forEach(el => {
+      el.addEventListener('click', () => openStrategyDetail(strategyPosts[Number(el.dataset.stidx)]));
+    });
   }
+  function openStrategyDetail(p){
+    if(!p) return;
+    document.getElementById('strategyDetailTitle').textContent = p.title || '';
+    document.getElementById('strategyDetailMeta').textContent = p.date || '';
+    const gallery = document.getElementById('strategyDetailGallery');
+    if(p.images && p.images.length){
+      gallery.style.display = 'grid';
+      gallery.innerHTML = p.images.map(src => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">`).join('');
+    } else {
+      gallery.style.display = 'none';
+      gallery.innerHTML = '';
+    }
+    document.getElementById('strategyDetailContent').textContent = p.content || '';
+    document.getElementById('strategyDetailLinkWrap').innerHTML = p.link
+      ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:13px; font-weight:800; color:#fff; background:var(--orange-deep); padding:11px 0; border-radius:9px; text-decoration:none; display:block; text-align:center;">⬇️ 파일 다운로드</a>`
+      : '';
+    document.getElementById('strategyDetailModalBackdrop').classList.add('open');
+  }
+  document.getElementById('strategyDetailModalClose').addEventListener('click', () => document.getElementById('strategyDetailModalBackdrop').classList.remove('open'));
+  document.getElementById('strategyDetailModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'strategyDetailModalBackdrop') document.getElementById('strategyDetailModalBackdrop').classList.remove('open'); });
   renderStrategy();
   async function loadStrategy(){
     try{
@@ -3230,6 +3263,10 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('strategyFormTitleInput').value = p ? (p.title || '') : '';
     document.getElementById('strategyFormContent').value = p ? (p.content || '') : '';
     document.getElementById('strategyFormLink').value = p ? (p.link || '') : '';
+    document.getElementById('strategyFormFile').value = '';
+    document.getElementById('strategyFormFileHint').textContent = editing
+      ? '새 파일을 올리면 기존 링크를 대체합니다. 비워두면 기존 링크를 유지합니다.'
+      : '파일을 올리면 자동으로 다운로드 링크가 만들어집니다 (최대 25MB). 이미 링크가 있으면 아래에 직접 입력하셔도 됩니다.';
     document.getElementById('strategyFormMsg2').textContent = '';
     document.getElementById('strategyFormSubmit').disabled = false;
     document.getElementById('strategyFormSubmit').textContent = editing ? '수정 저장' : '등록';
@@ -3244,10 +3281,16 @@ body.growon{ background:var(--g-navy); }
     const title = document.getElementById('strategyFormTitleInput').value.trim();
     const content = document.getElementById('strategyFormContent').value.trim();
     const link = document.getElementById('strategyFormLink').value.trim();
+    const fileEl = document.getElementById('strategyFormFile');
+    const file = fileEl.files && fileEl.files[0];
     const editing = strategyFormIdx !== null;
     if(!title){ msg.textContent = '제목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    if(file && file.size > SALES_MAX_MB * 1024 * 1024){
+      msg.textContent = '파일이 너무 큽니다. ' + SALES_MAX_MB + 'MB 이하로 올려주세요.';
+      msg.style.color = 'var(--orange-deep)'; return;
+    }
     btn.disabled = true; btn.textContent = '전송 중...';
-    msg.textContent = '전송 중입니다...'; msg.style.color = 'var(--slate)';
+    msg.textContent = file ? '파일 업로드 중입니다...' : '전송 중입니다...'; msg.style.color = 'var(--slate)';
     const pid = editing ? (strategyPosts[strategyFormIdx].id || String(Date.now())) : String(Date.now());
     try{
       const payload = {
@@ -3257,11 +3300,17 @@ body.growon{ background:var(--g-navy); }
         title: title, content: content, link: link,
         author: smWhoAmI()
       };
+      if(file){
+        const f = await smReadFile(file);
+        payload.files = [{ filename: f.filename, mime: f.mime, data: f.data }];
+      }
       const res = await fetch(STRATEGY_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
       if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
       const now = new Date();
       const y = now.toISOString().slice(0,10);
-      const newPost = { id: pid, title: title, content: content, link: link, author: smWhoAmI(), date: y.replace(/-/g,'.') + ' 게시', sortKey: y, images: [] };
+      const existing = editing ? strategyPosts[strategyFormIdx] : null;
+      const finalLink = file ? URL.createObjectURL(file) : (link || (existing ? existing.link : ''));
+      const newPost = { id: pid, title: title, content: content, link: finalLink, author: smWhoAmI(), date: y.replace(/-/g,'.') + ' 게시', sortKey: y, images: [] };
       if(editing) strategyPosts[strategyFormIdx] = newPost;
       else strategyPosts.unshift(newPost);
       strategyCloseForm();
