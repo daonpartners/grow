@@ -1,0 +1,76 @@
+{
+  "items": [
+    {
+      "id": "seed-1",
+      "title": "삼성화재 교육",
+      "cat": "LIVE",
+      "dateStart": "2026-07-14",
+      "time": "10시 30분",
+      "place": "ZOOM교육"
+    },
+    {
+      "id": "seed-2",
+      "title": "그로우사업부 인천 펫페어 참여",
+      "cat": "행사",
+      "dateStart": "2026-07-10",
+      "time": "",
+      "place": "인천"
+    },
+    {
+      "id": "seed-3",
+      "title": "KDB생명 교육",
+      "cat": "LIVE",
+      "dateStart": "2026-07-09",
+      "time": "13시 30분",
+      "place": "ZOOM교육"
+    },
+    {
+      "id": "seed-4",
+      "title": "미래에셋생명 교육",
+      "cat": "LIVE",
+      "dateStart": "2026-07-09",
+      "time": "10시 30분",
+      "place": "ZOOM교육"
+    },
+    {
+      "id": "seed-5",
+      "title": "교보생명 교육",
+      "cat": "LIVE",
+      "dateStart": "2026-07-08",
+      "time": "13시 30분",
+      "place": "ZOOM교육"
+    },
+    {
+      "id": "seed-6",
+      "title": "흥국화재보험 교육",
+      "cat": "LIVE",
+      "dateStart": "2026-07-08",
+      "time": "10시 30분",
+      "place": "ZOOM교육"
+    },
+    {
+      "id": "seed-7",
+      "title": "DB손해보험 교육",
+      "cat": "LIVE",
+      "dateStart": "2026-07-07",
+      "time": "13시 30분",
+      "place": "ZOOM교육"
+    },
+    {
+      "id": "seed-8",
+      "title": "IM라이프 교육",
+      "cat": "LIVE",
+      "dateStart": "2026-07-07",
+      "time": "10시 30분",
+      "place": "ZOOM교육"
+    },
+    {
+      "id": "seed-9",
+      "title": "손사강의 13:00",
+      "cat": "교육",
+      "dateStart": "2026-07-06",
+      "time": "14시~17시",
+      "place": "메리츠화재 서울사옥"
+    }
+  ]
+}
