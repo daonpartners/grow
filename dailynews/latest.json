@@ -1,126 +1,126 @@
 {
-  "date": "2026-07-30",
-  "dateLabel": "2026.07.30(목)",
+  "date": "2026-07-31",
+  "dateLabel": "2026.07.31(금)",
   "weather": [
     {
       "city": "서울",
       "min": 23,
       "max": 31,
-      "code": 2
+      "code": 3
     },
     {
       "city": "부산",
       "min": 25,
-      "max": 36,
-      "code": 2
+      "max": 37,
+      "code": 3
     },
     {
       "city": "대구",
       "min": 24,
       "max": 34,
-      "code": 0
+      "code": 2
     },
     {
       "city": "인천",
       "min": 24,
       "max": 29,
-      "code": 1
+      "code": 2
     },
     {
       "city": "광주",
-      "min": 22,
-      "max": 32,
+      "min": 23,
+      "max": 34,
       "code": 3
     },
     {
       "city": "대전",
       "min": 22,
-      "max": 32,
+      "max": 33,
       "code": 3
     },
     {
       "city": "강릉",
-      "min": 27,
-      "max": 37,
-      "code": 0
+      "min": 26,
+      "max": 38,
+      "code": 2
     },
     {
       "city": "제주",
       "min": 26,
-      "max": 31,
+      "max": 30,
       "code": 1
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "5,663.24",
-      "diff": "-1,092.51",
+      "value": "5,593.56",
+      "diff": "-430.10",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "662.68",
-      "diff": "-102.18",
+      "value": "644.78",
+      "diff": "-61.07",
       "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,443.70",
-      "diff": "-9.46",
+      "value": "1,421.51",
+      "diff": "-20.77",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "84.6",
-      "diff": "+5.3",
-      "dir": "up"
+      "value": "84.0",
+      "diff": "-0.5",
+      "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "718,172",
-      "diff": "+11,010",
+      "value": "713,441",
+      "diff": "+11,851",
       "dir": "up"
     }
   ],
   "trends": [
-    "지네딘 지단",
-    "한국농어촌공사",
-    "미군"
+    "이란",
+    "김재중",
+    "최준희"
   ],
   "news": [
     {
-      "cat": "사회",
-      "title": "역노화의 비밀, 나눔에서 찾다",
-      "summary": "역노화는 의학적 연구와 마음의 건강이 중요하다. 봉사 활동을 통해 삶의 의미를 찾고, 나 자신도 치유할 수 있다.",
-      "url": "https://v.daum.net/v/20260729185503827?from=newsbot&botref=KN&botevent=q",
-      "host": "v.daum.net"
+      "cat": "보험",
+      "title": "카카오페이손보, 펫보험 계약 1만건 돌파",
+      "summary": "카카오페이손보의 펫보험이 출시 4개월 만에 계약 1만건을 넘겼다. 어린 반려동물의 보험 가입 수요가 높아지고 있다.",
+      "url": "https://n.news.naver.com/article/003/0014097722?sid=101",
+      "host": "n.news.naver.com"
     },
     {
       "cat": "보험",
-      "title": "광고심의 수수료 부과제도 도입",
-      "summary": "금감원이 광고심의 수수료 부과제도를 구체화하고 GA업계는 비용 부담에 불만을 표출하고 있다.",
-      "url": "https://www.insweek.co.kr/news/articleView.html?idxno=71847",
-      "host": "insweek.co.kr"
+      "title": "한화손보, 암 치료비 시장 공략",
+      "summary": "한화손보가 '삼복치' 브랜드로 암 치료비 보장을 강화하고 생애주기별 상품 경쟁력을 확대한다.",
+      "url": "https://www.insjournal.co.kr/news/articleView.html?idxno=32434",
+      "host": "insjournal.co.kr"
     },
     {
       "cat": "보험",
-      "title": "어린이보험 경쟁 심화, 신담보 개발",
-      "summary": "저출생에도 불구하고 어린이보험 계약이 증가하고 있으며, 손보사들의 신담보 개발 경쟁이 활발하다.",
-      "url": "https://m.etoday.co.kr/news/view/2606253",
-      "host": "m.etoday.co.kr"
+      "title": "라이나생명, 건강보험 가입 50만 돌파",
+      "summary": "라이나생명이 비갱신형 건강보험 확대 덕분에 '새로담는' 건강보험 가입이 50만 건을 넘었다. 이 상품은 고객의 건강 상태에 맞춰 특약 선택이 가능하다.",
+      "url": "https://n.news.naver.com/article/421/0009087513?sid=101",
+      "host": "n.news.naver.com"
     },
     {
       "cat": "보험",
-      "title": "노후 파산 막는 간병 보험 가입법",
-      "summary": "간병 보험은 질병이나 사고로 인한 간병 비용을 보장해준다. 가입 시 보장 형태와 조건을 잘 확인해야 한다.",
-      "url": "https://n.news.naver.com/article/023/0003990190?sid=101",
+      "title": "종신보험 판매 감소, 생보사 전략 변화",
+      "summary": "종신보험 수요가 감소하며 생명보험사들이 판매 전략을 보장성 보험 중심으로 전환하고 있다. 올해 초회보험료는 전년 대비 큰 폭으로 감소했다.",
+      "url": "https://n.news.naver.com/article/421/0009086946?sid=101",
       "host": "n.news.naver.com"
     }
   ],
   "quote": {
-    "text": "우환에서 살고 안락에서 죽는다",
-    "author": "맹자"
+    "text": "아는 것을 안다 하고 모르는 것을 모른다 하는 것, 이것이 아는 것이다",
+    "author": "공자"
   },
-  "updatedAt": "2026-07-30T06:44:03.000Z"
+  "updatedAt": "2026-07-31T06:37:56.000Z"
 }
