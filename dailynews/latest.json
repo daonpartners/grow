@@ -1,126 +1,126 @@
 {
-  "date": "2026-07-31",
-  "dateLabel": "2026.07.31(금)",
+  "date": "2026-08-03",
+  "dateLabel": "2026.08.03(월)",
   "weather": [
     {
       "city": "서울",
-      "min": 23,
-      "max": 31,
+      "min": 24,
+      "max": 35,
       "code": 3
     },
     {
       "city": "부산",
-      "min": 25,
-      "max": 37,
-      "code": 3
+      "min": 26,
+      "max": 34,
+      "code": 0
     },
     {
       "city": "대구",
-      "min": 24,
-      "max": 34,
-      "code": 2
+      "min": 25,
+      "max": 35,
+      "code": 1
     },
     {
       "city": "인천",
       "min": 24,
-      "max": 29,
-      "code": 2
-    },
-    {
-      "city": "광주",
-      "min": 23,
-      "max": 34,
+      "max": 32,
       "code": 3
     },
     {
+      "city": "광주",
+      "min": 24,
+      "max": 36,
+      "code": 1
+    },
+    {
       "city": "대전",
-      "min": 22,
-      "max": 33,
+      "min": 23,
+      "max": 36,
       "code": 3
     },
     {
       "city": "강릉",
-      "min": 26,
-      "max": 38,
-      "code": 2
+      "min": 25,
+      "max": 29,
+      "code": 3
     },
     {
       "city": "제주",
       "min": 26,
-      "max": 30,
+      "max": 31,
       "code": 1
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "5,593.56",
-      "diff": "-430.10",
-      "dir": "down"
+      "value": "6,595.45",
+      "diff": "+1,001.89",
+      "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "644.78",
-      "diff": "-61.07",
-      "dir": "down"
+      "value": "719.76",
+      "diff": "+74.98",
+      "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,421.51",
-      "diff": "-20.77",
-      "dir": "down"
+      "value": "1,436.60",
+      "diff": "+16.00",
+      "dir": "up"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "84.0",
-      "diff": "-0.5",
-      "dir": "down"
+      "value": "84.7",
+      "diff": "+1.1",
+      "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "713,441",
-      "diff": "+11,851",
+      "value": "711,349",
+      "diff": "+9,104",
       "dir": "up"
     }
   ],
   "trends": [
-    "이란",
-    "김재중",
-    "최준희"
+    "배당",
+    "건설 회사",
+    "김다예"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "카카오페이손보, 펫보험 계약 1만건 돌파",
-      "summary": "카카오페이손보의 펫보험이 출시 4개월 만에 계약 1만건을 넘겼다. 어린 반려동물의 보험 가입 수요가 높아지고 있다.",
-      "url": "https://n.news.naver.com/article/003/0014097722?sid=101",
-      "host": "n.news.naver.com"
-    },
-    {
-      "cat": "보험",
-      "title": "한화손보, 암 치료비 시장 공략",
-      "summary": "한화손보가 '삼복치' 브랜드로 암 치료비 보장을 강화하고 생애주기별 상품 경쟁력을 확대한다.",
-      "url": "https://www.insjournal.co.kr/news/articleView.html?idxno=32434",
+      "title": "메리츠 ‘암치단비Ⅱ’ 인기 지속",
+      "summary": "메리츠의 ‘암치단비Ⅱ’가 10명 중 8명이 선택하며 높은 인기를 끌고 있다. 월 1000원대 추가로 최대 1억원의 치료비를 보장받을 수 있다.",
+      "url": "https://www.insjournal.co.kr/news/articleView.html?idxno=32463",
       "host": "insjournal.co.kr"
     },
     {
       "cat": "보험",
-      "title": "라이나생명, 건강보험 가입 50만 돌파",
-      "summary": "라이나생명이 비갱신형 건강보험 확대 덕분에 '새로담는' 건강보험 가입이 50만 건을 넘었다. 이 상품은 고객의 건강 상태에 맞춰 특약 선택이 가능하다.",
-      "url": "https://n.news.naver.com/article/421/0009087513?sid=101",
+      "title": "생보사 간병인 보험 일당 20만원 경쟁",
+      "summary": "생보사들이 간병인 보험 일당을 최대 20만원으로 높이며 경쟁을 재개하고 있다. 금융당국은 이러한 움직임을 예의주시하고 있다.",
+      "url": "https://n.news.naver.com/article/366/0001183627?sid=101",
       "host": "n.news.naver.com"
     },
     {
-      "cat": "보험",
-      "title": "종신보험 판매 감소, 생보사 전략 변화",
-      "summary": "종신보험 수요가 감소하며 생명보험사들이 판매 전략을 보장성 보험 중심으로 전환하고 있다. 올해 초회보험료는 전년 대비 큰 폭으로 감소했다.",
-      "url": "https://n.news.naver.com/article/421/0009086946?sid=101",
-      "host": "n.news.naver.com"
+      "cat": "사회",
+      "title": "서울성모병원, 관상동맥 폐쇄 위험 낮춘 시술 성공",
+      "summary": "서울성모병원이 '라마콘' 기법을 활용한 타비 재시술에 성공했다. 이 시술은 관상동맥 폐쇄 위험을 낮추는 데 기여할 것으로 기대된다.",
+      "url": "https://v.daum.net/v/20260802170209131?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "아침 공복에 좋은 음식과 효과",
+      "summary": "블루베리와 요거트는 혈당 조절과 염증 예방에 도움을 준다. 항산화 영양소가 풍부해 건강 유지에 기여한다.",
+      "url": "https://v.daum.net/v/20260802190250301?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "아는 것을 안다 하고 모르는 것을 모른다 하는 것, 이것이 아는 것이다",
+    "text": "작은 일을 참지 못하면 큰 계획을 그르친다",
     "author": "공자"
   },
-  "updatedAt": "2026-07-31T06:37:56.000Z"
+  "updatedAt": "2026-08-03T06:46:59.000Z"
 }
