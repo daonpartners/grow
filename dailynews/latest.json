@@ -1,46 +1,46 @@
 {
-  "date": "2026-08-05",
-  "dateLabel": "2026.08.05(수)",
+  "date": "2026-08-06",
+  "dateLabel": "2026.08.06(목)",
   "weather": [
     {
       "city": "서울",
-      "min": 26,
+      "min": 25,
       "max": 35,
       "code": 1
     },
     {
       "city": "부산",
-      "min": 26,
-      "max": 31,
-      "code": 1
-    },
-    {
-      "city": "대구",
       "min": 25,
       "max": 32,
       "code": 1
     },
     {
+      "city": "대구",
+      "min": 24,
+      "max": 33,
+      "code": 1
+    },
+    {
       "city": "인천",
-      "min": 26,
+      "min": 25,
       "max": 33,
       "code": 1
     },
     {
       "city": "광주",
-      "min": 26,
-      "max": 31,
+      "min": 25,
+      "max": 34,
       "code": 61
     },
     {
       "city": "대전",
-      "min": 25,
-      "max": 33,
-      "code": 51
+      "min": 24,
+      "max": 34,
+      "code": 1
     },
     {
       "city": "강릉",
-      "min": 24,
+      "min": 23,
       "max": 29,
       "code": 2
     },
@@ -48,79 +48,79 @@
       "city": "제주",
       "min": 27,
       "max": 30,
-      "code": 63
+      "code": 51
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,358.95",
-      "diff": "-236.50",
-      "dir": "down"
+      "value": "6,598.26",
+      "diff": "+340.81",
+      "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "780.72",
-      "diff": "+60.96",
+      "value": "799.59",
+      "diff": "+62.24",
       "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,429.35",
-      "diff": "+0.85",
-      "dir": "up"
+      "value": "1,421.98",
+      "diff": "-6.45",
+      "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
       "value": "75.1",
-      "diff": "-5.2",
+      "diff": "-0.6",
       "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "712,447",
-      "diff": "+17,733",
+      "value": "738,535",
+      "diff": "+33,229",
       "dir": "up"
     }
   ],
   "trends": [
-    "운세",
-    "pltr",
-    "시청률"
+    "박현경",
+    "오타니 쇼헤이",
+    "에코프로"
   ],
   "news": [
     {
       "cat": "사회",
-      "title": "도수치료 제한 후 비급여 치료 증가",
-      "summary": "도수치료 제한으로 일부 병원이 비급여 치료인 신장분사 치료를 늘리고 있다. 이에 따른 과잉진료 우려와 보험료 인상 가능성이 제기되고 있다.",
-      "url": "https://v.daum.net/v/20260804203441713?from=newsbot&botref=KN&botevent=q",
+      "title": "맞춤형 폐암 백신, 세계 최초 사례",
+      "summary": "영국 여성이 자신의 종양 DNA로 만든 맞춤형 폐암 백신을 맞았다. 연구진은 면역항암제 내성을 줄이고 치료 효과를 지속할 가능성을 확인할 계획이다.",
+      "url": "https://v.daum.net/v/20260805200648649?from=newsbot&botref=KN&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "경제",
+      "title": "도수치료 관리급여 시행 후 변화",
+      "summary": "도수치료 관리급여 시행 이후 비급여 신장분사치료 청구가 3배 증가했다. 병·의원들이 수익 감소를 보전하기 위해 비급여 치료를 병행하는 현상이 우려되고 있다.",
+      "url": "https://v.daum.net/v/20260806060327850?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     },
     {
       "cat": "보험",
-      "title": "교통사고 경상 환자 심사 강화",
-      "summary": "다음 달 10일부터 경상 환자는 8주 이상 치료 시 전문 의료인 심사를 받아야 합니다. 임산부와 7세 이하 영유아는 예외로 계속 치료받을 수 있습니다.",
-      "url": "https://v.daum.net/v/20260804212122666?from=newsbot&botref=KN&botevent=q",
-      "host": "v.daum.net"
+      "title": "폭염보장과 6시간 차보험 출시",
+      "summary": "보험 시장이 고객 맞춤형 상품으로 변화하고 있다. 건강 관리에 따른 할인 혜택과 시니어 전용 서비스가 강화됐다.",
+      "url": "https://www.ebn.co.kr/news/articleView.html?idxno=1719020",
+      "host": "ebn.co.kr"
     },
     {
       "cat": "보험",
-      "title": "금감원, GA 고강도 특명 검사 예고",
-      "summary": "금감원이 초대형 GA를 대상으로 고강도 현장검사를 예고하며 업계 긴장감이 높아지고 있다. 이번 검사는 불건전 모집 행위와 내부통제 문제를 집중적으로 점검할 예정이다.",
-      "url": "http://www.fins.co.kr/news/articleView.html?idxno=109480",
-      "host": "fins.co.kr"
-    },
-    {
-      "cat": "보험",
-      "title": "금감원, 9월 보험사 점검 착수",
-      "summary": "금감원이 보험금 지급 실태 점검을 실시하며 제도 개선을 추진할 계획이다. 민원 증가에 따라 특정 상품군의 지급 지연 문제를 파악할 예정이다.",
-      "url": "https://n.news.naver.com/article/374/0000525471?sid=101",
-      "host": "n.news.naver.com"
+      "title": "KB라이프, 100세 맞춤 연금보험 출시",
+      "summary": "KB라이프가 장기 유지 시 최대 60% 가산이 적용되는 연금보험을 출시했다. 이 상품은 노후소득과 건강 위험을 함께 대비할 수 있도록 설계되었다.",
+      "url": "https://www.econovill.com/news/articleView.html?idxno=747118",
+      "host": "econovill.com"
     }
   ],
   "quote": {
-    "text": "하루라도 책을 읽지 않으면 입안에 가시가 돋는다",
-    "author": "안중근"
+    "text": "큰 그릇은 늦게 이루어진다",
+    "author": "노자"
   },
-  "updatedAt": "2026-08-05T06:53:33.000Z"
+  "updatedAt": "2026-08-06T07:24:54.000Z"
 }
