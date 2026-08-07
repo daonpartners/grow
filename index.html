@@ -1260,6 +1260,8 @@ body.growon{ background:var(--g-navy); }
             <button class="edu-tab" data-atab="db">🗂️ DB신청</button>
             <button class="edu-tab" data-atab="album">🖼️ 앨범</button>
             <button class="edu-tab" id="dailyNewsTabBtn" data-atab="dailynews" style="display:none;">📰 데일리뉴스</button>
+            <button class="edu-tab" id="noticeAdminTabBtn" data-atab="noticemgr" style="display:none;">📢 공지사항</button>
+            <button class="edu-tab" id="strategyAdminTabBtn" data-atab="strategymgr" style="display:none;">📈 영업전략</button>
           </div>
 
           <!-- 회의자료 -->
@@ -1365,6 +1367,16 @@ body.growon{ background:var(--g-navy); }
             <textarea id="dnPublishUrls" placeholder="https://...&#10;https://...&#10;https://..." style="width:100%; box-sizing:border-box; min-height:120px; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px; font-family:inherit; resize:vertical;"></textarea>
             <div class="qna-form-msg" id="dnPublishMsg" style="margin-top:8px;"></div>
             <button type="button" id="dnPublishBtn" style="margin-top:8px; background:var(--orange); color:#fff; border:none; border-radius:10px; padding:12px 0; width:100%; font-size:13.5px; font-weight:800; cursor:pointer;">📰 발행하기</button>
+          </div>
+
+          <!-- 공지사항 관리 (관리자 전용) -->
+          <div class="edu-panel" id="admin-noticemgr">
+            <div id="noticeAdminList"></div>
+          </div>
+
+          <!-- 영업전략 관리 (관리자 전용) -->
+          <div class="edu-panel" id="admin-strategymgr">
+            <div id="strategyAdminList"></div>
           </div>
         </div>
       </section>
@@ -1992,6 +2004,11 @@ body.growon{ background:var(--g-navy); }
       <input type="checkbox" id="noticeFormPinned" style="width:16px; height:16px;">
       <label style="margin:0;">상단 고정</label>
     </div>
+    <div class="sm-form-row">
+      <label>이미지 첨부 (선택)</label>
+      <input type="file" id="noticeFormFiles" multiple accept="image/*">
+      <div class="sm-form-hint" id="noticeFormFileHint">여러 장 선택 가능 (각 최대 25MB)</div>
+    </div>
     <div class="sm-form-msg" id="noticeFormMsg2"></div>
     <button type="button" class="sm-form-submit" id="noticeFormSubmit">등록</button>
   </div>
@@ -2366,13 +2383,17 @@ body.growon{ background:var(--g-navy); }
   });
   function renderNoticeBoardList(){
     const canEdit = isTopAdmin();
-    const bar = canEdit ? `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn" id="noticeNewBtn">＋ 새 공지 등록</button></div>` : '';
-    document.getElementById('noticeBoardList').innerHTML = bar + (notices.length === 0
+    const bar = canEdit ? `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn notice-new-btn">＋ 새 공지 등록</button></div>` : '';
+    const html = bar + (notices.length === 0
       ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
       : notices.map((n, idx) => noticeRowHtml(n, idx)).join(''));
-    bindNoticeRows(document.getElementById('noticeBoardList'));
-    const nb = document.getElementById('noticeNewBtn');
-    if(nb) nb.addEventListener('click', () => noticeOpenForm(null));
+    ['noticeBoardList', 'noticeAdminList'].forEach(cid => {
+      const box = document.getElementById(cid);
+      if(!box) return;
+      box.innerHTML = html;
+      bindNoticeRows(box);
+      box.querySelectorAll('.notice-new-btn').forEach(b => b.addEventListener('click', () => noticeOpenForm(null)));
+    });
   }
   function closeNoticeBoardModal(){ document.getElementById('noticeBoardModalBackdrop').classList.remove('open'); }
   document.getElementById('noticeBoardModalClose').addEventListener('click', closeNoticeBoardModal);
@@ -2408,6 +2429,10 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('noticeFormTitleInput').value = n ? (n.title || '') : '';
     document.getElementById('noticeFormContent').value = n ? (n.content || '') : '';
     document.getElementById('noticeFormPinned').checked = !!(n && n.pinned);
+    document.getElementById('noticeFormFiles').value = '';
+    document.getElementById('noticeFormFileHint').textContent = editing
+      ? '새로 선택하면 기존 이미지를 대체합니다. 비워두면 기존 이미지를 유지합니다.'
+      : '여러 장 선택 가능 (각 최대 ' + SALES_MAX_MB + 'MB)';
     document.getElementById('noticeFormMsg2').textContent = '';
     document.getElementById('noticeFormSubmit').disabled = false;
     document.getElementById('noticeFormSubmit').textContent = editing ? '수정 저장' : '등록';
@@ -2423,21 +2448,47 @@ body.growon{ background:var(--g-navy); }
     const tag = document.getElementById('noticeFormTag').value;
     const content = document.getElementById('noticeFormContent').value.trim();
     const pinned = document.getElementById('noticeFormPinned').checked;
+    const fileEl = document.getElementById('noticeFormFiles');
+    const files = fileEl.files ? Array.from(fileEl.files) : [];
     const editing = noticeFormIdx !== null;
     if(!title){ msg.textContent = '제목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    const tooBig = files.find(f => f.size > SALES_MAX_MB * 1024 * 1024);
+    if(tooBig){
+      msg.textContent = '"' + tooBig.name + '" 파일이 너무 큽니다. ' + SALES_MAX_MB + 'MB 이하로 올려주세요.';
+      msg.style.color = 'var(--orange-deep)'; return;
+    }
     btn.disabled = true; btn.textContent = '전송 중...';
-    msg.textContent = '전송 중입니다...'; msg.style.color = 'var(--slate)';
+    msg.textContent = files.length ? '이미지 업로드 중입니다...' : '전송 중입니다...'; msg.style.color = 'var(--slate)';
+    const nid = editing ? (notices[noticeFormIdx].id || String(Date.now())) : String(Date.now());
     try{
       const payload = {
         action: editing ? 'update' : 'create',
-        id: editing ? (notices[noticeFormIdx].id || '') : '',
+        id: nid,
         tag: tag, title: title, content: content, pinned: pinned,
         author: smWhoAmI()
       };
+      if(files.length){
+        const readFiles = [];
+        for(let i = 0; i < files.length; i++){
+          const f = await smReadFile(files[i]);
+          readFiles.push({ filename: f.filename, mime: f.mime, data: f.data });
+        }
+        payload.files = readFiles;
+      }
       const res = await fetch(NOTICE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
       if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      /* 서버 재조회를 기다리지 않고 화면에 바로 반영 (GitHub 반영은 최대 5분 정도 걸릴 수 있음) */
+      const now = new Date();
+      const y = now.toISOString().slice(0,10);
+      const existing = editing ? notices[noticeFormIdx] : null;
+      const images = files.length ? files.map(f => URL.createObjectURL(f)) : (existing ? (existing.images || []) : []);
+      const newNotice = { id: nid, tag: tag, title: title, content: content, pinned: pinned, author: smWhoAmI(), date: y.replace(/-/g,'.') + ' 게시', sortKey: y, images: images };
+      if(editing) notices[noticeFormIdx] = newNotice;
+      else notices.unshift(newNotice);
       noticeCloseForm();
-      showConfirmPopup(editing ? '수정완료' : '등록완료', async () => { await loadNotices(); renderNoticeBoardList(); });
+      renderNotices(notices);
+      renderNoticeBoardList();
+      showConfirmPopup(editing ? '수정완료' : '등록완료');
     }catch(err){
       msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류');
       msg.style.color = 'var(--orange-deep)';
@@ -2451,7 +2502,10 @@ body.growon{ background:var(--g-navy); }
     try{
       const res = await fetch(NOTICE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'delete', id: n.id || '', author: smWhoAmI() }) });
       if(!res.ok) throw new Error('서버 오류');
-      showConfirmPopup('삭제완료', async () => { await loadNotices(); renderNoticeBoardList(); });
+      notices.splice(idx, 1);
+      renderNotices(notices);
+      renderNoticeBoardList();
+      showConfirmPopup('삭제완료');
     }catch(err){ alert('삭제 실패: ' + (err.message || '네트워크 오류')); }
   }
 
@@ -3218,8 +3272,8 @@ body.growon{ background:var(--g-navy); }
 
   function renderStrategyAllList(){
     const canEdit = isTopAdmin();
-    const bar = canEdit ? `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn" id="strategyNewBtn">＋ 새 영업전략 등록</button></div>` : '';
-    document.getElementById('strategyAllList').innerHTML = bar + (strategyPosts.length === 0
+    const bar = canEdit ? `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn strategy-new-btn">＋ 새 영업전략 등록</button></div>` : '';
+    const html = bar + (strategyPosts.length === 0
       ? '<div class="doc-empty-note">아직 등록된 게시물이 없습니다.</div>'
       : strategyPosts.map((p, idx) => `
         <div class="doc-search-result" style="text-align:left;">
@@ -3238,13 +3292,17 @@ body.growon{ background:var(--g-navy); }
           ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">⬇️ 파일 다운로드</a>` : ''}
         </div>
       `).join(''));
-    const nb = document.getElementById('strategyNewBtn');
-    if(nb) nb.addEventListener('click', () => strategyOpenForm(null));
-    document.getElementById('strategyAllList').querySelectorAll('.sm-edit[data-steidx]').forEach(el => {
-      el.addEventListener('click', () => strategyOpenForm(Number(el.dataset.steidx)));
-    });
-    document.getElementById('strategyAllList').querySelectorAll('.sm-del[data-stdidx]').forEach(el => {
-      el.addEventListener('click', () => strategyDelete(Number(el.dataset.stdidx)));
+    ['strategyAllList', 'strategyAdminList'].forEach(cid => {
+      const box = document.getElementById(cid);
+      if(!box) return;
+      box.innerHTML = html;
+      box.querySelectorAll('.strategy-new-btn').forEach(b => b.addEventListener('click', () => strategyOpenForm(null)));
+      box.querySelectorAll('.sm-edit[data-steidx]').forEach(el => {
+        el.addEventListener('click', () => strategyOpenForm(Number(el.dataset.steidx)));
+      });
+      box.querySelectorAll('.sm-del[data-stdidx]').forEach(el => {
+        el.addEventListener('click', () => strategyDelete(Number(el.dataset.stdidx)));
+      });
     });
   }
   document.getElementById('strategyViewAllBtn').addEventListener('click', () => {
@@ -5593,6 +5651,10 @@ body.growon{ background:var(--g-navy); }
     if(typeof renderScheduleAdminBar === 'function') renderScheduleAdminBar();
     const _dnTab = document.getElementById('dailyNewsTabBtn');
     if(_dnTab) _dnTab.style.display = isTopAdmin() ? '' : 'none';
+    const _noTab = document.getElementById('noticeAdminTabBtn');
+    if(_noTab) _noTab.style.display = isTopAdmin() ? '' : 'none';
+    const _stTab = document.getElementById('strategyAdminTabBtn');
+    if(_stTab) _stTab.style.display = isTopAdmin() ? '' : 'none';
   }
 
   function admSaveSession(){
@@ -6558,12 +6620,18 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('admin-' + btn.dataset.atab).classList.add('active');
     if(btn.dataset.atab === 'db') dbbLoad(false);
     if(btn.dataset.atab === 'album') albLoad();
+    if(btn.dataset.atab === 'noticemgr') renderNoticeBoardList();
+    if(btn.dataset.atab === 'strategymgr') renderStrategyAllList();
   });
 
   /* ===== 데일리뉴스 웹 발행 (관리자 전용) ===== */
   const DAILYNEWS_PUBLISH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/grow-dailynews-publish';
   const _dnTabBtn = document.getElementById('dailyNewsTabBtn');
   if(_dnTabBtn) _dnTabBtn.style.display = isTopAdmin() ? '' : 'none';
+  const _noticeAdminTabBtn = document.getElementById('noticeAdminTabBtn');
+  if(_noticeAdminTabBtn) _noticeAdminTabBtn.style.display = isTopAdmin() ? '' : 'none';
+  const _strategyAdminTabBtn = document.getElementById('strategyAdminTabBtn');
+  if(_strategyAdminTabBtn) _strategyAdminTabBtn.style.display = isTopAdmin() ? '' : 'none';
   const _dnBtn = document.getElementById('dnPublishBtn');
   if(_dnBtn) _dnBtn.addEventListener('click', async () => {
     const msg = document.getElementById('dnPublishMsg');
