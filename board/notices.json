@@ -17,6 +17,19 @@
       "pinned": false,
       "content": "",
       "images": []
+    },
+    {
+      "id": "1786085137340",
+      "tag": "긴급",
+      "title": "테스트 공지(이미지확인용)",
+      "content": "워크플로우 점검",
+      "pinned": false,
+      "author": "Claude 자동화팀",
+      "date": "2026.08.07 게시",
+      "sortKey": "2026-08-07",
+      "images": [
+        "https://raw.githubusercontent.com/daonpartners/grow/main/assets/notices/1786085137340_0_test1.jpg"
+      ]
     }
   ]
 }
