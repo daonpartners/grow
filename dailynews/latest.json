@@ -1,126 +1,126 @@
 {
-  "date": "2026-08-10",
-  "dateLabel": "2026.08.10(월)",
+  "date": "2026-08-11",
+  "dateLabel": "2026.08.11(화)",
   "weather": [
     {
       "city": "서울",
-      "min": 24,
-      "max": 33,
+      "min": 22,
+      "max": 32,
       "code": 3
     },
     {
       "city": "부산",
-      "min": 25,
-      "max": 29,
-      "code": 55
+      "min": 24,
+      "max": 28,
+      "code": 3
     },
     {
       "city": "대구",
-      "min": 24,
-      "max": 29,
-      "code": 51
+      "min": 21,
+      "max": 28,
+      "code": 3
     },
     {
       "city": "인천",
-      "min": 23,
+      "min": 22,
       "max": 32,
       "code": 3
     },
     {
       "city": "광주",
-      "min": 25,
-      "max": 29,
-      "code": 3
+      "min": 22,
+      "max": 32,
+      "code": 2
     },
     {
       "city": "대전",
-      "min": 24,
-      "max": 30,
+      "min": 21,
+      "max": 29,
       "code": 3
     },
     {
       "city": "강릉",
-      "min": 23,
+      "min": 22,
       "max": 27,
-      "code": 3
+      "code": 2
     },
     {
       "city": "제주",
-      "min": 28,
+      "min": 25,
       "max": 29,
-      "code": 51
+      "code": 3
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,258.77",
-      "diff": "-37.61",
-      "dir": "down"
+      "value": "6,299.66",
+      "diff": "+3.28",
+      "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "798.81",
-      "diff": "-2.86",
-      "dir": "down"
+      "value": "854.47",
+      "diff": "+52.80",
+      "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,407.33",
-      "diff": "-14.97",
-      "dir": "down"
+      "value": "1,417.71",
+      "diff": "+10.71",
+      "dir": "up"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "78.2",
-      "diff": "+0.9",
+      "value": "82.3",
+      "diff": "+4.1",
       "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "746,520",
-      "diff": "+19,102",
+      "value": "760,384",
+      "diff": "+24,048",
       "dir": "up"
     }
   ],
   "trends": [
-    "허양임",
-    "손주",
-    "권상우"
+    "천궁",
+    "결혼 의 완성",
+    "서수길"
   ],
   "news": [
     {
+      "cat": "보험",
+      "title": "보험금 지급 거절 민원 증가",
+      "summary": "보험금 지급을 둘러싼 소비자 불만이 증가하고 있으며, 흥국생명과 메리츠화재의 민원이 가장 많다.",
+      "url": "https://it.chosun.com/news/articleView.html?idxno=2023092167582",
+      "host": "it.chosun.com"
+    },
+    {
+      "cat": "보험",
+      "title": "전통시장 날씨보험, 폭염에 대응",
+      "summary": "KB손해보험이 전통시장 영업손실을 기상지수로 보장하는 날씨보험을 출시했다. 기온과 강수량에 따라 보험금이 지급되는 방식으로, 손해액 산정 절차를 간소화했다.",
+      "url": "https://n.news.naver.com/article/022/0004149697?sid=101",
+      "host": "n.news.naver.com"
+    },
+    {
       "cat": "생활",
-      "title": "CAR-T로 재발 혈액암 치료 가능성 열려",
-      "summary": "CAR-T 세포치료가 재발 혈액암 환자에게 새로운 치료 기회를 제공하고 있다. 이 치료법은 일부 환자에서 5년 이상 생존 결과를 보이고 있다.",
-      "url": "https://v.daum.net/v/20260810060010208?from=newsbot&botref=KN&botevent=q",
+      "title": "반려동물 전문 치료제 시장 확대",
+      "summary": "반려동물의 질환 치료 수요가 증가하며 전문 치료제 개발이 활발해지고 있다. 국내 제약사들은 다양한 만성 질환에 대한 치료제를 출시하고 있다.",
+      "url": "https://v.daum.net/v/20260811060358920?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     },
     {
-      "cat": "보험",
-      "title": "건강보험 1분기 3조8989억 적자",
-      "summary": "올해 1분기 건강보험이 3조8989억 원의 적자를 기록하며 6년 만에 적자 전환 가능성이 커졌다.",
-      "url": "https://v.daum.net/v/20260809193652648?from=newsbot&botref=CN2&botevent=q",
+      "cat": "사회",
+      "title": "알츠하이머병, 표적치료제의 희망",
+      "summary": "알츠하이머병은 조기 발견과 관리로 진행을 늦출 수 있다는 연구 결과가 발표됐다. 표적치료제가 등장하면서 질병 조절 치료 시대가 열리고 있다.",
+      "url": "https://v.daum.net/v/20260810174805606?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
-    },
-    {
-      "cat": "보험",
-      "title": "생보사, 암보험 특허 경쟁 심화",
-      "summary": "생명보험사들이 암보험 관련 배타적사용권을 증가시키며 시장 점유율 확대를 노리고 있다. 암 환자 수 증가와 의료비 부담 완화 수요가 상품 개발을 촉진하고 있다.",
-      "url": "https://m.ekn.kr/view.php?key=20260807023100370",
-      "host": "m.ekn.kr"
-    },
-    {
-      "cat": "보험",
-      "title": "노인 마지막 한 달 의료비 4.3배 증가",
-      "summary": "노인 사망 직전 병원 이송 시 의료비가 4.3배 증가하는 현상이 나타났다. 보험사들은 돌봄보험 상품 개발에 주목하고 있다.",
-      "url": "http://www.fins.co.kr/news/articleView.html?idxno=109537",
-      "host": "fins.co.kr"
     }
   ],
   "quote": {
-    "text": "신뢰는 쌓기 어렵고 무너지기는 쉽다",
-    "author": "워런 버핏"
+    "text": "오늘 할 일을 내일로 미루지 마라",
+    "author": "서양 격언"
   },
-  "updatedAt": "2026-08-10T06:53:12.000Z"
+  "updatedAt": "2026-08-11T07:03:05.000Z"
 }
