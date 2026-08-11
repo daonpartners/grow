@@ -1,126 +1,126 @@
 {
-  "date": "2026-08-11",
-  "dateLabel": "2026.08.11(화)",
+  "date": "2026-08-12",
+  "dateLabel": "2026.08.12(수)",
   "weather": [
     {
       "city": "서울",
-      "min": 22,
-      "max": 32,
-      "code": 3
+      "min": 20,
+      "max": 29,
+      "code": 1
     },
     {
       "city": "부산",
-      "min": 24,
-      "max": 28,
-      "code": 3
+      "min": 22,
+      "max": 29,
+      "code": 1
     },
     {
       "city": "대구",
-      "min": 21,
-      "max": 28,
-      "code": 3
+      "min": 20,
+      "max": 29,
+      "code": 2
     },
     {
       "city": "인천",
-      "min": 22,
-      "max": 32,
-      "code": 3
+      "min": 19,
+      "max": 30,
+      "code": 2
     },
     {
       "city": "광주",
-      "min": 22,
-      "max": 32,
-      "code": 2
+      "min": 19,
+      "max": 30,
+      "code": 1
     },
     {
       "city": "대전",
-      "min": 21,
+      "min": 18,
       "max": 29,
-      "code": 3
-    },
-    {
-      "city": "강릉",
-      "min": 22,
-      "max": 27,
       "code": 2
     },
     {
+      "city": "강릉",
+      "min": 23,
+      "max": 25,
+      "code": 51
+    },
+    {
       "city": "제주",
-      "min": 25,
-      "max": 29,
-      "code": 3
+      "min": 23,
+      "max": 28,
+      "code": 2
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,299.66",
-      "diff": "+3.28",
+      "value": "6,345.53",
+      "diff": "+86.76",
       "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "854.47",
-      "diff": "+52.80",
+      "value": "857.84",
+      "diff": "+59.03",
       "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,417.71",
-      "diff": "+10.71",
-      "dir": "up"
+      "value": "1,412.39",
+      "diff": "-4.92",
+      "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "82.3",
-      "diff": "+4.1",
+      "value": "83.5",
+      "diff": "+1.4",
       "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "760,384",
-      "diff": "+24,048",
+      "value": "754,840",
+      "diff": "+9,503",
       "dir": "up"
     }
   ],
   "trends": [
-    "천궁",
-    "결혼 의 완성",
-    "서수길"
+    "디에고 포를란",
+    "나솔",
+    "휴머노이드 로봇"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "보험금 지급 거절 민원 증가",
-      "summary": "보험금 지급을 둘러싼 소비자 불만이 증가하고 있으며, 흥국생명과 메리츠화재의 민원이 가장 많다.",
-      "url": "https://it.chosun.com/news/articleView.html?idxno=2023092167582",
-      "host": "it.chosun.com"
+      "title": "차량 렌트비 부당청구 문제 심각",
+      "summary": "자동차 보험에서 렌트비 부당청구 사례가 증가하고 있다. 수리기간을 늘리거나 허위 계약을 통해 보험금을 청구하는 방식이 다양해지고 있다.",
+      "url": "https://www.insjournal.co.kr/news/articleView.html?idxno=32563",
+      "host": "insjournal.co.kr"
     },
     {
-      "cat": "보험",
-      "title": "전통시장 날씨보험, 폭염에 대응",
-      "summary": "KB손해보험이 전통시장 영업손실을 기상지수로 보장하는 날씨보험을 출시했다. 기온과 강수량에 따라 보험금이 지급되는 방식으로, 손해액 산정 절차를 간소화했다.",
-      "url": "https://n.news.naver.com/article/022/0004149697?sid=101",
-      "host": "n.news.naver.com"
-    },
-    {
-      "cat": "생활",
-      "title": "반려동물 전문 치료제 시장 확대",
-      "summary": "반려동물의 질환 치료 수요가 증가하며 전문 치료제 개발이 활발해지고 있다. 국내 제약사들은 다양한 만성 질환에 대한 치료제를 출시하고 있다.",
-      "url": "https://v.daum.net/v/20260811060358920?from=newsbot&botref=KN&botevent=q",
-      "host": "v.daum.net"
+      "cat": "경제",
+      "title": "해외 투자자, 韓 임대시장에 1.3조 베팅",
+      "summary": "한국 임대주택 시장에 해외 기관투자자들이 1조3000억원을 투자했다. 월세 증가와 1인 가구 증가가 주요 요인으로 작용하고 있다.",
+      "url": "https://m.edaily.co.kr/News/Read?newsId=01167686645546336&mediaCodeNo=257",
+      "host": "m.edaily.co.kr"
     },
     {
       "cat": "사회",
-      "title": "알츠하이머병, 표적치료제의 희망",
-      "summary": "알츠하이머병은 조기 발견과 관리로 진행을 늦출 수 있다는 연구 결과가 발표됐다. 표적치료제가 등장하면서 질병 조절 치료 시대가 열리고 있다.",
-      "url": "https://v.daum.net/v/20260810174805606?from=newsbot&botref=KN&botevent=q",
+      "title": "교통사고 경상환자 장기치료 관리",
+      "summary": "교통사고 경상환자는 8주 초과 치료 시 전문 의료인 검토가 필요하다. 정부는 과잉진료를 줄이고 치료권을 보장하는 제도를 시행한다.",
+      "url": "https://v.daum.net/v/20260812060331748?from=newsbot&botref=KN&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "미국 비만율 감소, 한국은 제도적 장벽",
+      "summary": "미국의 비만율이 GLP-1 약물 덕분에 감소하고 있다. 그러나 한국은 제도적 장벽으로 인해 환자들이 치료를 받기 어려운 상황이다.",
+      "url": "https://v.daum.net/v/20260812043321518?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "오늘 할 일을 내일로 미루지 마라",
-    "author": "서양 격언"
+    "text": "백 번 듣는 것이 한 번 보는 것만 못하다",
+    "author": "한서"
   },
-  "updatedAt": "2026-08-11T07:03:05.000Z"
+  "updatedAt": "2026-08-12T07:18:22.000Z"
 }
