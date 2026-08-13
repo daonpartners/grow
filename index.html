@@ -1392,6 +1392,7 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-panel active" id="edu-lecture">
+          <div id="lectureAdminBar" style="display:none; margin-bottom:12px;"></div>
           <div class="filter-row" id="lectureFilterRow" data-reveal>
             <button class="filter-pill active" data-lcat="전체">전체</button>
             <button class="filter-pill" data-lcat="자동차">자동차</button>
@@ -2053,6 +2054,43 @@ body.growon{ background:var(--g-navy); }
     </div>
     <div class="sm-form-msg" id="scheduleFormMsg2"></div>
     <button type="button" class="sm-form-submit" id="scheduleFormSubmit">등록</button>
+  </div>
+</div>
+<div class="modal-backdrop" id="lectureFormBackdrop">
+  <div class="modal-card sm-form-card">
+    <button class="modal-close" id="lectureFormClose">&times;</button>
+    <div class="panel-eyebrow">강의실</div>
+    <h2 class="panel-title" id="lectureFormTitle2">새 강의 등록</h2>
+    <div class="sm-form-row">
+      <label>강의 제목 <b>*</b></label>
+      <input type="text" id="lectureFormName" placeholder="예) 자동차보험 책임보험 완전정리">
+    </div>
+    <div class="sm-form-row">
+      <label>강사·채널명 (선택)</label>
+      <input type="text" id="lectureFormInstructor" placeholder="예) 김중훈의 전지적자동차시점">
+    </div>
+    <div class="sm-form-row">
+      <label>카테고리</label>
+      <select id="lectureFormCategory" style="width:100%; box-sizing:border-box; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px;">
+        <option value="자동차">자동차</option>
+        <option value="화재/배상">화재/배상</option>
+        <option value="세일즈">세일즈</option>
+        <option value="상품지식">상품지식</option>
+        <option value="마인드셋">마인드셋</option>
+        <option value="재무설계">재무설계</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+    <div class="sm-form-row">
+      <label>유튜브 링크 (선택)</label>
+      <input type="text" id="lectureFormYoutube" placeholder="https://youtu.be/...">
+    </div>
+    <div class="sm-form-row">
+      <label>자료 링크 (선택)</label>
+      <input type="text" id="lectureFormMaterial" placeholder="https://drive.google.com/...">
+    </div>
+    <div class="sm-form-msg" id="lectureFormMsg2"></div>
+    <button type="button" class="sm-form-submit" id="lectureFormSubmit">등록</button>
   </div>
 </div>
 <div class="modal-backdrop" id="insurerModalBackdrop">
@@ -3225,12 +3263,20 @@ body.growon{ background:var(--g-navy); }
       latestBox.innerHTML = '<div class="doc-empty-note">아직 등록된 영업전략이 없습니다.</div>';
       return;
     }
-    latestBox.innerHTML = strategyPosts.slice(0, 5).map((p, idx) => `
+    /* 이번 달 게시물은 개수 제한 없이 전체 노출. 이번 달 게시물이 없으면 최신 5개로 대체 표시 */
+    const now = new Date();
+    const ym = now.getFullYear() + '.' + String(now.getMonth() + 1).padStart(2, '0');
+    let monthList = strategyPosts.filter(p => String(p.date || '').startsWith(ym));
+    if(!monthList.length) monthList = strategyPosts.slice(0, 5);
+    latestBox.innerHTML = monthList.map((p) => {
+      const idx = strategyPosts.indexOf(p);
+      return `
       <div class="notice" data-stidx="${idx}" style="cursor:pointer;">
         <span class="tag 전체공지">${escapeHtml(p.date)}</span>
         <div class="notice-body"><div class="notice-title">${escapeHtml(p.title)}</div><div class="notice-meta">${escapeHtml(p.content || '')}</div></div>
       </div>
-    `).join('');
+    `;
+    }).join('');
     latestBox.querySelectorAll('[data-stidx]').forEach(el => {
       el.addEventListener('click', () => openStrategyDetail(strategyPosts[Number(el.dataset.stidx)]));
     });
@@ -3396,9 +3442,12 @@ body.growon{ background:var(--g-navy); }
   document.getElementById('strategyModalClose').addEventListener('click', closeStrategyModal);
   document.getElementById('strategyModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'strategyModalBackdrop') closeStrategyModal(); });
 
-  // ================= 강의실 =================
-  const lectures = [
+  // ================= 강의실 (게시판화: 관리자센터에서 등록/수정/삭제) =================
+  const LECTURE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/grow-notice-board';
+  const LECTURE_JSON = 'board/lectures.json';
+  let lectures = [
     {
+      id: "seed-1",
       name: "[자동차]책임보험만 가입했다고? 하루500원이면 86억을 막는다!! 책임보험만 가입하면 패가망신 하는 이유",
       instructor: "김중훈의 전지적자동차시점",
       category: "자동차",
@@ -3406,6 +3455,7 @@ body.growon{ background:var(--g-navy); }
       materialLink: null
     }
   ];
+  let lectureCat = '전체';
 
   function getYoutubeThumb(url){
     if(!url) return null;
@@ -3415,34 +3465,154 @@ body.growon{ background:var(--g-navy); }
 
   function renderLectures(list){
     const grid = document.getElementById('lectureGrid');
+    const canEdit = isTopAdmin();
+    if(!list.length){
+      grid.innerHTML = '<div class="doc-empty-note">등록된 강의가 없습니다.</div>';
+      return;
+    }
     grid.innerHTML = list.map(l => {
+      const idx = lectures.indexOf(l);
       const thumb = getYoutubeThumb(l.youtubeLink);
       return `
         <div class="lecture-card">
-          <div class="lecture-thumb">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;" alt="${l.name}">` : '▶'}</div>
+          <div class="lecture-thumb">${thumb ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;" alt="${escapeHtml(l.name)}">` : '▶'}</div>
           <div class="lecture-info">
-            <div class="lecture-name">${l.name}</div>
-            <div class="lecture-meta"><span>${l.category}</span><span>${l.instructor}</span></div>
+            <div class="lecture-name">${escapeHtml(l.name)}</div>
+            <div class="lecture-meta"><span>${escapeHtml(l.category || '')}</span><span>${escapeHtml(l.instructor || '')}</span></div>
             <div class="lecture-links">
               ${l.youtubeLink ? `<a href="${l.youtubeLink}" target="_blank" rel="noopener">▶ 영상보기</a>` : ''}
               ${l.materialLink ? `<a href="${l.materialLink}" target="_blank" rel="noopener">📄 자료</a>` : ''}
               ${(!l.youtubeLink && !l.materialLink) ? `<span style="font-size:11px;color:var(--slate);">등록된 링크 없음</span>` : ''}
             </div>
+            ${canEdit ? `<div class="cm-tools">
+              <button type="button" class="cm-btn lec-edit" data-lidx="${idx}">✏️ 수정</button>
+              <button type="button" class="cm-btn del lec-del" data-lidx="${idx}">🗑️ 삭제</button>
+            </div>` : ''}
           </div>
         </div>
       `;
     }).join('');
+    grid.querySelectorAll('.lec-edit').forEach(btn => {
+      btn.addEventListener('click', () => lectureOpenForm(Number(btn.dataset.lidx)));
+    });
+    grid.querySelectorAll('.lec-del').forEach(btn => {
+      btn.addEventListener('click', () => lectureDelete(Number(btn.dataset.lidx)));
+    });
   }
-  renderLectures(lectures);
+  function applyLectureFilter(){
+    renderLectures(lectureCat === '전체' ? lectures : lectures.filter(l => l.category === lectureCat));
+  }
+  applyLectureFilter();
 
   document.getElementById('lectureFilterRow').addEventListener('click', (e) => {
     const btn = e.target.closest('.filter-pill');
     if(!btn) return;
     document.querySelectorAll('#lectureFilterRow .filter-pill').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
-    const cat = btn.dataset.lcat;
-    renderLectures(cat === '전체' ? lectures : lectures.filter(l => l.category === cat));
+    lectureCat = btn.dataset.lcat;
+    applyLectureFilter();
   });
+
+  function renderLectureAdminBar(){
+    const bar = document.getElementById('lectureAdminBar');
+    if(!bar) return;
+    if(isTopAdmin()){
+      bar.style.display = 'block';
+      bar.innerHTML = `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn" id="lectureNewBtn">＋ 새 강의 등록</button></div>`;
+      const nb = document.getElementById('lectureNewBtn');
+      if(nb) nb.addEventListener('click', () => lectureOpenForm(null));
+    } else {
+      bar.style.display = 'none';
+      bar.innerHTML = '';
+    }
+    applyLectureFilter(); /* 수정·삭제 버튼 노출 여부를 즉시 갱신 */
+  }
+
+  async function loadLectures(){
+    try{
+      const res = await fetch(LECTURE_JSON + '?t=' + Date.now(), { cache:'no-store' });
+      if(res.ok){
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : (data.items || []);
+        if(rows.length) lectures = rows.slice().sort((a,b) => String(b.sortKey||b.date||'').localeCompare(String(a.sortKey||a.date||'')));
+      }
+    }catch(e){ /* 초기 하드코딩 값 유지 */ }
+    applyLectureFilter();
+  }
+  window.reloadLectures = loadLectures;
+  loadLectures();
+  renderLectureAdminBar();
+
+  /* ===== 강의 등록/수정/삭제 ===== */
+  let lectureFormIdx = null;
+  function lectureOpenForm(idx){
+    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    lectureFormIdx = (idx === null || idx === undefined) ? null : idx;
+    const editing = lectureFormIdx !== null;
+    const l = editing ? lectures[lectureFormIdx] : null;
+    document.getElementById('lectureFormTitle2').textContent = editing ? '강의 수정' : '새 강의 등록';
+    document.getElementById('lectureFormName').value = l ? (l.name || '') : '';
+    document.getElementById('lectureFormInstructor').value = l ? (l.instructor || '') : '';
+    document.getElementById('lectureFormCategory').value = l ? (l.category || '자동차') : '자동차';
+    document.getElementById('lectureFormYoutube').value = l ? (l.youtubeLink || '') : '';
+    document.getElementById('lectureFormMaterial').value = l ? (l.materialLink || '') : '';
+    document.getElementById('lectureFormMsg2').textContent = '';
+    document.getElementById('lectureFormSubmit').disabled = false;
+    document.getElementById('lectureFormSubmit').textContent = editing ? '수정 저장' : '등록';
+    document.getElementById('lectureFormBackdrop').classList.add('open');
+  }
+  function lectureCloseForm(){ document.getElementById('lectureFormBackdrop').classList.remove('open'); }
+  document.getElementById('lectureFormClose').addEventListener('click', lectureCloseForm);
+  document.getElementById('lectureFormBackdrop').addEventListener('click', (e) => { if(e.target.id === 'lectureFormBackdrop') lectureCloseForm(); });
+  document.getElementById('lectureFormSubmit').addEventListener('click', async () => {
+    const msg = document.getElementById('lectureFormMsg2');
+    const btn = document.getElementById('lectureFormSubmit');
+    const name = document.getElementById('lectureFormName').value.trim();
+    const instructor = document.getElementById('lectureFormInstructor').value.trim();
+    const category = document.getElementById('lectureFormCategory').value;
+    const youtubeLink = document.getElementById('lectureFormYoutube').value.trim();
+    const materialLink = document.getElementById('lectureFormMaterial').value.trim();
+    const editing = lectureFormIdx !== null;
+    if(!name){ msg.textContent = '강의 제목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    btn.disabled = true; btn.textContent = '전송 중...';
+    msg.textContent = '전송 중입니다...'; msg.style.color = 'var(--slate)';
+    const lecId = editing ? (lectures[lectureFormIdx].id || String(Date.now())) : String(Date.now());
+    try{
+      const payload = {
+        kind: 'lecture',
+        action: editing ? 'update' : 'create',
+        id: lecId,
+        name: name, instructor: instructor, category: category,
+        youtubeLink: youtubeLink, materialLink: materialLink,
+        author: smWhoAmI()
+      };
+      const res = await fetch(LECTURE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      /* 서버 재조회를 기다리지 않고 화면에 바로 반영 (GitHub 반영은 최대 5분 정도 걸릴 수 있음) */
+      const newLec = { id: lecId, name: name, instructor: instructor, category: category, youtubeLink: youtubeLink, materialLink: materialLink, author: smWhoAmI() };
+      if(editing) lectures[lectureFormIdx] = newLec;
+      else lectures.unshift(newLec);
+      lectureCloseForm();
+      applyLectureFilter();
+      showConfirmPopup(editing ? '수정완료' : '등록완료');
+    }catch(err){
+      msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류');
+      msg.style.color = 'var(--orange-deep)';
+      btn.disabled = false; btn.textContent = editing ? '수정 저장' : '등록';
+    }
+  });
+  async function lectureDelete(idx){
+    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    const l = lectures[idx]; if(!l) return;
+    if(!confirm('«' + l.name + '»\n\n정말 삭제하시겠습니까?')) return;
+    try{
+      const res = await fetch(LECTURE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ kind:'lecture', action:'delete', id: l.id || '', author: smWhoAmI() }) });
+      if(!res.ok) throw new Error('서버 오류');
+      lectures.splice(idx, 1);
+      applyLectureFilter();
+      showConfirmPopup('삭제완료');
+    }catch(err){ alert('삭제 실패: ' + (err.message || '네트워크 오류')); }
+  }
 
   // ================= 자료실 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, category, content, links, date)
@@ -5662,7 +5832,9 @@ body.growon{ background:var(--g-navy); }
     if(window.reloadNotices) window.reloadNotices();
     if(window.reloadSchedule) window.reloadSchedule();
     if(window.reloadStrategy) window.reloadStrategy();
+    if(window.reloadLectures) window.reloadLectures();
     if(typeof renderScheduleAdminBar === 'function') renderScheduleAdminBar();
+    if(typeof renderLectureAdminBar === 'function') renderLectureAdminBar();
     const _dnTab = document.getElementById('dailyNewsTabBtn');
     if(_dnTab) _dnTab.style.display = isTopAdmin() ? '' : 'none';
     const _noTab = document.getElementById('noticeAdminTabBtn');
