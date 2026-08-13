@@ -394,6 +394,19 @@
   .surgery-thumb-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:8px;}
   .surgery-thumb{aspect-ratio:3/4; border-radius:8px; overflow:hidden; border:1px solid #D3D7F5; cursor:pointer; background:#fff; position:relative;}
   .surgery-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  /* ===== 간편상품 사전 스크리닝 ===== */
+  .uw-screen-q{padding:14px 0; border-top:1px solid #E3E7EE;}
+  .uw-screen-q:first-of-type{border-top:none; padding-top:2px;}
+  .uw-screen-qtitle{font-size:12.5px; font-weight:800; color:var(--navy-2); line-height:1.5; margin-bottom:9px;}
+  .uw-toggle{display:inline-flex; border:1px solid #D3D7F5; border-radius:9px; overflow:hidden;}
+  .uw-toggle button{border:none; background:#fff; padding:7px 16px; font-size:12.5px; font-weight:700; cursor:pointer; color:#6b7570;}
+  .uw-toggle button.active[data-v="yes"]{background:#B64A3F; color:#fff;}
+  .uw-toggle button.active[data-v="no"]{background:#12805A; color:#fff;}
+  .uw-screen-year{margin-top:11px;}
+  .uw-screen-year label{display:block; font-size:11.5px; color:var(--slate); margin-bottom:6px;}
+  .uw-screen-year label b{color:var(--orange-deep);}
+  .uw-screen-year input[type=range]{width:100%; accent-color:var(--orange);}
+  .uw-screen-notice{font-size:10.5px; color:var(--orange-deep); background:var(--orange-tint); border-radius:8px; padding:9px 12px; margin-top:14px; line-height:1.6;}
   .surgery-thumb .surgery-page-no{position:absolute; left:4px; bottom:4px; font-size:9.5px; font-weight:800; color:#fff; background:rgba(20,21,43,.65); padding:2px 6px; border-radius:999px;}
   .surgery-empty{grid-column:1/-1; text-align:center; padding:20px 10px; font-size:12px; color:var(--slate); background:#fff; border-radius:9px; border:1px dashed #D3D7F5;}
   /* ===== 종수술비 등급표 ===== */
@@ -1761,6 +1774,60 @@ body.growon{ background:var(--g-navy); }
           <div class="disease-notice">
             🔎 가입 전 확인해야 할 <b>고지·통지의무, 인수·부담보 기준, 설계 팁</b>을 한 곳에서 확인하세요.
           </div>
+
+          <div class="surgery-pin" id="uwScreenPin">
+            <div class="surgery-pin-head">
+              <span class="surgery-pin-icon">🧪</span>
+              <div>
+                <div class="surgery-pin-title">간편상품 사전 스크리닝</div>
+                <div class="surgery-pin-desc">고객 병력을 입력하면 심사 올릴 만한 보험사·상품을 미리 확인합니다. 최종 인수 여부는 반드시 해당 보험사 심사 결과를 따릅니다.</div>
+              </div>
+            </div>
+
+            <div class="uw-screen-q">
+              <div class="uw-screen-qtitle">1. 최근 3개월 이내 의사로부터 입원·수술·추가검사 필요소견 또는 질병확정진단·의심소견을 받은 사실이 있습니까?</div>
+              <div class="uw-toggle" data-uwq="q1">
+                <button type="button" data-v="no" class="active">없음</button>
+                <button type="button" data-v="yes">있음</button>
+              </div>
+            </div>
+
+            <div class="uw-screen-q">
+              <div class="uw-screen-qtitle">2. 최근 N년 이내 질병·상해로 입원 또는 수술(제왕절개 포함)을 받은 사실이 있습니까?</div>
+              <div class="uw-toggle" data-uwq="q2">
+                <button type="button" data-v="no" class="active">없음</button>
+                <button type="button" data-v="yes">있음</button>
+              </div>
+              <div class="uw-screen-year" id="uwQ2YearRow" style="display:none;">
+                <label>가장 최근 이력이 몇 년 전입니까? <b id="uwQ2YearVal">3년 전</b></label>
+                <input type="range" id="uwQ2Year" min="0" max="10" value="3">
+              </div>
+            </div>
+
+            <div class="uw-screen-q">
+              <div class="uw-screen-qtitle">3. 암·협심증·심근경색·간경화·뇌졸중 등 중대질환으로 진단받거나 입원·수술한 사실이 있습니까?</div>
+              <div class="uw-toggle" data-uwq="q3">
+                <button type="button" data-v="no" class="active">없음</button>
+                <button type="button" data-v="yes">있음</button>
+              </div>
+              <div class="uw-screen-year" id="uwQ3YearRow" style="display:none;">
+                <label>진단·입원·수술 시점 <b id="uwQ3YearVal">3년 전</b></label>
+                <input type="range" id="uwQ3Year" min="0" max="10" value="3">
+              </div>
+            </div>
+
+            <div class="uw-screen-q">
+              <div class="uw-screen-qtitle">해당 질환명 (예외질환 매칭용, 선택)</div>
+              <input type="text" id="uwDiseaseKw" class="faq-search" placeholder="예: 갑상선, 용종, 자궁근종 …">
+            </div>
+
+            <button type="button" class="qna-new-btn" id="uwScreenRunBtn" style="margin-top:6px; background:var(--navy-2); color:#fff; border:none;">심사 가능 상품 조회</button>
+
+            <div id="uwScreenResult" style="display:none;">
+              <div class="uw-screen-notice">📋 보험사별 정확한 인수기준(예외질환 포함) 자료를 준비 중입니다. 자료가 반영되면 이 화면에 실제 조회 결과가 표시됩니다.</div>
+            </div>
+          </div>
+
           <div class="guide-search-top">
             <input type="text" class="faq-search guide-search-input" id="underwriteSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 고지의무, 고혈압, 부담보)">
           </div>
@@ -5407,6 +5474,35 @@ body.growon{ background:var(--g-navy); }
     renderUnderwritePanel();
   });
   renderUnderwritePanel();
+
+  /* ===== 간편상품 사전 스크리닝 (UI만 우선 제공, 실제 데이터 준비중) ===== */
+  (function initUwScreen(){
+    const pin = document.getElementById('uwScreenPin');
+    if(!pin) return;
+    const uwsState = { q1:'no', q2:'no', q3:'no' };
+    pin.querySelectorAll('.uw-toggle').forEach(t => {
+      t.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          t.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const q = t.dataset.uwq;
+          uwsState[q] = btn.dataset.v;
+          if(q === 'q2') document.getElementById('uwQ2YearRow').style.display = btn.dataset.v === 'yes' ? 'block' : 'none';
+          if(q === 'q3') document.getElementById('uwQ3YearRow').style.display = btn.dataset.v === 'yes' ? 'block' : 'none';
+        });
+      });
+    });
+    const q2y = document.getElementById('uwQ2Year');
+    if(q2y) q2y.addEventListener('input', () => { document.getElementById('uwQ2YearVal').textContent = q2y.value + '년 전'; });
+    const q3y = document.getElementById('uwQ3Year');
+    if(q3y) q3y.addEventListener('input', () => { document.getElementById('uwQ3YearVal').textContent = q3y.value + '년 전'; });
+    const runBtn = document.getElementById('uwScreenRunBtn');
+    if(runBtn) runBtn.addEventListener('click', () => {
+      const resultBox = document.getElementById('uwScreenResult');
+      resultBox.style.display = 'block';
+      resultBox.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    });
+  })();
 
 
   // ================= 영업자료실 =================
