@@ -1,24 +1,24 @@
 {
-  "date": "2026-08-13",
-  "dateLabel": "2026.08.13(목)",
+  "date": "2026-08-14",
+  "dateLabel": "2026.08.14(금)",
   "weather": [
     {
       "city": "서울",
-      "min": 21,
-      "max": 29,
-      "code": 51
+      "min": 22,
+      "max": 28,
+      "code": 3
     },
     {
       "city": "부산",
       "min": 24,
       "max": 30,
-      "code": 51
+      "code": 3
     },
     {
       "city": "대구",
-      "min": 22,
-      "max": 30,
-      "code": 51
+      "min": 23,
+      "max": 31,
+      "code": 3
     },
     {
       "city": "인천",
@@ -29,98 +29,98 @@
     {
       "city": "광주",
       "min": 23,
-      "max": 32,
-      "code": 2
+      "max": 28,
+      "code": 51
     },
     {
       "city": "대전",
-      "min": 20,
-      "max": 30,
+      "min": 22,
+      "max": 29,
       "code": 3
     },
     {
       "city": "강릉",
       "min": 23,
-      "max": 27,
-      "code": 51
+      "max": 25,
+      "code": 61
     },
     {
       "city": "제주",
       "min": 24,
       "max": 28,
-      "code": 51
+      "code": 3
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,579.04",
-      "diff": "+279.38",
+      "value": "6,813.34",
+      "diff": "+467.81",
       "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "858.91",
-      "diff": "+60.10",
+      "value": "861.37",
+      "diff": "+6.90",
       "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,416.75",
-      "diff": "+4.57",
+      "value": "1,418.26",
+      "diff": "+1.80",
       "dir": "up"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "82.6",
-      "diff": "-0.6",
+      "value": "81.2",
+      "diff": "-2.1",
       "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "763,354",
-      "diff": "+17,105",
+      "value": "753,583",
+      "diff": "+649",
       "dir": "up"
     }
   ],
   "trends": [
-    "삼성전기",
-    "돈",
-    "연합뉴스"
+    "문경시",
+    "김민희",
+    "과일"
   ],
   "news": [
     {
-      "cat": "경제",
-      "title": "외국계 보험사 매각설 지속",
-      "summary": "저출생과 규제로 외국계 보험사의 매각설이 계속되고 있다. 현재 매각설이 있는 보험사는 BNP파리바카디프생명과 메트라이프생명 등이다.",
-      "url": "https://n.news.naver.com/article/015/0005319677?sid=101",
-      "host": "n.news.naver.com"
-    },
-    {
-      "cat": "보험",
-      "title": "보험 비교설명 의무 시스템 문제점",
-      "summary": "보험 비교설명의무 시스템이 제대로 작동하지 않아 소비자 피해 우려가 커지고 있다. 보험사들이 정보를 제때 제공하지 않아 GA와 설계사들이 어려움을 겪고 있다는 지적이 있다.",
-      "url": "https://n.news.naver.com/article/014/0005560785",
+      "cat": "사회",
+      "title": "홈플러스, 67개 점포 정식 재개장",
+      "summary": "홈플러스가 67개 점포의 정식 영업을 재개하며 고객들이 몰렸다. 대규모 할인 행사로 매장이 활기를 되찾았다.",
+      "url": "https://n.news.naver.com/article/003/0014125759",
       "host": "n.news.naver.com"
     },
     {
       "cat": "사회",
-      "title": "젊은 여성, 유방 검사 함께 받아야",
-      "summary": "젊은 여성은 유방 촬영술과 초음파 검사를 함께 받는 것이 좋다고 전문가가 권장했다. 특히 고위험군은 30세부터 검사를 시작해야 한다.",
-      "url": "https://v.daum.net/v/20260813004051951?from=newsbot&botref=CN2&botevent=q",
-      "host": "v.daum.net"
+      "title": "75세 여성, 임플란트 수술 중 사망",
+      "summary": "75세 여성이 임플란트 11개를 심는 수술 중 심정지로 사망했다. 국과수는 국소마취제 독성 반응으로 추정하고 있다.",
+      "url": "https://n.news.naver.com/article/081/0003670111",
+      "host": "n.news.naver.com"
     },
     {
-      "cat": "생활",
-      "title": "주방 위생, 식중독 위험 높여",
-      "summary": "주방이 깨끗해 보여도 식중독 위험은 여전하다. 응답자의 75%가 식중독균을 퍼뜨릴 위험이 있는 행동을 하고 있다.",
-      "url": "https://v.daum.net/v/20260813050132475?from=newsbot&botref=CN2&botevent=q",
+      "cat": "보험",
+      "title": "사망보험금 유동화 신청률 0.34%",
+      "summary": "사망보험금 유동화 제도가 시행된 지 반년이 지났으나 신청률이 0.34%에 불과하다. 높은 문턱과 낮은 인지도 등이 제도 확산에 걸림돌로 작용하고 있다.",
+      "url": "https://m.globalepic.co.kr/view.php?ud=2026081308540156287cc35ccc5c_29",
+      "host": "m.globalepic.co.kr"
+    },
+    {
+      "cat": "사회",
+      "title": "안선영, 치매 母 약 최고 함량 공개",
+      "summary": "안선영은 치매를 앓고 있는 어머니의 약물 치료 상황을 공유했다. 치매약은 병 진행 속도를 늦출 수 있지만 완치할 수는 없다.",
+      "url": "https://v.daum.net/v/20260814044210918?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "우환에서 살고 안락에서 죽는다",
-    "author": "맹자"
+    "text": "아는 것을 안다 하고 모르는 것을 모른다 하는 것, 이것이 아는 것이다",
+    "author": "공자"
   },
-  "updatedAt": "2026-08-13T06:49:05.000Z"
+  "updatedAt": "2026-08-14T06:38:50.000Z"
 }
