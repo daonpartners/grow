@@ -1,6 +1,54 @@
 {
   "items": [
     {
+      "id": "1786684147102",
+      "kind": "driver",
+      "title": "수동입력 테스트",
+      "customerName": "홍길동",
+      "author": "김화진",
+      "companies": [
+        "A손보",
+        "B손보"
+      ],
+      "totalPremiums": [
+        {
+          "premium": "32,530원"
+        },
+        {
+          "premium": "28,900원"
+        }
+      ],
+      "rows": [
+        {
+          "coverage": "교통사고처리지원금(합의금)",
+          "note": "",
+          "values": [
+            {
+              "limit": "2억원"
+            },
+            {
+              "limit": "1억원"
+            }
+          ]
+        },
+        {
+          "coverage": "벌금(대인)",
+          "note": "",
+          "values": [
+            {
+              "limit": "3천만원"
+            },
+            {
+              "limit": "2천만원"
+            }
+          ]
+        }
+      ],
+      "xlsxLink": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/coverage/manual_1786684147102.xls",
+      "date": "2026.08.14 게시",
+      "sortKey": "2026-08-14"
+    },
+    {
       "id": "1786683907609",
       "title": "테스트 비교",
       "customerName": "전송죽",
