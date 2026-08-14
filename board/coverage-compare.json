@@ -1,3 +1,17 @@
 {
-  "items": []
+  "items": [
+    {
+      "id": "1786677238020",
+      "title": "테스트 고객보장비교",
+      "customerName": "홍길동",
+      "author": "김화진",
+      "companies": [
+        null
+      ],
+      "rows": [],
+      "xlsxLink": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/coverage/1786677238020.xlsx",
+      "date": "2026.08.14 게시",
+      "sortKey": "2026-08-14"
+    }
+  ]
 }
