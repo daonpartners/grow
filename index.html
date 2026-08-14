@@ -439,8 +439,9 @@
   table.me-sheet .me-foot{color:#C0392B; font-size:11px; text-align:center; padding:8px;}
   .me-rm-btn{background:none; border:none; color:#fff; cursor:pointer; font-size:11px; padding:2px 8px; text-decoration:underline;}
   @media print{
-    body.me-printing > *:not(#mePrintArea){display:none !important;}
-    #mePrintArea{display:block !important; position:static; width:100%; padding:0; margin:0;}
+    body.me-printing * { visibility:hidden !important; }
+    body.me-printing #mePrintArea, body.me-printing #mePrintArea * { visibility:visible !important; }
+    #mePrintArea{display:block !important; position:absolute !important; top:0; left:0; width:100%; padding:0; margin:0;}
     html.me-printing, body.me-printing{height:auto !important; overflow:visible !important;}
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   }
