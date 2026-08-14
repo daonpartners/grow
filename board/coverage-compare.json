@@ -1,6 +1,28 @@
 {
   "items": [
     {
+      "id": "1786685142596",
+      "kind": "driver",
+      "title": "검증",
+      "customerName": "검증고객",
+      "author": "테스트",
+      "companies": [
+        "A회사",
+        "B회사"
+      ],
+      "totalPremiums": [
+        {
+          "premium": "3만원"
+        },
+        {
+          "premium": "2만원"
+        }
+      ],
+      "xlsxLink": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/coverage/manual_1786685142596.xls",
+      "date": "2026.08.14 게시",
+      "sortKey": "2026-08-14"
+    },
+    {
       "id": "1786684147102",
       "kind": "driver",
       "title": "수동입력 테스트",
