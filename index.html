@@ -425,7 +425,8 @@
 
   /* ===== 직접입력 비교표 (me-) ===== */
   table.me-sheet{border-collapse:collapse; width:100%; background:#fff;}
-  table.me-sheet th, table.me-sheet td{border:1px solid #333; padding:0; font-size:12.5px;}
+  table.me-sheet th, table.me-sheet td{border:1px solid #333; padding:0; font-size:12.5px; height:34px;}
+  table.me-sheet input{height:34px; box-sizing:border-box;}
   table.me-sheet th{background:#F2F2F2; font-weight:800; text-align:center; padding:8px;}
   table.me-sheet td.me-label{padding:8px; font-weight:700; text-align:center; background:#F7F7F7;}
   table.me-sheet td.me-rowlabel{padding:0; text-align:left;}
@@ -1438,9 +1439,10 @@ body.growon{ background:var(--g-navy); }
         <div class="edu-tabs" id="eduTabs" data-reveal>
           <button class="edu-tab active" data-tab="lecture">🎬 강의실</button>
           <button class="edu-tab" data-tab="materialboard">📁 자료실</button>
+          <button class="edu-tab" data-tab="salesmat">🗣️ 상담·영업자료</button>
         </div>
 
-        <div class="edu-panel active" id="edu-lecture">
+        <div class="edu-panel edu-toplevel active" id="edu-lecture">
           <div id="lectureAdminBar" style="display:none; margin-bottom:12px;"></div>
           <div class="filter-row" id="lectureFilterRow" data-reveal>
             <button class="filter-pill active" data-lcat="전체">전체</button>
@@ -1455,8 +1457,25 @@ body.growon{ background:var(--g-navy); }
           <div class="lecture-grid" id="lectureGrid" data-reveal></div>
         </div>
 
-        <div class="edu-panel" id="edu-materialboard">
+        <div class="edu-panel edu-toplevel" id="edu-materialboard">
           <div id="smList-eduArchive"></div>
+        </div>
+
+        <div class="edu-panel edu-toplevel" id="edu-salesmat">
+          <div id="salesmaterials">
+            <div class="edu-tabs" id="smTabs" data-reveal>
+              <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
+              <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
+              <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
+              <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
+              <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
+            </div>
+            <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
+            <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
+            <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
+            <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
+            <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
+          </div>
         </div>
 
         <!-- 자료실 상세보기 모달 -->
@@ -1470,7 +1489,7 @@ body.growon{ background:var(--g-navy); }
           </div>
         </div>
 
-        <div class="edu-panel" id="edu-request" style="display:none;"></div>
+        <div class="edu-panel edu-toplevel" id="edu-request" style="display:none;"></div>
       </section>
       </div>
       
@@ -1514,6 +1533,7 @@ body.growon{ background:var(--g-navy); }
           <div class="edu-tabs" id="salesCenterTabs" data-reveal>
             <button class="edu-tab active" data-sctab="coveragecompare">📊 고객보장비교(AI)</button>
             <button class="edu-tab" data-sctab="manualentry">📝 직접입력 비교표</button>
+            <button class="edu-tab" data-sctab="archive">🗂️ 서식·다운로드</button>
           </div>
 
           <div class="edu-panel active" id="sc-coveragecompare">
@@ -1543,9 +1563,6 @@ body.growon{ background:var(--g-navy); }
               <div class="grade-table-wrap"><table class="grade-table" id="ccResultTable"></table></div>
               <a id="ccDownloadBtn" href="#" target="_blank" rel="noopener" class="lb-download-btn" style="margin-top:14px;">⬇ 엑셀 파일 다운로드</a>
             </div>
-
-            <div class="subsection-title">🗂️ 지난 비교 게시물</div>
-            <div id="ccPostList"></div>
           </div>
 
           <div class="edu-panel" id="sc-manualentry">
@@ -1579,15 +1596,34 @@ body.growon{ background:var(--g-navy); }
               </div>
 
               <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
-                <button type="button" class="qna-new-btn" id="meSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 저장하기</button>
+                <button type="button" class="qna-new-btn" id="meSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 이미지로 저장</button>
                 <button type="button" class="qna-new-btn" id="mePrintBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">🖨️ 인쇄하기</button>
               </div>
               <div class="cc-msg" id="meMsg"></div>
-              <a href="#" id="meDlLink" target="_blank" style="display:none; margin-top:10px; background:var(--orange); color:#fff; padding:10px 18px; border-radius:999px; text-decoration:none; font-size:13px; font-weight:800;">⬇ 엑셀 파일 다운로드</a>
             </div>
+          </div>
 
-            <div class="subsection-title">🗂️ 지난 작성 게시물</div>
-            <div id="mePostList"></div>
+          <div class="edu-panel" id="sc-archive">
+            <div id="edu-archive">
+              <div class="filter-row" id="filterRow" data-reveal>
+                <button class="filter-pill active" data-cat="전체">전체</button>
+                <button class="filter-pill" data-cat="실손보험">실손보험</button>
+                <button class="filter-pill" data-cat="암">암</button>
+                <button class="filter-pill" data-cat="뇌.심">뇌·심</button>
+                <button class="filter-pill" data-cat="수술비.기타">수술비·기타</button>
+                <button class="filter-pill" data-cat="운전자.상해">운전자·상해</button>
+                <button class="filter-pill" data-cat="치아.펫.태아">치아·펫·태아</button>
+                <button class="filter-pill" data-cat="자동차">자동차</button>
+                <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상·중대재해단체</button>
+                <button class="filter-pill" data-cat="후유장해.치매.간병">후유장해·치매·간병</button>
+                <button class="filter-pill" data-cat="고지의무.보상사례">고지의무·보상사례</button>
+                <button class="filter-pill" data-cat="세일즈">세일즈</button>
+                <button class="filter-pill" data-cat="DB스크립트">DB스크립트</button>
+                <button class="filter-pill" data-cat="CEO.법인.세금">CEO·법인·세금</button>
+                <button class="filter-pill" data-cat="연금.종신">연금·종신</button>
+              </div>
+              <div class="doc-grid" id="docGrid" data-reveal></div>
+            </div>
           </div>
           <div id="mePrintArea" style="display:none;"></div>
         </section>
@@ -1595,15 +1631,13 @@ body.growon{ background:var(--g-navy); }
       <div class="gview" id="view-qna">
 <section class="panel panel-navy" id="qna">
         <div class="panel-head">
-          <div><h2 class="panel-title">🍯 그로우꿀단지</h2></div>
+          <div><h2 class="panel-title">📖 가이드센터</h2></div>
         </div>
 
         <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
           <button class="edu-tab active" data-qtab="guide">📚 보험가이드</button>
           <button class="edu-tab" data-qtab="underwrite">🔎 가입·인수 가이드</button>
           <button class="edu-tab" data-qtab="claim2">📮 보상·청구 가이드</button>
-          <button class="edu-tab" data-qtab="sales">🗣️ 상담·영업자료</button>
-          <button class="edu-tab" data-qtab="archive">🗂️ 서식·다운로드</button>
           <button class="edu-tab" data-qtab="center">💬 FAQ</button>
         </div>
 
@@ -1969,49 +2003,6 @@ body.growon{ background:var(--g-navy); }
           <div class="faq-area"></div>
         </div>
 
-        <div class="edu-panel" id="qna-sales">
-<div id="salesmaterials">
-        <div class="edu-tabs" id="smTabs" data-reveal>
-          <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
-          <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
-          <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
-          <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
-          <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
-        </div>
-
-        <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
-        <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
-        <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
-        <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
-        <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
-      </div>
-        </div>
-
-        <div class="edu-panel" id="qna-archive">
-<div class="edu-panel" id="edu-archive">
-          <div class="filter-row" id="filterRow" data-reveal>
-            <button class="filter-pill active" data-cat="전체">전체</button>
-            <button class="filter-pill" data-cat="실손보험">실손보험</button>
-            <button class="filter-pill" data-cat="암">암</button>
-            <button class="filter-pill" data-cat="뇌.심">뇌·심</button>
-            <button class="filter-pill" data-cat="수술비.기타">수술비·기타</button>
-            <button class="filter-pill" data-cat="운전자.상해">운전자·상해</button>
-            <button class="filter-pill" data-cat="치아.펫.태아">치아·펫·태아</button>
-            <button class="filter-pill" data-cat="자동차">자동차</button>
-            <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상·중대재해단체</button>
-            <button class="filter-pill" data-cat="후유장해.치매.간병">후유장해·치매·간병</button>
-            <button class="filter-pill" data-cat="고지의무.보상사례">고지의무·보상사례</button>
-            <button class="filter-pill" data-cat="세일즈">세일즈</button>
-            <button class="filter-pill" data-cat="DB스크립트">DB스크립트</button>
-            <button class="filter-pill" data-cat="CEO.법인.세금">CEO·법인·세금</button>
-            <button class="filter-pill" data-cat="연금.종신">연금·종신</button>
-          </div>
-          <div class="doc-grid" id="docGrid" data-reveal></div>
-        </div>
-
-        
-        </div>
-
         <div class="edu-panel" id="qna-center">
           <div class="subsection-title">📋 자주 묻는 질문</div>
           <div class="faq-area" id="qna-center-faqarea"></div>
@@ -2071,9 +2062,9 @@ body.growon{ background:var(--g-navy); }
 
   <div class="gcol" id="colRight">
     <div class="rail-t">주요 메뉴</div>
-    <button class="gbtn" data-view="qna">🏢 그로우보험실무센터</button>
+    <button class="gbtn" data-view="materials">🎓 교육센터</button>
     <button class="gbtn" data-view="salescenter">🧾 영업센터</button>
-    <button class="gbtn" data-view="materials">교육센터</button>
+    <button class="gbtn" data-view="qna">📖 가이드센터</button>
     <a class="gbtn" href="https://openga.calsplatz.com/login" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">미래에셋금융서비스<small>(M포스트)</small></a>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
 
@@ -3356,8 +3347,8 @@ body.growon{ background:var(--g-navy); }
   document.getElementById('eduTabs').addEventListener('click', (e) => {
     const btn = e.target.closest('.edu-tab');
     if(!btn) return;
-    document.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.edu-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#eduTabs .edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#view-materials .edu-toplevel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('edu-' + btn.dataset.tab).classList.add('active');
   });
@@ -5629,9 +5620,7 @@ body.growon{ background:var(--g-navy); }
 
   // ================= 고객보장비교 (영업센터) =================
   const CC_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-coverage-compare';
-  const CC_JSON = 'board/coverage-compare.json';
   const CC_MAX_MB = 20;
-  let ccPosts = [];
 
   function ccEsc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -5692,7 +5681,7 @@ body.growon{ background:var(--g-navy); }
     table.innerHTML = head + premRow + body;
   }
 
-  function ccShowResult(data){
+  async function ccShowResult(data){
     document.getElementById('ccResultWrap').style.display = 'block';
     const custLabel = (data.customerName && data.customerName.trim()) ? data.customerName.trim() : '고객';
     document.getElementById('ccResultTitle').textContent = custLabel + '고객님 보험비교표';
@@ -5700,43 +5689,23 @@ body.growon{ background:var(--g-navy); }
     ccRenderTable(data.rows, data.companies || [], data.totalPremiums || []);
     const dl = document.getElementById('ccDownloadBtn');
     if(data.xlsxLink){
-      dl.href = data.xlsxLink;
+      try{
+        const fileRes = await fetch(data.xlsxLink + '?t=' + Date.now());
+        const fileText = await fileRes.text();
+        const blob = new Blob([fileText], { type: 'application/vnd.ms-excel' });
+        const blobUrl = URL.createObjectURL(blob);
+        dl.href = blobUrl;
+        dl.download = custLabel + '.xls';
+      }catch(dlErr){
+        dl.href = data.xlsxLink;
+        dl.removeAttribute('download');
+      }
       dl.style.display = 'inline-flex';
     } else {
       dl.style.display = 'none';
     }
     document.getElementById('ccResultWrap').scrollIntoView({ behavior:'smooth', block:'start' });
   }
-
-  function ccRenderPostList(){
-    const box = document.getElementById('ccPostList');
-    if(!box) return;
-    if(!ccPosts.length){
-      box.innerHTML = '<div class="doc-empty-note">아직 등록된 비교 게시물이 없습니다.</div>';
-      return;
-    }
-    box.innerHTML = ccPosts.map((p, i) => `
-      <div class="cc-post-card" data-ci="${i}">
-        <div class="cc-post-title">${ccEsc(p.title)}</div>
-        <div class="cc-post-meta">${ccEsc(p.companies ? p.companies.join(' · ') : '')}${p.customerName ? ' · 고객: ' + ccEsc(p.customerName) : ''} · ${ccEsc(p.date || '')} · ${ccEsc(p.author || '')}</div>
-      </div>`).join('');
-    box.querySelectorAll('.cc-post-card').forEach(el => {
-      el.addEventListener('click', () => ccShowResult(ccPosts[Number(el.dataset.ci)]));
-    });
-  }
-
-  async function ccLoadPosts(){
-    try{
-      const res = await fetch(CC_JSON + '?t=' + Date.now(), { cache:'no-store' });
-      if(res.ok){
-        const data = await res.json();
-        const rows = Array.isArray(data) ? data : (data.items || []);
-        ccPosts = rows.slice().sort((a,b) => String(b.sortKey||b.date||'').localeCompare(String(a.sortKey||a.date||'')));
-      }
-    }catch(e){ /* 초기 상태 유지 */ }
-    ccRenderPostList();
-  }
-  ccLoadPosts();
 
   const _ccSubmit = document.getElementById('ccSubmitBtn');
   if(_ccSubmit) _ccSubmit.addEventListener('click', async () => {
@@ -5783,7 +5752,6 @@ body.growon{ background:var(--g-navy); }
       if(!data || data.success === false) throw new Error((data && data.message) || '처리에 실패했습니다.');
       msg.textContent = '✅ 완료되었습니다.'; msg.style.color = 'green';
       ccShowResult(data);
-      ccLoadPosts();
     }catch(err){
       msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류') + ' · 잠시 후 다시 시도해주세요.';
       msg.style.color = 'var(--orange-deep)';
@@ -5806,14 +5774,13 @@ body.growon{ background:var(--g-navy); }
   (function initManualEntry(){
     const MEROOT = document.getElementById('sc-manualentry');
     if(!MEROOT) return;
-    const ME_SAVE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-coverage-manual-save';
-    const ME_BOARD_JSON = 'https://raw.githubusercontent.com/daonpartners/grow/main/board/coverage-compare.json';
 
     let meState = {
       kind: 'consulting',
       driverCompanies: ['A회사', 'B회사'],
       otherCompanies: ['A회사', 'B회사'],
-      consultingNames: ['기존1', '기존2', '신규1', '신규2']
+      consultingExisting: ['기존1', '기존2'],
+      consultingNew: ['신규1', '신규2']
     };
     const ME_DRIVER_GROUPS = [
       { label:'형사비용담보', count:4 },
@@ -5869,7 +5836,7 @@ body.growon{ background:var(--g-navy); }
       });
       const existingExtra = (prefill && prefill.extraRows) || [];
       function extraRowHtml(r){
-        let html = '<tr data-me-extra="1"><td class="me-rowlabel" colspan="2">'+meNameInput(r.coverage,'me-extra-name-input')+'</td>';
+        let html = '<tr data-me-extra="1"><td class="me-rowlabel"'+(groups.length?' colspan="2"':'')+'>'+meNameInput(r.coverage,'me-extra-name-input')+'</td>';
         for(let c=0;c<nCols;c++){ html += meVal(r.values ? r.values[c] : ''); }
         html += `<td><input type="text" class="me-note-input" value="${ccEsc(r.note||'')}" placeholder="비고"></td></tr>`;
         return html;
@@ -5926,22 +5893,31 @@ body.growon{ background:var(--g-navy); }
     function meRenderConsulting(prefill){
       const t = document.getElementById('meSheetTable');
       const RED = '#F4A6A6';
-      const names = (prefill && prefill.names) || meState.consultingNames;
-      meState.consultingNames = names;
-      const products = (prefill && prefill.products) || ['','','',''];
-      const terms = (prefill && prefill.terms) || ['','','','',''];
-      const premiums = (prefill && prefill.premiums) || ['','','','','',''];
-      function nameTh(idx, bg){ return `<th style="background:${bg};"><input type="text" class="me-cname-input" value="${ccEsc(names[idx]||'')}" placeholder="회사명"></th>`; }
+      const existing = (prefill && prefill.existing) || meState.consultingExisting;
+      const newer = (prefill && prefill.newer) || meState.consultingNew;
+      meState.consultingExisting = existing;
+      meState.consultingNew = newer;
+      const E = existing.length, N = newer.length;
+      const totalCols = E + 1 + N + 1;
+      const nTotal = totalCols + 2;
+      const products = (prefill && prefill.products) || Array(totalCols).fill('');
+      const terms = (prefill && prefill.terms) || Array(totalCols).fill('');
+      const premiums = (prefill && prefill.premiums) || Array(totalCols).fill('');
+      if(!meState.consultingCounts) meState.consultingCounts = ME_CONSULTING_GROUPS.map(g => g.count);
+      const counts = (prefill && prefill.groupCounts) || meState.consultingCounts;
+      meState.consultingCounts = counts;
+      function nameTh(idx, bg, isExisting){ const arr = isExisting ? existing : newer; return `<th style="background:${bg};"><input type="text" class="me-cname-input" data-side="${isExisting?'e':'n'}" data-idx="${idx}" value="${ccEsc(arr[idx]||'')}" placeholder="회사명"></th>`; }
       let flatIdx = 0;
       const prefillRows = (prefill && prefill.rows) || [];
       let rowsHtml = '';
-      ME_CONSULTING_GROUPS.forEach(g => {
-        for(let i=0;i<g.count;i++){
+      ME_CONSULTING_GROUPS.forEach((g, gi) => {
+        const cnt = counts[gi];
+        for(let i=0;i<cnt;i++){
           const rv = prefillRows[flatIdx] || {};
           rowsHtml += '<tr data-me-cgidx="'+flatIdx+'">';
-          if(i===0) rowsHtml += `<td class="me-label" rowspan="${g.count}">${ccEsc(g.label)}</td>`;
+          if(i===0) rowsHtml += `<td class="me-label" rowspan="${cnt}">${ccEsc(g.label)}<br><button type="button" class="me-rm-btn" data-add-group="${gi}" style="color:#12152B; font-size:10px;">＋행</button></td>`;
           rowsHtml += `<td class="me-rowlabel">${meNameInput(rv.coverage)}</td>`;
-          for(let c=0;c<6;c++){ rowsHtml += meVal(rv.values ? rv.values[c] : ''); }
+          for(let c=0;c<totalCols;c++){ rowsHtml += meVal(rv.values ? rv.values[c] : ''); }
           rowsHtml += '</tr>';
           flatIdx++;
         }
@@ -5949,53 +5925,116 @@ body.growon{ background:var(--g-navy); }
       const existingExtra = (prefill && prefill.extraRows) || [];
       function extraRowHtml(r){
         let html = '<tr data-me-cextra="1"><td class="me-rowlabel" colspan="2">'+meNameInput(r.coverage,'me-extra-name-input')+'</td>';
-        for(let c=0;c<6;c++){ html += meVal(r.values ? r.values[c] : ''); }
+        for(let c=0;c<totalCols;c++){ html += meVal(r.values ? r.values[c] : ''); }
         html += '</tr>';
         return html;
       }
       const extraRowsHtml = existingExtra.length ? existingExtra.map(extraRowHtml).join('') : extraRowHtml({coverage:'',values:[]});
 
+      const existingThs = existing.map((c,idx) => nameTh(idx,'#DCE9F7',true)).join('');
+      const newThs = newer.map((c,idx) => nameTh(idx,'#FDEEDD',false)).join('');
+
       t.innerHTML = `
-        <tr><td class="me-titlecell" colspan="8">${ccEsc(meTitleText())}</td></tr>
+        <tr><td class="me-titlecell" colspan="${nTotal}">${ccEsc(meTitleText())}</td></tr>
         <tr>
-          <td colspan="2" style="border:1px solid #333;"></td>
-          <td colspan="2" style="border:1px solid #333;background:#DCE9F7;padding:8px;font-weight:800;text-align:center;">기존 가입보험</td>
-          <td style="border:1px solid #333;"></td>
-          <td colspan="2" style="border:1px solid #333;background:#FDEEDD;padding:8px;font-weight:800;text-align:center;">신규 제안회사</td>
-          <td style="border:1px solid #333;"></td>
+          <th rowspan="2" colspan="2">보험회사</th>
+          <td colspan="${E}" style="border:1px solid #333;background:#DCE9F7;padding:8px;font-weight:800;text-align:center;">기존 가입보험 <button type="button" class="me-rm-btn" id="meAddExistBtn" style="color:#12152B;">＋</button> <button type="button" class="me-rm-btn" id="meRmExistBtn" style="color:#12152B;">－</button></td>
+          <th rowspan="2" style="background:${RED};">컨설팅 전</th>
+          <td colspan="${N}" style="border:1px solid #333;background:#FDEEDD;padding:8px;font-weight:800;text-align:center;">신규 제안회사 <button type="button" class="me-rm-btn" id="meAddNewBtn" style="color:#12152B;">＋</button> <button type="button" class="me-rm-btn" id="meRmNewBtn" style="color:#12152B;">－</button></td>
+          <th rowspan="2" style="background:${RED};">컨설팅 후</th>
         </tr>
         <tr>
-          <th colspan="2">보험회사</th>
-          ${nameTh(0,'#DCE9F7')}${nameTh(1,'#DCE9F7')}
-          <th style="background:${RED};">컨설팅 전</th>
-          ${nameTh(2,'#FDEEDD')}${nameTh(3,'#FDEEDD')}
-          <th style="background:${RED};">컨설팅 후</th>
+          ${existingThs}
+          ${newThs}
         </tr>
         <tr><td class="me-rowlabel" colspan="2" style="text-align:center; padding:8px; font-weight:700;">상품명</td>
-          ${Array.from({length:6}).map((_,c)=>`<td><input type="text" class="me-cproduct-input" value="${ccEsc(products[c]||'')}"></td>`).join('')}
+          ${Array.from({length:totalCols}).map((_,c)=>`<td><input type="text" class="me-cproduct-input" value="${ccEsc(products[c]||'')}"></td>`).join('')}
         </tr>
         <tr><td class="me-rowlabel" colspan="2" style="text-align:center; padding:8px; font-weight:700;">납입/보장기간</td>
-          ${Array.from({length:6}).map((_,c)=>`<td><input type="text" class="me-cterm-input" value="${ccEsc(terms[c]||'')}"></td>`).join('')}
+          ${Array.from({length:totalCols}).map((_,c)=>`<td><input type="text" class="me-cterm-input" value="${ccEsc(terms[c]||'')}"></td>`).join('')}
         </tr>
         <tr class="me-prem-row"><td class="me-rowlabel" colspan="2" style="text-align:center; padding:8px; font-weight:700;">보험료</td>
-          ${Array.from({length:6}).map((_,c)=>`<td><input type="text" class="me-cpremium-input" value="${ccEsc(premiums[c]||'')}"></td>`).join('')}
+          ${Array.from({length:totalCols}).map((_,c)=>`<td><input type="text" class="me-cpremium-input" value="${ccEsc(premiums[c]||'')}"></td>`).join('')}
         </tr>
-        <tr><td class="me-divider" colspan="8">보장내용</td></tr>
+        <tr><td class="me-divider" colspan="${nTotal}">보장내용</td></tr>
         ${rowsHtml}
-        <tr><td class="me-divider" colspan="8">추가 담보 <button type="button" class="me-rm-btn" id="meAddCExtraRowBtn">＋ 행 추가</button></td></tr>
+        <tr><td class="me-divider" colspan="${nTotal}">추가 담보 <button type="button" class="me-rm-btn" id="meAddCExtraRowBtn">＋ 행 추가</button></td></tr>
         <tbody id="meCExtraBody">${extraRowsHtml}</tbody>
-        <tr><td class="me-foot" colspan="8">※주요 진단비 위주로 요약한 내용이므로 자세한 사항은 상품설명서 및 약관을 참고바랍니다.</td></tr>
+        <tr><td class="me-foot" colspan="${nTotal}">※주요 진단비 위주로 요약한 내용이므로 자세한 사항은 상품설명서 및 약관을 참고바랍니다.</td></tr>
       `;
       const addBtn = document.getElementById('meAddCExtraRowBtn');
       if(addBtn) addBtn.addEventListener('click', () => {
         document.getElementById('meCExtraBody').insertAdjacentHTML('beforeend', extraRowHtml({coverage:'',values:[]}));
       });
+
+      t.querySelectorAll('[data-add-group]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const gi = Number(btn.dataset.addGroup);
+          const vals = meCollectConsulting();
+          const newCounts = meState.consultingCounts.slice();
+          let start = 0;
+          for(let k=0;k<gi;k++) start += newCounts[k];
+          const insertAt = start + newCounts[gi];
+          const newRows = vals.rows.slice();
+          newRows.splice(insertAt, 0, { coverage:'', values:[] });
+          newCounts[gi] = newCounts[gi] + 1;
+          meRenderConsulting({
+            existing: vals.existing, newer: vals.newer,
+            products: vals.products, terms: vals.terms, premiums: vals.premiums,
+            rows: newRows, extraRows: vals.extraRows, groupCounts: newCounts
+          });
+        });
+      });
+
+      function insertColumnAt(side, insertIdx){
+        const vals = meCollectConsulting();
+        const arr = side === 'e' ? vals.existing.slice() : vals.newer.slice();
+        if(arr.length >= 5){ return; }
+        arr.push(side === 'e' ? ('기존' + (arr.length+1)) : ('신규' + (arr.length+1)));
+        const globalIdx = side === 'e' ? insertIdx : (vals.existing.length + 1 + insertIdx);
+        function grow(list){ const out = list.slice(); out.splice(globalIdx, 0, ''); return out; }
+        const rebuilt = {
+          existing: side === 'e' ? arr : vals.existing,
+          newer: side === 'n' ? arr : vals.newer,
+          products: grow(vals.products), terms: grow(vals.terms), premiums: grow(vals.premiums),
+          rows: vals.rows.map(r => ({ coverage:r.coverage, values: grow(r.values) })),
+          extraRows: vals.extraRows.map(r => ({ coverage:r.coverage, values: grow(r.values) }))
+        };
+        meRenderConsulting(rebuilt);
+      }
+      function removeColumnAt(side){
+        const vals = meCollectConsulting();
+        const arr = side === 'e' ? vals.existing.slice() : vals.newer.slice();
+        if(arr.length <= 1){ return; }
+        const removeIdx = side === 'e' ? (arr.length - 1) : (vals.existing.length + 1 + arr.length - 1);
+        arr.pop();
+        function shrink(list){ const out = list.slice(); out.splice(removeIdx, 1); return out; }
+        const rebuilt = {
+          existing: side === 'e' ? arr : vals.existing,
+          newer: side === 'n' ? arr : vals.newer,
+          products: shrink(vals.products), terms: shrink(vals.terms), premiums: shrink(vals.premiums),
+          rows: vals.rows.map(r => ({ coverage:r.coverage, values: shrink(r.values) })),
+          extraRows: vals.extraRows.map(r => ({ coverage:r.coverage, values: shrink(r.values) }))
+        };
+        meRenderConsulting(rebuilt);
+      }
+      const addExistBtn = document.getElementById('meAddExistBtn');
+      if(addExistBtn) addExistBtn.addEventListener('click', (e) => { e.preventDefault(); insertColumnAt('e', existing.length); });
+      const rmExistBtn = document.getElementById('meRmExistBtn');
+      if(rmExistBtn) rmExistBtn.addEventListener('click', (e) => { e.preventDefault(); removeColumnAt('e'); });
+      const addNewBtn = document.getElementById('meAddNewBtn');
+      if(addNewBtn) addNewBtn.addEventListener('click', (e) => { e.preventDefault(); insertColumnAt('n', newer.length); });
+      const rmNewBtn = document.getElementById('meRmNewBtn');
+      if(rmNewBtn) rmNewBtn.addEventListener('click', (e) => { e.preventDefault(); removeColumnAt('n'); });
+
       document.getElementById('meCustomer').oninput = meUpdateTitleCell;
     }
 
     function meCollectConsulting(){
       const t = document.getElementById('meSheetTable');
-      const names = Array.from(t.querySelectorAll('.me-cname-input')).map(i => i.value);
+      const existing = Array.from(t.querySelectorAll('.me-cname-input[data-side="e"]')).map(i => i.value);
+      const newer = Array.from(t.querySelectorAll('.me-cname-input[data-side="n"]')).map(i => i.value);
       const products = Array.from(t.querySelectorAll('.me-cproduct-input')).map(i => i.value);
       const terms = Array.from(t.querySelectorAll('.me-cterm-input')).map(i => i.value);
       const premiums = Array.from(t.querySelectorAll('.me-cpremium-input')).map(i => i.value);
@@ -6009,7 +6048,7 @@ body.growon{ background:var(--g-navy); }
         const vinputs = Array.from(tr.querySelectorAll('.me-value-input')).map(i => i.value);
         return { coverage, values: vinputs };
       });
-      return { names, products, terms, premiums, rows, extraRows };
+      return { existing, newer, products, terms, premiums, rows, extraRows };
     }
 
     function meCollect(){ return meState.kind === 'consulting' ? meCollectConsulting() : meCollectFlat(); }
@@ -6051,10 +6090,8 @@ body.growon{ background:var(--g-navy); }
       meRender(vals);
     });
 
-    const mePrintBtn = document.getElementById('mePrintBtn');
-    if(mePrintBtn) mePrintBtn.addEventListener('click', () => {
+    function meBuildCleanClone(){
       const sheet = document.getElementById('meSheetTable');
-      const area = document.getElementById('mePrintArea');
       const clone = sheet.cloneNode(true);
       clone.querySelectorAll('input').forEach(inp => {
         const span = document.createElement('span');
@@ -6063,6 +6100,13 @@ body.growon{ background:var(--g-navy); }
         inp.replaceWith(span);
       });
       clone.querySelectorAll('button').forEach(b => b.remove());
+      return clone;
+    }
+
+    const mePrintBtn = document.getElementById('mePrintBtn');
+    if(mePrintBtn) mePrintBtn.addEventListener('click', () => {
+      const clone = meBuildCleanClone();
+      const area = document.getElementById('mePrintArea');
       area.innerHTML = '';
       area.appendChild(clone);
       document.body.classList.add('me-printing');
@@ -6070,83 +6114,46 @@ body.growon{ background:var(--g-navy); }
       setTimeout(() => document.body.classList.remove('me-printing'), 500);
     });
 
+    function meLoadHtml2Canvas(){
+      return new Promise((res, rej) => {
+        if(window.html2canvas) return res();
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
     const meSaveBtn = document.getElementById('meSaveBtn');
     if(meSaveBtn) meSaveBtn.addEventListener('click', async () => {
       const msg = document.getElementById('meMsg');
       const customerName = document.getElementById('meCustomer').value.trim();
-      const title = document.getElementById('meTitle').value.trim() || (customerName ? customerName + ' 보장비교' : '보장비교');
-      const author = document.getElementById('meAuthor').value.trim() || (typeof smWhoAmI === 'function' ? smWhoAmI() : '');
-      const productType = document.getElementById('meProductType').value.trim();
-
-      let payload = { kind: meState.kind, title, customerName, author, productType };
-      if(meState.kind === 'consulting'){
-        const v = meCollectConsulting();
-        payload.companies = [v.names[0]||'기존1', v.names[1]||'기존2', '컨설팅 전', v.names[2]||'신규1', v.names[3]||'신규2', '컨설팅 후'];
-        payload.products = v.products;
-        payload.terms = v.terms.map(t => ({ term: t||'' }));
-        payload.totalPremiums = v.premiums.map(p => ({ premium: p||'' }));
-        let ri = 0;
-        payload.groups = ME_CONSULTING_GROUPS.map(g => {
-          const rows = [];
-          for(let i=0;i<g.count;i++){ const r = v.rows[ri] || {coverage:'',values:[]}; rows.push({ coverage:r.coverage, values:(r.values||[]).map(x=>({limit:x||''})) }); ri++; }
-          return { label:g.label, rows };
-        });
-        payload.extraRows = v.extraRows.filter(r=>r.coverage && r.coverage.trim()).map(r => ({ coverage:r.coverage, values:(r.values||[]).map(x=>({limit:x||''})) }));
-      } else {
-        const v = meCollectFlat();
-        payload.companies = v.companies.map((c,i)=>c || ('회사'+(i+1)));
-        payload.terms = v.terms.map(t => ({ term: t||'' }));
-        payload.totalPremiums = v.premiums.map(p => ({ premium: p||'' }));
-        const groupDefs = meState.kind === 'driver' ? ME_DRIVER_GROUPS : [];
-        let ri = 0;
-        payload.groups = groupDefs.map(g => {
-          const rows = [];
-          for(let i=0;i<g.count;i++){ const r = v.rows[ri] || {coverage:'',values:[],note:''}; rows.push({ coverage:r.coverage, note:r.note||'', values:(r.values||[]).map(x=>({limit:x||''})) }); ri++; }
-          return { label:g.label, rows };
-        });
-        payload.extraRows = v.extraRows.filter(r=>r.coverage && r.coverage.trim()).map(r => ({ coverage:r.coverage, note:r.note||'', values:(r.values||[]).map(x=>({limit:x||''})) }));
-      }
-
       meSaveBtn.disabled = true;
-      msg.textContent = '저장 중...'; msg.style.color = 'var(--slate)';
+      msg.textContent = '이미지 만드는 중...'; msg.style.color = 'var(--slate)';
       try{
-        const res = await fetch(ME_SAVE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
-        const data = await res.json();
-        if(!data || data.success === false) throw new Error((data && data.message) || '저장 실패');
-        msg.textContent = '✅ 저장되었습니다.'; msg.style.color = 'green';
-        const dl = document.getElementById('meDlLink');
-        dl.href = data.xlsxLink;
-        dl.style.display = 'inline-block';
-        meLoadPosts();
+        await meLoadHtml2Canvas();
+        const clone = meBuildCleanClone();
+        const stage = document.createElement('div');
+        stage.style.cssText = 'position:fixed; left:-9999px; top:0; background:#fff; padding:12px;';
+        stage.appendChild(clone);
+        document.body.appendChild(stage);
+        const canvas = await window.html2canvas(clone, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+        document.body.removeChild(stage);
+        const a = document.createElement('a');
+        const kindLabel = meState.kind === 'consulting' ? '컨설팅비교' : (meState.kind === 'driver' ? '운전자보험비교' : '보험비교');
+        a.download = (customerName || '고객') + '_' + kindLabel + '.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        msg.textContent = '✅ 이미지로 저장되었습니다.'; msg.style.color = 'green';
       }catch(err){
-        msg.textContent = '실패: ' + (err.message || '네트워크 오류');
+        msg.textContent = '실패: ' + (err.message || '이미지 생성 오류');
         msg.style.color = 'var(--orange-deep)';
       }finally{
         meSaveBtn.disabled = false;
       }
     });
 
-    async function meLoadPosts(){
-      const box = document.getElementById('mePostList');
-      if(!box) return;
-      try{
-        const res = await fetch(ME_BOARD_JSON + '?t=' + Date.now(), { cache:'no-store' });
-        const data = await res.json();
-        const items = (data.items || []).slice(0, 15);
-        if(!items.length){ box.innerHTML = '<div class="doc-empty-note">아직 게시물이 없습니다.</div>'; return; }
-        box.innerHTML = items.map(p => `
-          <div class="cc-post-card">
-            <div class="cc-post-title">${ccEsc(p.title)}</div>
-            <div class="cc-post-meta">${ccEsc((p.companies||[]).filter(Boolean).join(' · '))} · ${ccEsc(p.customerName||'')} · ${ccEsc(p.date||'')} · ${ccEsc(p.author||'')}${p.xlsxLink ? ' · <a href="'+ccEsc(p.xlsxLink)+'" target="_blank" style="color:var(--orange-deep); font-weight:700;">⬇ 엑셀</a>' : ''}</div>
-          </div>`).join('');
-      }catch(e){
-        box.innerHTML = '<div class="doc-empty-note">목록을 불러오지 못했습니다.</div>';
-      }
-    }
-
     meRender();
-    meLoadPosts();
   })();
 
 
