@@ -1,6 +1,396 @@
 {
   "items": [
     {
+      "id": "1786682367037",
+      "title": "테스트 비교",
+      "customerName": "전송죽",
+      "author": "테스트",
+      "companies": [
+        "메리츠",
+        "KB손보",
+        "회사3"
+      ],
+      "totalPremiums": [
+        {
+          "company": "메리츠",
+          "premium": "32,650 원"
+        },
+        {
+          "company": "KB손보",
+          "premium": "29,042 원"
+        },
+        {
+          "company": "회사3",
+          "premium": ""
+        }
+      ],
+      "rows": [
+        {
+          "coverage": "교통상해사망",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "5천만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": "5천만원"
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "교통상해50%이상후유장해",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "10만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": "5천만원"
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "교통사고처리지원금(합의금)",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "2억원"
+            },
+            {
+              "company": "KB손보",
+              "limit": "2억원"
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "변호사선임비용",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": ""
+            },
+            {
+              "company": "KB손보",
+              "limit": "5백만원"
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "벌금(대인)",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "3천만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": "5백만원"
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "벌금(대물)",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "1백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비1급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "3천만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비2급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "1천2백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비3급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "9백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": "1억원"
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비4급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "세부사항 참조"
+            },
+            {
+              "company": "KB손보",
+              "limit": "9백만원"
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비5급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "3백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비6급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "3백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비7급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "2백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비8급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "2백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비9급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "2백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비10급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "2백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비11급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "2백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비12급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "3백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비13급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "3백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        },
+        {
+          "coverage": "자동차부상치료비14급",
+          "note": "",
+          "values": [
+            {
+              "company": "메리츠",
+              "limit": "3백만원"
+            },
+            {
+              "company": "KB손보",
+              "limit": ""
+            },
+            {
+              "company": "회사3",
+              "limit": ""
+            }
+          ]
+        }
+      ],
+      "xlsxLink": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/coverage/1786682367037.xlsx",
+      "date": "2026.08.14 게시",
+      "sortKey": "2026-08-14"
+    },
+    {
       "id": "1786681158517",
       "title": "테스트 비교",
       "customerName": "전송죽",
