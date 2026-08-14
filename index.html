@@ -429,8 +429,8 @@
   table.me-sheet input{height:34px; box-sizing:border-box;}
   table.me-sheet th{background:#F2F2F2; font-weight:800; text-align:center; padding:8px;}
   table.me-sheet td.me-label{padding:8px; font-weight:700; text-align:center; background:#F7F7F7;}
-  table.me-sheet td.me-rowlabel{padding:0; text-align:left;}
-  table.me-sheet input{width:100%; box-sizing:border-box; border:none; padding:8px; font-size:12.5px; font-family:inherit; background:transparent;}
+  table.me-sheet td.me-rowlabel{padding:0; text-align:center;}
+  table.me-sheet input{width:100%; box-sizing:border-box; border:none; padding:8px; font-size:12.5px; font-family:inherit; background:transparent; text-align:center;}
   table.me-sheet input:focus{outline:2px solid var(--orange); outline-offset:-2px; background:#fff;}
   table.me-sheet .me-titlecell{padding:10px; font-size:15.5px; font-weight:800; text-align:center;}
   table.me-sheet .me-divider{background:#595959; color:#fff; font-weight:800; text-align:center; padding:8px;}
@@ -5788,6 +5788,10 @@ body.growon{ background:var(--g-navy); }
       { label:'형사비용담보', count:4 },
       { label:'자동차부상치료비', count:2 }
     ];
+    const ME_DRIVER_ROW_LABELS = {
+      '형사비용담보': ['교통사고처리지원금(합의금)', '벌금(대인)', '벌금(대물)', '변호사선임비용'],
+      '자동차부상치료비': ['1급', '14급']
+    };
     const ME_CONSULTING_GROUPS = [
       { label:'암', count:2 }, { label:'뇌', count:2 }, { label:'심장', count:3 },
       { label:'치료비', count:5 }, { label:'수술비', count:3 }, { label:'기타', count:1 }
@@ -5825,11 +5829,15 @@ body.growon{ background:var(--g-navy); }
       const prefillRows = (prefill && prefill.rows) || [];
       let groupsHtml = '';
       groups.forEach(g => {
+        const fixedLabels = (meState.kind === 'driver' && ME_DRIVER_ROW_LABELS[g.label]) ? ME_DRIVER_ROW_LABELS[g.label] : null;
         for(let i=0;i<g.count;i++){
           const rv = prefillRows[flatIdx] || {};
+          const fixedName = fixedLabels ? fixedLabels[i] : null;
           groupsHtml += '<tr data-me-gidx="'+flatIdx+'">';
           if(i===0) groupsHtml += `<td class="me-label" rowspan="${g.count}">${ccEsc(g.label)}</td>`;
-          groupsHtml += `<td class="me-rowlabel">${meNameInput(rv.coverage)}</td>`;
+          groupsHtml += fixedName
+            ? `<td class="me-rowlabel me-rowlabel-fixed" data-fixed-label="${ccEsc(fixedName)}">${ccEsc(fixedName)}</td>`
+            : `<td class="me-rowlabel">${meNameInput(rv.coverage)}</td>`;
           for(let c=0;c<nCols;c++){ groupsHtml += meVal(rv.values ? rv.values[c] : ''); }
           groupsHtml += `<td><input type="text" class="me-note-input" value="${ccEsc(rv.note||'')}" placeholder="비고"></td>`;
           groupsHtml += '</tr>';
@@ -5878,7 +5886,8 @@ body.growon{ background:var(--g-navy); }
       const terms = Array.from(t.querySelectorAll('.me-term-input')).map(i => i.value);
       const premiums = Array.from(t.querySelectorAll('.me-premium-input')).map(i => i.value);
       const rows = Array.from(t.querySelectorAll('tr[data-me-gidx]')).map(tr => {
-        const coverage = tr.querySelector('.me-itemname-input') ? tr.querySelector('.me-itemname-input').value : '';
+        const fixedCell = tr.querySelector('.me-rowlabel-fixed');
+        const coverage = tr.querySelector('.me-itemname-input') ? tr.querySelector('.me-itemname-input').value : (fixedCell ? fixedCell.getAttribute('data-fixed-label') : '');
         const vinputs = Array.from(tr.querySelectorAll('.me-value-input')).map(i => i.value);
         const note = tr.querySelector('.me-note-input') ? tr.querySelector('.me-note-input').value : '';
         return { coverage, values: vinputs, note };
@@ -6117,7 +6126,9 @@ body.growon{ background:var(--g-navy); }
       const clone = sheet.cloneNode(true);
       clone.querySelectorAll('input').forEach(inp => {
         const span = document.createElement('span');
-        span.textContent = inp.value;
+        let val = inp.value;
+        if(/^[0-9]+$/.test(val.trim())) val = Number(val.trim()).toLocaleString('ko-KR');
+        span.textContent = val;
         if(inp.parentElement.tagName === 'TH' || inp.className.indexOf('premium')>=0) span.style.fontWeight = '800';
         inp.replaceWith(span);
       });
@@ -6160,10 +6171,10 @@ body.growon{ background:var(--g-navy); }
         await meLoadHtml2Canvas();
         const clone = meBuildCleanClone();
         const stage = document.createElement('div');
-        stage.style.cssText = 'position:fixed; left:-9999px; top:0; background:#fff; padding:12px;';
+        stage.style.cssText = 'position:fixed; left:-9999px; top:0; background:#fff; padding:32px 36px;';
         stage.appendChild(clone);
         document.body.appendChild(stage);
-        const canvas = await window.html2canvas(clone, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+        const canvas = await window.html2canvas(stage, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
         document.body.removeChild(stage);
         const a = document.createElement('a');
         const kindLabel = meState.kind === 'consulting' ? '컨설팅비교' : (meState.kind === 'driver' ? '운전자보험비교' : '보험비교');
