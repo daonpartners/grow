@@ -1747,19 +1747,20 @@ body.growon{ background:var(--g-navy); }
             📚 카테고리를 선택하거나 검색하면 관련 담보·상품 가이드를 볼 수 있습니다.
           </div>
 
-          <div class="surgery-pin" id="cbPin_guide">
-            <div class="surgery-pin-head">
-              <span class="surgery-pin-icon">📚</span>
-              <div><div class="surgery-pin-title">보험가이드 첨부자료</div></div>
-              <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide')">＋ 게시물 등록</button>
-            </div>
-            <div class="driver-menu" id="cbMenu_guide"></div>
-          </div>
           <div class="guide-search-top">
             <input type="text" class="faq-search guide-search-input" id="guideSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 암진단비, 실손, 운전자보험)">
           </div>
           <div class="disease-toolbar">
             <div class="filter-row disease-grouprow" id="guideGroupRow"></div>
+          </div>
+
+          <div class="surgery-pin" id="cbPin_guide">
+            <div class="surgery-pin-head">
+              <span class="surgery-pin-icon">📚</span>
+              <div><div class="surgery-pin-title" id="cbGuideTitle">암 게시판</div></div>
+              <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide')">＋ 게시물 등록</button>
+            </div>
+            <div class="driver-menu" id="cbMenu_guide"></div>
           </div>
 
           <div id="driverPinsWrap" style="display:none;">
@@ -5397,7 +5398,16 @@ const limitCompareData = {};
   let guideBoardOrder = [];
   let claimBoardOrder = [];
   function renderLimitCompareMenu(){ renderBoard('limitCompareMenu', limitBoardOrder); }
-  function renderGuideBoard(){ renderBoard('cbMenu_guide', guideBoardOrder); }
+  function renderGuideBoard(){
+    const cat = (typeof guideState !== 'undefined') ? guideState.cat : null;
+    const titleEl = document.getElementById('cbGuideTitle');
+    if(titleEl && cat) titleEl.textContent = `${cat} 게시판`;
+    const filtered = cat ? guideBoardOrder.filter(k => {
+      const d = limitCompareData[k];
+      return d && d.guideCat === cat;
+    }) : guideBoardOrder.slice();
+    renderBoard('cbMenu_guide', filtered);
+  }
   function renderClaimBoard(){ renderBoard('cbMenu_claim2', claimBoardOrder); }
   function renderAllBoards(){ renderLimitCompareMenu(); renderGuideBoard(); renderClaimBoard(); }
 
@@ -5638,7 +5648,8 @@ const limitCompareData = {};
         const rowsForCat = byCat[catKey].sort((a,b) => (a.sortOrder||0) - (b.sortOrder||0));
         const images = rowsForCat.map(r => ({ imgId: r.imgId, src: `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
         const section = rowsForCat[0].section || 'limit_compare';
-        limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true, section };
+        const guideCat = rowsForCat[0].guideCat || '';
+        limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true, section, guideCat };
         if(section === 'guide') guideBoardOrder.push(catKey);
         else if(section === 'claim2') claimBoardOrder.push(catKey);
         else limitBoardOrder.push(catKey);
@@ -5690,7 +5701,7 @@ const limitCompareData = {};
       });
       const res = await fetch(LIMIT_UPLOAD_URL, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ catKey, catLabel: titleRaw, pageTitle, mime: file.type || 'image/png', imageBase64: b64, uploadedBy: admName || admLabel || '', section: limitUploadSection })
+        body: JSON.stringify({ catKey, catLabel: titleRaw, pageTitle, mime: file.type || 'image/png', imageBase64: b64, uploadedBy: admName || admLabel || '', section: limitUploadSection, guideCat: (limitUploadSection === 'guide' && typeof guideState !== 'undefined') ? guideState.cat : '' })
       });
       const data = await res.json();
       if(data && data.success){
@@ -6085,6 +6096,8 @@ const limitCompareData = {};
     if(fWrap) fWrap.style.display = (!isSearching && cat === '화재보험') ? 'block' : 'none';
     const lWrap = document.getElementById('liabilityPinsWrap');
     if(lWrap) lWrap.style.display = (!isSearching && cat === '배상책임보험') ? 'block' : 'none';
+    const cbWrap = document.getElementById('cbPin_guide');
+    if(cbWrap) cbWrap.style.display = isSearching ? 'none' : 'block';
   }
 
   const _ggr = document.getElementById('guideGroupRow');
@@ -6100,6 +6113,7 @@ const limitCompareData = {};
       if(_gs0) _gs0.value = '';
       renderGuideGrid();
       toggleGuidePins();
+      renderGuideBoard();
     });
   }
   const _gs = document.getElementById('guideSearch');
@@ -6207,6 +6221,7 @@ const limitCompareData = {};
 
   renderGuideGrid();
   toggleGuidePins();
+  renderGuideBoard();
 
   // ================= 가입·인수 가이드 =================
   const UW_CATS = ["고지의무","통지의무","인수가이드","부담보가이드","설계TIP"];
