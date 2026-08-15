@@ -810,28 +810,14 @@
   .limit-table tr:last-child td{border-bottom:none;}
   .limit-empty-note{margin-top:14px; background:var(--canvas); border-radius:12px; padding:16px; font-size:12.5px; color:var(--slate); line-height:1.6;}
 
+  .limit-slide-arrow{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:var(--navy-2); color:#fff; font-size:13px; margin-right:8px; flex:none;}
+  #limitModalName{display:flex; align-items:center; font-size:18px; font-weight:800; color:var(--navy-2); padding-bottom:10px; border-bottom:2px solid var(--navy-2); margin-bottom:4px;}
+
   .limit-toolbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:10px 0 14px; padding-bottom:12px; border-bottom:1px solid var(--line);}
-  .limit-viewtoggle{display:flex; gap:6px; background:var(--canvas); border-radius:999px; padding:3px;}
-  .limit-viewtoggle button{border:none; background:none; padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:700; color:var(--slate); cursor:pointer;}
-  .limit-viewtoggle button.active{background:var(--navy-2); color:#fff;}
+  .limit-slide-hint{font-size:11.5px; color:var(--slate);}
   .limit-actions{display:flex; gap:6px;}
   .limit-actions button{border:1px solid var(--line); background:#fff; border-radius:8px; padding:7px 10px; font-size:12px; font-weight:700; color:var(--navy-2); cursor:pointer; display:flex; align-items:center; gap:4px;}
   .limit-actions button:hover{background:var(--canvas);}
-
-  .limit-chiprow{display:flex; gap:6px; overflow-x:auto; padding-bottom:10px; margin-bottom:14px;}
-  .limit-chip{flex:none; border:1px solid var(--line); background:#fff; border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:700; color:var(--ink); cursor:pointer; white-space:nowrap;}
-  .limit-chip.active{background:var(--orange); border-color:var(--orange); color:#fff;}
-  .limit-chip-group{font-size:11px; color:var(--slate); font-weight:700; flex:none; align-self:center; padding-right:2px;}
-
-  .limit-card{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
-  .limit-card-head{background:var(--navy-2); color:#fff; padding:14px 18px; font-size:16px; font-weight:800;}
-  .limit-card-body{padding:6px 18px 16px;}
-  .limit-card-row{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid #F0F1F5; font-size:13.5px;}
-  .limit-card-row:last-child{border-bottom:none;}
-  .limit-card-row .lc-label{color:var(--slate); font-weight:700; flex:none; width:150px;}
-  .limit-card-row .lc-value{color:var(--ink); font-weight:600; text-align:right; flex:1;}
-  .limit-card-section{background:#EEF0FC; color:var(--navy-2); font-weight:800; font-size:11.5px; padding:8px 18px; margin:8px -18px 0;}
-  .limit-card-section:first-child{margin-top:0;}
 
   /* ===== 상담·영업자료 게시판 ===== */
   .sm-adminbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
@@ -2403,14 +2389,11 @@ body.growon{ background:var(--g-navy); }
           <div class="dz-modal-group" id="limitModalGroup">회사별 인수한도 비교</div>
           <div class="dz-modal-name" id="limitModalName"></div>
           <div class="limit-toolbar" id="limitToolbar" style="display:none;">
-            <div class="limit-viewtoggle">
-              <button type="button" data-view="card" class="active">카드로 보기</button>
-              <button type="button" data-view="table">표로 보기</button>
-            </div>
+            <div class="limit-slide-hint">📊 원본 장표 그대로 · 이 화면을 통째로 저장·인쇄할 수 있습니다</div>
             <div class="limit-actions">
-              <button type="button" id="limitPopoutBtn">↗ 새창</button>
-              <button type="button" id="limitSaveBtn">🖼 이미지저장</button>
-              <button type="button" id="limitPrintBtn">🖨 인쇄</button>
+              <button type="button" id="limitPopoutBtn">↗ 새창 크게보기</button>
+              <button type="button" id="limitSaveBtn">⬇ 장표 다운로드</button>
+              <button type="button" id="limitPrintBtn">🖨 장표 인쇄</button>
             </div>
           </div>
           <div id="limitModalBody"></div>
@@ -7186,7 +7169,7 @@ const limitCompareData = {
     { key:"치매진단비", icon:"🧠" },
     { key:"고혈압진단비", icon:"💊" }
   ];
-  const limitViewState = { key:null, view:'card', groupIdx:0, companyIdx:0 };
+  
 
   function renderLimitCompareMenu(){
     const wrap = document.getElementById('limitCompareMenu');
@@ -7203,62 +7186,23 @@ const limitCompareData = {
     });
   }
 
-  function limitCardHtml(group, company){
-    const rows = group.attrs.map(([label, key]) => {
-      if(key === '---') return `<div class="limit-card-section">${escapeHtml(label)}</div>`;
-      const val = (group.data[company] || {})[key];
-      return `<div class="limit-card-row"><div class="lc-label">${escapeHtml(label)}</div><div class="lc-value">${escapeHtml(String(val || '-'))}</div></div>`;
-    }).join('');
-    return `<div class="limit-card"><div class="limit-card-head">${escapeHtml(company)}</div><div class="limit-card-body">${rows}</div></div>`;
-  }
-
-  function renderLimitBody(){
-    const d = limitCompareData[limitViewState.key];
-    if(!d) return;
-    const body = document.getElementById('limitModalBody');
-    if(limitViewState.view === 'table'){
-      body.innerHTML = d.html + (d.note ? `<div class="limit-empty-note" style="margin-top:12px;">${d.note}</div>` : '');
-      return;
-    }
-    // card view
-    let chipHtml = '';
-    d.groups.forEach((g, gi) => {
-      if(g.title) chipHtml += `<span class="limit-chip-group">${escapeHtml(g.title)}</span>`;
-      g.companies.forEach((c, ci) => {
-        const active = (gi === limitViewState.groupIdx && ci === limitViewState.companyIdx) ? ' active' : '';
-        chipHtml += `<button type="button" class="limit-chip${active}" data-gi="${gi}" data-ci="${ci}">${escapeHtml(c)}</button>`;
-      });
-    });
-    const g = d.groups[limitViewState.groupIdx];
-    const company = g.companies[limitViewState.companyIdx];
-    body.innerHTML = `<div class="limit-chiprow">${chipHtml}</div>` + limitCardHtml(g, company) +
-      (d.note ? `<div class="limit-empty-note" style="margin-top:14px;">${d.note}</div>` : '');
-    body.querySelectorAll('.limit-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        limitViewState.groupIdx = parseInt(chip.dataset.gi, 10);
-        limitViewState.companyIdx = parseInt(chip.dataset.ci, 10);
-        renderLimitBody();
-      });
-    });
-  }
+  let limitCurrentKey = null;
 
   function openLimitModal(key){
     const d = limitCompareData[key];
     if(!d) return;
-    document.getElementById('limitModalName').textContent = d.label;
+    limitCurrentKey = key;
+    document.getElementById('limitModalName').innerHTML = `<span class="limit-slide-arrow">➜</span>${escapeHtml(d.label)}`;
     document.getElementById('limitModalDate').textContent = d.date || '자료 준비 중';
     const toolbar = document.getElementById('limitToolbar');
     const body = document.getElementById('limitModalBody');
-    if(d.groups && d.groups.length > 0){
+    if(d.html){
       toolbar.style.display = 'flex';
-      limitViewState.key = key; limitViewState.view = 'card'; limitViewState.groupIdx = 0; limitViewState.companyIdx = 0;
-      toolbar.querySelectorAll('.limit-viewtoggle button').forEach(b => b.classList.toggle('active', b.dataset.view === 'card'));
-      renderLimitBody();
+      body.innerHTML = d.html + (d.note ? `<div class="limit-empty-note" style="margin-top:12px;">${d.note}</div>` : '');
     } else {
       toolbar.style.display = 'none';
-      limitViewState.key = null;
       body.innerHTML = `<div class="limit-empty-note">아직 "${d.label}"의 회사별 한도 자료가 입력되지 않았습니다.<br><br>
-        화진님이 병명·보험사·상품명·한도(비고)를 정리해 주시면(엑셀 캡처나 표 이미지도 좋습니다) 이 표에 그대로 반영됩니다. 추측 수치는 넣지 않습니다.</div>`;
+        화진님이 병명·보험사·상품명·한도(비고)를 정리해 주시면(엑셀 캡처나 표 이미지도 좋습니다) 이 장표에 그대로 반영됩니다. 추측 수치는 넣지 않습니다.</div>`;
     }
     document.getElementById('limitModalBackdrop').classList.add('open');
   }
@@ -7269,18 +7213,9 @@ const limitCompareData = {
   const _lmb = document.getElementById('limitModalBackdrop');
   if(_lmb) _lmb.addEventListener('click', (e) => { if(e.target.id === 'limitModalBackdrop') closeLimitModal(); });
 
-  const _lvt = document.getElementById('limitToolbar');
-  if(_lvt) _lvt.querySelectorAll('.limit-viewtoggle button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      _lvt.querySelectorAll('.limit-viewtoggle button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      limitViewState.view = btn.dataset.view;
-      renderLimitBody();
-    });
-  });
 
   function limitStandaloneHtml(){
-    const d = limitCompareData[limitViewState.key];
+    const d = limitCompareData[limitCurrentKey];
     const title = d ? d.label : '';
     const bodyHtml = document.getElementById('limitModalBody').innerHTML;
     return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - 다온지사</title>
@@ -7295,18 +7230,11 @@ const limitCompareData = {
         .limit-table .lt-attr-head{text-align:left; background:#1c2b4a;}
         .limit-table .lt-attr{text-align:left; font-weight:700; color:#1c2b4a; background:#f2f4f6; white-space:normal; min-width:110px;}
         .limit-table tr.lt-group td{background:#EEF0FC; color:#1c2b4a; font-weight:800; text-align:left; font-size:11px;}
-        .limit-subtitle{font-size:14px; font-weight:800; color:#1c2b4a; margin:18px 0 6px;}
-        .limit-card{background:#fff; border:1px solid #dfe4e9; border-radius:14px; overflow:hidden; margin-bottom:16px;}
-        .limit-card-head{background:#1c2b4a; color:#fff; padding:14px 18px; font-size:16px; font-weight:800;}
-        .limit-card-body{padding:6px 18px 16px;}
-        .limit-card-row{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid #f0f1f5; font-size:13.5px;}
-        .limit-card-row .lc-label{color:#6b7684; font-weight:700; width:150px; flex:none;}
-        .limit-card-row .lc-value{text-align:right; flex:1;}
-        .limit-card-section{background:#EEF0FC; color:#1c2b4a; font-weight:800; font-size:11.5px; padding:8px 18px; margin:8px -18px 0;}
-        .limit-chiprow{display:none;}
         .limit-empty-note{margin-top:14px; background:#f2f4f6; border-radius:12px; padding:16px; font-size:12.5px; color:#6b7684; line-height:1.6;}
+        h1{display:flex; align-items:center; font-size:20px; font-weight:800; color:#1c2b4a; padding-bottom:12px; border-bottom:2px solid #1c2b4a; margin-bottom:18px;}
+        h1 .arrow{display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:6px; background:#1c2b4a; color:#fff; font-size:14px; margin-right:9px; flex:none;}
         @media print{ body{padding:0;} }
-      </style></head><body><h1>${title}</h1>${bodyHtml}</body></html>`;
+      </style></head><body><h1><span class="arrow">➜</span>${title}</h1>${bodyHtml}</body></html>`;
   }
   const _lpo = document.getElementById('limitPopoutBtn');
   if(_lpo) _lpo.addEventListener('click', () => {
@@ -7319,8 +7247,8 @@ const limitCompareData = {
   const _lpr = document.getElementById('limitPrintBtn');
   if(_lpr) _lpr.addEventListener('click', () => {
     const area = document.getElementById('limitPrintArea');
-    const title = limitCompareData[limitViewState.key] ? limitCompareData[limitViewState.key].label : '';
-    area.innerHTML = `<h2 style="font-size:18px; margin-bottom:14px;">${title}</h2>` + document.getElementById('limitModalBody').innerHTML;
+    const title = limitCompareData[limitCurrentKey] ? limitCompareData[limitCurrentKey].label : '';
+    area.innerHTML = `<h2 style="display:flex;align-items:center;font-size:18px;font-weight:800;color:#1c2b4a;padding-bottom:10px;border-bottom:2px solid #1c2b4a;margin-bottom:16px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#1c2b4a;color:#fff;font-size:13px;margin-right:8px;">➜</span>${title}</h2>` + document.getElementById('limitModalBody').innerHTML;
     document.documentElement.classList.add('me-printing');
     document.body.classList.add('me-printing');
     window.print();
@@ -7346,10 +7274,10 @@ const limitCompareData = {
     _lsv.textContent = '저장 중...';
     try{
       await limitLoadHtml2Canvas();
-      const title = limitCompareData[limitViewState.key] ? limitCompareData[limitViewState.key].label : '인수한도비교';
+      const title = limitCompareData[limitCurrentKey] ? limitCompareData[limitCurrentKey].label : '인수한도비교';
       const stage = document.createElement('div');
-      stage.style.cssText = 'position:fixed; left:-9999px; top:0; background:#fff; padding:24px; width:1000px;';
-      stage.innerHTML = `<h2 style="font-size:18px; margin-bottom:14px; color:#1c2b4a;">${title}</h2>` + document.getElementById('limitModalBody').innerHTML;
+      stage.style.cssText = 'position:fixed; left:-9999px; top:0; background:#fff; padding:24px; width:1100px;';
+      stage.innerHTML = `<h2 style="display:flex;align-items:center;font-size:20px;font-weight:800;color:#1c2b4a;padding-bottom:12px;border-bottom:2px solid #1c2b4a;margin-bottom:18px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:#1c2b4a;color:#fff;font-size:14px;margin-right:9px;">➜</span>${title}</h2>` + document.getElementById('limitModalBody').innerHTML;
       document.body.appendChild(stage);
       const canvas = await window.html2canvas(stage, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
       document.body.removeChild(stage);
