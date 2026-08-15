@@ -2092,7 +2092,7 @@ body.growon{ background:var(--g-navy); }
               <div>
                 <div class="surgery-pin-title">회사별 인수한도 비교 게시판</div>
               </div>
-              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn" style="display:none;">＋ 게시물 등록</button>
+              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn">＋ 게시물 등록</button>
             </div>
             <div class="driver-menu" id="limitCompareMenu"></div>
             <div id="limitUploadForm" class="lc-upload-form" style="display:none;">
@@ -7380,16 +7380,6 @@ const limitCompareData = {
   }
   loadLimitUploadedImages();
 
-  // 어떤 경로로 로그인/로그아웃하든(탭 전환, 새로고침, 뒤로가기 등) 항상 최신 상태로
-  // 스스로 맞춰지도록: 표시 여부는 주기적으로 동기화하고, 클릭은 위임 방식으로 처리.
-  function syncLimitUploadVisibility(){
-    const luOpen = document.getElementById('limitUploadOpenBtn');
-    if(!luOpen) return;
-    luOpen.style.display = (sessionStorage.getItem('growAdmin') === '1') ? '' : 'none';
-  }
-  syncLimitUploadVisibility();
-  setInterval(syncLimitUploadVisibility, 1000);
-
   document.addEventListener('click', (e) => {
     const openBtn = e.target.closest && e.target.closest('#limitUploadOpenBtn');
     if(openBtn){
@@ -9293,7 +9283,6 @@ const limitCompareData = {
     const ea = document.getElementById('eventNewAuthor');
     if(ea && !ea.value) ea.value = whoName;
 
-    if(typeof syncLimitUploadVisibility === 'function') syncLimitUploadVisibility();
     if(typeof renderLimitCompareMenu === 'function') renderLimitCompareMenu();
   }
 
