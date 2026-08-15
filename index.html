@@ -465,9 +465,8 @@
   @media print{
     body.me-printing .modal-backdrop, body.me-printing .dn-modal, body.me-printing .alb-lb, body.me-printing .scrim, body.me-printing .drawer{ display:none !important; }
     body.me-printing * { visibility:hidden !important; }
-    body.me-printing #mePrintArea, body.me-printing #mePrintArea *,
-    body.me-printing #limitPrintArea, body.me-printing #limitPrintArea * { visibility:visible !important; }
-    #mePrintArea, #limitPrintArea{display:block !important; position:absolute !important; top:0; left:0; width:100%; padding:0; margin:0; background:#fff !important;}
+    body.me-printing #mePrintArea, body.me-printing #mePrintArea * { visibility:visible !important; }
+    #mePrintArea{display:block !important; position:absolute !important; top:0; left:0; width:100%; padding:0; margin:0; background:#fff !important;}
     html.me-printing, body.me-printing{height:auto !important; overflow:visible !important; background:#fff !important;}
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   }
@@ -822,18 +821,6 @@
   .limit-actions button{border:1px solid var(--line); background:#fff; border-radius:8px; padding:7px 10px; font-size:12px; font-weight:700; color:var(--navy-2); cursor:pointer; display:flex; align-items:center; gap:4px;}
   .limit-actions button:hover{background:var(--canvas);}
 
-  /* A4 가로 1장에 맞춘 인쇄 규격: .limit-page 1개 = 1페이지 */
-  @media print{
-    @page{ size: A4 landscape; margin: 10mm; }
-    #limitPrintArea .limit-page{ page-break-after: always; break-after: page; }
-    #limitPrintArea .limit-page:last-child{ page-break-after: auto; break-after: auto; }
-    #limitPrintArea .limit-scroll{ overflow: visible !important; border:none !important; }
-    #limitPrintArea .limit-table{ width:100% !important; table-layout:fixed; font-size:8px !important; white-space:normal !important; word-break:keep-all; }
-    #limitPrintArea .limit-table th, #limitPrintArea .limit-table td{ padding:3px 4px !important; }
-    #limitPrintArea .limit-table .lt-attr, #limitPrintArea .limit-table .lt-attr-head{ position:static !important; min-width:0 !important; }
-    #limitPrintArea .limit-table th{ position:static !important; }
-  }
-
   /* ===== 원본 병합셀 구조 표 (유방암진단비 등) ===== */
   .limit-table.lt-merged{table-layout:fixed;}
   .limit-table.lt-merged th, .limit-table.lt-merged td{text-align:center; vertical-align:middle;}
@@ -854,10 +841,6 @@
   .limit-pdf-text{font-size:13px; color:var(--slate);}
   .limit-pdf-dlbtn{display:inline-flex; align-items:center; gap:6px; background:var(--navy-2); color:#fff; border-radius:8px; padding:10px 18px; font-size:13px; font-weight:700; text-decoration:none;}
   .limit-pdf-dlbtn:hover{opacity:.9;}
-  @media print{
-    #limitPrintArea .limit-slide-img{ max-width:100%; max-height:180mm; width:auto; margin:0 auto; }
-    #limitPrintArea .limit-pdf-box{ padding:20px; }
-  }
 
   .lc-upload-btn{margin-left:auto; flex:none; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer;}
   .lc-upload-btn:hover{opacity:.9;}
@@ -2503,11 +2486,10 @@ body.growon{ background:var(--g-navy); }
           <div class="dz-modal-group" id="limitModalGroup">회사별 인수한도 비교</div>
           <div class="dz-modal-name" id="limitModalName"></div>
           <div class="limit-toolbar" id="limitToolbar" style="display:none;">
-            <div class="limit-slide-hint">📊 원본 장표 그대로 · 이 화면을 통째로 저장·인쇄할 수 있습니다</div>
+            <div class="limit-slide-hint">📊 원본 장표 그대로</div>
             <div class="limit-actions">
-              <button type="button" id="limitPopoutBtn">↗ 새창 크게보기</button>
-              <button type="button" id="limitSaveBtn">⬇ 장표 다운로드</button>
-              <button type="button" id="limitPrintBtn">🖨 장표 인쇄</button>
+              <button type="button" id="limitSaveBtn">⬇ 다운로드</button>
+              <button type="button" id="limitPopoutBtn">↗ 새창에서 보기·인쇄</button>
             </div>
           </div>
           <div id="limitModalBody"></div>
@@ -2517,7 +2499,6 @@ body.growon{ background:var(--g-navy); }
           </div>
         </div>
       </div>
-<div id="limitPrintArea" style="display:none;"></div>
 <div class="alb-lb" id="surgeryLb">
   <div class="alb-lb-box">
     <button class="alb-lb-x" id="surgeryLbX">&times;</button>
@@ -5703,6 +5684,16 @@ const limitCompareData = {};
         .limit-empty-note{margin-top:14px; background:#f2f4f6; border-radius:12px; padding:16px; font-size:12.5px; color:#6b7684; line-height:1.6;}
         .limit-subtitle{font-size:14px; font-weight:800; color:#1c2b4a; margin:0 0 8px;}
         .limit-slide-img{width:100%; height:auto; display:block; border:1px solid #dfe4e9; border-radius:10px;}
+        .limit-pdf-box{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:48px 24px; border:1px dashed #dfe4e9; border-radius:12px; background:#f2f4f6;}
+        .limit-pdf-icon{font-size:40px;}
+        .limit-pdf-text{font-size:13px; color:#6b7684;}
+        .limit-pdf-dlbtn{display:inline-flex; align-items:center; gap:6px; background:#1c2b4a; color:#fff; border-radius:8px; padding:10px 18px; font-size:13px; font-weight:700; text-decoration:none;}
+        .limit-table.lt-merged td.lt-attr{background:#f2f4f6; color:#1c2b4a; font-weight:800; font-size:12px; text-align:center;}
+        .limit-table.lt-merged td.lt-vert{writing-mode:vertical-rl; text-orientation:upright; letter-spacing:2px;}
+        .limit-table.lt-merged td.lt-left{text-align:left; line-height:1.7; font-size:11.5px; white-space:normal;}
+        .limit-table.lt-merged tr.lt-subhead td{background:#EEF0FC; color:#1c2b4a; font-weight:800;}
+        .limit-table.lt-merged tr.lt-highlight td:not(.lt-attr){background:#FFF7DC; font-weight:800; color:#c65a1e;}
+        .lt-red{color:#c0392b; font-weight:800;} .lt-blue{color:#1a56c4; font-weight:700;} .lt-purple{color:#6a3fc2; font-weight:800;} .lt-flag{color:#c0392b; font-size:9px;}
         h1{display:flex; align-items:center; font-size:20px; font-weight:800; color:#1c2b4a; padding-bottom:12px; border-bottom:2px solid #1c2b4a; margin-bottom:18px;}
         h1 .arrow{display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:6px; background:#1c2b4a; color:#fff; font-size:14px; margin-right:9px; flex:none;}
         .limit-page{margin-bottom:26px;}
@@ -5715,6 +5706,7 @@ const limitCompareData = {};
           .limit-table{ width:100% !important; table-layout:fixed; font-size:8px !important; white-space:normal !important; word-break:keep-all; }
           .limit-table th, .limit-table td{ padding:3px 4px !important; }
           .limit-slide-img{ max-width:100%; max-height:180mm; width:auto; margin:0 auto; }
+          .limit-pdf-box{ padding:20px; }
           body{padding:0;}
         }
       </style></head><body><h1><span class="arrow">➜</span>${title}</h1>${bodyHtml}</body></html>`;
@@ -5725,20 +5717,6 @@ const limitCompareData = {};
     if(!w) return;
     w.document.write(limitStandaloneHtml());
     w.document.close();
-  });
-
-  const _lpr = document.getElementById('limitPrintBtn');
-  if(_lpr) _lpr.addEventListener('click', () => {
-    const area = document.getElementById('limitPrintArea');
-    const title = limitCompareData[limitCurrentKey] ? limitCompareData[limitCurrentKey].label : '';
-    area.innerHTML = `<h2 style="display:flex;align-items:center;font-size:18px;font-weight:800;color:#1c2b4a;padding-bottom:10px;border-bottom:2px solid #1c2b4a;margin-bottom:16px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#1c2b4a;color:#fff;font-size:13px;margin-right:8px;">➜</span>${title}</h2>` + document.getElementById('limitModalBody').innerHTML;
-    document.documentElement.classList.add('me-printing');
-    document.body.classList.add('me-printing');
-    window.print();
-    setTimeout(() => {
-      document.documentElement.classList.remove('me-printing');
-      document.body.classList.remove('me-printing');
-    }, 500);
   });
 
   function limitLoadHtml2Canvas(){
@@ -5759,7 +5737,7 @@ const limitCompareData = {};
       const baseTitle = d ? d.label : '인수한도비교';
 
       if(d && d.images && d.images.length > 0){
-        // 이미지/PDF 기반 카테고리: 원본 파일을 그대로(화질 손실 없이) 다운로드
+        // 이미지/PDF 기반 게시물: 원본 파일을 그대로(화질 손실 없이) 다운로드
         for(let i=0; i<d.images.length; i++){
           const im = d.images[i];
           _lsv.textContent = d.images.length > 1 ? `저장 중... (${i+1}/${d.images.length})` : '저장 중...';
@@ -5778,10 +5756,10 @@ const limitCompareData = {};
         return;
       }
 
+      // 직접 제작한 표(built-in): 화면을 있는 그대로 캡처해서 PNG로 저장(별도 축소·합성 없음)
       await limitLoadHtml2Canvas();
       const pages = Array.from(document.querySelectorAll('#limitModalBody .limit-page'));
       const list = pages.length ? pages : [document.getElementById('limitModalBody')];
-      const A4W = 2000, A4H = 1414; // A4 가로 비율(297:210)에 맞춘 캔버스 크기
 
       for(let i=0; i<list.length; i++){
         _lsv.textContent = list.length > 1 ? `저장 중... (${i+1}/${list.length})` : '저장 중...';
@@ -5797,27 +5775,16 @@ const limitCompareData = {};
         clone.querySelectorAll('.limit-subtitle').forEach(el => { el.style.display = 'none'; }); // 페이지 제목에 이미 포함됨
         stage.appendChild(clone);
         document.body.appendChild(stage);
-        const raw = await window.html2canvas(stage, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+        const canvas = await window.html2canvas(stage, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
         document.body.removeChild(stage);
-
-        // A4 가로 캔버스에 맞춰 축소(레터박스) — 원본 장표처럼 한 장에 들어가도록
-        const finalCanvas = document.createElement('canvas');
-        finalCanvas.width = A4W; finalCanvas.height = A4H;
-        const ctx = finalCanvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, A4W, A4H);
-        const pad = 24;
-        const scale = Math.min((A4W - pad*2) / raw.width, (A4H - pad*2) / raw.height);
-        const w = raw.width * scale, h = raw.height * scale;
-        ctx.drawImage(raw, (A4W - w) / 2, (A4H - h) / 2, w, h);
 
         const a = document.createElement('a');
         a.download = baseTitle + (pageTitle ? '_' + pageTitle : (list.length > 1 ? '_' + (i+1) : '')) + '.png';
-        a.href = finalCanvas.toDataURL('image/png');
+        a.href = canvas.toDataURL('image/png');
         a.click();
         await new Promise(r => setTimeout(r, 250));
       }
-    } catch(e){ console.error(e); alert('이미지 저장에 실패했습니다.'); }
+    } catch(e){ console.error(e); alert('다운로드에 실패했습니다.'); }
     _lsv.disabled = false;
     _lsv.textContent = orig;
   });
