@@ -7308,7 +7308,6 @@ const limitCompareData = {
         delete limitCompareData[key];
         limitBoardOrder = limitBoardOrder.filter(k => k !== key);
         renderLimitCompareMenu();
-        populateLimitUploadCatSelect && populateLimitUploadCatSelect();
       } else { alert('삭제에 실패했습니다.'); }
     } catch(e){ alert('네트워크 오류로 삭제에 실패했습니다.'); }
   }
@@ -7382,12 +7381,25 @@ const limitCompareData = {
   }
   loadLimitUploadedImages();
 
-  const _luOpen = document.getElementById('limitUploadOpenBtn');
-  const _luForm = document.getElementById('limitUploadForm');
-  if(_luOpen && sessionStorage.getItem('growAdmin') === '1'){
-    _luOpen.style.display = '';
-    _luOpen.addEventListener('click', () => { _luForm.style.display = _luForm.style.display === 'none' ? 'block' : 'none'; });
+  // 어떤 경로로 로그인/로그아웃하든(탭 전환, 새로고침, 뒤로가기 등) 항상 최신 상태로
+  // 스스로 맞춰지도록: 표시 여부는 주기적으로 동기화하고, 클릭은 위임 방식으로 처리.
+  function syncLimitUploadVisibility(){
+    const luOpen = document.getElementById('limitUploadOpenBtn');
+    if(!luOpen) return;
+    luOpen.style.display = (sessionStorage.getItem('growAdmin') === '1') ? '' : 'none';
   }
+  syncLimitUploadVisibility();
+  setInterval(syncLimitUploadVisibility, 1000);
+
+  document.addEventListener('click', (e) => {
+    const openBtn = e.target.closest && e.target.closest('#limitUploadOpenBtn');
+    if(openBtn){
+      const form = document.getElementById('limitUploadForm');
+      if(form) form.style.display = (form.style.display === 'none' || !form.style.display) ? 'block' : 'none';
+      return;
+    }
+  });
+
   const _luSubmit = document.getElementById('limitUploadSubmit');
   if(_luSubmit) _luSubmit.addEventListener('click', async () => {
     const msg = document.getElementById('limitUploadMsg');
@@ -9281,6 +9293,9 @@ const limitCompareData = {
     if(ma && !ma.value) ma.value = whoName;
     const ea = document.getElementById('eventNewAuthor');
     if(ea && !ea.value) ea.value = whoName;
+
+    if(typeof syncLimitUploadVisibility === 'function') syncLimitUploadVisibility();
+    if(typeof renderLimitCompareMenu === 'function') renderLimitCompareMenu();
   }
 
   function unlockAdmin(){
