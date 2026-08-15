@@ -2092,27 +2092,9 @@ body.growon{ background:var(--g-navy); }
               <div>
                 <div class="surgery-pin-title">회사별 인수한도 비교 게시판</div>
               </div>
-              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn">＋ 게시물 등록</button>
+              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn" style="display:none;" onclick="document.getElementById('limitUploadModalBackdrop').classList.add('open')">＋ 게시물 등록</button>
             </div>
             <div class="driver-menu" id="limitCompareMenu"></div>
-            <div id="limitUploadForm" class="lc-upload-form" style="display:none;">
-              <div class="lc-upload-row">
-                <label>게시물 제목</label>
-                <input type="text" id="limitUploadTitle" placeholder="예: 치매진단비 회사별 비교">
-              </div>
-              <div class="lc-upload-row">
-                <label>페이지 부제 (선택, 여러 장 나눠 올릴 때만)</label>
-                <input type="text" id="limitUploadPageTitle" placeholder="예: 생명보험 10개사">
-              </div>
-              <div class="lc-upload-row">
-                <label>표 이미지 파일</label>
-                <input type="file" id="limitUploadFile" accept="image/*">
-              </div>
-              <div class="lc-upload-actions">
-                <button type="button" id="limitUploadSubmit" class="qna-new-btn" style="background:var(--navy-2); color:#fff; border:none;">등록</button>
-                <span id="limitUploadMsg" style="font-size:12px; color:var(--slate);"></span>
-              </div>
-            </div>
           </div>
 
 
@@ -2445,6 +2427,29 @@ body.growon{ background:var(--g-navy); }
           <div class="dz-modal-foot">
             <div>기준일: <span id="cvModalDate"></span></div>
             <div>※ 실제 보장 여부는 가입하신 상품의 개별 약관을 반드시 대조 확인해야 합니다.</div>
+          </div>
+        </div>
+      </div>
+<div class="modal-backdrop" id="limitUploadModalBackdrop">
+        <div class="modal-card" style="max-width:480px;">
+          <button class="modal-close" onclick="document.getElementById('limitUploadModalBackdrop').classList.remove('open')">&times;</button>
+          <div class="dz-modal-group">회사별 인수한도 비교 게시판</div>
+          <div class="dz-modal-name" style="border-bottom:none; margin-bottom:14px;">＋ 게시물 등록</div>
+          <div class="lc-upload-row">
+            <label>게시물 제목</label>
+            <input type="text" id="limitUploadTitle" placeholder="예: 치매진단비 회사별 비교">
+          </div>
+          <div class="lc-upload-row">
+            <label>페이지 부제 (선택, 여러 장 나눠 올릴 때만)</label>
+            <input type="text" id="limitUploadPageTitle" placeholder="예: 생명보험 10개사">
+          </div>
+          <div class="lc-upload-row">
+            <label>표 이미지 파일</label>
+            <input type="file" id="limitUploadFile" accept="image/*">
+          </div>
+          <div class="lc-upload-actions">
+            <button type="button" id="limitUploadSubmit" class="qna-new-btn" style="background:var(--navy-2); color:#fff; border:none;">등록</button>
+            <span id="limitUploadMsg" style="font-size:12px; color:var(--slate);"></span>
           </div>
         </div>
       </div>
@@ -7380,14 +7385,18 @@ const limitCompareData = {
   }
   loadLimitUploadedImages();
 
-  document.addEventListener('click', (e) => {
-    const openBtn = e.target.closest && e.target.closest('#limitUploadOpenBtn');
-    if(openBtn){
-      const form = document.getElementById('limitUploadForm');
-      if(form) form.style.display = (form.style.display === 'none' || !form.style.display) ? 'block' : 'none';
-      return;
-    }
-  });
+  // 등록 버튼은 관리자 로그인 시에만 노출. 어떤 경로로 로그인하든(탭 전환·새로고침 등)
+  // 확실히 반영되도록 주기적으로 동기화. 클릭 동작 자체는 버튼의 onclick 속성이라 이 로직과 무관하게 항상 작동.
+  function syncLimitUploadVisibility(){
+    const luOpen = document.getElementById('limitUploadOpenBtn');
+    if(!luOpen) return;
+    luOpen.style.display = (sessionStorage.getItem('growAdmin') === '1') ? '' : 'none';
+  }
+  syncLimitUploadVisibility();
+  setInterval(syncLimitUploadVisibility, 1000);
+
+  const _luModal = document.getElementById('limitUploadModalBackdrop');
+  if(_luModal) _luModal.addEventListener('click', (e) => { if(e.target.id === 'limitUploadModalBackdrop') _luModal.classList.remove('open'); });
 
   const _luSubmit = document.getElementById('limitUploadSubmit');
   if(_luSubmit) _luSubmit.addEventListener('click', async () => {
@@ -7416,7 +7425,7 @@ const limitCompareData = {
         msg.textContent = '등록되었습니다.'; msg.style.color = 'var(--orange-deep)';
         fileInput.value = ''; document.getElementById('limitUploadPageTitle').value = ''; document.getElementById('limitUploadTitle').value = '';
         await loadLimitUploadedImages();
-        setTimeout(() => { msg.textContent = ''; }, 3000);
+        setTimeout(() => { msg.textContent = ''; if(_luModal) _luModal.classList.remove('open'); }, 1200);
       } else { msg.textContent = '등록에 실패했습니다.'; msg.style.color = 'red'; }
     } catch(e){ msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red'; }
   });
