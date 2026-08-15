@@ -1754,15 +1754,6 @@ body.growon{ background:var(--g-navy); }
             <div class="filter-row disease-grouprow" id="guideGroupRow"></div>
           </div>
 
-          <div class="surgery-pin" id="cbPin_guide">
-            <div class="surgery-pin-head">
-              <span class="surgery-pin-icon">📚</span>
-              <div><div class="surgery-pin-title" id="cbGuideTitle">암 게시판</div></div>
-              <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide')">＋ 게시물 등록</button>
-            </div>
-            <div class="driver-menu" id="cbMenu_guide"></div>
-          </div>
-
           <div id="driverPinsWrap" style="display:none;">
             <div class="surgery-pin">
               <div class="surgery-pin-head">
@@ -1771,6 +1762,7 @@ body.growon{ background:var(--g-navy); }
                   <div class="surgery-pin-title">운전자보험 변천사 & 담보 가이드</div>
                   <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                 </div>
+                <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','운전자보험')">＋ 게시물 등록</button>
               </div>
               <div class="driver-img-block">
                 <div class="driver-img-label">📈 운전자보험 변천사 (2009~2024)</div>
@@ -1804,6 +1796,7 @@ body.growon{ background:var(--g-navy); }
                     <span class="dm-icon">📋</span><span class="dm-label">운전자보험의 주요보장</span><span class="dm-arrow">›</span>
                   </button>
                 </div>
+                <div class="driver-menu" id="cbMenu_guide_운전자보험" style="margin-top:8px;"></div>
               </div>
             </div>
           </div>
@@ -1818,6 +1811,7 @@ body.growon{ background:var(--g-navy); }
                   <div class="surgery-pin-title">수술비보험 가이드</div>
                   <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                 </div>
+                <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','수술비')">＋ 게시물 등록</button>
               </div>
               <div class="driver-menu">
                 <button type="button" class="driver-menu-item" data-full="assets/surginsure/combo.jpg" data-cap="1-5종 수술비란?">
@@ -1833,6 +1827,7 @@ body.growon{ background:var(--g-navy); }
                   <span class="dm-icon">🛡️</span><span class="dm-label">3종 수술비로 수술·시술·반복치료까지 빈틈없이 대비하자!</span><span class="dm-arrow">›</span>
                 </button>
               </div>
+              <div class="driver-menu" id="cbMenu_guide_수술비" style="margin-top:8px;"></div>
             </div>
           </div>
 
@@ -1879,6 +1874,7 @@ body.growon{ background:var(--g-navy); }
                   <div class="surgery-pin-title">뇌/심 가이드</div>
                   <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                 </div>
+                <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','뇌·심장질환')">＋ 게시물 등록</button>
               </div>
               <div class="driver-menu">
                 <button type="button" class="lb-menu-item" data-gallery="brainHeartDiagnosis">
@@ -1888,6 +1884,7 @@ body.growon{ background:var(--g-navy); }
                   <span class="dm-icon">💊</span><span class="dm-label">치료비 (치료방법과 치료비)</span><span class="dm-arrow">›</span>
                 </button>
               </div>
+              <div class="driver-menu" id="cbMenu_guide_뇌·심장질환" style="margin-top:8px;"></div>
             </div>
           </div>
 
@@ -1901,6 +1898,7 @@ body.growon{ background:var(--g-navy); }
                   <div class="surgery-pin-title">암 가이드</div>
                   <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                 </div>
+                <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','암')">＋ 게시물 등록</button>
               </div>
               <div class="driver-menu">
                 <button type="button" class="lb-menu-item" data-gallery="cancerAll">
@@ -1919,6 +1917,7 @@ body.growon{ background:var(--g-navy); }
                   <span class="dm-icon">📄</span><span class="dm-label">유사암 서류확인 가이드</span><span class="dm-arrow">›</span>
                 </button>
               </div>
+              <div class="driver-menu" id="cbMenu_guide_암" style="margin-top:8px;"></div>
             </div>
           </div>
 
@@ -1930,6 +1929,7 @@ body.growon{ background:var(--g-navy); }
                   <div class="surgery-pin-title">화재보험 가이드</div>
                   <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                 </div>
+                <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','화재보험')">＋ 게시물 등록</button>
               </div>
               <div class="driver-menu">
                 <button type="button" class="lb-menu-item" data-gallery="fireGuide">
@@ -1939,6 +1939,7 @@ body.growon{ background:var(--g-navy); }
                   <span class="dm-icon">🏗️</span><span class="dm-label">건물급수가이드 (1~5급 건물 예시)</span><span class="dm-arrow">›</span>
                 </button>
               </div>
+              <div class="driver-menu" id="cbMenu_guide_화재보험" style="margin-top:8px;"></div>
             </div>
           </div>
 
@@ -1950,6 +1951,7 @@ body.growon{ background:var(--g-navy); }
                   <div class="surgery-pin-title">배상책임보험 완벽정리</div>
                   <div class="surgery-pin-desc">보종별 정의·가입대상·보상범위·과태료·상담포인트를 이미지로 정리했습니다. 클릭하면 크게 볼 수 있습니다.</div>
                 </div>
+                <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','배상책임보험')">＋ 게시물 등록</button>
               </div>
               <div class="driver-menu">
                 <button type="button" class="lb-menu-item" data-gallery="liabilityFood">
@@ -1983,6 +1985,7 @@ body.growon{ background:var(--g-navy); }
                   <span class="dm-icon">🏙️</span><span class="dm-label">특수건물특약부화재보험 (의무보험)</span><span class="dm-arrow">›</span>
                 </button>
               </div>
+              <div class="driver-menu" id="cbMenu_guide_배상책임보험" style="margin-top:8px;"></div>
             </div>
           </div>
 
@@ -1995,6 +1998,7 @@ body.growon{ background:var(--g-navy); }
                     <div class="surgery-pin-title">치매가이드</div>
                     <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                   </div>
+                  <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','치매·간병')">＋ 게시물 등록</button>
                 </div>
                 <div class="driver-menu">
                   <button type="button" class="lb-menu-item" data-gallery="dementiaMain">
@@ -2004,6 +2008,7 @@ body.growon{ background:var(--g-navy); }
                     <span class="dm-icon">💊</span><span class="dm-label">치료비 (레켐비)</span><span class="dm-arrow">›</span>
                   </button>
                 </div>
+                <div class="driver-menu" id="cbMenu_guide_치매·간병" style="margin-top:8px;"></div>
               </div>
               <div class="surgery-pin guide-box">
                 <div class="surgery-pin-head">
@@ -5398,15 +5403,23 @@ const limitCompareData = {};
   let guideBoardOrder = [];
   let claimBoardOrder = [];
   function renderLimitCompareMenu(){ renderBoard('limitCompareMenu', limitBoardOrder); }
+  const GUIDE_CAT_CONTAINERS = {
+    "운전자보험": "cbMenu_guide_운전자보험",
+    "수술비": "cbMenu_guide_수술비",
+    "뇌·심장질환": "cbMenu_guide_뇌·심장질환",
+    "암": "cbMenu_guide_암",
+    "화재보험": "cbMenu_guide_화재보험",
+    "배상책임보험": "cbMenu_guide_배상책임보험",
+    "치매·간병": "cbMenu_guide_치매·간병"
+  };
   function renderGuideBoard(){
-    const cat = (typeof guideState !== 'undefined') ? guideState.cat : null;
-    const titleEl = document.getElementById('cbGuideTitle');
-    if(titleEl && cat) titleEl.textContent = `${cat} 게시판`;
-    const filtered = cat ? guideBoardOrder.filter(k => {
-      const d = limitCompareData[k];
-      return d && d.guideCat === cat;
-    }) : guideBoardOrder.slice();
-    renderBoard('cbMenu_guide', filtered);
+    Object.keys(GUIDE_CAT_CONTAINERS).forEach(cat => {
+      const filtered = guideBoardOrder.filter(k => {
+        const d = limitCompareData[k];
+        return d && d.guideCat === cat;
+      });
+      renderBoard(GUIDE_CAT_CONTAINERS[cat], filtered);
+    });
   }
   function renderClaimBoard(){ renderBoard('cbMenu_claim2', claimBoardOrder); }
   function renderAllBoards(){ renderLimitCompareMenu(); renderGuideBoard(); renderClaimBoard(); }
@@ -5669,13 +5682,15 @@ const limitCompareData = {};
   setInterval(syncLimitUploadVisibility, 1000);
 
   let limitUploadSection = 'limit_compare';
-  function limitOpenUpload(section){
+  let limitUploadGuideCat = '';
+  function limitOpenUpload(section, guideCat){
     limitUploadSection = section || 'limit_compare';
+    limitUploadGuideCat = guideCat || '';
     document.getElementById('limitUploadModalBackdrop').classList.add('open');
   }
   document.addEventListener('click', (e) => {
     const btn = e.target.closest && e.target.closest('.cb-register-btn');
-    if(btn){ limitOpenUpload(btn.dataset.board); }
+    if(btn && !btn.hasAttribute('onclick')){ limitOpenUpload(btn.dataset.board); }
   });
 
   const _luModal = document.getElementById('limitUploadModalBackdrop');
@@ -5701,7 +5716,7 @@ const limitCompareData = {};
       });
       const res = await fetch(LIMIT_UPLOAD_URL, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ catKey, catLabel: titleRaw, pageTitle, mime: file.type || 'image/png', imageBase64: b64, uploadedBy: admName || admLabel || '', section: limitUploadSection, guideCat: (limitUploadSection === 'guide' && typeof guideState !== 'undefined') ? guideState.cat : '' })
+        body: JSON.stringify({ catKey, catLabel: titleRaw, pageTitle, mime: file.type || 'image/png', imageBase64: b64, uploadedBy: admName || admLabel || '', section: limitUploadSection, guideCat: limitUploadGuideCat })
       });
       const data = await res.json();
       if(data && data.success){
@@ -6096,8 +6111,6 @@ const limitCompareData = {};
     if(fWrap) fWrap.style.display = (!isSearching && cat === '화재보험') ? 'block' : 'none';
     const lWrap = document.getElementById('liabilityPinsWrap');
     if(lWrap) lWrap.style.display = (!isSearching && cat === '배상책임보험') ? 'block' : 'none';
-    const cbWrap = document.getElementById('cbPin_guide');
-    if(cbWrap) cbWrap.style.display = isSearching ? 'none' : 'block';
   }
 
   const _ggr = document.getElementById('guideGroupRow');
