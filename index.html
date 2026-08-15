@@ -834,6 +834,38 @@
     #limitPrintArea .limit-table th{ position:static !important; }
   }
 
+  /* ===== 원본 병합셀 구조 표 (유방암진단비 등) ===== */
+  .limit-table.lt-merged{table-layout:fixed;}
+  .limit-table.lt-merged th, .limit-table.lt-merged td{text-align:center; vertical-align:middle;}
+  .limit-table.lt-merged td.lt-attr{background:var(--canvas); color:var(--navy-2); font-weight:800; font-size:12px;}
+  .limit-table.lt-merged td.lt-vert{writing-mode:vertical-rl; text-orientation:upright; letter-spacing:2px;}
+  .limit-table.lt-merged td.lt-left{text-align:left; line-height:1.7; font-size:11.5px; white-space:normal;}
+  .limit-table.lt-merged tr.lt-subhead td{background:#EEF0FC; color:var(--navy-2); font-weight:800;}
+  .limit-table.lt-merged tr.lt-highlight td:not(.lt-attr){background:#FFF7DC; font-weight:800; color:var(--orange-deep);}
+  .limit-table .lt-red{color:#c0392b; font-weight:800;}
+  .limit-table .lt-blue{color:#1a56c4; font-weight:700;}
+  .limit-table .lt-purple{color:#6a3fc2; font-weight:800;}
+  .limit-table .lt-flag{color:#c0392b; font-size:9px; margin-left:2px;}
+  .limit-table.lt-annuity td{white-space:normal;}
+
+  .limit-slide-img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:10px; margin-top:6px;}
+  @media print{
+    #limitPrintArea .limit-slide-img{ max-width:100%; max-height:180mm; width:auto; margin:0 auto; }
+  }
+
+  .lc-upload-btn{margin-left:auto; flex:none; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer;}
+  .lc-upload-btn:hover{opacity:.9;}
+  .lc-upload-form{margin-top:14px; padding:14px; background:var(--canvas); border-radius:12px; border:1px dashed var(--line);}
+  .lc-upload-row{display:flex; flex-direction:column; gap:5px; margin-bottom:10px;}
+  .lc-upload-row label{font-size:11.5px; font-weight:700; color:var(--slate);}
+  .lc-upload-row select, .lc-upload-row input[type=text], .lc-upload-row input[type=file]{border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; background:#fff;}
+  .lc-upload-actions{display:flex; align-items:center; gap:10px;}
+
+  .lc-post-row{display:flex; align-items:stretch; gap:6px; margin-bottom:6px;}
+  .lc-post-row .lb-menu-item{flex:1;}
+  .lc-del-btn{flex:none; display:flex; align-items:center; justify-content:center; width:38px; border-radius:8px; background:var(--stop-soft,#fbecea); color:#c0392b; cursor:pointer; font-size:14px;}
+  .lc-del-btn:hover{background:#f6d5d0;}
+
   /* ===== 상담·영업자료 게시판 ===== */
   .sm-adminbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
     background:#f6f8ff; border:1px dashed var(--line); border-radius:10px; padding:10px 12px; margin-bottom:12px;}
@@ -2058,11 +2090,30 @@ body.growon{ background:var(--g-navy); }
             <div class="surgery-pin-head">
               <span class="surgery-pin-icon">📊</span>
               <div>
-                <div class="surgery-pin-title">회사별 인수한도 비교</div>
-                <div class="surgery-pin-desc">담보별로 클릭하면 회사별 가입한도를 표로 볼 수 있습니다. 자료가 없는 항목은 "준비 중"으로 표시됩니다.</div>
+                <div class="surgery-pin-title">회사별 인수한도 비교 게시판</div>
+                <div class="surgery-pin-desc">화진님이 등록한 표 이미지가 게시물(버튼)로 나열됩니다. 클릭하면 팝업으로 보고, 다운로드·인쇄도 가능합니다.</div>
               </div>
+              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn" style="display:none;">＋ 게시물 등록</button>
             </div>
             <div class="driver-menu" id="limitCompareMenu"></div>
+            <div id="limitUploadForm" class="lc-upload-form" style="display:none;">
+              <div class="lc-upload-row">
+                <label>게시물 제목</label>
+                <input type="text" id="limitUploadTitle" placeholder="예: 치매진단비 회사별 비교">
+              </div>
+              <div class="lc-upload-row">
+                <label>페이지 부제 (선택, 여러 장 나눠 올릴 때만)</label>
+                <input type="text" id="limitUploadPageTitle" placeholder="예: 생명보험 10개사">
+              </div>
+              <div class="lc-upload-row">
+                <label>표 이미지 파일</label>
+                <input type="file" id="limitUploadFile" accept="image/*">
+              </div>
+              <div class="lc-upload-actions">
+                <button type="button" id="limitUploadSubmit" class="qna-new-btn" style="background:var(--navy-2); color:#fff; border:none;">등록</button>
+                <span id="limitUploadMsg" style="font-size:12px; color:var(--slate);"></span>
+              </div>
+            </div>
           </div>
 
 
@@ -6154,8 +6205,8 @@ const limitCompareData = {
     "유방암진단비": {
         "label": "유방암진단비(타입별 통합보장)",
         "date": "2026-08-15",
-        "html": "<div class=\"limit-page\"><div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">미래에셋</th><th class=\"lt-col\">흥국생명</th><th class=\"lt-col\">한화손보</th></tr></thead><tbody><tr><td class=\"lt-attr\">일반심사형 상품명</td><td>M케어건강보험</td><td>다(多)사랑 통합보험V2</td><td>시그니처 여성건강보험</td></tr><tr><td class=\"lt-attr\">일반암진단비</td><td>1천/2백</td><td>1천(180일내10%)/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">통합유방암-타입A</td><td>1천</td><td>1천</td><td>2천</td></tr><tr><td class=\"lt-attr\">통합유방암-타입B</td><td>1천</td><td>1천</td><td>2천</td></tr><tr><td class=\"lt-attr\">통합유방암-타입C</td><td>1천</td><td>3천</td><td>2천</td></tr><tr><td class=\"lt-attr\">통합유방암-타입D</td><td>3천</td><td>3천</td><td>5천</td></tr><tr><td class=\"lt-attr\">기타(제자리암 등)</td><td>유방제자리암2백 · 180일내25%,1년내50%</td><td>180일내25%,1년내50% · 1년이내유방암50%</td><td>1년미만50%</td></tr><tr><td class=\"lt-attr\">기타담보</td><td>검사(PET,MRI,CT,초음파),NGS10 · 유방바늘생검20,예후예측검사3백 · 유방암수술(전체/부분)1천/5백 · 항암방사선1천,항암약물1천,항암호르몬1백 · 다빈치(레보)로봇7백,비급여항암방사선2천 · 비급여표적항암2천,특정항암2천 · 급여유방재건술2백</td><td>여성암보장3천(여성생식기암) · 다섯번받는유방암:2천(첫번째2천,재진단2천,총4회,180일내10%,1년내50%) · 급여유방재건/유방절제,보존수술 각1천</td><td>유방바늘생검조직병리검사비50 · 유방암예후예측검사비3백 · 유방암수술비10 · 유방암진단후계속암2천(재진단암,4대유사암) · 유방암항암방사선치료비회당1백 · 유방암항암약물치료비회당1백 · 특정유방병변진공흡인절제치료비50(1회한)</td></tr><tr><td class=\"lt-attr\">가입금액(암진단비 외)</td><td>주계약3백, 통합유방암, 통합유방암주요치료비5천</td><td>주계약3백, 다섯번받는유방암진단, 유방암케어(급여재건/유방절제,보존수술), 유방암수용체타입별진단, 여성암보장3천(50세2천,간편없음)</td><td>기본계약:상사1.5억원(간편1억원),납입면제10, Lady유방케어패키지(유방,갑상선,여성생식기질환 통합치료비1천 가능)</td></tr><tr class=\"lt-group\"><td colspan=\"4\">보험료</td></tr><tr><td class=\"lt-attr\">30세</td><td>25,800</td><td>37,550</td><td>51,117</td></tr><tr><td class=\"lt-attr\">40세</td><td>31,560</td><td>46,380</td><td>63,334</td></tr><tr><td class=\"lt-attr\">50세</td><td>31,704</td><td>44,660</td><td>59,368</td></tr><tr class=\"lt-group\"><td colspan=\"4\">간편심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>M케어간편건강보험</td><td>다사랑3.10.5간편건강보험</td><td>시그니처 여성간편365</td></tr><tr><td class=\"lt-attr\">30세</td><td>30,678</td><td>28,300</td><td>56,598</td></tr><tr><td class=\"lt-attr\">40세</td><td>37,564</td><td>35,460</td><td>71,003</td></tr><tr><td class=\"lt-attr\">50세</td><td>37,281</td><td>34,720</td><td>67,919</td></tr></tbody></table></div></div>",
-        "note": "기준: 여자·20년납·종신(100세만기)·무해약환급형. 보험료는 여성전용 상품 기준.",
+        "html": "<div class=\"limit-page\">\n<div class=\"limit-scroll\">\n<table class=\"limit-table lt-merged\">\n<thead>\n<tr><th colspan=\"3\">단위:만원</th><th colspan=\"3\">미래에셋</th><th colspan=\"3\">흥국생명</th><th colspan=\"3\">한화손보</th></tr>\n</thead>\n<tbody>\n<tr><td colspan=\"3\" class=\"lt-attr\">일반심사형</td><td colspan=\"3\">M케어건강보험</td><td colspan=\"3\">다(多)사랑 통합보험V2</td><td colspan=\"3\">시그니처 여성건강보험</td></tr>\n<tr><td colspan=\"3\" class=\"lt-attr\">일반암진단비</td><td colspan=\"3\">1천/2백</td><td colspan=\"3\">1천(180일내10%)/2백</td><td colspan=\"3\">1천/2백</td></tr>\n<tr><td rowspan=\"5\" class=\"lt-attr lt-vert\">통합<br>유방암<br>진단</td><td rowspan=\"4\" class=\"lt-attr\">타입별</td><td class=\"lt-attr\">A</td><td colspan=\"3\">1천</td><td colspan=\"3\">1천</td><td colspan=\"3\">2천</td></tr>\n<tr><td class=\"lt-attr\">B</td><td colspan=\"3\">1천</td><td colspan=\"3\">1천</td><td colspan=\"3\">2천</td></tr>\n<tr><td class=\"lt-attr\">C</td><td colspan=\"3\">1천</td><td colspan=\"3\">3천</td><td colspan=\"3\">2천</td></tr>\n<tr><td class=\"lt-attr\">D</td><td colspan=\"3\">3천</td><td colspan=\"3\">3천</td><td colspan=\"3\">5천</td></tr>\n<tr><td colspan=\"2\" class=\"lt-attr\">기타</td><td colspan=\"3\">유방제자리암2백<br>180일내25%, 1년내50%</td><td colspan=\"3\">180일내25%, 1년내50%<br>* 1년이내유방암50%</td><td colspan=\"3\">1년미만50%</td></tr>\n<tr><td colspan=\"3\" class=\"lt-attr\">기타담보</td>\n<td colspan=\"3\" class=\"lt-left\">· 검사(PET,MRI,CT,초음파),NGG10<br>· 유방바늘생검20, 예후예측검사3백<br>· 유방암수술(전체/부분)1천/5백<br>· 항암방사선1천,항암약물1천,항암호르몬1백<br>· 다빈치(레보)로봇7백,비급여항암방사선2천<br>· 비급여표적항암2천,비급여특정항암2천<br>· 급여유방재건술2백</td>\n<td colspan=\"3\" class=\"lt-left\">· 여성암보장3천(여성생식기암)<br>· 다섯번받는유방암:2천<br>&nbsp;&nbsp;-첫번째유방암으로진단시2천<br>&nbsp;&nbsp;-재진단암으로진단시2천(총4회보장)<br>&nbsp;&nbsp;(180일내10%,1년내50%)<br>· 급여유방재건/유방절제,보존수술 각1천</td>\n<td colspan=\"3\" class=\"lt-left\">· 유방바늘생검조직병리검사비50<br>· 유방암예후예측검사비3백<br>· 유방암으로인한유방수술비10<br>· 유방암진단후계속암2천(재진단암,4대유사암)<br>· 유방암항암방사선치료비회당1백<br>· 유방암항암약물치료비회당1백<br>· 특정유방병변진공흡인절제치료비50(1회한)</td></tr>\n<tr><td colspan=\"3\" class=\"lt-attr\">가입금액<br>(암진단비 외)</td>\n<td colspan=\"3\">주계약3백, 통합유방암,<br>통합유방암주요치료비5천</td>\n<td colspan=\"3\">주계약3백, 다섯번받는유방암진단,<br>유방암케어(급여재건수술/유방절제,보존수술)<br>유방암수용체타입별진단, 여성암보장3천<br>(50세2천, 간편은 없음)</td>\n<td colspan=\"3\">기본계약:상사1.5억원(간편1억원)<br>납입면제10, Lady유방케어패키지<br>(유방,갑상선,여성생식기질환 통합치료비1천 가능)</td></tr>\n<tr class=\"lt-subhead\"><td colspan=\"3\" class=\"lt-attr\">보험료(원)</td><td>30세</td><td>40세</td><td>50세</td><td>30세</td><td>40세</td><td>50세</td><td>30세</td><td>40세</td><td>50세</td></tr>\n<tr class=\"lt-highlight\"><td colspan=\"3\" class=\"lt-attr\">일반심사형</td><td>25,800</td><td>31,560</td><td>31,704</td><td>37,550</td><td>46,380</td><td>44,660</td><td>51,117</td><td>63,334</td><td>59,368</td></tr>\n<tr><td colspan=\"3\" class=\"lt-attr\">간편심사형</td><td colspan=\"3\">M케어간편건강보험</td><td colspan=\"3\">다사랑3.10.5간편건강보험</td><td colspan=\"3\">시그니처 여성간편365</td></tr>\n<tr class=\"lt-highlight\"><td colspan=\"3\" class=\"lt-attr\">보험료(원)</td><td>30,678</td><td>37,564</td><td>37,281</td><td>28,300</td><td>35,460</td><td>34,720</td><td>56,598</td><td>71,003</td><td>67,919</td></tr>\n</tbody>\n</table>\n</div>\n</div>",
+        "note": "기준: 여자, 20년납 종신(100세만기), 무해약환급형.",
         "groups": [
             {
                 "title": null,
@@ -6300,8 +6351,8 @@ const limitCompareData = {
     "암통합치료비": {
         "label": "암통합치료비(급여+비급여)",
         "date": "2026-08-15",
-        "html": "<div class=\"limit-page\"><div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">삼성생명</th><th class=\"lt-col\">삼성화재</th><th class=\"lt-col\">메리츠화재</th><th class=\"lt-col\">KB손보</th><th class=\"lt-col\">동양생명</th><th class=\"lt-col\">푸본현대</th></tr></thead><tbody><tr><td class=\"lt-attr\">가입금액</td><td>암통합치료 1억원</td><td>암통합치료비1.2억원</td><td>암통합치료비1억원</td><td>암통합치료1.5억원</td><td>암통합치료비1억원</td><td>암통합치료비1억원</td></tr><tr><td class=\"lt-attr\">보장병원/치료횟수</td><td>종합병원/23회</td><td>종합병원/20회</td><td>일반병원/20회</td><td>종합병원/20회</td><td>종합병원/16회</td><td>종합병원/20회</td></tr><tr><td class=\"lt-attr\">검사-내시경/MRI/PET</td><td>5/5/5</td><td>-</td><td>5/5/5</td><td>10/5/5</td><td>5/5/5</td><td>5/5/5</td></tr><tr><td class=\"lt-attr\">검사-단일유전자/초음파/CT</td><td>5/10/10</td><td>-</td><td>5/10/10</td><td>5/5/5</td><td>5/10/10</td><td>5/10/10</td></tr><tr><td class=\"lt-attr\">검사-생검조직병리/NGS</td><td>20/100</td><td>-</td><td>20/100</td><td>20/10</td><td>20/100</td><td>20/100</td></tr><tr><td class=\"lt-attr\">치료-주요치료</td><td>1천/2백</td><td>1.5천/6백</td><td>1천/2백</td><td>1,500/3백</td><td>1천/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">치료-항암호르몬</td><td>1백</td><td>3백/60</td><td>-</td><td>150</td><td>-</td><td>1백</td></tr><tr><td class=\"lt-attr\">치료-항암세기조절</td><td>1천</td><td>-</td><td>1천</td><td>1천</td><td>-</td><td>1천</td></tr><tr><td class=\"lt-attr\">치료-중환자실/암통증</td><td>-/50</td><td>5백/-</td><td>-/50</td><td>750/50</td><td>5백(소액암1백)/50</td><td>-/50</td></tr><tr><td class=\"lt-attr\">비급여-다빈치로봇(암/전갑)</td><td>1천/2백</td><td>1천/5백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">비급여-고액항암군</td><td>3천</td><td>3천</td><td>3천</td><td>3천</td><td>3천</td><td>3천</td></tr><tr><td class=\"lt-attr\">재활</td><td>2(연20회)</td><td>-</td><td>2(연20회)</td><td>2(30회)</td><td>2(연20회)</td><td>2(연20회)</td></tr><tr><td class=\"lt-attr\">기타치료</td><td>로봇수술:레보아이추가</td><td>*비급여주요치료1천</td><td>-</td><td>-</td><td>-</td><td>사망보장,암진단50(5년,연1회)</td></tr><tr class=\"lt-group\"><td colspan=\"7\">일반심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>1540건강보험/4180건강보험</td><td>건강보험내돈내삼1640/4170</td><td>T내Mom대로/5.10.5보장보험</td><td>5.10.10플러스건강보험</td><td>우리WON하는보장보험</td><td>MAX종신보험세븐 하이픽암플러스</td></tr><tr><td class=\"lt-attr\">기본계약및연계</td><td>주계약3백</td><td>상사1억원,납면10,간편상사5천</td><td>상후1백,50세:간편상사1백추가</td><td>상사,상후1백,납면10,간편:1백</td><td>주계약3백</td><td>기본납면형 주계약5백</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>51,828</td><td>90,269</td><td>55,380</td><td>92,501</td><td>60,977</td><td>481,354</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>46,516</td><td>72,229</td><td>54,481</td><td>63,957</td><td>48,711</td><td>462,609</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>66,566</td><td>118,404</td><td>75,310</td><td>125,280</td><td>77,981</td><td>531,926</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>49,067</td><td>77,040</td><td>58,930</td><td>67,999</td><td>53,112</td><td>496,827</td></tr><tr class=\"lt-group\"><td colspan=\"7\">간편심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>1540/4180</td><td>간편새로고침100세</td><td>통합간편건강보험</td><td>3N5)슬기로운간편</td><td>우리WON하는간편</td><td>하이픽암플러스(간편)</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>62,229</td><td>96,463</td><td>62,000</td><td>111,394</td><td>69,237</td><td>513,591</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>58,030</td><td>73,791</td><td>59,611</td><td>63,151</td><td>56,113</td><td>494,341</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>79,385</td><td>133,382</td><td>82,260</td><td>150,795</td><td>88,518</td><td>567,852</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>60,492</td><td>80,938</td><td>62,870</td><td>68,620</td><td>60,680</td><td>529,889</td></tr></tbody></table></div></div>",
-        "note": "기준: 남녀·20년납·100세만기,무해약환급형. 고액항암=표적항암약물허가치료,특정면역항암약물허가치료,항암양성자방사선치료. 푸본현대는 종신보험 결합형이라 보험료 단위가 다른 회사와 다름 — 반드시 원본 재확인.",
+        "html": "<div class=\"limit-page\">\n<div class=\"limit-scroll\">\n<table class=\"limit-table lt-merged\">\n<thead>\n<tr><th colspan=\"2\">단위:만원</th><th colspan=\"2\">삼성생명</th><th colspan=\"2\">삼성화재</th><th colspan=\"2\">메리츠화재</th><th colspan=\"2\">KB손보</th><th colspan=\"2\">동양생명</th><th colspan=\"2\">푸본현대</th></tr>\n</thead>\n<tbody>\n<tr><td colspan=\"2\" class=\"lt-attr\">가입금액</td><td colspan=\"2\">암통합치료 1억원</td><td colspan=\"2\">암통합치료비1.2억원</td><td colspan=\"2\">암통합치료비1억원</td><td colspan=\"2\">암통합치료1.5억원</td><td colspan=\"2\">암통합치료비1억원</td><td colspan=\"2\">암통합치료비1억원</td></tr>\n<tr><td colspan=\"2\" class=\"lt-attr\">보장병원/치료횟수</td><td colspan=\"2\">종합병원/23회</td><td colspan=\"2\">종합병원/20회</td><td colspan=\"2\">일반병원/20회</td><td colspan=\"2\">종합병원/20회</td><td colspan=\"2\">종합병원/16회</td><td colspan=\"2\">종합병원/20회</td></tr>\n<tr><td rowspan=\"3\" class=\"lt-attr\">검사</td><td class=\"lt-attr\">내시경/MRI촬영/PET</td><td colspan=\"2\">5/5/5</td><td colspan=\"2\">-</td><td colspan=\"2\">5/5/5</td><td colspan=\"2\">10/5/5</td><td colspan=\"2\">5/5/5</td><td colspan=\"2\">5/5/5</td></tr><tr><td class=\"lt-attr\">단일유전자/초음파/CT</td><td colspan=\"2\">5/10/10</td><td colspan=\"2\">-</td><td colspan=\"2\">5/10/10</td><td colspan=\"2\">5/5/5</td><td colspan=\"2\">5/10/10</td><td colspan=\"2\">5/10/10</td></tr><tr><td class=\"lt-attr\">생검조직병리/NGS</td><td colspan=\"2\">20/100</td><td colspan=\"2\">-</td><td colspan=\"2\">20/100</td><td colspan=\"2\">20/10</td><td colspan=\"2\">20/100</td><td colspan=\"2\">20/100</td></tr>\n<tr><td rowspan=\"4\" class=\"lt-attr\">치료</td><td class=\"lt-attr\">*주요치료</td><td colspan=\"2\">1천/2백</td><td colspan=\"2\">1.5천/6백</td><td colspan=\"2\">1천/2백</td><td colspan=\"2\">1,500/3백</td><td colspan=\"2\">1천/2백</td><td colspan=\"2\">1천/2백</td></tr><tr><td class=\"lt-attr\">항암호르몬</td><td colspan=\"2\">1백</td><td colspan=\"2\">3백/60</td><td colspan=\"2\">-</td><td colspan=\"2\">150</td><td colspan=\"2\">-</td><td colspan=\"2\">1백</td></tr><tr><td class=\"lt-attr\">항암세기조절</td><td colspan=\"2\">1천</td><td colspan=\"2\">-</td><td colspan=\"2\">1천</td><td colspan=\"2\">1천</td><td colspan=\"2\">-</td><td colspan=\"2\">1천</td></tr><tr><td class=\"lt-attr\">중환자실/암통증</td><td colspan=\"2\">-/50</td><td colspan=\"2\">5백/-</td><td colspan=\"2\">-/50</td><td colspan=\"2\">750/50</td><td colspan=\"2\">5백(소액암1백)/50</td><td colspan=\"2\">-/50</td></tr>\n<tr><td rowspan=\"2\" class=\"lt-attr\">비급여</td><td class=\"lt-attr\">다빈치 로봇(암/전·갑)</td><td colspan=\"2\">1천/2백</td><td colspan=\"2\">1천/5백</td><td colspan=\"2\">1천/2백</td><td colspan=\"2\">1천/2백</td><td colspan=\"2\">1천/2백</td><td colspan=\"2\">1천/2백</td></tr><tr><td class=\"lt-attr\">고액항암군</td><td colspan=\"2\">3천</td><td colspan=\"2\">3천</td><td colspan=\"2\">3천</td><td colspan=\"2\">3천</td><td colspan=\"2\">3천</td><td colspan=\"2\">3천</td></tr>\n<tr><td colspan=\"2\" class=\"lt-attr\">재활</td><td colspan=\"2\">2(연20회)</td><td colspan=\"2\">-</td><td colspan=\"2\">2(연20회)</td><td colspan=\"2\">2(30회)</td><td colspan=\"2\">2(연20회)</td><td colspan=\"2\">2(연20회)</td></tr>\n<tr><td colspan=\"2\" class=\"lt-attr\">기타치료</td><td colspan=\"2\">로봇수술:레보아이추가</td><td colspan=\"2\">*비급여주요치료1천</td><td colspan=\"2\">-</td><td colspan=\"2\">-</td><td colspan=\"2\">-</td><td colspan=\"2\">사망보장,암진단50<br>(5년,연1회)</td></tr>\n<tr><td colspan=\"2\" class=\"lt-attr\">일반심사형</td><td colspan=\"2\">1540건강보험<br>4180건강보험</td><td colspan=\"2\">건강보험내돈내삼<br>1640/4170</td><td colspan=\"2\">T내Mom대로/<br>5.10.5보장보험</td><td colspan=\"2\">5.10.10플러스<br>건강보험</td><td colspan=\"2\">우리WON하는<br>보장보험</td><td colspan=\"2\">MAX종신보험세븐<br>하이픽암플러스</td></tr>\n<tr><td colspan=\"2\" class=\"lt-attr\">기본계약및연계</td><td colspan=\"2\">주계약3백</td><td colspan=\"2\">상사1억원,납면10,<br>간편상사5천</td><td colspan=\"2\">상후1백,50세:간편<br>상사1백 추가</td><td colspan=\"2\">상사,상후1백,납면10<br>간편:1백</td><td colspan=\"2\">주계약3백</td><td colspan=\"2\">기본납면형<br>주계약5백</td></tr>\n<tr class=\"lt-subhead\"><td colspan=\"2\" class=\"lt-attr\">보험료</td><td>40세</td><td>50세</td><td>40세</td><td>50세</td><td>40세</td><td>50세</td><td>40세</td><td>50세</td><td>40세</td><td>50세</td><td>40세</td><td>50세</td></tr>\n<tr class=\"lt-highlight\"><td colspan=\"2\" class=\"lt-attr\">남자(원)</td><td>51,828</td><td>66,566</td><td>90,269</td><td>118,404</td><td>55,380</td><td>75,310</td><td>92,501</td><td>125,280</td><td>60,977</td><td>77,981</td><td>481,354</td><td>531,926</td></tr>\n<tr class=\"lt-highlight\"><td colspan=\"2\" class=\"lt-attr\">여자(원)</td><td>46,516</td><td>49,067</td><td>72,229</td><td>77,040</td><td>54,481</td><td>58,930</td><td>63,957</td><td>67,999</td><td>48,711</td><td>53,112</td><td>462,609</td><td>496,827</td></tr>\n<tr><td colspan=\"2\" class=\"lt-attr\">간편심사형</td><td colspan=\"2\">1540/4180</td><td colspan=\"2\">간편새로고침100세</td><td colspan=\"2\">통합간편건강보험</td><td colspan=\"2\">3N5)슬기로운간편</td><td colspan=\"2\">우리WON하는간편</td><td colspan=\"2\">하이픽암플러스<br>(간편)</td></tr>\n<tr class=\"lt-highlight\"><td colspan=\"2\" class=\"lt-attr\">남자(원)</td><td>62,229</td><td>79,385</td><td>96,463</td><td>133,382</td><td>62,000</td><td>82,260</td><td>111,394</td><td>150,795</td><td>69,237</td><td>88,518</td><td>513,591</td><td>567,852</td></tr>\n<tr class=\"lt-highlight\"><td colspan=\"2\" class=\"lt-attr\">여자(원)</td><td>58,030</td><td>60,492</td><td>73,791</td><td>80,938</td><td>59,611</td><td>62,870</td><td>63,151</td><td>68,620</td><td>56,113</td><td>60,680</td><td>494,341</td><td>529,889</td></tr>\n</tbody>\n</table>\n</div>\n</div>",
+        "note": "기준: 남녀, 20년납 100세만기, 무해약환급형. *수술·항암약물·항암방사선: 일반암/수술(유사암), 항암(4대유사암), 전갑:전립선암,갑상선암, 연간한도:수술제외,연1회.<br>고액항암=표적항암약물허가치료, 특정면역항암약물허가치료, 항암양성자방사선치료. 푸본현대는 종신보험 결합형이라 보험료 단위가 다른 회사와 다름 — 반드시 원본 재확인.",
         "groups": [
             {
                 "title": null,
@@ -7159,46 +7210,107 @@ const limitCompareData = {
             }
         ]
     },
-    "치매진단비": {
-        "label": "치매진단비",
-        "date": "",
-        "html": "",
-        "note": "",
-        "groups": []
+    "운전자보험": {
+        "label": "운전자보험 보장비교",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-page\"><div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">삼성화재</th><th class=\"lt-col\">현대해상</th><th class=\"lt-col\">DB손보</th><th class=\"lt-col\">KB손보</th><th class=\"lt-col\">메리츠화재</th><th class=\"lt-col\">한화손보</th><th class=\"lt-col\">흥국화재</th><th class=\"lt-col\">롯데손보</th><th class=\"lt-col\">하나손보</th><th class=\"lt-col\">농협손보</th></tr></thead><tbody><tr><td class=\"lt-attr\">상품명</td><td>안전운전 파트너플러스</td><td>뉴하이카 운전상해1종</td><td>참좋은 운전자상해</td><td>플러스운전자상해보험</td><td>운전자상해 종합보험</td><td>운전자 상해보험</td><td>The편한 운전자상해</td><td>Let:drive 운전자보험</td><td>하나더베스트 운전자상해</td><td>올바른 운전자보험</td></tr><tr><td class=\"lt-attr\">기본계약</td><td>상사5천</td><td>자부상1-7급 500</td><td>자부상1-7,교상50%각1백</td><td>자부상1-7,교상50% 1백</td><td>교상100 외모특정10</td><td>자부상1-7급 1천</td><td>교상사망 3천</td><td>자부상1-3급3천,1-7급5백</td><td>자부상1-7급 1백</td><td>자부상1-7급 1천</td></tr><tr><td class=\"lt-attr\">납입면제</td><td>10</td><td>10</td><td>납면형</td><td>납면 기본형</td><td>납입면제형</td><td>납면형</td><td>10</td><td>납면형</td><td>납면형</td><td>납면형</td></tr><tr><td class=\"lt-attr\">자부상14급</td><td>30</td><td>30</td><td>30</td><td>30</td><td>30</td><td>30</td><td>30</td><td>30</td><td>30</td><td>30</td></tr><tr><td class=\"lt-attr\">교사처</td><td>2억원</td><td>2억원</td><td>2억원</td><td>2억원</td><td>2억원</td><td>2억원</td><td>2억원</td><td>2억원</td><td>2.5억원</td><td>2억원</td></tr><tr><td class=\"lt-attr\">교사처(6주)</td><td>1천</td><td>1천</td><td>1천</td><td>1천</td><td>1천</td><td>1천</td><td>1천</td><td>1천</td><td>1천</td><td>1천</td></tr><tr><td class=\"lt-attr\">벌금(대물/대인)</td><td>5백/3천</td><td>5백/3천</td><td>5백/3천</td><td>5백/3천</td><td>5백/3천</td><td>5백/3천</td><td>5백/3천</td><td>5백/3천</td><td>5백/3천</td><td>5백/2천</td></tr><tr><td class=\"lt-attr\">변호사선임</td><td>5백</td><td>5백</td><td><span class=\"lt-red\">현물</span></td><td>5백</td><td>5백</td><td>5백</td><td>5백</td><td>5백</td><td><span class=\"lt-red\">현물</span></td><td>5백</td></tr><tr><td class=\"lt-attr\">급발진변호사선임</td><td>-</td><td>법률3천</td><td>상담:회당5(연30)</td><td>5백</td><td>5백</td><td>5백</td><td>1천</td><td>1천</td><td>1천</td><td>5백</td></tr><tr><td class=\"lt-attr\">최저보험료(원)</td><td>1만</td><td>1만</td><td>1만</td><td>1만</td><td>1만</td><td>1.5만</td><td>1만</td><td>1만</td><td>1만</td><td>1만</td></tr><tr class=\"lt-group\"><td colspan=\"11\">보험료</td></tr><tr><td class=\"lt-attr\">남자(원)</td><td>11,806</td><td>13,080</td><td>14,200</td><td>12,538</td><td>11,670</td><td>18,356</td><td>13,445</td><td>15,055</td><td>13,452</td><td>16,469</td></tr><tr><td class=\"lt-attr\">여자(원)</td><td>8,178</td><td>12,920</td><td>11,620</td><td>9,277</td><td>10,940</td><td>16,826</td><td>12,837</td><td>15,106</td><td>10,615</td><td>12,718</td></tr></tbody></table></div></div>",
+        "note": "기준: 40세 남녀, 보장보험료 한:원, 6주:교통사고처리 지원금 6주미만, 교사처:교통사고처리지원금, 자부상보상:14급 기준, 20년납 20년갱신, 상사:상해사망, 교상:교상상해."
     },
-    "고혈압진단비": {
-        "label": "고혈압진단비",
-        "date": "",
-        "html": "",
-        "note": "",
-        "groups": []
+    "연금보험비교": {
+        "label": "연금보험 가입예시 비교 (변액연금·공시이율연금)",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-page\" data-pagetitle=\"최저연금보증형 변액연금보험\">\n<div class=\"limit-subtitle\">● 40세 남녀 최저연금보증형 변액연금보험 가입 예시 (월 30만원, 10년납)</div>\n<div class=\"limit-scroll\"><table class=\"limit-table lt-merged lt-annuity\">\n<thead><tr><th>보험사</th><th>상품명</th><th>최저연금 보증기준</th><th>최저기준 연금액</th><th>구분</th><th>매년 연금액</th><th>총 연금수령액</th><th>기납입보험료(대비)</th></tr></thead>\n<tbody><tr><td rowspan=\"2\" class=\"lt-attr\">IBK연금</td><td rowspan=\"2\">평생보증받는 변액연금</td><td rowspan=\"2\">20년간 8%, 이후 5%</td><td rowspan=\"2\">9,732만원</td><td class=\"lt-blue\">여자</td><td class=\"lt-blue\">591만원</td><td>1억7,730만원</td><td class=\"lt-purple\">약 4.9배</td></tr><tr><td class=\"lt-blue\">남자</td><td class=\"lt-blue\">616만원</td><td>1억8,480만원</td><td class=\"lt-purple\">약 5.1배</td></tr><tr><td rowspan=\"2\" class=\"lt-attr\">KDB생명</td><td rowspan=\"2\">더! 행복드림변액연금</td><td rowspan=\"2\">30년간 7%, 이후 5%</td><td rowspan=\"2\">9,550만원</td><td class=\"lt-blue\">여자</td><td class=\"lt-blue\">622만원</td><td>1억8,660만원</td><td class=\"lt-purple\">약 5.1배</td></tr><tr><td class=\"lt-blue\">남자</td><td class=\"lt-blue\">645만원</td><td>1억9,350억원<sup class=\"lt-flag\">*원본표기 그대로</sup></td><td class=\"lt-purple\">약 5.3배</td></tr><tr><td rowspan=\"2\" class=\"lt-attr\">IM라이프</td><td rowspan=\"2\">iM마스터PRO변액</td><td rowspan=\"2\">30년간 7%, 이후 5%</td><td rowspan=\"2\">9,910만원</td><td class=\"lt-blue\">여자</td><td class=\"lt-blue\">622만원</td><td>1억8,689만원</td><td class=\"lt-purple\">약 5.1배</td></tr><tr><td class=\"lt-blue\">남자</td><td class=\"lt-blue\">646만원</td><td>1억9,388만원</td><td class=\"lt-purple\">약 5.3배</td></tr></tbody>\n</table></div>\n<div class=\"limit-empty-note\">※ 남여, 월30만원, 10년납, 70세연금개시, 각사별 연금형태 상이 ※ 투자수익율 3.75% 가정 시, 변액연금보험의 해약환급금은 펀드선택비율, 투자수익율에 따라 달라집니다.<br>※ KDB생명 남자 총연금수령액 \"1억9,350억원\"은 원본 이미지 표기 그대로이며(만원 단위 오기로 추정), 실제 안내 전 반드시 원본 자료로 재확인하세요.</div>\n</div>\n<div class=\"limit-page\" data-pagetitle=\"공시이율 연금보험\">\n<div class=\"limit-subtitle\">● 공시이율 연금보험 가입 예시 (월 30만원, 10년납)</div>\n<div class=\"limit-scroll\"><table class=\"limit-table lt-merged lt-annuity\">\n<thead><tr><th>보험사</th><th>상품명</th><th>최저연금 보증기준</th><th>최저기준 연금액</th><th>구분</th><th>매년 연금액</th><th>총 연금수령액</th><th>기납입보험료(대비)</th></tr></thead>\n<tbody><tr><td rowspan=\"2\" class=\"lt-attr\">KDB생명</td><td rowspan=\"2\">더! 행복플러스연금</td><td rowspan=\"2\">가입후 20년 7%, 연금개시전 5%</td><td rowspan=\"2\">9,190만원</td><td class=\"lt-blue\">여자</td><td class=\"lt-blue\">603만원</td><td>1억8,090만원</td><td class=\"lt-purple\">약 5.0배</td></tr><tr><td class=\"lt-blue\">남자</td><td class=\"lt-blue\">627만원</td><td>1억8,810만원</td><td class=\"lt-purple\">약 5.2배</td></tr><tr><td rowspan=\"2\" class=\"lt-attr\">IM라이프</td><td rowspan=\"2\">iM세이프PRO연금</td><td rowspan=\"2\">가입후 20년 7%, 연금개시전 5%</td><td rowspan=\"2\">9,190만원</td><td class=\"lt-blue\">여자</td><td class=\"lt-blue\">561만원</td><td>1억6,846만원</td><td class=\"lt-purple\">약 4.6배</td></tr><tr><td class=\"lt-blue\">남자</td><td class=\"lt-blue\">585만원</td><td>1억7,563만원</td><td class=\"lt-purple\">약 4.8배</td></tr><tr><td rowspan=\"2\" class=\"lt-attr\">신한라이프</td><td rowspan=\"2\">ONE더라이프연금</td><td rowspan=\"2\">가입후 20년 7%, 연금개시전 5%</td><td rowspan=\"2\">9,190만원</td><td class=\"lt-blue\">여자</td><td class=\"lt-blue\">446만원</td><td>1억3,380만원</td><td class=\"lt-purple\">약 3.7배</td></tr><tr><td class=\"lt-blue\">남자</td><td class=\"lt-blue\">468만원</td><td>1억4,040만원</td><td class=\"lt-purple\">약 3.9배</td></tr></tbody>\n</table></div>\n<div class=\"limit-empty-note\">※ 남여, 월30만원, 10년납, 70세연금개시, 각사별 연금형태 상이 ※ 공시이율 연금의 해약환급금(률)과 연금액은 공시이율 변동에 따라 달라집니다.</div>\n</div>",
+        "note": ""
+    },
+    "종신700비교": {
+        "label": "700종신보험 비교표",
+        "date": "2026-08-15",
+        "images": [
+            {
+                "src": "assets/limitcompare/life700.png",
+                "pageTitle": null
+            }
+        ],
+        "note": ""
+    },
+    "단기납종신환급률": {
+        "label": "단기납종신보험 환급률 비교표",
+        "date": "2026-08-15",
+        "images": [
+            {
+                "src": "assets/limitcompare/shortpay_refund.png",
+                "pageTitle": null
+            }
+        ],
+        "note": ""
+    },
+    "암주요치료비": {
+        "label": "암주요치료비 비교표",
+        "date": "2026-08-15",
+        "images": [
+            {
+                "src": "assets/limitcompare/cancer_treatment_1.png",
+                "pageTitle": "손해보험 12개사"
+            },
+            {
+                "src": "assets/limitcompare/cancer_treatment_2.png",
+                "pageTitle": "생명보험 13개사"
+            }
+        ],
+        "note": ""
     }
 };
-  const LIMIT_CATEGORIES = [
-    { key:"2대질환", icon:"🫀" },
-    { key:"암비급여통합치료비", icon:"🧬" },
-    { key:"암통합치료비", icon:"💰" },
-    { key:"유방암진단비", icon:"🎗️" },
-    { key:"간병인사용일당", icon:"🏥" },
-    { key:"장기요양등급담보", icon:"📋" },
-    { key:"치매진단비", icon:"🧠" },
-    { key:"고혈압진단비", icon:"💊" }
-  ];
+  // 기존에 화진님이 준 자료로 미리 만들어둔 built-in 장표들의 아이콘(고정 메뉴 아님, 게시판에 함께 표시됨)
+  const LIMIT_BUILTIN_ICONS = {
+    "2대질환": "🫀", "암비급여통합치료비": "🧬", "암통합치료비": "💰", "유방암진단비": "🎗️",
+    "운전자보험": "🚗", "연금보험비교": "👵", "종신700비교": "🛡️", "단기납종신환급률": "📈",
+    "암주요치료비": "🏥", "간병인사용일당": "🏨", "장기요양등급담보": "📋"
+  };
+  const LIMIT_BUILTIN_KEYS = Object.keys(LIMIT_BUILTIN_ICONS);
   
+
+  let limitBoardOrder = LIMIT_BUILTIN_KEYS.slice();
 
   function renderLimitCompareMenu(){
     const wrap = document.getElementById('limitCompareMenu');
     if(!wrap) return;
-    wrap.innerHTML = LIMIT_CATEGORIES.map(c => {
-      const d = limitCompareData[c.key];
-      const ready = d && d.groups && d.groups.length > 0;
-      return `<button type="button" class="lb-menu-item" data-limitkey="${c.key}">
-        <span class="dm-icon">${c.icon}</span><span class="dm-label">${d ? d.label : c.key}${ready ? '' : ' <span style="color:var(--slate);font-weight:400;">(준비중)</span>'}</span><span class="dm-arrow">›</span>
-      </button>`;
+    const isAdmin = sessionStorage.getItem('growAdmin') === '1';
+    wrap.innerHTML = limitBoardOrder.map(key => {
+      const d = limitCompareData[key];
+      if(!d) return '';
+      const icon = LIMIT_BUILTIN_ICONS[key] || '🗂️';
+      const delBtn = (isAdmin && d.isUploaded) ? `<span class="lc-del-btn" data-delkey="${key}" title="삭제">🗑</span>` : '';
+      return `<div class="lc-post-row">
+        <button type="button" class="lb-menu-item" data-limitkey="${key}">
+          <span class="dm-icon">${icon}</span><span class="dm-label">${escapeHtml(d.label)}</span><span class="dm-arrow">›</span>
+        </button>${delBtn}
+      </div>`;
     }).join('');
     wrap.querySelectorAll('[data-limitkey]').forEach(btn => {
       btn.addEventListener('click', () => openLimitModal(btn.dataset.limitkey));
     });
+    wrap.querySelectorAll('[data-delkey]').forEach(btn => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); deleteLimitPost(btn.dataset.delkey); });
+    });
+  }
+
+  async function deleteLimitPost(key){
+    const d = limitCompareData[key];
+    if(!d || !d.isUploaded) return;
+    if(!confirm(`"${d.label}" 게시물을 삭제할까요? 되돌릴 수 없습니다.`)) return;
+    try{
+      const res = await fetch(LIMIT_DELETE_URL, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ catKey: key })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        delete limitCompareData[key];
+        limitBoardOrder = limitBoardOrder.filter(k => k !== key);
+        renderLimitCompareMenu();
+        populateLimitUploadCatSelect && populateLimitUploadCatSelect();
+      } else { alert('삭제에 실패했습니다.'); }
+    } catch(e){ alert('네트워크 오류로 삭제에 실패했습니다.'); }
   }
 
   let limitCurrentKey = null;
@@ -7211,7 +7323,13 @@ const limitCompareData = {
     document.getElementById('limitModalDate').textContent = d.date || '자료 준비 중';
     const toolbar = document.getElementById('limitToolbar');
     const body = document.getElementById('limitModalBody');
-    if(d.html){
+    if(d.images && d.images.length > 0){
+      toolbar.style.display = 'flex';
+      body.innerHTML = d.images.map(im => `<div class="limit-page"${im.pageTitle ? ` data-pagetitle="${escapeHtml(im.pageTitle)}"` : ''}>` +
+        (im.pageTitle ? `<div class="limit-subtitle">${escapeHtml(im.pageTitle)}</div>` : '') +
+        `<img class="limit-slide-img" src="${im.src}" alt="${escapeHtml(d.label)}"></div>`).join('') +
+        (d.note ? `<div class="limit-empty-note" style="margin-top:12px;">${d.note}</div>` : '');
+    } else if(d.html){
       toolbar.style.display = 'flex';
       body.innerHTML = d.html + (d.note ? `<div class="limit-empty-note" style="margin-top:12px;">${d.note}</div>` : '');
     } else {
@@ -7228,12 +7346,86 @@ const limitCompareData = {
   const _lmb = document.getElementById('limitModalBackdrop');
   if(_lmb) _lmb.addEventListener('click', (e) => { if(e.target.id === 'limitModalBackdrop') closeLimitModal(); });
 
+  /* ===== 화진님 직접 등록: 게시판 방식 (n8n Data Table 저장, GitHub 업로드 불필요) ===== */
+  const LIMIT_LIST_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-images';
+  const LIMIT_IMAGE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-image';
+  const LIMIT_UPLOAD_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-image-upload';
+  const LIMIT_DELETE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-image-delete';
+
+  async function loadLimitUploadedImages(){
+    try{
+      const res = await fetch(LIMIT_LIST_URL);
+      if(!res.ok) return;
+      const rows = await res.json();
+      if(!Array.isArray(rows)) return;
+      const byCat = {};
+      rows.forEach(r => {
+        if(!r || !r.catKey) return; // 손상되었거나 테스트용 빈 행은 무시
+        (byCat[r.catKey] = byCat[r.catKey] || []).push(r);
+      });
+      // 업로드 게시물만 board 순서에서 제거 후 다시 채움(최신 목록 반영)
+      limitBoardOrder = limitBoardOrder.filter(k => LIMIT_BUILTIN_KEYS.includes(k));
+      const uploadedKeys = Object.keys(byCat).sort((a,b) => {
+        const aMin = Math.min(...byCat[a].map(r => r.sortOrder||0));
+        const bMin = Math.min(...byCat[b].map(r => r.sortOrder||0));
+        return bMin - aMin; // 최신 게시물이 위로
+      });
+      uploadedKeys.forEach(catKey => {
+        if(LIMIT_BUILTIN_KEYS.includes(catKey)) return; // built-in 장표와 겹치면 건드리지 않음
+        const rowsForCat = byCat[catKey].sort((a,b) => (a.sortOrder||0) - (b.sortOrder||0));
+        const images = rowsForCat.map(r => ({ src: `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null }));
+        limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true };
+        limitBoardOrder.push(catKey);
+      });
+      renderLimitCompareMenu();
+    } catch(e){ /* 목록 로딩 실패는 조용히 무시 (built-in 항목은 정상 노출) */ }
+  }
+  loadLimitUploadedImages();
+
+  const _luOpen = document.getElementById('limitUploadOpenBtn');
+  const _luForm = document.getElementById('limitUploadForm');
+  if(_luOpen && sessionStorage.getItem('growAdmin') === '1'){
+    _luOpen.style.display = '';
+    _luOpen.addEventListener('click', () => { _luForm.style.display = _luForm.style.display === 'none' ? 'block' : 'none'; });
+  }
+  const _luSubmit = document.getElementById('limitUploadSubmit');
+  if(_luSubmit) _luSubmit.addEventListener('click', async () => {
+    const msg = document.getElementById('limitUploadMsg');
+    const fileInput = document.getElementById('limitUploadFile');
+    const file = fileInput.files[0];
+    const titleRaw = document.getElementById('limitUploadTitle').value.trim();
+    const catKey = titleRaw.replace(/\s+/g, '_').replace(/[^\w가-힣_-]/g, '') + '_' + Date.now().toString(36);
+    const pageTitle = document.getElementById('limitUploadPageTitle').value.trim();
+    if(!titleRaw){ msg.textContent = '게시물 제목을 입력해주세요.'; msg.style.color = 'red'; return; }
+    if(!file){ msg.textContent = '이미지 파일을 선택해주세요.'; msg.style.color = 'red'; return; }
+    msg.textContent = '업로드 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const b64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const res = await fetch(LIMIT_UPLOAD_URL, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ catKey, catLabel: titleRaw, pageTitle, mime: file.type || 'image/png', imageBase64: b64, uploadedBy: admName || admLabel || '' })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '등록되었습니다.'; msg.style.color = 'var(--orange-deep)';
+        fileInput.value = ''; document.getElementById('limitUploadPageTitle').value = ''; document.getElementById('limitUploadTitle').value = '';
+        await loadLimitUploadedImages();
+        setTimeout(() => { msg.textContent = ''; }, 3000);
+      } else { msg.textContent = '등록에 실패했습니다.'; msg.style.color = 'red'; }
+    } catch(e){ msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red'; }
+  });
+
 
   function limitStandaloneHtml(){
     const d = limitCompareData[limitCurrentKey];
     const title = d ? d.label : '';
     const bodyHtml = document.getElementById('limitModalBody').innerHTML;
-    return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - 다온지사</title>
+    return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><base href="${document.baseURI}"><title>${title} - 다온지사</title>
       <style>
         body{font-family:-apple-system,'Malgun Gothic',sans-serif; padding:24px; color:#16202b; background:#fff;}
         h1{font-size:20px; margin-bottom:16px;}
@@ -7246,6 +7438,8 @@ const limitCompareData = {
         .limit-table .lt-attr{text-align:left; font-weight:700; color:#1c2b4a; background:#f2f4f6; white-space:normal; min-width:110px;}
         .limit-table tr.lt-group td{background:#EEF0FC; color:#1c2b4a; font-weight:800; text-align:left; font-size:11px;}
         .limit-empty-note{margin-top:14px; background:#f2f4f6; border-radius:12px; padding:16px; font-size:12.5px; color:#6b7684; line-height:1.6;}
+        .limit-subtitle{font-size:14px; font-weight:800; color:#1c2b4a; margin:0 0 8px;}
+        .limit-slide-img{width:100%; height:auto; display:block; border:1px solid #dfe4e9; border-radius:10px;}
         h1{display:flex; align-items:center; font-size:20px; font-weight:800; color:#1c2b4a; padding-bottom:12px; border-bottom:2px solid #1c2b4a; margin-bottom:18px;}
         h1 .arrow{display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:6px; background:#1c2b4a; color:#fff; font-size:14px; margin-right:9px; flex:none;}
         .limit-page{margin-bottom:26px;}
@@ -7257,6 +7451,7 @@ const limitCompareData = {
           .limit-scroll{ overflow: visible !important; border:none !important; }
           .limit-table{ width:100% !important; table-layout:fixed; font-size:8px !important; white-space:normal !important; word-break:keep-all; }
           .limit-table th, .limit-table td{ padding:3px 4px !important; }
+          .limit-slide-img{ max-width:100%; max-height:180mm; width:auto; margin:0 auto; }
           body{padding:0;}
         }
       </style></head><body><h1><span class="arrow">➜</span>${title}</h1>${bodyHtml}</body></html>`;
@@ -7297,9 +7492,29 @@ const limitCompareData = {
     _lsv.disabled = true;
     const orig = _lsv.textContent;
     try{
-      await limitLoadHtml2Canvas();
       const d = limitCompareData[limitCurrentKey];
       const baseTitle = d ? d.label : '인수한도비교';
+
+      if(d && d.images && d.images.length > 0){
+        // 이미지 기반 카테고리: 원본 파일을 그대로(화질 손실 없이) 다운로드
+        for(let i=0; i<d.images.length; i++){
+          const im = d.images[i];
+          _lsv.textContent = d.images.length > 1 ? `저장 중... (${i+1}/${d.images.length})` : '저장 중...';
+          const resp = await fetch(im.src);
+          const blob = await resp.blob();
+          const a = document.createElement('a');
+          a.download = baseTitle + (im.pageTitle ? '_' + im.pageTitle : (d.images.length > 1 ? '_' + (i+1) : '')) + '.png';
+          a.href = URL.createObjectURL(blob);
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+          await new Promise(r => setTimeout(r, 250));
+        }
+        _lsv.disabled = false;
+        _lsv.textContent = orig;
+        return;
+      }
+
+      await limitLoadHtml2Canvas();
       const pages = Array.from(document.querySelectorAll('#limitModalBody .limit-page'));
       const list = pages.length ? pages : [document.getElementById('limitModalBody')];
       const A4W = 2000, A4H = 1414; // A4 가로 비율(297:210)에 맞춘 캔버스 크기
