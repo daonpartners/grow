@@ -1746,6 +1746,15 @@ body.growon{ background:var(--g-navy); }
           <div class="disease-notice">
             📚 카테고리를 선택하거나 검색하면 관련 담보·상품 가이드를 볼 수 있습니다.
           </div>
+
+          <div class="surgery-pin" id="cbPin_guide">
+            <div class="surgery-pin-head">
+              <span class="surgery-pin-icon">📚</span>
+              <div><div class="surgery-pin-title">보험가이드 첨부자료</div></div>
+              <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide')">＋ 게시물 등록</button>
+            </div>
+            <div class="driver-menu" id="cbMenu_guide"></div>
+          </div>
           <div class="guide-search-top">
             <input type="text" class="faq-search guide-search-input" id="guideSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 암진단비, 실손, 운전자보험)">
           </div>
@@ -2092,7 +2101,7 @@ body.growon{ background:var(--g-navy); }
                 <div class="surgery-pin-title">회사별 인수한도 비교</div>
                 <div class="surgery-pin-desc">(가입한도나 보험료 등은 피보험자의 건강상태, 연령, 치료력 등에 의해 변경될 수 있으므로 꼭 원수사의 인수조건을 확인해야 합니다)</div>
               </div>
-              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn" style="display:none;" onclick="document.getElementById('limitUploadModalBackdrop').classList.add('open')">＋ 게시물 등록</button>
+              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn cb-register-btn" data-board="limit_compare" style="display:none;" onclick="limitOpenUpload('limit_compare')">＋ 게시물 등록</button>
             </div>
             <div class="driver-menu" id="limitCompareMenu"></div>
           </div>
@@ -2114,6 +2123,14 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-panel" id="qna-claim2">
+          <div class="surgery-pin" id="cbPin_claim2">
+            <div class="surgery-pin-head">
+              <span class="surgery-pin-icon">📮</span>
+              <div><div class="surgery-pin-title">보상·청구가이드 첨부자료</div></div>
+              <button type="button" class="lc-upload-btn cb-register-btn" data-board="claim2" style="display:none;" onclick="limitOpenUpload('claim2')">＋ 게시물 등록</button>
+            </div>
+            <div class="driver-menu" id="cbMenu_claim2"></div>
+          </div>
           <div class="faq-area"></div>
         </div>
 
@@ -5336,8 +5353,8 @@ const limitCompareData = {};
     if(/연금/.test(l)) return [10, 0];
     return [999, 0];
   }
-  function sortLimitBoardOrder(){
-    limitBoardOrder.sort((a, b) => {
+  function sortBoardOrder(order){
+    order.sort((a, b) => {
       const da = limitCompareData[a], db = limitCompareData[b];
       const [ra1, ra2] = limitTopicRank(da && da.label);
       const [rb1, rb2] = limitTopicRank(db && db.label);
@@ -5347,14 +5364,14 @@ const limitCompareData = {};
     });
   }
 
-  function renderLimitCompareMenu(){
-    const wrap = document.getElementById('limitCompareMenu');
+  function renderBoard(containerId, order){
+    const wrap = document.getElementById(containerId);
     if(!wrap) return;
-    sortLimitBoardOrder();
+    sortBoardOrder(order);
     const isAdmin = sessionStorage.getItem('growAdmin') === '1';
-    wrap.innerHTML = limitBoardOrder.length === 0
-      ? `<div class="limit-cat-empty">아직 등록된 게시물이 없습니다. 위 "＋ 게시물 등록" 버튼으로 표 이미지를 올려주세요.</div>`
-      : limitBoardOrder.map(key => {
+    wrap.innerHTML = order.length === 0
+      ? `<div class="limit-cat-empty">아직 등록된 게시물이 없습니다. 위 "＋ 게시물 등록" 버튼으로 이미지·PDF를 올려주세요.</div>`
+      : order.map(key => {
       const d = limitCompareData[key];
       if(!d) return '';
       const icon = LIMIT_BUILTIN_ICONS[key] || '🗂️';
@@ -5376,6 +5393,13 @@ const limitCompareData = {};
       btn.addEventListener('click', (e) => { e.stopPropagation(); deleteLimitPost(btn.dataset.delkey); });
     });
   }
+
+  let guideBoardOrder = [];
+  let claimBoardOrder = [];
+  function renderLimitCompareMenu(){ renderBoard('limitCompareMenu', limitBoardOrder); }
+  function renderGuideBoard(){ renderBoard('cbMenu_guide', guideBoardOrder); }
+  function renderClaimBoard(){ renderBoard('cbMenu_claim2', claimBoardOrder); }
+  function renderAllBoards(){ renderLimitCompareMenu(); renderGuideBoard(); renderClaimBoard(); }
 
   async function deleteLimitPost(key){
     const d = limitCompareData[key];
@@ -5602,6 +5626,8 @@ const limitCompareData = {};
       });
       // 업로드 게시물만 board 순서에서 제거 후 다시 채움(최신 목록 반영)
       limitBoardOrder = limitBoardOrder.filter(k => LIMIT_BUILTIN_KEYS.includes(k));
+      guideBoardOrder = [];
+      claimBoardOrder = [];
       const uploadedKeys = Object.keys(byCat).sort((a,b) => {
         const aMin = Math.min(...byCat[a].map(r => r.sortOrder||0));
         const bMin = Math.min(...byCat[b].map(r => r.sortOrder||0));
@@ -5611,23 +5637,35 @@ const limitCompareData = {};
         if(LIMIT_BUILTIN_KEYS.includes(catKey)) return; // built-in 장표와 겹치면 건드리지 않음
         const rowsForCat = byCat[catKey].sort((a,b) => (a.sortOrder||0) - (b.sortOrder||0));
         const images = rowsForCat.map(r => ({ imgId: r.imgId, src: `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
-        limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true };
-        limitBoardOrder.push(catKey);
+        const section = rowsForCat[0].section || 'limit_compare';
+        limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true, section };
+        if(section === 'guide') guideBoardOrder.push(catKey);
+        else if(section === 'claim2') claimBoardOrder.push(catKey);
+        else limitBoardOrder.push(catKey);
       });
-      renderLimitCompareMenu();
+      renderAllBoards();
     } catch(e){ /* 목록 로딩 실패는 조용히 무시 (built-in 항목은 정상 노출) */ }
   }
   loadLimitUploadedImages();
 
-  // 등록 버튼은 관리자 로그인 시에만 노출. 어떤 경로로 로그인하든(탭 전환·새로고침 등)
+  // 등록 버튼은 관리자 로그인 시에만 노출(게시판 3곳 모두). 어떤 경로로 로그인하든(탭 전환·새로고침 등)
   // 확실히 반영되도록 주기적으로 동기화. 클릭 동작 자체는 버튼의 onclick 속성이라 이 로직과 무관하게 항상 작동.
   function syncLimitUploadVisibility(){
-    const luOpen = document.getElementById('limitUploadOpenBtn');
-    if(!luOpen) return;
-    luOpen.style.display = (sessionStorage.getItem('growAdmin') === '1') ? '' : 'none';
+    const show = sessionStorage.getItem('growAdmin') === '1';
+    document.querySelectorAll('#limitUploadOpenBtn, .cb-register-btn').forEach(btn => { btn.style.display = show ? '' : 'none'; });
   }
   syncLimitUploadVisibility();
   setInterval(syncLimitUploadVisibility, 1000);
+
+  let limitUploadSection = 'limit_compare';
+  function limitOpenUpload(section){
+    limitUploadSection = section || 'limit_compare';
+    document.getElementById('limitUploadModalBackdrop').classList.add('open');
+  }
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest && e.target.closest('.cb-register-btn');
+    if(btn){ limitOpenUpload(btn.dataset.board); }
+  });
 
   const _luModal = document.getElementById('limitUploadModalBackdrop');
   if(_luModal) _luModal.addEventListener('click', (e) => { if(e.target.id === 'limitUploadModalBackdrop') _luModal.classList.remove('open'); });
@@ -5652,7 +5690,7 @@ const limitCompareData = {};
       });
       const res = await fetch(LIMIT_UPLOAD_URL, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ catKey, catLabel: titleRaw, pageTitle, mime: file.type || 'image/png', imageBase64: b64, uploadedBy: admName || admLabel || '' })
+        body: JSON.stringify({ catKey, catLabel: titleRaw, pageTitle, mime: file.type || 'image/png', imageBase64: b64, uploadedBy: admName || admLabel || '', section: limitUploadSection })
       });
       const data = await res.json();
       if(data && data.success){
