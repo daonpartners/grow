@@ -849,10 +849,14 @@
   .limit-table.lt-annuity td{white-space:normal;}
 
   .limit-slide-img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:10px; margin-top:6px;}
-  .limit-slide-pdf{width:100%; height:75vh; display:block; border:1px solid var(--line); border-radius:10px; margin-top:6px; background:#f5f5f5;}
+  .limit-pdf-box{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:48px 24px; border:1px dashed var(--line); border-radius:12px; background:var(--canvas); margin-top:6px;}
+  .limit-pdf-icon{font-size:40px;}
+  .limit-pdf-text{font-size:13px; color:var(--slate);}
+  .limit-pdf-dlbtn{display:inline-flex; align-items:center; gap:6px; background:var(--navy-2); color:#fff; border-radius:8px; padding:10px 18px; font-size:13px; font-weight:700; text-decoration:none;}
+  .limit-pdf-dlbtn:hover{opacity:.9;}
   @media print{
     #limitPrintArea .limit-slide-img{ max-width:100%; max-height:180mm; width:auto; margin:0 auto; }
-    #limitPrintArea .limit-slide-pdf{ width:100%; height:180mm; }
+    #limitPrintArea .limit-pdf-box{ padding:20px; }
   }
 
   .lc-upload-btn{margin-left:auto; flex:none; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer;}
@@ -5335,6 +5339,7 @@ const limitCompareData = {};
   // 순서: 암주요 → 암통합 → 암비급여 → 유방암 → 2대질환(뇌·심) → 수술비 → 일당(간병) → 재가·치매(장기요양) → 운전자보험 → 종신(700→단기납→기타) → 연금 → 그 외
   function limitTopicRank(label){
     const l = String(label || '');
+    if(/종합\s*인수\s*한도|종합\s*인수\s*가이드/.test(l)) return [-1, 0]; // 항상 최상단 고정
     if(/암\s*주요/.test(l)) return [0, 0];
     if(/암\s*통합/.test(l)) return [1, 0];
     if(/암\s*비급여/.test(l)) return [2, 0];
@@ -5570,7 +5575,7 @@ const limitCompareData = {};
       body.innerHTML = d.images.map(im => {
         const isPdf = im.mime === 'application/pdf';
         const media = isPdf
-          ? `<iframe class="limit-slide-pdf" src="${im.src}" title="${escapeHtml(d.label)}"></iframe>`
+          ? `<div class="limit-pdf-box"><span class="limit-pdf-icon">📄</span><div class="limit-pdf-text">PDF 파일입니다. 미리보기 대신 다운로드해서 확인해주세요.</div><a class="limit-pdf-dlbtn" href="${im.src}" download target="_blank" rel="noopener">⬇ 파일 다운로드</a></div>`
           : `<img class="limit-slide-img" src="${im.src}" alt="${escapeHtml(d.label)}">`;
         return `<div class="limit-page"${im.pageTitle ? ` data-pagetitle="${escapeHtml(im.pageTitle)}"` : ''}>` +
           (im.pageTitle ? `<div class="limit-subtitle">${escapeHtml(im.pageTitle)}</div>` : '') +
