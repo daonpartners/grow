@@ -849,8 +849,10 @@
   .limit-table.lt-annuity td{white-space:normal;}
 
   .limit-slide-img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:10px; margin-top:6px;}
+  .limit-slide-pdf{width:100%; height:75vh; display:block; border:1px solid var(--line); border-radius:10px; margin-top:6px; background:#f5f5f5;}
   @media print{
     #limitPrintArea .limit-slide-img{ max-width:100%; max-height:180mm; width:auto; margin:0 auto; }
+    #limitPrintArea .limit-slide-pdf{ width:100%; height:180mm; }
   }
 
   .lc-upload-btn{margin-left:auto; flex:none; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer;}
@@ -864,6 +866,16 @@
   .lc-post-row{display:flex; align-items:stretch; gap:6px; margin-bottom:6px;}
   .lc-post-row .lb-menu-item{flex:1;}
   .lc-del-btn{flex:none; display:flex; align-items:center; justify-content:center; width:38px; border-radius:8px; background:var(--stop-soft,#fbecea); color:#c0392b; cursor:pointer; font-size:14px;}
+  .lc-edit-btn{flex:none; display:flex; align-items:center; justify-content:center; width:38px; border-radius:8px; background:var(--canvas); color:var(--navy-2); cursor:pointer; font-size:14px;}
+  .lc-edit-btn:hover{background:#e4e8f0;}
+  .lc-mini-btn{flex:none; border:1px solid var(--line); background:#fff; border-radius:8px; padding:0 12px; font-size:12px; font-weight:700; color:var(--navy-2); cursor:pointer;}
+  .lc-edit-page{border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:10px; background:var(--canvas);}
+  .lc-edit-page-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .lc-edit-page-head b{font-size:12px; color:var(--navy-2);}
+  .lc-edit-page-head .lc-del-btn{width:28px; height:28px; font-size:12px;}
+  .lc-edit-page input[type=text]{width:100%; border:1px solid var(--line); border-radius:8px; padding:7px 9px; font-size:12.5px; margin-bottom:6px; background:#fff;}
+  .lc-edit-page input[type=file]{width:100%; font-size:12px;}
+  .lc-edit-page-actions{display:flex; align-items:center; gap:8px; margin-top:8px;}
   .lc-del-btn:hover{background:#f6d5d0;}
 
   /* ===== 상담·영업자료 게시판 ===== */
@@ -2445,11 +2457,38 @@ body.growon{ background:var(--g-navy); }
           </div>
           <div class="lc-upload-row">
             <label>표 이미지 파일</label>
-            <input type="file" id="limitUploadFile" accept="image/*">
+            <input type="file" id="limitUploadFile" accept="image/*,application/pdf,.pdf">
           </div>
           <div class="lc-upload-actions">
             <button type="button" id="limitUploadSubmit" class="qna-new-btn" style="background:var(--navy-2); color:#fff; border:none;">등록</button>
             <span id="limitUploadMsg" style="font-size:12px; color:var(--slate);"></span>
+          </div>
+        </div>
+      </div>
+<div class="modal-backdrop" id="limitEditModalBackdrop">
+        <div class="modal-card" style="max-width:560px;">
+          <button class="modal-close" onclick="document.getElementById('limitEditModalBackdrop').classList.remove('open')">&times;</button>
+          <div class="dz-modal-group">회사별 인수한도 비교</div>
+          <div class="dz-modal-name" style="border-bottom:none; margin-bottom:10px;">✏️ 게시물 수정</div>
+
+          <div class="lc-upload-row">
+            <label>게시물 제목</label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="limitEditTitle" style="flex:1;">
+              <button type="button" id="limitEditTitleSave" class="lc-mini-btn">제목 저장</button>
+            </div>
+          </div>
+
+          <div id="limitEditPages"></div>
+
+          <div class="lc-upload-row" style="margin-top:6px; padding-top:12px; border-top:1px dashed var(--line);">
+            <label>＋ 새 페이지 추가 (선택)</label>
+            <input type="text" id="limitEditNewPageTitle" placeholder="페이지 부제 (예: 손해보험 10개사)" style="margin-bottom:6px;">
+            <input type="file" id="limitEditNewPageFile" accept="image/*,application/pdf,.pdf">
+          </div>
+          <div class="lc-upload-actions">
+            <button type="button" id="limitEditAddPageBtn" class="qna-new-btn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">페이지 추가</button>
+            <span id="limitEditMsg" style="font-size:12px; color:var(--slate);"></span>
           </div>
         </div>
       </div>
@@ -5332,15 +5371,19 @@ const limitCompareData = {};
       const d = limitCompareData[key];
       if(!d) return '';
       const icon = LIMIT_BUILTIN_ICONS[key] || '🗂️';
+      const editBtn = (isAdmin && d.isUploaded) ? `<span class="lc-edit-btn" data-editkey="${key}" title="수정">✏️</span>` : '';
       const delBtn = (isAdmin && d.isUploaded) ? `<span class="lc-del-btn" data-delkey="${key}" title="삭제">🗑</span>` : '';
       return `<div class="lc-post-row">
         <button type="button" class="lb-menu-item" data-limitkey="${key}">
           <span class="dm-icon">${icon}</span><span class="dm-label">${escapeHtml(d.label)}</span><span class="dm-arrow">›</span>
-        </button>${delBtn}
+        </button>${editBtn}${delBtn}
       </div>`;
     }).join('');
     wrap.querySelectorAll('[data-limitkey]').forEach(btn => {
       btn.addEventListener('click', () => openLimitModal(btn.dataset.limitkey));
+    });
+    wrap.querySelectorAll('[data-editkey]').forEach(btn => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); openLimitEditModal(btn.dataset.editkey); });
     });
     wrap.querySelectorAll('[data-delkey]').forEach(btn => {
       btn.addEventListener('click', (e) => { e.stopPropagation(); deleteLimitPost(btn.dataset.delkey); });
@@ -5365,6 +5408,163 @@ const limitCompareData = {};
     } catch(e){ alert('네트워크 오류로 삭제에 실패했습니다.'); }
   }
 
+  /* ===== 게시물 수정 팝업 ===== */
+  let limitEditKey = null;
+
+  function renderLimitEditPages(){
+    const d = limitCompareData[limitEditKey];
+    const wrap = document.getElementById('limitEditPages');
+    if(!d || !wrap) return;
+    wrap.innerHTML = d.images.map((im, idx) => {
+      const isPdf = im.mime === 'application/pdf';
+      const preview = isPdf
+        ? `<div style="font-size:24px;">📄 PDF</div>`
+        : `<img src="${im.src}" style="max-width:100%; max-height:120px; border-radius:6px; display:block; margin-bottom:6px;">`;
+      return `<div class="lc-edit-page" data-imgid="${im.imgId}">
+        <div class="lc-edit-page-head">
+          <b>${d.images.length > 1 ? `페이지 ${idx+1}` : '단일 페이지'}</b>
+          ${d.images.length > 1 ? `<span class="lc-del-btn" data-pagedelid="${im.imgId}" title="이 페이지 삭제">🗑</span>` : ''}
+        </div>
+        ${preview}
+        <input type="text" class="lc-edit-pagetitle" value="${escapeHtml(im.pageTitle || '')}" placeholder="페이지 부제">
+        <input type="file" class="lc-edit-pagefile" accept="image/*,application/pdf,.pdf">
+        <div class="lc-edit-page-actions">
+          <button type="button" class="lc-mini-btn" data-pagesaveid="${im.imgId}">이 페이지 저장</button>
+          <span class="lc-edit-page-msg" style="font-size:11.5px; color:var(--slate);"></span>
+        </div>
+      </div>`;
+    }).join('');
+
+    wrap.querySelectorAll('[data-pagesaveid]').forEach(btn => {
+      btn.addEventListener('click', () => saveLimitPage(btn.dataset.pagesaveid, btn.closest('.lc-edit-page')));
+    });
+    wrap.querySelectorAll('[data-pagedelid]').forEach(btn => {
+      btn.addEventListener('click', () => deleteLimitPage(btn.dataset.pagedelid));
+    });
+  }
+
+  function openLimitEditModal(key){
+    const d = limitCompareData[key];
+    if(!d || !d.isUploaded) return;
+    limitEditKey = key;
+    document.getElementById('limitEditTitle').value = d.label;
+    document.getElementById('limitEditMsg').textContent = '';
+    document.getElementById('limitEditNewPageTitle').value = '';
+    document.getElementById('limitEditNewPageFile').value = '';
+    renderLimitEditPages();
+    document.getElementById('limitEditModalBackdrop').classList.add('open');
+  }
+
+  function fileToBase64(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function saveLimitPage(imgId, pageEl){
+    const msg = pageEl.querySelector('.lc-edit-page-msg');
+    const pageTitle = pageEl.querySelector('.lc-edit-pagetitle').value.trim();
+    const fileInput = pageEl.querySelector('.lc-edit-pagefile');
+    const file = fileInput.files[0];
+    const d = limitCompareData[limitEditKey];
+    const im = d.images.find(x => x.imgId === imgId);
+    msg.textContent = '저장 중...'; msg.style.color = 'var(--slate)';
+    try{
+      let mime = im.mime, imageBase64;
+      if(file){
+        mime = file.type || mime;
+        imageBase64 = await fileToBase64(file);
+      } else {
+        // 파일을 새로 안 골랐으면 기존 이미지를 그대로 유지(원본을 다시 가져와 재저장)
+        const resp = await fetch(im.src);
+        const blob = await resp.blob();
+        imageBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
+      const res = await fetch(LIMIT_REPLACE_URL, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ imgId, pageTitle, mime, imageBase64 })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '저장됨'; msg.style.color = 'var(--orange-deep)';
+        await loadLimitUploadedImages();
+        renderLimitEditPages();
+      } else { msg.textContent = '저장 실패'; msg.style.color = 'red'; }
+    } catch(e){ msg.textContent = '네트워크 오류'; msg.style.color = 'red'; }
+  }
+
+  async function deleteLimitPage(imgId){
+    const d = limitCompareData[limitEditKey];
+    if(!d || d.images.length <= 1){ alert('마지막 남은 페이지는 이 화면에서 삭제할 수 없습니다. 게시물 전체 삭제를 이용해주세요.'); return; }
+    if(!confirm('이 페이지를 삭제할까요?')) return;
+    try{
+      const res = await fetch(LIMIT_PAGE_DELETE_URL, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ imgId })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        await loadLimitUploadedImages();
+        renderLimitEditPages();
+      } else { alert('페이지 삭제에 실패했습니다.'); }
+    } catch(e){ alert('네트워크 오류로 페이지 삭제에 실패했습니다.'); }
+  }
+
+  const _letSave = document.getElementById('limitEditTitleSave');
+  if(_letSave) _letSave.addEventListener('click', async () => {
+    const msg = document.getElementById('limitEditMsg');
+    const newTitle = document.getElementById('limitEditTitle').value.trim();
+    if(!newTitle){ msg.textContent = '제목을 입력해주세요.'; msg.style.color = 'red'; return; }
+    msg.textContent = '저장 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(LIMIT_RENAME_URL, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ catKey: limitEditKey, catLabel: newTitle })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '제목이 저장되었습니다.'; msg.style.color = 'var(--orange-deep)';
+        await loadLimitUploadedImages();
+      } else { msg.textContent = '저장 실패'; msg.style.color = 'red'; }
+    } catch(e){ msg.textContent = '네트워크 오류'; msg.style.color = 'red'; }
+  });
+
+  const _leAddPage = document.getElementById('limitEditAddPageBtn');
+  if(_leAddPage) _leAddPage.addEventListener('click', async () => {
+    const msg = document.getElementById('limitEditMsg');
+    const fileInput = document.getElementById('limitEditNewPageFile');
+    const file = fileInput.files[0];
+    const pageTitle = document.getElementById('limitEditNewPageTitle').value.trim();
+    if(!file){ msg.textContent = '추가할 파일을 선택해주세요.'; msg.style.color = 'red'; return; }
+    const d = limitCompareData[limitEditKey];
+    msg.textContent = '추가 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const imageBase64 = await fileToBase64(file);
+      const res = await fetch(LIMIT_UPLOAD_URL, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ catKey: limitEditKey, catLabel: d.label, pageTitle, mime: file.type || 'image/png', imageBase64, uploadedBy: admName || admLabel || '' })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '페이지가 추가되었습니다.'; msg.style.color = 'var(--orange-deep)';
+        fileInput.value = ''; document.getElementById('limitEditNewPageTitle').value = '';
+        await loadLimitUploadedImages();
+        renderLimitEditPages();
+      } else { msg.textContent = '추가 실패'; msg.style.color = 'red'; }
+    } catch(e){ msg.textContent = '네트워크 오류'; msg.style.color = 'red'; }
+  });
+
+  const _leModal = document.getElementById('limitEditModalBackdrop');
+  if(_leModal) _leModal.addEventListener('click', (e) => { if(e.target.id === 'limitEditModalBackdrop') _leModal.classList.remove('open'); });
+
   let limitCurrentKey = null;
 
   function openLimitModal(key){
@@ -5377,9 +5577,15 @@ const limitCompareData = {};
     const body = document.getElementById('limitModalBody');
     if(d.images && d.images.length > 0){
       toolbar.style.display = 'flex';
-      body.innerHTML = d.images.map(im => `<div class="limit-page"${im.pageTitle ? ` data-pagetitle="${escapeHtml(im.pageTitle)}"` : ''}>` +
-        (im.pageTitle ? `<div class="limit-subtitle">${escapeHtml(im.pageTitle)}</div>` : '') +
-        `<img class="limit-slide-img" src="${im.src}" alt="${escapeHtml(d.label)}"></div>`).join('') +
+      body.innerHTML = d.images.map(im => {
+        const isPdf = im.mime === 'application/pdf';
+        const media = isPdf
+          ? `<iframe class="limit-slide-pdf" src="${im.src}" title="${escapeHtml(d.label)}"></iframe>`
+          : `<img class="limit-slide-img" src="${im.src}" alt="${escapeHtml(d.label)}">`;
+        return `<div class="limit-page"${im.pageTitle ? ` data-pagetitle="${escapeHtml(im.pageTitle)}"` : ''}>` +
+          (im.pageTitle ? `<div class="limit-subtitle">${escapeHtml(im.pageTitle)}</div>` : '') +
+          media + `</div>`;
+      }).join('') +
         (d.note ? `<div class="limit-empty-note" style="margin-top:12px;">${d.note}</div>` : '');
     } else if(d.html){
       toolbar.style.display = 'flex';
@@ -5403,6 +5609,9 @@ const limitCompareData = {};
   const LIMIT_IMAGE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-image';
   const LIMIT_UPLOAD_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-image-upload';
   const LIMIT_DELETE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-image-delete';
+  const LIMIT_RENAME_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-post-rename';
+  const LIMIT_REPLACE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-page-replace';
+  const LIMIT_PAGE_DELETE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-page-delete';
 
   async function loadLimitUploadedImages(){
     try{
@@ -5425,7 +5634,7 @@ const limitCompareData = {};
       uploadedKeys.forEach(catKey => {
         if(LIMIT_BUILTIN_KEYS.includes(catKey)) return; // built-in 장표와 겹치면 건드리지 않음
         const rowsForCat = byCat[catKey].sort((a,b) => (a.sortOrder||0) - (b.sortOrder||0));
-        const images = rowsForCat.map(r => ({ src: `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null }));
+        const images = rowsForCat.map(r => ({ imgId: r.imgId, src: `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
         limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true };
         limitBoardOrder.push(catKey);
       });
@@ -5555,14 +5764,15 @@ const limitCompareData = {};
       const baseTitle = d ? d.label : '인수한도비교';
 
       if(d && d.images && d.images.length > 0){
-        // 이미지 기반 카테고리: 원본 파일을 그대로(화질 손실 없이) 다운로드
+        // 이미지/PDF 기반 카테고리: 원본 파일을 그대로(화질 손실 없이) 다운로드
         for(let i=0; i<d.images.length; i++){
           const im = d.images[i];
           _lsv.textContent = d.images.length > 1 ? `저장 중... (${i+1}/${d.images.length})` : '저장 중...';
           const resp = await fetch(im.src);
           const blob = await resp.blob();
+          const ext = im.mime === 'application/pdf' ? '.pdf' : (im.mime === 'image/jpeg' ? '.jpg' : '.png');
           const a = document.createElement('a');
-          a.download = baseTitle + (im.pageTitle ? '_' + im.pageTitle : (d.images.length > 1 ? '_' + (i+1) : '')) + '.png';
+          a.download = baseTitle + (im.pageTitle ? '_' + im.pageTitle : (d.images.length > 1 ? '_' + (i+1) : '')) + ext;
           a.href = URL.createObjectURL(blob);
           a.click();
           setTimeout(() => URL.revokeObjectURL(a.href), 3000);
