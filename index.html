@@ -2103,6 +2103,7 @@ body.growon{ background:var(--g-navy); }
               <span class="surgery-pin-icon">📊</span>
               <div>
                 <div class="surgery-pin-title">회사별 인수한도 비교</div>
+                <div class="surgery-pin-desc">(가입한도나 보험료 등은 피보험자의 건강상태, 연령, 치료력 등에 의해 변경될 수 있으므로 꼭 원수사의 인수조건을 확인해야 합니다)</div>
               </div>
               <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn" style="display:none;" onclick="document.getElementById('limitUploadModalBackdrop').classList.add('open')">＋ 게시물 등록</button>
             </div>
@@ -5469,28 +5470,17 @@ const limitCompareData = {};
     const pageTitle = pageEl.querySelector('.lc-edit-pagetitle').value.trim();
     const fileInput = pageEl.querySelector('.lc-edit-pagefile');
     const file = fileInput.files[0];
-    const d = limitCompareData[limitEditKey];
-    const im = d.images.find(x => x.imgId === imgId);
     msg.textContent = '저장 중...'; msg.style.color = 'var(--slate)';
     try{
-      let mime = im.mime, imageBase64;
+      const payload = { imgId, pageTitle };
       if(file){
-        mime = file.type || mime;
-        imageBase64 = await fileToBase64(file);
-      } else {
-        // 파일을 새로 안 골랐으면 기존 이미지를 그대로 유지(원본을 다시 가져와 재저장)
-        const resp = await fetch(im.src);
-        const blob = await resp.blob();
-        imageBase64 = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
+        payload.mime = file.type || 'image/png';
+        payload.imageBase64 = await fileToBase64(file);
       }
+      // 파일을 새로 안 골랐으면 mime/imageBase64를 아예 보내지 않음 → 서버가 기존 이미지를 그대로 유지
       const res = await fetch(LIMIT_REPLACE_URL, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ imgId, pageTitle, mime, imageBase64 })
+        body: JSON.stringify(payload)
       });
       const data = await res.json();
       if(data && data.success){
