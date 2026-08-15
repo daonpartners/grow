@@ -2090,7 +2090,7 @@ body.growon{ background:var(--g-navy); }
             <div class="surgery-pin-head">
               <span class="surgery-pin-icon">📊</span>
               <div>
-                <div class="surgery-pin-title">회사별 인수한도 비교 게시판</div>
+                <div class="surgery-pin-title">회사별 인수한도 비교</div>
               </div>
               <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn" style="display:none;" onclick="document.getElementById('limitUploadModalBackdrop').classList.add('open')">＋ 게시물 등록</button>
             </div>
@@ -2433,7 +2433,7 @@ body.growon{ background:var(--g-navy); }
 <div class="modal-backdrop" id="limitUploadModalBackdrop">
         <div class="modal-card" style="max-width:480px;">
           <button class="modal-close" onclick="document.getElementById('limitUploadModalBackdrop').classList.remove('open')">&times;</button>
-          <div class="dz-modal-group">회사별 인수한도 비교 게시판</div>
+          <div class="dz-modal-group">회사별 인수한도 비교</div>
           <div class="dz-modal-name" style="border-bottom:none; margin-bottom:14px;">＋ 게시물 등록</div>
           <div class="lc-upload-row">
             <label>게시물 제목</label>
@@ -7275,9 +7275,40 @@ const limitCompareData = {
 
   let limitBoardOrder = LIMIT_BUILTIN_KEYS.slice();
 
+  // 제목 키워드로 주제를 판별해 항상 같은 순서로 자동 정렬.
+  // 순서: 암주요 → 암통합 → 암비급여 → 유방암 → 2대질환(뇌·심) → 수술비 → 일당(간병) → 재가·치매(장기요양) → 운전자보험 → 종신(700→단기납→기타) → 연금 → 그 외
+  function limitTopicRank(label){
+    const l = String(label || '');
+    if(/암\s*주요/.test(l)) return [0, 0];
+    if(/암\s*통합/.test(l)) return [1, 0];
+    if(/암\s*비급여/.test(l)) return [2, 0];
+    if(/유방암/.test(l)) return [3, 0];
+    if(/2대질환|뇌\s*[·.]?\s*심|순환계|뇌졸중|심근경색|협심증/.test(l)) return [4, 0];
+    if(/수술비|수술/.test(l)) return [5, 0];
+    if(/일당|간병/.test(l)) return [6, 0];
+    if(/재가|치매|장기요양|요양/.test(l)) return [7, 0];
+    if(/운전자/.test(l)) return [8, 0];
+    if(/종신/.test(l) && /700/.test(l)) return [9, 0];
+    if(/단기납/.test(l)) return [9, 1];
+    if(/종신/.test(l)) return [9, 2];
+    if(/연금/.test(l)) return [10, 0];
+    return [999, 0];
+  }
+  function sortLimitBoardOrder(){
+    limitBoardOrder.sort((a, b) => {
+      const da = limitCompareData[a], db = limitCompareData[b];
+      const [ra1, ra2] = limitTopicRank(da && da.label);
+      const [rb1, rb2] = limitTopicRank(db && db.label);
+      if(ra1 !== rb1) return ra1 - rb1;
+      if(ra2 !== rb2) return ra2 - rb2;
+      return 0; // 같은 주제 안에서는 등록 순서(배열에 들어간 순서) 유지
+    });
+  }
+
   function renderLimitCompareMenu(){
     const wrap = document.getElementById('limitCompareMenu');
     if(!wrap) return;
+    sortLimitBoardOrder();
     const isAdmin = sessionStorage.getItem('growAdmin') === '1';
     wrap.innerHTML = limitBoardOrder.map(key => {
       const d = limitCompareData[key];
