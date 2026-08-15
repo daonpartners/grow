@@ -465,8 +465,9 @@
   @media print{
     body.me-printing .modal-backdrop, body.me-printing .dn-modal, body.me-printing .alb-lb, body.me-printing .scrim, body.me-printing .drawer{ display:none !important; }
     body.me-printing * { visibility:hidden !important; }
-    body.me-printing #mePrintArea, body.me-printing #mePrintArea * { visibility:visible !important; }
-    #mePrintArea{display:block !important; position:absolute !important; top:0; left:0; width:100%; padding:0; margin:0; background:#fff !important;}
+    body.me-printing #mePrintArea, body.me-printing #mePrintArea *,
+    body.me-printing #limitPrintArea, body.me-printing #limitPrintArea * { visibility:visible !important; }
+    #mePrintArea, #limitPrintArea{display:block !important; position:absolute !important; top:0; left:0; width:100%; padding:0; margin:0; background:#fff !important;}
     html.me-printing, body.me-printing{height:auto !important; overflow:visible !important; background:#fff !important;}
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   }
@@ -793,6 +794,44 @@
   .modal-card-note{font-size:11px; color:var(--orange-deep); font-weight:600; margin-top:2px;}
   @media (max-width:480px){ .modal-tile{max-width:calc(33.333% - 7px);} }
   .modal-empty{font-size:12px; color:var(--slate); text-align:center; padding:20px;}
+
+  /* ===== 회사별 인수한도 비교 (원본 표 방향: 회사=열, 항목=행) ===== */
+  .limit-cat-empty{font-size:12px; color:var(--slate); padding:10px 2px;}
+  .limit-subtitle{font-size:13px; font-weight:800; color:var(--navy-2); margin:18px 0 6px;}
+  .limit-subtitle:first-child{margin-top:0;}
+  .limit-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:10px;}
+  .limit-table{width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap;}
+  .limit-table th, .limit-table td{padding:7px 10px; border-bottom:1px solid var(--line); border-right:1px solid #EEF0F4;}
+  .limit-table th{text-align:center; font-size:11.5px; color:#fff; font-weight:700; background:var(--navy-2); position:sticky; top:0; z-index:1;}
+  .limit-table td{text-align:center; color:var(--ink);}
+  .limit-table .lt-attr-head{text-align:left; left:0; z-index:2; background:var(--navy-2);}
+  .limit-table .lt-attr{text-align:left; font-weight:700; color:var(--navy-2); background:var(--canvas); white-space:normal; min-width:110px; position:sticky; left:0; z-index:1;}
+  .limit-table tr.lt-group td{background:#EEF0FC; color:var(--navy-2); font-weight:800; text-align:left; font-size:11px; padding:6px 10px;}
+  .limit-table tr:last-child td{border-bottom:none;}
+  .limit-empty-note{margin-top:14px; background:var(--canvas); border-radius:12px; padding:16px; font-size:12.5px; color:var(--slate); line-height:1.6;}
+
+  .limit-toolbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:10px 0 14px; padding-bottom:12px; border-bottom:1px solid var(--line);}
+  .limit-viewtoggle{display:flex; gap:6px; background:var(--canvas); border-radius:999px; padding:3px;}
+  .limit-viewtoggle button{border:none; background:none; padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:700; color:var(--slate); cursor:pointer;}
+  .limit-viewtoggle button.active{background:var(--navy-2); color:#fff;}
+  .limit-actions{display:flex; gap:6px;}
+  .limit-actions button{border:1px solid var(--line); background:#fff; border-radius:8px; padding:7px 10px; font-size:12px; font-weight:700; color:var(--navy-2); cursor:pointer; display:flex; align-items:center; gap:4px;}
+  .limit-actions button:hover{background:var(--canvas);}
+
+  .limit-chiprow{display:flex; gap:6px; overflow-x:auto; padding-bottom:10px; margin-bottom:14px;}
+  .limit-chip{flex:none; border:1px solid var(--line); background:#fff; border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:700; color:var(--ink); cursor:pointer; white-space:nowrap;}
+  .limit-chip.active{background:var(--orange); border-color:var(--orange); color:#fff;}
+  .limit-chip-group{font-size:11px; color:var(--slate); font-weight:700; flex:none; align-self:center; padding-right:2px;}
+
+  .limit-card{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  .limit-card-head{background:var(--navy-2); color:#fff; padding:14px 18px; font-size:16px; font-weight:800;}
+  .limit-card-body{padding:6px 18px 16px;}
+  .limit-card-row{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid #F0F1F5; font-size:13.5px;}
+  .limit-card-row:last-child{border-bottom:none;}
+  .limit-card-row .lc-label{color:var(--slate); font-weight:700; flex:none; width:150px;}
+  .limit-card-row .lc-value{color:var(--ink); font-weight:600; text-align:right; flex:1;}
+  .limit-card-section{background:#EEF0FC; color:var(--navy-2); font-weight:800; font-size:11.5px; padding:8px 18px; margin:8px -18px 0;}
+  .limit-card-section:first-child{margin-top:0;}
 
   /* ===== 상담·영업자료 게시판 ===== */
   .sm-adminbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
@@ -1961,6 +2000,7 @@ body.growon{ background:var(--g-navy); }
             🔎 가입 전 확인해야 할 <b>고지·통지의무, 인수·부담보 기준, 설계 팁</b>을 한 곳에서 확인하세요.
           </div>
 
+          <!-- 2026-08-15 잠정보류: 간편상품 사전 스크리닝 (화진님 지시로 비활성화, 코드는 보존)
           <div class="surgery-pin" id="uwScreenPin">
             <div class="surgery-pin-head">
               <span class="surgery-pin-icon">🧪</span>
@@ -2011,6 +2051,19 @@ body.growon{ background:var(--g-navy); }
 
             <div id="uwScreenResult" style="display:none;"></div>
           </div>
+          -->
+
+          <div class="surgery-pin" id="limitComparePin">
+            <div class="surgery-pin-head">
+              <span class="surgery-pin-icon">📊</span>
+              <div>
+                <div class="surgery-pin-title">회사별 인수한도 비교</div>
+                <div class="surgery-pin-desc">담보별로 클릭하면 회사별 가입한도를 표로 볼 수 있습니다. 자료가 없는 항목은 "준비 중"으로 표시됩니다.</div>
+              </div>
+            </div>
+            <div class="driver-menu" id="limitCompareMenu"></div>
+          </div>
+
 
           <div class="guide-search-top">
             <input type="text" class="faq-search guide-search-input" id="underwriteSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 고지의무, 고혈압, 부담보)">
@@ -2344,6 +2397,30 @@ body.growon{ background:var(--g-navy); }
           </div>
         </div>
       </div>
+<div class="modal-backdrop" id="limitModalBackdrop">
+        <div class="modal-card" style="max-width:1100px;">
+          <button class="modal-close" id="limitModalClose">&times;</button>
+          <div class="dz-modal-group" id="limitModalGroup">회사별 인수한도 비교</div>
+          <div class="dz-modal-name" id="limitModalName"></div>
+          <div class="limit-toolbar" id="limitToolbar" style="display:none;">
+            <div class="limit-viewtoggle">
+              <button type="button" data-view="card" class="active">카드로 보기</button>
+              <button type="button" data-view="table">표로 보기</button>
+            </div>
+            <div class="limit-actions">
+              <button type="button" id="limitPopoutBtn">↗ 새창</button>
+              <button type="button" id="limitSaveBtn">🖼 이미지저장</button>
+              <button type="button" id="limitPrintBtn">🖨 인쇄</button>
+            </div>
+          </div>
+          <div id="limitModalBody"></div>
+          <div class="dz-modal-foot">
+            <div>기준일: <span id="limitModalDate"></span></div>
+            <div>※ 인수한도는 성별·연령·직업·병력에 따라 개별 심사에서 달라질 수 있습니다.</div>
+          </div>
+        </div>
+      </div>
+<div id="limitPrintArea" style="display:none;"></div>
 <div class="alb-lb" id="surgeryLb">
   <div class="alb-lb-box">
     <button class="alb-lb-x" id="surgeryLbX">&times;</button>
@@ -5151,6 +5228,2140 @@ body.growon{ background:var(--g-navy); }
   const _cvb = document.getElementById('coverageModalBackdrop');
   if(_cvb) _cvb.addEventListener('click', (e) => { if(e.target.id === 'coverageModalBackdrop') closeCoverageModal(); });
 
+  // ================= 회사별 인수한도 비교 =================
+  // 2026-08-15: 카드형/표형 전환 + 인쇄/이미지저장/새창보기 지원.
+  // 다음 달 자료 갱신 시 각 카테고리의 companies/data 부분만 교체하면 됩니다.
+const limitCompareData = {
+    "2대질환": {
+        "label": "2대질환(뇌·심)주요치료비 — 순환계질환",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-subtitle\">생명보험 10개사</div><div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">삼성생명</th><th class=\"lt-col\">한화생명</th><th class=\"lt-col\">교보생명</th><th class=\"lt-col\">신한라이프</th><th class=\"lt-col\">미래에셋</th><th class=\"lt-col\">KB라이프</th><th class=\"lt-col\">흥국생명</th><th class=\"lt-col\">동양생명</th><th class=\"lt-col\">DB생명</th><th class=\"lt-col\">라이나생명</th></tr></thead><tbody><tr><td class=\"lt-attr\">연간한도</td><td>1억원</td><td>1억원</td><td>1.2억원</td><td>9천</td><td>5천</td><td>9천</td><td>1억원</td><td>1억원</td><td>8천</td><td>5천</td></tr><tr><td class=\"lt-attr\">연간횟수</td><td>3회</td><td>13회</td><td>6회</td><td>5회</td><td>11회</td><td>3회</td><td>4회</td><td>4회</td><td>4회</td><td>4회</td></tr><tr><td class=\"lt-attr\">감액기간(일반)</td><td>없음</td><td>없음</td><td>없음</td><td>없음</td><td>없음</td><td>1년</td><td>1년</td><td>없음</td><td>1년</td><td>1년</td></tr><tr><td class=\"lt-attr\">감액기간(간편)</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>없음</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td></tr><tr><td class=\"lt-attr\">병원구분</td><td>종합병원</td><td>일반/상급</td><td>일반/상급</td><td>일반/상급</td><td>일반병원</td><td>일반/상급</td><td>일반병원</td><td>종합병원</td><td>일반병원</td><td>일반병원</td></tr><tr><td class=\"lt-attr\">권역구분</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td class=\"lt-attr\">순환계범위</td><td>52종</td><td>52종</td><td>52종</td><td>52종</td><td>61종</td><td>52종</td><td>52종</td><td>52종</td><td>52종</td><td>62종</td></tr><tr><td class=\"lt-attr\">치료종류</td><td>3종</td><td>13종</td><td>3종</td><td>4종</td><td>11종</td><td>3종</td><td>4종</td><td>10종+검사3종</td><td>4종</td><td>4종</td></tr><tr><td class=\"lt-attr\">선지급</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>50%</td></tr><tr><td class=\"lt-attr\">기타</td><td>순환계통합 1억원</td><td>일반+상급합산 1억원</td><td>일반2천/상급2천</td><td>일반+상급합산 2천/2천/1천</td><td>통합순환 5천</td><td>일반2천/상급1천</td><td>-</td><td>순환계통합 1억원</td><td>-</td><td>순환계Ⅱ 연간1회</td></tr><tr class=\"lt-group\"><td colspan=\"11\">치료비 세부</td></tr><tr><td class=\"lt-attr\">수술</td><td>2.5천</td><td>2천(매회)</td><td>2천</td><td>2천</td><td>1천(매회)</td><td>2천(매회)</td><td>3천</td><td>2천(매회)</td><td>2천</td><td>3천/3천</td></tr><tr><td class=\"lt-attr\">혈전용해</td><td>3천</td><td>2.5천</td><td>2천</td><td>2천</td><td>1천</td><td>2천</td><td>3천</td><td>2.5천</td><td>2천</td><td>1.5천/3천</td></tr><tr><td class=\"lt-attr\">혈전제거술</td><td>3천</td><td>5백</td><td>2천</td><td>2천</td><td>-</td><td>-</td><td>3천</td><td>1천</td><td>2천</td><td>1.5천/3천</td></tr><tr><td class=\"lt-attr\">중환자실</td><td>1천</td><td>1.5천</td><td>-</td><td>1천</td><td>8백</td><td>2천</td><td>1천</td><td>1.2천</td><td>2천</td><td>1.5천/3천</td></tr><tr><td class=\"lt-attr\">기타치료</td><td>-</td><td>기타치료</td><td>간편 1천</td><td>복합혈전제거+용해</td><td>기타치료</td><td>-</td><td>-</td><td>기타치료</td><td>-</td><td>순환계Ⅰ/Ⅱ</td></tr><tr class=\"lt-group\"><td colspan=\"11\">일반심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>1540 청춘대표건강보험</td><td>시그니처H통합건강(비납면)</td><td>마이플랜건강보험</td><td>통합건강보험ONE</td><td>M-케어건강보험</td><td>딱좋은요즘건강보험</td><td>다사랑통합보험V2(기본형)</td><td>우리WON하는보장보험</td><td>내가고른건강보험</td><td>새로담는건강보험</td></tr><tr><td class=\"lt-attr\">보험료(남)</td><td>42,982</td><td>58,017</td><td>27,384</td><td>42,870</td><td>22,995</td><td>41,260</td><td>51,300</td><td>44,000</td><td>41,380</td><td>52,500</td></tr><tr><td class=\"lt-attr\">보험료(여)</td><td>23,646</td><td>35,005</td><td>15,980</td><td>27,990</td><td>13,997</td><td>22,820</td><td>26,030</td><td>27,100</td><td>23,460</td><td>31,500</td></tr><tr class=\"lt-group\"><td colspan=\"11\">간편심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>1540 청춘대표(355)</td><td>시그니처H통합건강</td><td>간편마이플랜건강보험</td><td>통합건강보험ONE</td><td>M-케어건강보험</td><td>딱좋은요즘건강보험</td><td>다사랑3N5간편(납면제외)</td><td>우리WON하는간편보장보험</td><td>내가고른건강보험</td><td>새로담는간편건강보험</td></tr><tr><td class=\"lt-attr\">보험료(남)</td><td>52,584</td><td>69,468</td><td>17,601(원본 회색표기)</td><td>55,100</td><td>29,644</td><td>45,840</td><td>67,070</td><td>49,990</td><td>54,600</td><td>64,200</td></tr><tr><td class=\"lt-attr\">보험료(여)</td><td>29,329</td><td>38,369</td><td>10,127(원본 회색표기)</td><td>36,280</td><td>18,886</td><td>25,500</td><td>34,210</td><td>31,530</td><td>30,800</td><td>38,400</td></tr></tbody></table></div><div class=\"limit-subtitle\">손해보험 10개사</div><div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">삼성화재</th><th class=\"lt-col\">현대해상</th><th class=\"lt-col\">DB손보</th><th class=\"lt-col\">KB손보</th><th class=\"lt-col\">메리츠화재</th><th class=\"lt-col\">한화손보</th><th class=\"lt-col\">흥국화재</th><th class=\"lt-col\">롯데손보</th><th class=\"lt-col\">하나손보</th><th class=\"lt-col\">농협손보</th></tr></thead><tbody><tr><td class=\"lt-attr\">연간한도</td><td>6.5천</td><td>1.45억원</td><td>1.05억원</td><td>1.3억원</td><td>1억원</td><td>1.1억원</td><td>1.05억원</td><td>1억원</td><td>1.44억원</td><td>6천</td></tr><tr><td class=\"lt-attr\">연간횟수</td><td>4회</td><td>9회</td><td>4회</td><td>5회</td><td>12회</td><td>18회</td><td>4회</td><td>9회</td><td>9회</td><td>3회</td></tr><tr><td class=\"lt-attr\">감액기간(일반)</td><td>1년</td><td>없음</td><td>없음</td><td>없음</td><td>1년</td><td>없음</td><td>1년</td><td>없음</td><td>없음</td><td>없음</td></tr><tr><td class=\"lt-attr\">감액기간(간편)</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td><td>1년</td></tr><tr><td class=\"lt-attr\">병원구분</td><td>종합/상급</td><td>일반/상급</td><td>종합병원</td><td>일반/상급</td><td>일반/상급(권역○)</td><td>일반/상급(권역○)</td><td>일반/상급</td><td>일반/상급</td><td>일반병원</td><td>일반병원</td></tr><tr><td class=\"lt-attr\">권역구분</td><td>-</td><td>-</td><td>-</td><td>-</td><td>○</td><td>○</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td class=\"lt-attr\">순환계범위</td><td>52종</td><td>심뇌혈관</td><td>52종</td><td>52종</td><td>52종</td><td>52종</td><td>52종</td><td>52종</td><td>62종</td><td>52종</td></tr><tr><td class=\"lt-attr\">치료종류</td><td>4종</td><td>3종+@</td><td>3종</td><td>4종</td><td>12종</td><td>18종</td><td>3종</td><td>4종</td><td>4종</td><td>3종</td></tr><tr><td class=\"lt-attr\">선지급</td><td>50%,5백</td><td>70%,5백</td><td>50%,5백</td><td>50%,5백</td><td>50%,5백</td><td>50%,5백</td><td>50%,5백</td><td>50%,5백</td><td>-</td><td>-</td></tr><tr><td class=\"lt-attr\">기타</td><td>순환계Ⅲ</td><td>관혈/비관혈</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>순환+뇌허</td><td>-</td><td>순환계 3-5종</td></tr><tr class=\"lt-group\"><td colspan=\"11\">치료비 세부</td></tr><tr><td class=\"lt-attr\">수술</td><td>2천(회당)</td><td>3천(간편2천)</td><td>3천</td><td>2천</td><td>2천(매회)</td><td>2천</td><td>3천</td><td>2천(매회)</td><td>2천</td><td>2천(회당)</td></tr><tr><td class=\"lt-attr\">혈전용해</td><td>2천(연1회)</td><td>3천(간편2천)</td><td>3천(뇌심)</td><td>2천</td><td>2.5천</td><td>2천</td><td>3천</td><td>2천</td><td>2천</td><td>2천</td></tr><tr><td class=\"lt-attr\">혈전제거술</td><td>2천(연1회)</td><td>-</td><td>-</td><td>2천</td><td>-</td><td>2천</td><td>3천</td><td>-</td><td>-</td><td>-</td></tr><tr><td class=\"lt-attr\">중환자실</td><td>5백</td><td>1천</td><td>1.5천</td><td>1천</td><td>2천</td><td>1천</td><td>1.5천</td><td>1천</td><td>2천</td><td>2천(종합병원)</td></tr><tr><td class=\"lt-attr\">기타치료</td><td>-</td><td>특정중증2천</td><td>-</td><td>-</td><td>기타치료</td><td>기타치료</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr class=\"lt-group\"><td colspan=\"11\">일반심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>내돈내삼1640</td><td>퍼펙트플러스종합보험(2Q)</td><td>건강할때가입하는청춘어람+/행복+</td><td>5.10.10 Young+건강</td><td>더건강한내mom 5.10.5</td><td>더건강한한아름종합보험(프리미엄)</td><td>The건강한 0545종합</td><td>4060종합보험(10플러스)</td><td>더퍼스트건강보험</td><td>NH가성비굿건강보험</td></tr><tr><td class=\"lt-attr\">보험료(남)</td><td>34,900</td><td>52,510</td><td>62,055</td><td>38,600</td><td>43,107</td><td>42,790</td><td>51,825</td><td>45,000</td><td>71,600</td><td>35,060</td></tr><tr><td class=\"lt-attr\">보험료(여)</td><td>26,125</td><td>30,810</td><td>38,310</td><td>24,560</td><td>30,221</td><td>16,570</td><td>29,580</td><td>21,120</td><td>48,200</td><td>16,220</td></tr><tr class=\"lt-group\"><td colspan=\"11\">간편심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>간편보험새로고침100세</td><td>내삶엔(3N)맞춤간편건강보험</td><td>나에게맞춘간편건강보험</td><td>슬기로운간편Plus</td><td>통합간편건강보험(Ⅱ)</td><td>3N5더간편건강보험(1형)</td><td>든든한3N5간편종합건강보험(1형)</td><td>3N5간편맞춤건강보험</td><td>더퍼스트3N5간편건강보험</td><td>NH헤아림355건강보험</td></tr><tr><td class=\"lt-attr\">보험료(남)</td><td>40,000</td><td>53,980</td><td>69,675</td><td>52,480</td><td>60,127</td><td>54,980</td><td>64,545</td><td>53,450</td><td>88,170</td><td>35,960</td></tr><tr><td class=\"lt-attr\">보험료(여)</td><td>31,790</td><td>31,550</td><td>44,580</td><td>30,320</td><td>41,650</td><td>22,400</td><td>36,120</td><td>25,950</td><td>53,400</td><td>20,280</td></tr></tbody></table></div>",
+        "note": "기준: 40세·20년납·100세만기·무해약환급형·납입면제·담보만 최고한도 설계 시. 교보생명 간편심사형 보험료(회색 표기)는 원본에서도 별도 표시된 값으로 판매 여부 재확인 필요.",
+        "groups": [
+            {
+                "title": "생명보험 10개사",
+                "companies": [
+                    "삼성생명",
+                    "한화생명",
+                    "교보생명",
+                    "신한라이프",
+                    "미래에셋",
+                    "KB라이프",
+                    "흥국생명",
+                    "동양생명",
+                    "DB생명",
+                    "라이나생명"
+                ],
+                "attrs": [
+                    [
+                        "연간한도",
+                        "limit"
+                    ],
+                    [
+                        "연간횟수",
+                        "cnt"
+                    ],
+                    [
+                        "감액기간(일반)",
+                        "dmg1"
+                    ],
+                    [
+                        "감액기간(간편)",
+                        "dmg2"
+                    ],
+                    [
+                        "병원구분",
+                        "hosp"
+                    ],
+                    [
+                        "권역구분",
+                        "zone"
+                    ],
+                    [
+                        "순환계범위",
+                        "scope"
+                    ],
+                    [
+                        "치료종류",
+                        "tx"
+                    ],
+                    [
+                        "선지급",
+                        "adv"
+                    ],
+                    [
+                        "기타",
+                        "etc"
+                    ],
+                    [
+                        "치료비 세부",
+                        "---"
+                    ],
+                    [
+                        "수술",
+                        "surg"
+                    ],
+                    [
+                        "혈전용해",
+                        "thromb"
+                    ],
+                    [
+                        "혈전제거술",
+                        "thrombr"
+                    ],
+                    [
+                        "중환자실",
+                        "icu"
+                    ],
+                    [
+                        "기타치료",
+                        "etc2"
+                    ],
+                    [
+                        "일반심사형",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "prod"
+                    ],
+                    [
+                        "보험료(남)",
+                        "male"
+                    ],
+                    [
+                        "보험료(여)",
+                        "female"
+                    ],
+                    [
+                        "간편심사형",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "eprod"
+                    ],
+                    [
+                        "보험료(남)",
+                        "emale"
+                    ],
+                    [
+                        "보험료(여)",
+                        "efemale"
+                    ]
+                ],
+                "data": {
+                    "삼성생명": {
+                        "limit": "1억원",
+                        "cnt": "3회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "종합병원",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "3종",
+                        "adv": "-",
+                        "etc": "순환계통합 1억원",
+                        "surg": "2.5천",
+                        "thromb": "3천",
+                        "thrombr": "3천",
+                        "icu": "1천",
+                        "etc2": "-",
+                        "prod": "1540 청춘대표건강보험",
+                        "male": "42,982",
+                        "female": "23,646",
+                        "eprod": "1540 청춘대표(355)",
+                        "emale": "52,584",
+                        "efemale": "29,329"
+                    },
+                    "한화생명": {
+                        "limit": "1억원",
+                        "cnt": "13회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "13종",
+                        "adv": "-",
+                        "etc": "일반+상급합산 1억원",
+                        "surg": "2천(매회)",
+                        "thromb": "2.5천",
+                        "thrombr": "5백",
+                        "icu": "1.5천",
+                        "etc2": "기타치료",
+                        "prod": "시그니처H통합건강(비납면)",
+                        "male": "58,017",
+                        "female": "35,005",
+                        "eprod": "시그니처H통합건강",
+                        "emale": "69,468",
+                        "efemale": "38,369"
+                    },
+                    "교보생명": {
+                        "limit": "1.2억원",
+                        "cnt": "6회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "3종",
+                        "adv": "-",
+                        "etc": "일반2천/상급2천",
+                        "surg": "2천",
+                        "thromb": "2천",
+                        "thrombr": "2천",
+                        "icu": "-",
+                        "etc2": "간편 1천",
+                        "prod": "마이플랜건강보험",
+                        "male": "27,384",
+                        "female": "15,980",
+                        "eprod": "간편마이플랜건강보험",
+                        "emale": "17,601(원본 회색표기)",
+                        "efemale": "10,127(원본 회색표기)"
+                    },
+                    "신한라이프": {
+                        "limit": "9천",
+                        "cnt": "5회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "4종",
+                        "adv": "-",
+                        "etc": "일반+상급합산 2천/2천/1천",
+                        "surg": "2천",
+                        "thromb": "2천",
+                        "thrombr": "2천",
+                        "icu": "1천",
+                        "etc2": "복합혈전제거+용해",
+                        "prod": "통합건강보험ONE",
+                        "male": "42,870",
+                        "female": "27,990",
+                        "eprod": "통합건강보험ONE",
+                        "emale": "55,100",
+                        "efemale": "36,280"
+                    },
+                    "미래에셋": {
+                        "limit": "5천",
+                        "cnt": "11회",
+                        "dmg1": "없음",
+                        "dmg2": "없음",
+                        "hosp": "일반병원",
+                        "zone": "-",
+                        "scope": "61종",
+                        "tx": "11종",
+                        "adv": "-",
+                        "etc": "통합순환 5천",
+                        "surg": "1천(매회)",
+                        "thromb": "1천",
+                        "thrombr": "-",
+                        "icu": "8백",
+                        "etc2": "기타치료",
+                        "prod": "M-케어건강보험",
+                        "male": "22,995",
+                        "female": "13,997",
+                        "eprod": "M-케어건강보험",
+                        "emale": "29,644",
+                        "efemale": "18,886"
+                    },
+                    "KB라이프": {
+                        "limit": "9천",
+                        "cnt": "3회",
+                        "dmg1": "1년",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "3종",
+                        "adv": "-",
+                        "etc": "일반2천/상급1천",
+                        "surg": "2천(매회)",
+                        "thromb": "2천",
+                        "thrombr": "-",
+                        "icu": "2천",
+                        "etc2": "-",
+                        "prod": "딱좋은요즘건강보험",
+                        "male": "41,260",
+                        "female": "22,820",
+                        "eprod": "딱좋은요즘건강보험",
+                        "emale": "45,840",
+                        "efemale": "25,500"
+                    },
+                    "흥국생명": {
+                        "limit": "1억원",
+                        "cnt": "4회",
+                        "dmg1": "1년",
+                        "dmg2": "1년",
+                        "hosp": "일반병원",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "4종",
+                        "adv": "-",
+                        "etc": "-",
+                        "surg": "3천",
+                        "thromb": "3천",
+                        "thrombr": "3천",
+                        "icu": "1천",
+                        "etc2": "-",
+                        "prod": "다사랑통합보험V2(기본형)",
+                        "male": "51,300",
+                        "female": "26,030",
+                        "eprod": "다사랑3N5간편(납면제외)",
+                        "emale": "67,070",
+                        "efemale": "34,210"
+                    },
+                    "동양생명": {
+                        "limit": "1억원",
+                        "cnt": "4회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "종합병원",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "10종+검사3종",
+                        "adv": "-",
+                        "etc": "순환계통합 1억원",
+                        "surg": "2천(매회)",
+                        "thromb": "2.5천",
+                        "thrombr": "1천",
+                        "icu": "1.2천",
+                        "etc2": "기타치료",
+                        "prod": "우리WON하는보장보험",
+                        "male": "44,000",
+                        "female": "27,100",
+                        "eprod": "우리WON하는간편보장보험",
+                        "emale": "49,990",
+                        "efemale": "31,530"
+                    },
+                    "DB생명": {
+                        "limit": "8천",
+                        "cnt": "4회",
+                        "dmg1": "1년",
+                        "dmg2": "1년",
+                        "hosp": "일반병원",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "4종",
+                        "adv": "-",
+                        "etc": "-",
+                        "surg": "2천",
+                        "thromb": "2천",
+                        "thrombr": "2천",
+                        "icu": "2천",
+                        "etc2": "-",
+                        "prod": "내가고른건강보험",
+                        "male": "41,380",
+                        "female": "23,460",
+                        "eprod": "내가고른건강보험",
+                        "emale": "54,600",
+                        "efemale": "30,800"
+                    },
+                    "라이나생명": {
+                        "limit": "5천",
+                        "cnt": "4회",
+                        "dmg1": "1년",
+                        "dmg2": "1년",
+                        "hosp": "일반병원",
+                        "zone": "-",
+                        "scope": "62종",
+                        "tx": "4종",
+                        "adv": "50%",
+                        "etc": "순환계Ⅱ 연간1회",
+                        "surg": "3천/3천",
+                        "thromb": "1.5천/3천",
+                        "thrombr": "1.5천/3천",
+                        "icu": "1.5천/3천",
+                        "etc2": "순환계Ⅰ/Ⅱ",
+                        "prod": "새로담는건강보험",
+                        "male": "52,500",
+                        "female": "31,500",
+                        "eprod": "새로담는간편건강보험",
+                        "emale": "64,200",
+                        "efemale": "38,400"
+                    }
+                }
+            },
+            {
+                "title": "손해보험 10개사",
+                "companies": [
+                    "삼성화재",
+                    "현대해상",
+                    "DB손보",
+                    "KB손보",
+                    "메리츠화재",
+                    "한화손보",
+                    "흥국화재",
+                    "롯데손보",
+                    "하나손보",
+                    "농협손보"
+                ],
+                "attrs": [
+                    [
+                        "연간한도",
+                        "limit"
+                    ],
+                    [
+                        "연간횟수",
+                        "cnt"
+                    ],
+                    [
+                        "감액기간(일반)",
+                        "dmg1"
+                    ],
+                    [
+                        "감액기간(간편)",
+                        "dmg2"
+                    ],
+                    [
+                        "병원구분",
+                        "hosp"
+                    ],
+                    [
+                        "권역구분",
+                        "zone"
+                    ],
+                    [
+                        "순환계범위",
+                        "scope"
+                    ],
+                    [
+                        "치료종류",
+                        "tx"
+                    ],
+                    [
+                        "선지급",
+                        "adv"
+                    ],
+                    [
+                        "기타",
+                        "etc"
+                    ],
+                    [
+                        "치료비 세부",
+                        "---"
+                    ],
+                    [
+                        "수술",
+                        "surg"
+                    ],
+                    [
+                        "혈전용해",
+                        "thromb"
+                    ],
+                    [
+                        "혈전제거술",
+                        "thrombr"
+                    ],
+                    [
+                        "중환자실",
+                        "icu"
+                    ],
+                    [
+                        "기타치료",
+                        "etc2"
+                    ],
+                    [
+                        "일반심사형",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "prod"
+                    ],
+                    [
+                        "보험료(남)",
+                        "male"
+                    ],
+                    [
+                        "보험료(여)",
+                        "female"
+                    ],
+                    [
+                        "간편심사형",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "eprod"
+                    ],
+                    [
+                        "보험료(남)",
+                        "emale"
+                    ],
+                    [
+                        "보험료(여)",
+                        "efemale"
+                    ]
+                ],
+                "data": {
+                    "삼성화재": {
+                        "limit": "6.5천",
+                        "cnt": "4회",
+                        "dmg1": "1년",
+                        "dmg2": "1년",
+                        "hosp": "종합/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "4종",
+                        "adv": "50%,5백",
+                        "etc": "순환계Ⅲ",
+                        "surg": "2천(회당)",
+                        "thromb": "2천(연1회)",
+                        "thrombr": "2천(연1회)",
+                        "icu": "5백",
+                        "etc2": "-",
+                        "prod": "내돈내삼1640",
+                        "male": "34,900",
+                        "female": "26,125",
+                        "eprod": "간편보험새로고침100세",
+                        "emale": "40,000",
+                        "efemale": "31,790"
+                    },
+                    "현대해상": {
+                        "limit": "1.45억원",
+                        "cnt": "9회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "심뇌혈관",
+                        "tx": "3종+@",
+                        "adv": "70%,5백",
+                        "etc": "관혈/비관혈",
+                        "surg": "3천(간편2천)",
+                        "thromb": "3천(간편2천)",
+                        "thrombr": "-",
+                        "icu": "1천",
+                        "etc2": "특정중증2천",
+                        "prod": "퍼펙트플러스종합보험(2Q)",
+                        "male": "52,510",
+                        "female": "30,810",
+                        "eprod": "내삶엔(3N)맞춤간편건강보험",
+                        "emale": "53,980",
+                        "efemale": "31,550"
+                    },
+                    "DB손보": {
+                        "limit": "1.05억원",
+                        "cnt": "4회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "종합병원",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "3종",
+                        "adv": "50%,5백",
+                        "etc": "-",
+                        "surg": "3천",
+                        "thromb": "3천(뇌심)",
+                        "thrombr": "-",
+                        "icu": "1.5천",
+                        "etc2": "-",
+                        "prod": "건강할때가입하는청춘어람+/행복+",
+                        "male": "62,055",
+                        "female": "38,310",
+                        "eprod": "나에게맞춘간편건강보험",
+                        "emale": "69,675",
+                        "efemale": "44,580"
+                    },
+                    "KB손보": {
+                        "limit": "1.3억원",
+                        "cnt": "5회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "4종",
+                        "adv": "50%,5백",
+                        "etc": "-",
+                        "surg": "2천",
+                        "thromb": "2천",
+                        "thrombr": "2천",
+                        "icu": "1천",
+                        "etc2": "-",
+                        "prod": "5.10.10 Young+건강",
+                        "male": "38,600",
+                        "female": "24,560",
+                        "eprod": "슬기로운간편Plus",
+                        "emale": "52,480",
+                        "efemale": "30,320"
+                    },
+                    "메리츠화재": {
+                        "limit": "1억원",
+                        "cnt": "12회",
+                        "dmg1": "1년",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급(권역○)",
+                        "zone": "○",
+                        "scope": "52종",
+                        "tx": "12종",
+                        "adv": "50%,5백",
+                        "etc": "-",
+                        "surg": "2천(매회)",
+                        "thromb": "2.5천",
+                        "thrombr": "-",
+                        "icu": "2천",
+                        "etc2": "기타치료",
+                        "prod": "더건강한내mom 5.10.5",
+                        "male": "43,107",
+                        "female": "30,221",
+                        "eprod": "통합간편건강보험(Ⅱ)",
+                        "emale": "60,127",
+                        "efemale": "41,650"
+                    },
+                    "한화손보": {
+                        "limit": "1.1억원",
+                        "cnt": "18회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급(권역○)",
+                        "zone": "○",
+                        "scope": "52종",
+                        "tx": "18종",
+                        "adv": "50%,5백",
+                        "etc": "-",
+                        "surg": "2천",
+                        "thromb": "2천",
+                        "thrombr": "2천",
+                        "icu": "1천",
+                        "etc2": "기타치료",
+                        "prod": "더건강한한아름종합보험(프리미엄)",
+                        "male": "42,790",
+                        "female": "16,570",
+                        "eprod": "3N5더간편건강보험(1형)",
+                        "emale": "54,980",
+                        "efemale": "22,400"
+                    },
+                    "흥국화재": {
+                        "limit": "1.05억원",
+                        "cnt": "4회",
+                        "dmg1": "1년",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "3종",
+                        "adv": "50%,5백",
+                        "etc": "-",
+                        "surg": "3천",
+                        "thromb": "3천",
+                        "thrombr": "3천",
+                        "icu": "1.5천",
+                        "etc2": "-",
+                        "prod": "The건강한 0545종합",
+                        "male": "51,825",
+                        "female": "29,580",
+                        "eprod": "든든한3N5간편종합건강보험(1형)",
+                        "emale": "64,545",
+                        "efemale": "36,120"
+                    },
+                    "롯데손보": {
+                        "limit": "1억원",
+                        "cnt": "9회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반/상급",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "4종",
+                        "adv": "50%,5백",
+                        "etc": "순환+뇌허",
+                        "surg": "2천(매회)",
+                        "thromb": "2천",
+                        "thrombr": "-",
+                        "icu": "1천",
+                        "etc2": "-",
+                        "prod": "4060종합보험(10플러스)",
+                        "male": "45,000",
+                        "female": "21,120",
+                        "eprod": "3N5간편맞춤건강보험",
+                        "emale": "53,450",
+                        "efemale": "25,950"
+                    },
+                    "하나손보": {
+                        "limit": "1.44억원",
+                        "cnt": "9회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반병원",
+                        "zone": "-",
+                        "scope": "62종",
+                        "tx": "4종",
+                        "adv": "-",
+                        "etc": "-",
+                        "surg": "2천",
+                        "thromb": "2천",
+                        "thrombr": "-",
+                        "icu": "2천",
+                        "etc2": "-",
+                        "prod": "더퍼스트건강보험",
+                        "male": "71,600",
+                        "female": "48,200",
+                        "eprod": "더퍼스트3N5간편건강보험",
+                        "emale": "88,170",
+                        "efemale": "53,400"
+                    },
+                    "농협손보": {
+                        "limit": "6천",
+                        "cnt": "3회",
+                        "dmg1": "없음",
+                        "dmg2": "1년",
+                        "hosp": "일반병원",
+                        "zone": "-",
+                        "scope": "52종",
+                        "tx": "3종",
+                        "adv": "-",
+                        "etc": "순환계 3-5종",
+                        "surg": "2천(회당)",
+                        "thromb": "2천",
+                        "thrombr": "-",
+                        "icu": "2천(종합병원)",
+                        "etc2": "-",
+                        "prod": "NH가성비굿건강보험",
+                        "male": "35,060",
+                        "female": "16,220",
+                        "eprod": "NH헤아림355건강보험",
+                        "emale": "35,960",
+                        "efemale": "20,280"
+                    }
+                }
+            }
+        ]
+    },
+    "암비급여통합치료비": {
+        "label": "암비급여통합치료비",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">삼성생명</th><th class=\"lt-col\">동양생명</th><th class=\"lt-col\">삼성화재</th><th class=\"lt-col\">현대해상</th><th class=\"lt-col\">KB손보</th><th class=\"lt-col\">메리츠화재</th></tr></thead><tbody><tr><td class=\"lt-attr\">일반심사형 상품명</td><td>1540/4180 건강보험</td><td>우리WON하는 보장보험</td><td>내돈내삼 1640/4170</td><td>퍼펙트플러스 종합보험</td><td>5.10.10 플러스건강보험</td><td>또걸려도또받는 암보험</td></tr><tr><td class=\"lt-attr\">병원규모</td><td>종합병원이상</td><td>종합병원이상</td><td>종합병원이상</td><td>일반/상급</td><td>종합병원</td><td>일반병원</td></tr><tr><td class=\"lt-attr\">보장횟수</td><td>암수술회당,연1회</td><td>암수술회당,연1회</td><td>암수술회당,연1회</td><td>연1회</td><td>암수술회당,연1회</td><td>암수술회당,연1회</td></tr><tr><td class=\"lt-attr\">담보명(가입금액)</td><td>전액본인부담 암통치(종합병원) 1억원</td><td>비급여암통합치료비 1억원</td><td>종합병원 비급여통합치료비(표준형,1억원)</td><td>하이클래스 암특정치료비8천 / 암주요치료비Ⅱ7천</td><td>비급여암통합 치료비plus 출시</td><td>암통합치료비Ⅱ 비급여1억원</td></tr><tr><td class=\"lt-attr\">세부담보-주요치료</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">세부담보-고액항암</td><td>3천(암,기,갑)</td><td>3천(암,기,갑)</td><td>3천(암,기,갑)</td><td>3천(암)</td><td>3천(암,기,갑)</td><td>3천(암,기,갑)</td></tr><tr><td class=\"lt-attr\">세부담보-다빈치로봇</td><td>1천/2백</td><td>1천/2백</td><td>1천/5백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">기타</td><td>주계약3백 · 수술:4대유사암</td><td>주계약3백 · 수술:4대유사암</td><td>상사1억원,납면10 · 간편:상사5천 · 수술:기,갑</td><td>상사,상후1백,납면10 · 간편:상사1천,암주치Ⅱ1백/20 · 수술:4대유사암</td><td>상사,상후1백 · 간편:상사1백 · 기,갑:20%</td><td>통합암 진단1백,유사암20 · 수술:4대유사암</td></tr><tr><td class=\"lt-attr\">최저P(원)</td><td>2만</td><td>2만</td><td>2만</td><td>2만</td><td>1만</td><td>없음</td></tr><tr class=\"lt-group\"><td colspan=\"7\">보험료</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>29,301</td><td>37,047</td><td>25,247</td><td>27,730</td><td>20,395</td><td>22,840</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>19,053</td><td>21,531</td><td>17,784</td><td>17,030</td><td>12,672</td><td>16,950</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>36,944</td><td>47,201</td><td>32,274</td><td>36,610</td><td>27,147</td><td>28,500</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>20,233</td><td>22,972</td><td>19,054</td><td>16,870</td><td>12,845</td><td>16,300</td></tr><tr class=\"lt-group\"><td colspan=\"7\">간편심사형(355)</td></tr><tr><td class=\"lt-attr\">상품명</td><td>1540/4180 건강보험(355)</td><td>우리WON하는 간편보장보험</td><td>간편보험 새로고침100세</td><td>내삶엔(3N)맞춤간편건강보험</td><td>3.N.5)슬기로운간편건강보험Plus</td><td>또걸려도또받는 간편암보험</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>35,241</td><td>42,107</td><td>24,950</td><td>38,480</td><td>23,739</td><td>27,640</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>23,415</td><td>24,443</td><td>17,135</td><td>24,170</td><td>11,964</td><td>20,250</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>44,262</td><td>53,618</td><td>33,471</td><td>50,760</td><td>31,838</td><td>34,960</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>24,594</td><td>25,810</td><td>18,794</td><td>24,220</td><td>12,479</td><td>19,310</td></tr></tbody></table></div>",
+        "note": "기준: 사무직(무위험직)·20년납·100세(종신)무해약환급형·비급여:전액본인부담(비급여포함). 암치료=수술,항암방사선,항암약물. 고액항암=표적항암약물허가치료,특정면역항암약물,항암양성자. 다빈치=일반암/(특정암:전립선,갑상선). 기=기타피부암,갑=갑상선암.",
+        "groups": [
+            {
+                "title": null,
+                "companies": [
+                    "삼성생명",
+                    "동양생명",
+                    "삼성화재",
+                    "현대해상",
+                    "KB손보",
+                    "메리츠화재"
+                ],
+                "attrs": [
+                    [
+                        "일반심사형 상품명",
+                        "prod"
+                    ],
+                    [
+                        "병원규모",
+                        "hosp"
+                    ],
+                    [
+                        "보장횟수",
+                        "cnt"
+                    ],
+                    [
+                        "담보명(가입금액)",
+                        "cov"
+                    ],
+                    [
+                        "세부담보-주요치료",
+                        "main"
+                    ],
+                    [
+                        "세부담보-고액항암",
+                        "adv"
+                    ],
+                    [
+                        "세부담보-다빈치로봇",
+                        "davinci"
+                    ],
+                    [
+                        "기타",
+                        "etc"
+                    ],
+                    [
+                        "최저P(원)",
+                        "minp"
+                    ],
+                    [
+                        "보험료",
+                        "---"
+                    ],
+                    [
+                        "40세 남",
+                        "m40"
+                    ],
+                    [
+                        "40세 여",
+                        "f40"
+                    ],
+                    [
+                        "50세 남",
+                        "m50"
+                    ],
+                    [
+                        "50세 여",
+                        "f50"
+                    ],
+                    [
+                        "간편심사형(355)",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "eprod"
+                    ],
+                    [
+                        "40세 남",
+                        "em40"
+                    ],
+                    [
+                        "40세 여",
+                        "ef40"
+                    ],
+                    [
+                        "50세 남",
+                        "em50"
+                    ],
+                    [
+                        "50세 여",
+                        "ef50"
+                    ]
+                ],
+                "data": {
+                    "삼성생명": {
+                        "prod": "1540/4180 건강보험",
+                        "hosp": "종합병원이상",
+                        "cnt": "암수술회당,연1회",
+                        "cov": "전액본인부담 암통치(종합병원) 1억원",
+                        "main": "1천/2백",
+                        "adv": "3천(암,기,갑)",
+                        "davinci": "1천/2백",
+                        "etc": "주계약3백 · 수술:4대유사암",
+                        "minp": "2만",
+                        "m40": "29,301",
+                        "f40": "19,053",
+                        "m50": "36,944",
+                        "f50": "20,233",
+                        "eprod": "1540/4180 건강보험(355)",
+                        "em40": "35,241",
+                        "ef40": "23,415",
+                        "em50": "44,262",
+                        "ef50": "24,594"
+                    },
+                    "동양생명": {
+                        "prod": "우리WON하는 보장보험",
+                        "hosp": "종합병원이상",
+                        "cnt": "암수술회당,연1회",
+                        "cov": "비급여암통합치료비 1억원",
+                        "main": "1천/2백",
+                        "adv": "3천(암,기,갑)",
+                        "davinci": "1천/2백",
+                        "etc": "주계약3백 · 수술:4대유사암",
+                        "minp": "2만",
+                        "m40": "37,047",
+                        "f40": "21,531",
+                        "m50": "47,201",
+                        "f50": "22,972",
+                        "eprod": "우리WON하는 간편보장보험",
+                        "em40": "42,107",
+                        "ef40": "24,443",
+                        "em50": "53,618",
+                        "ef50": "25,810"
+                    },
+                    "삼성화재": {
+                        "prod": "내돈내삼 1640/4170",
+                        "hosp": "종합병원이상",
+                        "cnt": "암수술회당,연1회",
+                        "cov": "종합병원 비급여통합치료비(표준형,1억원)",
+                        "main": "1천/2백",
+                        "adv": "3천(암,기,갑)",
+                        "davinci": "1천/5백",
+                        "etc": "상사1억원,납면10 · 간편:상사5천 · 수술:기,갑",
+                        "minp": "2만",
+                        "m40": "25,247",
+                        "f40": "17,784",
+                        "m50": "32,274",
+                        "f50": "19,054",
+                        "eprod": "간편보험 새로고침100세",
+                        "em40": "24,950",
+                        "ef40": "17,135",
+                        "em50": "33,471",
+                        "ef50": "18,794"
+                    },
+                    "현대해상": {
+                        "prod": "퍼펙트플러스 종합보험",
+                        "hosp": "일반/상급",
+                        "cnt": "연1회",
+                        "cov": "하이클래스 암특정치료비8천 / 암주요치료비Ⅱ7천",
+                        "main": "1천/2백",
+                        "adv": "3천(암)",
+                        "davinci": "1천/2백",
+                        "etc": "상사,상후1백,납면10 · 간편:상사1천,암주치Ⅱ1백/20 · 수술:4대유사암",
+                        "minp": "2만",
+                        "m40": "27,730",
+                        "f40": "17,030",
+                        "m50": "36,610",
+                        "f50": "16,870",
+                        "eprod": "내삶엔(3N)맞춤간편건강보험",
+                        "em40": "38,480",
+                        "ef40": "24,170",
+                        "em50": "50,760",
+                        "ef50": "24,220"
+                    },
+                    "KB손보": {
+                        "prod": "5.10.10 플러스건강보험",
+                        "hosp": "종합병원",
+                        "cnt": "암수술회당,연1회",
+                        "cov": "비급여암통합 치료비plus 출시",
+                        "main": "1천/2백",
+                        "adv": "3천(암,기,갑)",
+                        "davinci": "1천/2백",
+                        "etc": "상사,상후1백 · 간편:상사1백 · 기,갑:20%",
+                        "minp": "1만",
+                        "m40": "20,395",
+                        "f40": "12,672",
+                        "m50": "27,147",
+                        "f50": "12,845",
+                        "eprod": "3.N.5)슬기로운간편건강보험Plus",
+                        "em40": "23,739",
+                        "ef40": "11,964",
+                        "em50": "31,838",
+                        "ef50": "12,479"
+                    },
+                    "메리츠화재": {
+                        "prod": "또걸려도또받는 암보험",
+                        "hosp": "일반병원",
+                        "cnt": "암수술회당,연1회",
+                        "cov": "암통합치료비Ⅱ 비급여1억원",
+                        "main": "1천/2백",
+                        "adv": "3천(암,기,갑)",
+                        "davinci": "1천/2백",
+                        "etc": "통합암 진단1백,유사암20 · 수술:4대유사암",
+                        "minp": "없음",
+                        "m40": "22,840",
+                        "f40": "16,950",
+                        "m50": "28,500",
+                        "f50": "16,300",
+                        "eprod": "또걸려도또받는 간편암보험",
+                        "em40": "27,640",
+                        "ef40": "20,250",
+                        "em50": "34,960",
+                        "ef50": "19,310"
+                    }
+                }
+            }
+        ]
+    },
+    "유방암진단비": {
+        "label": "유방암진단비(타입별 통합보장)",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">미래에셋</th><th class=\"lt-col\">흥국생명</th><th class=\"lt-col\">한화손보</th></tr></thead><tbody><tr><td class=\"lt-attr\">일반심사형 상품명</td><td>M케어건강보험</td><td>다(多)사랑 통합보험V2</td><td>시그니처 여성건강보험</td></tr><tr><td class=\"lt-attr\">일반암진단비</td><td>1천/2백</td><td>1천(180일내10%)/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">통합유방암-타입A</td><td>1천</td><td>1천</td><td>2천</td></tr><tr><td class=\"lt-attr\">통합유방암-타입B</td><td>1천</td><td>1천</td><td>2천</td></tr><tr><td class=\"lt-attr\">통합유방암-타입C</td><td>1천</td><td>3천</td><td>2천</td></tr><tr><td class=\"lt-attr\">통합유방암-타입D</td><td>3천</td><td>3천</td><td>5천</td></tr><tr><td class=\"lt-attr\">기타(제자리암 등)</td><td>유방제자리암2백 · 180일내25%,1년내50%</td><td>180일내25%,1년내50% · 1년이내유방암50%</td><td>1년미만50%</td></tr><tr><td class=\"lt-attr\">기타담보</td><td>검사(PET,MRI,CT,초음파),NGS10 · 유방바늘생검20,예후예측검사3백 · 유방암수술(전체/부분)1천/5백 · 항암방사선1천,항암약물1천,항암호르몬1백 · 다빈치(레보)로봇7백,비급여항암방사선2천 · 비급여표적항암2천,특정항암2천 · 급여유방재건술2백</td><td>여성암보장3천(여성생식기암) · 다섯번받는유방암:2천(첫번째2천,재진단2천,총4회,180일내10%,1년내50%) · 급여유방재건/유방절제,보존수술 각1천</td><td>유방바늘생검조직병리검사비50 · 유방암예후예측검사비3백 · 유방암수술비10 · 유방암진단후계속암2천(재진단암,4대유사암) · 유방암항암방사선치료비회당1백 · 유방암항암약물치료비회당1백 · 특정유방병변진공흡인절제치료비50(1회한)</td></tr><tr><td class=\"lt-attr\">가입금액(암진단비 외)</td><td>주계약3백, 통합유방암, 통합유방암주요치료비5천</td><td>주계약3백, 다섯번받는유방암진단, 유방암케어(급여재건/유방절제,보존수술), 유방암수용체타입별진단, 여성암보장3천(50세2천,간편없음)</td><td>기본계약:상사1.5억원(간편1억원),납입면제10, Lady유방케어패키지(유방,갑상선,여성생식기질환 통합치료비1천 가능)</td></tr><tr class=\"lt-group\"><td colspan=\"4\">보험료</td></tr><tr><td class=\"lt-attr\">30세</td><td>25,800</td><td>37,550</td><td>51,117</td></tr><tr><td class=\"lt-attr\">40세</td><td>31,560</td><td>46,380</td><td>63,334</td></tr><tr><td class=\"lt-attr\">50세</td><td>31,704</td><td>44,660</td><td>59,368</td></tr><tr class=\"lt-group\"><td colspan=\"4\">간편심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>M케어간편건강보험</td><td>다사랑3.10.5간편건강보험</td><td>시그니처 여성간편365</td></tr><tr><td class=\"lt-attr\">30세</td><td>30,678</td><td>28,300</td><td>56,598</td></tr><tr><td class=\"lt-attr\">40세</td><td>37,564</td><td>35,460</td><td>71,003</td></tr><tr><td class=\"lt-attr\">50세</td><td>37,281</td><td>34,720</td><td>67,919</td></tr></tbody></table></div>",
+        "note": "기준: 여자·20년납·종신(100세만기)·무해약환급형. 보험료는 여성전용 상품 기준.",
+        "groups": [
+            {
+                "title": null,
+                "companies": [
+                    "미래에셋",
+                    "흥국생명",
+                    "한화손보"
+                ],
+                "attrs": [
+                    [
+                        "일반심사형 상품명",
+                        "prod"
+                    ],
+                    [
+                        "일반암진단비",
+                        "gen"
+                    ],
+                    [
+                        "통합유방암-타입A",
+                        "A"
+                    ],
+                    [
+                        "통합유방암-타입B",
+                        "B"
+                    ],
+                    [
+                        "통합유방암-타입C",
+                        "C"
+                    ],
+                    [
+                        "통합유방암-타입D",
+                        "D"
+                    ],
+                    [
+                        "기타(제자리암 등)",
+                        "etc"
+                    ],
+                    [
+                        "기타담보",
+                        "extra"
+                    ],
+                    [
+                        "가입금액(암진단비 외)",
+                        "amt"
+                    ],
+                    [
+                        "보험료",
+                        "---"
+                    ],
+                    [
+                        "30세",
+                        "m30"
+                    ],
+                    [
+                        "40세",
+                        "m40"
+                    ],
+                    [
+                        "50세",
+                        "m50"
+                    ],
+                    [
+                        "간편심사형",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "eprod"
+                    ],
+                    [
+                        "30세",
+                        "em30"
+                    ],
+                    [
+                        "40세",
+                        "em40"
+                    ],
+                    [
+                        "50세",
+                        "em50"
+                    ]
+                ],
+                "data": {
+                    "미래에셋": {
+                        "prod": "M케어건강보험",
+                        "gen": "1천/2백",
+                        "A": "1천",
+                        "B": "1천",
+                        "C": "1천",
+                        "D": "3천",
+                        "etc": "유방제자리암2백 · 180일내25%,1년내50%",
+                        "extra": "검사(PET,MRI,CT,초음파),NGS10 · 유방바늘생검20,예후예측검사3백 · 유방암수술(전체/부분)1천/5백 · 항암방사선1천,항암약물1천,항암호르몬1백 · 다빈치(레보)로봇7백,비급여항암방사선2천 · 비급여표적항암2천,특정항암2천 · 급여유방재건술2백",
+                        "amt": "주계약3백, 통합유방암, 통합유방암주요치료비5천",
+                        "m30": "25,800",
+                        "m40": "31,560",
+                        "m50": "31,704",
+                        "eprod": "M케어간편건강보험",
+                        "em30": "30,678",
+                        "em40": "37,564",
+                        "em50": "37,281"
+                    },
+                    "흥국생명": {
+                        "prod": "다(多)사랑 통합보험V2",
+                        "gen": "1천(180일내10%)/2백",
+                        "A": "1천",
+                        "B": "1천",
+                        "C": "3천",
+                        "D": "3천",
+                        "etc": "180일내25%,1년내50% · 1년이내유방암50%",
+                        "extra": "여성암보장3천(여성생식기암) · 다섯번받는유방암:2천(첫번째2천,재진단2천,총4회,180일내10%,1년내50%) · 급여유방재건/유방절제,보존수술 각1천",
+                        "amt": "주계약3백, 다섯번받는유방암진단, 유방암케어(급여재건/유방절제,보존수술), 유방암수용체타입별진단, 여성암보장3천(50세2천,간편없음)",
+                        "m30": "37,550",
+                        "m40": "46,380",
+                        "m50": "44,660",
+                        "eprod": "다사랑3.10.5간편건강보험",
+                        "em30": "28,300",
+                        "em40": "35,460",
+                        "em50": "34,720"
+                    },
+                    "한화손보": {
+                        "prod": "시그니처 여성건강보험",
+                        "gen": "1천/2백",
+                        "A": "2천",
+                        "B": "2천",
+                        "C": "2천",
+                        "D": "5천",
+                        "etc": "1년미만50%",
+                        "extra": "유방바늘생검조직병리검사비50 · 유방암예후예측검사비3백 · 유방암수술비10 · 유방암진단후계속암2천(재진단암,4대유사암) · 유방암항암방사선치료비회당1백 · 유방암항암약물치료비회당1백 · 특정유방병변진공흡인절제치료비50(1회한)",
+                        "amt": "기본계약:상사1.5억원(간편1억원),납입면제10, Lady유방케어패키지(유방,갑상선,여성생식기질환 통합치료비1천 가능)",
+                        "m30": "51,117",
+                        "m40": "63,334",
+                        "m50": "59,368",
+                        "eprod": "시그니처 여성간편365",
+                        "em30": "56,598",
+                        "em40": "71,003",
+                        "em50": "67,919"
+                    }
+                }
+            }
+        ]
+    },
+    "암통합치료비": {
+        "label": "암통합치료비(급여+비급여)",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">삼성생명</th><th class=\"lt-col\">삼성화재</th><th class=\"lt-col\">메리츠화재</th><th class=\"lt-col\">KB손보</th><th class=\"lt-col\">동양생명</th><th class=\"lt-col\">푸본현대</th></tr></thead><tbody><tr><td class=\"lt-attr\">가입금액</td><td>암통합치료 1억원</td><td>암통합치료비1.2억원</td><td>암통합치료비1억원</td><td>암통합치료1.5억원</td><td>암통합치료비1억원</td><td>암통합치료비1억원</td></tr><tr><td class=\"lt-attr\">보장병원/치료횟수</td><td>종합병원/23회</td><td>종합병원/20회</td><td>일반병원/20회</td><td>종합병원/20회</td><td>종합병원/16회</td><td>종합병원/20회</td></tr><tr><td class=\"lt-attr\">검사-내시경/MRI/PET</td><td>5/5/5</td><td>-</td><td>5/5/5</td><td>10/5/5</td><td>5/5/5</td><td>5/5/5</td></tr><tr><td class=\"lt-attr\">검사-단일유전자/초음파/CT</td><td>5/10/10</td><td>-</td><td>5/10/10</td><td>5/5/5</td><td>5/10/10</td><td>5/10/10</td></tr><tr><td class=\"lt-attr\">검사-생검조직병리/NGS</td><td>20/100</td><td>-</td><td>20/100</td><td>20/10</td><td>20/100</td><td>20/100</td></tr><tr><td class=\"lt-attr\">치료-주요치료</td><td>1천/2백</td><td>1.5천/6백</td><td>1천/2백</td><td>1,500/3백</td><td>1천/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">치료-항암호르몬</td><td>1백</td><td>3백/60</td><td>-</td><td>150</td><td>-</td><td>1백</td></tr><tr><td class=\"lt-attr\">치료-항암세기조절</td><td>1천</td><td>-</td><td>1천</td><td>1천</td><td>-</td><td>1천</td></tr><tr><td class=\"lt-attr\">치료-중환자실/암통증</td><td>-/50</td><td>5백/-</td><td>-/50</td><td>750/50</td><td>5백(소액암1백)/50</td><td>-/50</td></tr><tr><td class=\"lt-attr\">비급여-다빈치로봇(암/전갑)</td><td>1천/2백</td><td>1천/5백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td><td>1천/2백</td></tr><tr><td class=\"lt-attr\">비급여-고액항암군</td><td>3천</td><td>3천</td><td>3천</td><td>3천</td><td>3천</td><td>3천</td></tr><tr><td class=\"lt-attr\">재활</td><td>2(연20회)</td><td>-</td><td>2(연20회)</td><td>2(30회)</td><td>2(연20회)</td><td>2(연20회)</td></tr><tr><td class=\"lt-attr\">기타치료</td><td>로봇수술:레보아이추가</td><td>*비급여주요치료1천</td><td>-</td><td>-</td><td>-</td><td>사망보장,암진단50(5년,연1회)</td></tr><tr class=\"lt-group\"><td colspan=\"7\">일반심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>1540건강보험/4180건강보험</td><td>건강보험내돈내삼1640/4170</td><td>T내Mom대로/5.10.5보장보험</td><td>5.10.10플러스건강보험</td><td>우리WON하는보장보험</td><td>MAX종신보험세븐 하이픽암플러스</td></tr><tr><td class=\"lt-attr\">기본계약및연계</td><td>주계약3백</td><td>상사1억원,납면10,간편상사5천</td><td>상후1백,50세:간편상사1백추가</td><td>상사,상후1백,납면10,간편:1백</td><td>주계약3백</td><td>기본납면형 주계약5백</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>51,828</td><td>90,269</td><td>55,380</td><td>92,501</td><td>60,977</td><td>481,354</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>46,516</td><td>72,229</td><td>54,481</td><td>63,957</td><td>48,711</td><td>462,609</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>66,566</td><td>118,404</td><td>75,310</td><td>125,280</td><td>77,981</td><td>531,926</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>49,067</td><td>77,040</td><td>58,930</td><td>67,999</td><td>53,112</td><td>496,827</td></tr><tr class=\"lt-group\"><td colspan=\"7\">간편심사형</td></tr><tr><td class=\"lt-attr\">상품명</td><td>1540/4180</td><td>간편새로고침100세</td><td>통합간편건강보험</td><td>3N5)슬기로운간편</td><td>우리WON하는간편</td><td>하이픽암플러스(간편)</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>62,229</td><td>96,463</td><td>62,000</td><td>111,394</td><td>69,237</td><td>513,591</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>58,030</td><td>73,791</td><td>59,611</td><td>63,151</td><td>56,113</td><td>494,341</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>79,385</td><td>133,382</td><td>82,260</td><td>150,795</td><td>88,518</td><td>567,852</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>60,492</td><td>80,938</td><td>62,870</td><td>68,620</td><td>60,680</td><td>529,889</td></tr></tbody></table></div>",
+        "note": "기준: 남녀·20년납·100세만기,무해약환급형. 고액항암=표적항암약물허가치료,특정면역항암약물허가치료,항암양성자방사선치료. 푸본현대는 종신보험 결합형이라 보험료 단위가 다른 회사와 다름 — 반드시 원본 재확인.",
+        "groups": [
+            {
+                "title": null,
+                "companies": [
+                    "삼성생명",
+                    "삼성화재",
+                    "메리츠화재",
+                    "KB손보",
+                    "동양생명",
+                    "푸본현대"
+                ],
+                "attrs": [
+                    [
+                        "가입금액",
+                        "amt"
+                    ],
+                    [
+                        "보장병원/치료횟수",
+                        "hosp"
+                    ],
+                    [
+                        "검사-내시경/MRI/PET",
+                        "scope1"
+                    ],
+                    [
+                        "검사-단일유전자/초음파/CT",
+                        "scope2"
+                    ],
+                    [
+                        "검사-생검조직병리/NGS",
+                        "scope3"
+                    ],
+                    [
+                        "치료-주요치료",
+                        "main"
+                    ],
+                    [
+                        "치료-항암호르몬",
+                        "horm"
+                    ],
+                    [
+                        "치료-항암세기조절",
+                        "seg"
+                    ],
+                    [
+                        "치료-중환자실/암통증",
+                        "icu"
+                    ],
+                    [
+                        "비급여-다빈치로봇(암/전갑)",
+                        "dav"
+                    ],
+                    [
+                        "비급여-고액항암군",
+                        "adv"
+                    ],
+                    [
+                        "재활",
+                        "reh"
+                    ],
+                    [
+                        "기타치료",
+                        "etc"
+                    ],
+                    [
+                        "일반심사형",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "prod"
+                    ],
+                    [
+                        "기본계약및연계",
+                        "link"
+                    ],
+                    [
+                        "40세 남",
+                        "m40"
+                    ],
+                    [
+                        "40세 여",
+                        "f40"
+                    ],
+                    [
+                        "50세 남",
+                        "m50"
+                    ],
+                    [
+                        "50세 여",
+                        "f50"
+                    ],
+                    [
+                        "간편심사형",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "eprod"
+                    ],
+                    [
+                        "40세 남",
+                        "em40"
+                    ],
+                    [
+                        "40세 여",
+                        "ef40"
+                    ],
+                    [
+                        "50세 남",
+                        "em50"
+                    ],
+                    [
+                        "50세 여",
+                        "ef50"
+                    ]
+                ],
+                "data": {
+                    "삼성생명": {
+                        "amt": "암통합치료 1억원",
+                        "hosp": "종합병원/23회",
+                        "scope1": "5/5/5",
+                        "scope2": "5/10/10",
+                        "scope3": "20/100",
+                        "main": "1천/2백",
+                        "horm": "1백",
+                        "seg": "1천",
+                        "icu": "-/50",
+                        "dav": "1천/2백",
+                        "adv": "3천",
+                        "reh": "2(연20회)",
+                        "etc": "로봇수술:레보아이추가",
+                        "prod": "1540건강보험/4180건강보험",
+                        "link": "주계약3백",
+                        "m40": "51,828",
+                        "f40": "46,516",
+                        "m50": "66,566",
+                        "f50": "49,067",
+                        "eprod": "1540/4180",
+                        "em40": "62,229",
+                        "ef40": "58,030",
+                        "em50": "79,385",
+                        "ef50": "60,492"
+                    },
+                    "삼성화재": {
+                        "amt": "암통합치료비1.2억원",
+                        "hosp": "종합병원/20회",
+                        "scope1": "-",
+                        "scope2": "-",
+                        "scope3": "-",
+                        "main": "1.5천/6백",
+                        "horm": "3백/60",
+                        "seg": "-",
+                        "icu": "5백/-",
+                        "dav": "1천/5백",
+                        "adv": "3천",
+                        "reh": "-",
+                        "etc": "*비급여주요치료1천",
+                        "prod": "건강보험내돈내삼1640/4170",
+                        "link": "상사1억원,납면10,간편상사5천",
+                        "m40": "90,269",
+                        "f40": "72,229",
+                        "m50": "118,404",
+                        "f50": "77,040",
+                        "eprod": "간편새로고침100세",
+                        "em40": "96,463",
+                        "ef40": "73,791",
+                        "em50": "133,382",
+                        "ef50": "80,938"
+                    },
+                    "메리츠화재": {
+                        "amt": "암통합치료비1억원",
+                        "hosp": "일반병원/20회",
+                        "scope1": "5/5/5",
+                        "scope2": "5/10/10",
+                        "scope3": "20/100",
+                        "main": "1천/2백",
+                        "horm": "-",
+                        "seg": "1천",
+                        "icu": "-/50",
+                        "dav": "1천/2백",
+                        "adv": "3천",
+                        "reh": "2(연20회)",
+                        "etc": "-",
+                        "prod": "T내Mom대로/5.10.5보장보험",
+                        "link": "상후1백,50세:간편상사1백추가",
+                        "m40": "55,380",
+                        "f40": "54,481",
+                        "m50": "75,310",
+                        "f50": "58,930",
+                        "eprod": "통합간편건강보험",
+                        "em40": "62,000",
+                        "ef40": "59,611",
+                        "em50": "82,260",
+                        "ef50": "62,870"
+                    },
+                    "KB손보": {
+                        "amt": "암통합치료1.5억원",
+                        "hosp": "종합병원/20회",
+                        "scope1": "10/5/5",
+                        "scope2": "5/5/5",
+                        "scope3": "20/10",
+                        "main": "1,500/3백",
+                        "horm": "150",
+                        "seg": "1천",
+                        "icu": "750/50",
+                        "dav": "1천/2백",
+                        "adv": "3천",
+                        "reh": "2(30회)",
+                        "etc": "-",
+                        "prod": "5.10.10플러스건강보험",
+                        "link": "상사,상후1백,납면10,간편:1백",
+                        "m40": "92,501",
+                        "f40": "63,957",
+                        "m50": "125,280",
+                        "f50": "67,999",
+                        "eprod": "3N5)슬기로운간편",
+                        "em40": "111,394",
+                        "ef40": "63,151",
+                        "em50": "150,795",
+                        "ef50": "68,620"
+                    },
+                    "동양생명": {
+                        "amt": "암통합치료비1억원",
+                        "hosp": "종합병원/16회",
+                        "scope1": "5/5/5",
+                        "scope2": "5/10/10",
+                        "scope3": "20/100",
+                        "main": "1천/2백",
+                        "horm": "-",
+                        "seg": "-",
+                        "icu": "5백(소액암1백)/50",
+                        "dav": "1천/2백",
+                        "adv": "3천",
+                        "reh": "2(연20회)",
+                        "etc": "-",
+                        "prod": "우리WON하는보장보험",
+                        "link": "주계약3백",
+                        "m40": "60,977",
+                        "f40": "48,711",
+                        "m50": "77,981",
+                        "f50": "53,112",
+                        "eprod": "우리WON하는간편",
+                        "em40": "69,237",
+                        "ef40": "56,113",
+                        "em50": "88,518",
+                        "ef50": "60,680"
+                    },
+                    "푸본현대": {
+                        "amt": "암통합치료비1억원",
+                        "hosp": "종합병원/20회",
+                        "scope1": "5/5/5",
+                        "scope2": "5/10/10",
+                        "scope3": "20/100",
+                        "main": "1천/2백",
+                        "horm": "1백",
+                        "seg": "1천",
+                        "icu": "-/50",
+                        "dav": "1천/2백",
+                        "adv": "3천",
+                        "reh": "2(연20회)",
+                        "etc": "사망보장,암진단50(5년,연1회)",
+                        "prod": "MAX종신보험세븐 하이픽암플러스",
+                        "link": "기본납면형 주계약5백",
+                        "m40": "481,354",
+                        "f40": "462,609",
+                        "m50": "531,926",
+                        "f50": "496,827",
+                        "eprod": "하이픽암플러스(간편)",
+                        "em40": "513,591",
+                        "ef40": "494,341",
+                        "em50": "567,852",
+                        "ef50": "529,889"
+                    }
+                }
+            }
+        ]
+    },
+    "간병인사용일당": {
+        "label": "간병인사용일당",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">KB라이프</th><th class=\"lt-col\">흥국생명</th><th class=\"lt-col\">NH농협생명</th><th class=\"lt-col\">현대해상</th><th class=\"lt-col\">DB손보</th><th class=\"lt-col\">한화손보</th><th class=\"lt-col\">롯데손보</th></tr></thead><tbody><tr><td class=\"lt-attr\">일반심사형 상품명</td><td>딱좋은요즘 건강보험</td><td>다사랑통합보험</td><td>NH올원더풀간병 안심요양보험</td><td>퍼펙트플러스 종합보험</td><td>건강할때가입하는청춘어람+/행복+</td><td>더건강한 한아름종합(프리미엄)</td><td>Let's smile 4060종합보험</td></tr><tr><td class=\"lt-attr\">기본계약</td><td>5백</td><td>3백</td><td>3백</td><td>상사1억원,상후1백</td><td>상해후유1백</td><td>상사1백</td><td>상사,상후1백</td></tr><tr><td class=\"lt-attr\">간병인사용-180일↓(1인/2인/3인)</td><td>15/7/7</td><td>15/6/7</td><td>20/5/7</td><td>20/5/7</td><td>15/5/7</td><td>15/6/7</td><td>15/5/7,종합5</td></tr><tr><td class=\"lt-attr\">간병인사용-181일↑</td><td>10/-/3</td><td>20/-/7</td><td>20/-/7</td><td>20/-/7</td><td>10/-/7</td><td>15/6/7</td><td>15/-/7</td></tr><tr><td class=\"lt-attr\">입원일당-1인실</td><td>5/20</td><td>10/30</td><td>-</td><td>10/20</td><td>10/20</td><td>10/20</td><td>10/20</td></tr><tr><td class=\"lt-attr\">입원일당-2~3인실</td><td>2/10</td><td>10/10</td><td>-</td><td>5/5</td><td>5/5</td><td>5/5(간편3/7)</td><td>5/5</td></tr><tr><td class=\"lt-attr\">기타</td><td>비납면형</td><td>기본형</td><td>-</td><td>2Q패스</td><td>간병패스</td><td>상해중(1-30)/질병중(1-180)1백/40</td><td>4-5인실:5/5</td></tr><tr class=\"lt-group\"><td colspan=\"8\">보험료</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>31,465</td><td>36,748</td><td>35,970</td><td>50,760</td><td>52,680</td><td>59,902</td><td>56,568</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>39,196</td><td>43,896</td><td>41,380</td><td>52,900</td><td>45,690</td><td>69,840</td><td>57,928</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>40,019</td><td>46,811</td><td>44,780</td><td>64,970</td><td>71,170</td><td>74,999</td><td>75,712</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>49,376</td><td>54,908</td><td>50,880</td><td>65,660</td><td>57,540</td><td>84,046</td><td>75,161</td></tr><tr class=\"lt-group\"><td colspan=\"8\">간편심사형(355)</td></tr><tr><td class=\"lt-attr\">상품명</td><td>딱좋은요즘건강보험(355)</td><td>다사랑3N5간편건강보험</td><td>NH올원더풀간병안심요양보험</td><td>내삶엔(3N)맞춤간편건강보험</td><td>나에게맞춘간편건강보험</td><td>한화3N5더간편건강보험(1형)</td><td>3N5간편맞춤건강보험</td></tr><tr><td class=\"lt-attr\">기타</td><td>비납면형 · 1인실3/20 · 2-3인실1/10</td><td>납면미적용</td><td>325유형(간편가입Ⅱ)</td><td>2Q패스 · 상사1억원</td><td>-</td><td>상후1백,상해중(1-30)50,상사5천</td><td>상사1백,4-5인실:3/3</td></tr><tr><td class=\"lt-attr\">40세 남</td><td>32,998</td><td>43,425</td><td>64,380</td><td>56,580</td><td>59,030</td><td>60,194</td><td>61,570</td></tr><tr><td class=\"lt-attr\">40세 여</td><td>41,693</td><td>53,475</td><td>75,890</td><td>58,960</td><td>50,750</td><td>74,050</td><td>67,014</td></tr><tr><td class=\"lt-attr\">50세 남</td><td>41,918</td><td>54,753</td><td>80,530</td><td>72,220</td><td>78,150</td><td>75,871</td><td>82,399</td></tr><tr><td class=\"lt-attr\">50세 여</td><td>52,407</td><td>66,559</td><td>88,380</td><td>73,030</td><td>61,630</td><td>90,395</td><td>86,211</td></tr></tbody></table></div>",
+        "note": "기준: 사무직(무위험직)·무해약환급형·20년납100세만기(종신)·손해보험 납면10. 입원일당은 종합/상급 기준, 연계조건 별도 표기 없으면 일반·간편 동일.",
+        "groups": [
+            {
+                "title": null,
+                "companies": [
+                    "KB라이프",
+                    "흥국생명",
+                    "NH농협생명",
+                    "현대해상",
+                    "DB손보",
+                    "한화손보",
+                    "롯데손보"
+                ],
+                "attrs": [
+                    [
+                        "일반심사형 상품명",
+                        "prod"
+                    ],
+                    [
+                        "기본계약",
+                        "base"
+                    ],
+                    [
+                        "간병인사용-180일↓(1인/2인/3인)",
+                        "d180"
+                    ],
+                    [
+                        "간병인사용-181일↑",
+                        "d181"
+                    ],
+                    [
+                        "입원일당-1인실",
+                        "room1"
+                    ],
+                    [
+                        "입원일당-2~3인실",
+                        "room23"
+                    ],
+                    [
+                        "기타",
+                        "etc"
+                    ],
+                    [
+                        "보험료",
+                        "---"
+                    ],
+                    [
+                        "40세 남",
+                        "m40"
+                    ],
+                    [
+                        "40세 여",
+                        "f40"
+                    ],
+                    [
+                        "50세 남",
+                        "m50"
+                    ],
+                    [
+                        "50세 여",
+                        "f50"
+                    ],
+                    [
+                        "간편심사형(355)",
+                        "---"
+                    ],
+                    [
+                        "상품명",
+                        "eprod"
+                    ],
+                    [
+                        "기타",
+                        "eetc"
+                    ],
+                    [
+                        "40세 남",
+                        "em40"
+                    ],
+                    [
+                        "40세 여",
+                        "ef40"
+                    ],
+                    [
+                        "50세 남",
+                        "em50"
+                    ],
+                    [
+                        "50세 여",
+                        "ef50"
+                    ]
+                ],
+                "data": {
+                    "KB라이프": {
+                        "prod": "딱좋은요즘 건강보험",
+                        "base": "5백",
+                        "d180": "15/7/7",
+                        "d181": "10/-/3",
+                        "room1": "5/20",
+                        "room23": "2/10",
+                        "etc": "비납면형",
+                        "m40": "31,465",
+                        "f40": "39,196",
+                        "m50": "40,019",
+                        "f50": "49,376",
+                        "eprod": "딱좋은요즘건강보험(355)",
+                        "eetc": "비납면형 · 1인실3/20 · 2-3인실1/10",
+                        "em40": "32,998",
+                        "ef40": "41,693",
+                        "em50": "41,918",
+                        "ef50": "52,407"
+                    },
+                    "흥국생명": {
+                        "prod": "다사랑통합보험",
+                        "base": "3백",
+                        "d180": "15/6/7",
+                        "d181": "20/-/7",
+                        "room1": "10/30",
+                        "room23": "10/10",
+                        "etc": "기본형",
+                        "m40": "36,748",
+                        "f40": "43,896",
+                        "m50": "46,811",
+                        "f50": "54,908",
+                        "eprod": "다사랑3N5간편건강보험",
+                        "eetc": "납면미적용",
+                        "em40": "43,425",
+                        "ef40": "53,475",
+                        "em50": "54,753",
+                        "ef50": "66,559"
+                    },
+                    "NH농협생명": {
+                        "prod": "NH올원더풀간병 안심요양보험",
+                        "base": "3백",
+                        "d180": "20/5/7",
+                        "d181": "20/-/7",
+                        "room1": "-",
+                        "room23": "-",
+                        "etc": "-",
+                        "m40": "35,970",
+                        "f40": "41,380",
+                        "m50": "44,780",
+                        "f50": "50,880",
+                        "eprod": "NH올원더풀간병안심요양보험",
+                        "eetc": "325유형(간편가입Ⅱ)",
+                        "em40": "64,380",
+                        "ef40": "75,890",
+                        "em50": "80,530",
+                        "ef50": "88,380"
+                    },
+                    "현대해상": {
+                        "prod": "퍼펙트플러스 종합보험",
+                        "base": "상사1억원,상후1백",
+                        "d180": "20/5/7",
+                        "d181": "20/-/7",
+                        "room1": "10/20",
+                        "room23": "5/5",
+                        "etc": "2Q패스",
+                        "m40": "50,760",
+                        "f40": "52,900",
+                        "m50": "64,970",
+                        "f50": "65,660",
+                        "eprod": "내삶엔(3N)맞춤간편건강보험",
+                        "eetc": "2Q패스 · 상사1억원",
+                        "em40": "56,580",
+                        "ef40": "58,960",
+                        "em50": "72,220",
+                        "ef50": "73,030"
+                    },
+                    "DB손보": {
+                        "prod": "건강할때가입하는청춘어람+/행복+",
+                        "base": "상해후유1백",
+                        "d180": "15/5/7",
+                        "d181": "10/-/7",
+                        "room1": "10/20",
+                        "room23": "5/5",
+                        "etc": "간병패스",
+                        "m40": "52,680",
+                        "f40": "45,690",
+                        "m50": "71,170",
+                        "f50": "57,540",
+                        "eprod": "나에게맞춘간편건강보험",
+                        "eetc": "-",
+                        "em40": "59,030",
+                        "ef40": "50,750",
+                        "em50": "78,150",
+                        "ef50": "61,630"
+                    },
+                    "한화손보": {
+                        "prod": "더건강한 한아름종합(프리미엄)",
+                        "base": "상사1백",
+                        "d180": "15/6/7",
+                        "d181": "15/6/7",
+                        "room1": "10/20",
+                        "room23": "5/5(간편3/7)",
+                        "etc": "상해중(1-30)/질병중(1-180)1백/40",
+                        "m40": "59,902",
+                        "f40": "69,840",
+                        "m50": "74,999",
+                        "f50": "84,046",
+                        "eprod": "한화3N5더간편건강보험(1형)",
+                        "eetc": "상후1백,상해중(1-30)50,상사5천",
+                        "em40": "60,194",
+                        "ef40": "74,050",
+                        "em50": "75,871",
+                        "ef50": "90,395"
+                    },
+                    "롯데손보": {
+                        "prod": "Let's smile 4060종합보험",
+                        "base": "상사,상후1백",
+                        "d180": "15/5/7,종합5",
+                        "d181": "15/-/7",
+                        "room1": "10/20",
+                        "room23": "5/5",
+                        "etc": "4-5인실:5/5",
+                        "m40": "56,568",
+                        "f40": "57,928",
+                        "m50": "75,712",
+                        "f50": "75,161",
+                        "eprod": "3N5간편맞춤건강보험",
+                        "eetc": "상사1백,4-5인실:3/3",
+                        "em40": "61,570",
+                        "ef40": "67,014",
+                        "em50": "82,399",
+                        "ef50": "86,211"
+                    }
+                }
+            }
+        ]
+    },
+    "장기요양등급담보": {
+        "label": "장기요양등급담보(시설입소/재가급여)",
+        "date": "2026-08-15",
+        "html": "<div class=\"limit-scroll\"><table class=\"limit-table limit-table-wide\"><thead><tr><th class=\"lt-attr-head\">구분</th><th class=\"lt-col\">삼성생명</th><th class=\"lt-col\">한화생명</th><th class=\"lt-col\">교보생명</th><th class=\"lt-col\">농협생명</th><th class=\"lt-col\">KB라이프</th><th class=\"lt-col\">동양생명</th><th class=\"lt-col\">흥국생명</th><th class=\"lt-col\">DB생명</th><th class=\"lt-col\">ABL생명</th></tr></thead><tbody><tr><td class=\"lt-attr\">상품명</td><td>시니어대표건강보험</td><td>H치매간병보험(일반)</td><td>더안심치매간병보험</td><td>NH올더풀 기억안심치매</td><td>골든라이프 딱좋은간병보험</td><td>우리WON하는 치매간병보험</td><td>치매담은 시니어보장</td><td>당신곁에치매 간병보험(1종)</td><td>우리WON 케어간병보험</td></tr><tr class=\"lt-group\"><td colspan=\"10\">인지등급</td></tr><tr><td class=\"lt-attr\">복지용구 60세</td><td>-</td><td>20</td><td>재가30</td><td>10</td><td>20</td><td>30</td><td>20</td><td>30</td><td>20</td></tr><tr><td class=\"lt-attr\">복지용구 70세</td><td>-</td><td>10</td><td>재가30</td><td>10</td><td>10</td><td>15</td><td>5</td><td>20</td><td>10</td></tr><tr><td class=\"lt-attr\">주야간 60세</td><td>10</td><td>20</td><td>10</td><td>50</td><td>30</td><td>50</td><td>50</td><td>60*</td><td>60</td></tr><tr><td class=\"lt-attr\">주야간 70세</td><td>10</td><td>10</td><td>10</td><td>50</td><td>10</td><td>30</td><td>10</td><td>60*</td><td>20</td></tr><tr><td class=\"lt-attr\">진단비 60세</td><td>-</td><td>1백</td><td>5백</td><td>2백</td><td>1백</td><td>1백</td><td>70</td><td>-</td><td>1백</td></tr><tr><td class=\"lt-attr\">진단비 70세</td><td>-</td><td>50</td><td>-</td><td>2백</td><td>50</td><td>-</td><td>25</td><td>-</td><td>-</td></tr><tr class=\"lt-group\"><td colspan=\"10\">경증(월)</td></tr><tr><td class=\"lt-attr\">시설급여 60세</td><td>70</td><td>100</td><td>-</td><td>20</td><td>20</td><td>50</td><td>100</td><td>70</td><td>100</td></tr><tr><td class=\"lt-attr\">시설급여 70세</td><td>70</td><td>50</td><td>-</td><td>20</td><td>10</td><td>30</td><td>50</td><td>50</td><td>50</td></tr><tr><td class=\"lt-attr\">재가급여 60세</td><td>40</td><td>복합60</td><td>방문10</td><td>20+복합70</td><td>20+복합30</td><td>50</td><td>복합80</td><td>50</td><td>80</td></tr><tr><td class=\"lt-attr\">재가급여 70세</td><td>40</td><td>복합20</td><td>방문10</td><td>10+복합70</td><td>10+복합30</td><td>30</td><td>복합10</td><td>30</td><td>40</td></tr><tr><td class=\"lt-attr\">방문요양 60세</td><td>-</td><td>-</td><td>방문재가3</td><td>30</td><td>20</td><td>30</td><td>20</td><td>30*</td><td>20</td></tr><tr><td class=\"lt-attr\">방문요양 70세</td><td>-</td><td>-</td><td>방문재가3</td><td>30</td><td>10</td><td>15</td><td>5</td><td>20</td><td>10</td></tr><tr class=\"lt-group\"><td colspan=\"10\">중증(월)</td></tr><tr><td class=\"lt-attr\">시설급여 60세</td><td>50</td><td>-</td><td>1일3</td><td>30</td><td>70</td><td>100</td><td>100</td><td>100</td><td>100</td></tr><tr><td class=\"lt-attr\">시설급여 70세</td><td>50</td><td>-</td><td>1일3</td><td>30</td><td>30</td><td>50</td><td>70</td><td>50</td><td>50</td></tr><tr><td class=\"lt-attr\">재가급여 60세</td><td>-</td><td>-</td><td>1일3</td><td>30</td><td>70</td><td>100</td><td>75</td><td>50</td><td>100</td></tr><tr><td class=\"lt-attr\">재가급여 70세</td><td>-</td><td>-</td><td>1일3</td><td>30</td><td>30</td><td>50</td><td>15</td><td>30</td><td>50</td></tr><tr><td class=\"lt-attr\">기타</td><td>주계약3백,종신만기,특약100세만기</td><td>주계약3백,70세15년납,인지진단10년납</td><td>주계약3백,종신,특약90세,70세15년납</td><td>주계약3백,1-2등급5백</td><td>주계약3백,중증치매1백</td><td>주계약3백</td><td>주계약3백,치매통원3</td><td>주계약3백,무해약환급형,*데이케어</td><td>주계약1백,일반심사형,1-5등급방문·재가합산1백한도</td></tr><tr class=\"lt-group\"><td colspan=\"10\">보험료</td></tr><tr><td class=\"lt-attr\">60세 남</td><td>92,980</td><td>47,150</td><td>93,775</td><td>83,540</td><td>82,997</td><td>97,656</td><td>98,439</td><td>86,635</td><td>181,441</td></tr><tr><td class=\"lt-attr\">60세 여</td><td>154,400</td><td>83,420</td><td>138,470</td><td>127,550</td><td>133,883</td><td>169,449</td><td>167,466</td><td>134,873</td><td>284,620</td></tr><tr><td class=\"lt-attr\">70세 남</td><td>151,550</td><td>44,695</td><td>163,200</td><td>125,160</td><td>79,730</td><td>88,238</td><td>60,746</td><td>96,207</td><td>129,890</td></tr><tr><td class=\"lt-attr\">70세 여</td><td>274,310</td><td>74,055</td><td>265,920</td><td>184,840</td><td>119,069</td><td>135,848</td><td>96,125</td><td>140,916</td><td>229,180</td></tr></tbody></table></div>",
+        "note": "기준: 월단위·만원, 무해약·20년납90세만기·생활비지원, 방문요양은 재가급여로 합산. 인지등급:1~인지지원, 경증:장기요양1~5등급, 중증:1~2등급(회사별 상이). 사업방법서·가입약관 원문 대조 필요.",
+        "groups": [
+            {
+                "title": null,
+                "companies": [
+                    "삼성생명",
+                    "한화생명",
+                    "교보생명",
+                    "농협생명",
+                    "KB라이프",
+                    "동양생명",
+                    "흥국생명",
+                    "DB생명",
+                    "ABL생명"
+                ],
+                "attrs": [
+                    [
+                        "상품명",
+                        "prod"
+                    ],
+                    [
+                        "인지등급",
+                        "---"
+                    ],
+                    [
+                        "복지용구 60세",
+                        "welf60"
+                    ],
+                    [
+                        "복지용구 70세",
+                        "welf70"
+                    ],
+                    [
+                        "주야간 60세",
+                        "day60"
+                    ],
+                    [
+                        "주야간 70세",
+                        "day70"
+                    ],
+                    [
+                        "진단비 60세",
+                        "dx60"
+                    ],
+                    [
+                        "진단비 70세",
+                        "dx70"
+                    ],
+                    [
+                        "경증(월)",
+                        "---"
+                    ],
+                    [
+                        "시설급여 60세",
+                        "fac60"
+                    ],
+                    [
+                        "시설급여 70세",
+                        "fac70"
+                    ],
+                    [
+                        "재가급여 60세",
+                        "home60"
+                    ],
+                    [
+                        "재가급여 70세",
+                        "home70"
+                    ],
+                    [
+                        "방문요양 60세",
+                        "visit60"
+                    ],
+                    [
+                        "방문요양 70세",
+                        "visit70"
+                    ],
+                    [
+                        "중증(월)",
+                        "---"
+                    ],
+                    [
+                        "시설급여 60세",
+                        "hfac60"
+                    ],
+                    [
+                        "시설급여 70세",
+                        "hfac70"
+                    ],
+                    [
+                        "재가급여 60세",
+                        "hhome60"
+                    ],
+                    [
+                        "재가급여 70세",
+                        "hhome70"
+                    ],
+                    [
+                        "기타",
+                        "etc"
+                    ],
+                    [
+                        "보험료",
+                        "---"
+                    ],
+                    [
+                        "60세 남",
+                        "m60"
+                    ],
+                    [
+                        "60세 여",
+                        "f60"
+                    ],
+                    [
+                        "70세 남",
+                        "m70"
+                    ],
+                    [
+                        "70세 여",
+                        "f70"
+                    ]
+                ],
+                "data": {
+                    "삼성생명": {
+                        "prod": "시니어대표건강보험",
+                        "welf60": "-",
+                        "welf70": "-",
+                        "day60": "10",
+                        "day70": "10",
+                        "dx60": "-",
+                        "dx70": "-",
+                        "fac60": "70",
+                        "fac70": "70",
+                        "home60": "40",
+                        "home70": "40",
+                        "visit60": "-",
+                        "visit70": "-",
+                        "hfac60": "50",
+                        "hfac70": "50",
+                        "hhome60": "-",
+                        "hhome70": "-",
+                        "etc": "주계약3백,종신만기,특약100세만기",
+                        "m60": "92,980",
+                        "f60": "154,400",
+                        "m70": "151,550",
+                        "f70": "274,310"
+                    },
+                    "한화생명": {
+                        "prod": "H치매간병보험(일반)",
+                        "welf60": "20",
+                        "welf70": "10",
+                        "day60": "20",
+                        "day70": "10",
+                        "dx60": "1백",
+                        "dx70": "50",
+                        "fac60": "100",
+                        "fac70": "50",
+                        "home60": "복합60",
+                        "home70": "복합20",
+                        "visit60": "-",
+                        "visit70": "-",
+                        "hfac60": "-",
+                        "hfac70": "-",
+                        "hhome60": "-",
+                        "hhome70": "-",
+                        "etc": "주계약3백,70세15년납,인지진단10년납",
+                        "m60": "47,150",
+                        "f60": "83,420",
+                        "m70": "44,695",
+                        "f70": "74,055"
+                    },
+                    "교보생명": {
+                        "prod": "더안심치매간병보험",
+                        "welf60": "재가30",
+                        "welf70": "재가30",
+                        "day60": "10",
+                        "day70": "10",
+                        "dx60": "5백",
+                        "dx70": "-",
+                        "fac60": "-",
+                        "fac70": "-",
+                        "home60": "방문10",
+                        "home70": "방문10",
+                        "visit60": "방문재가3",
+                        "visit70": "방문재가3",
+                        "hfac60": "1일3",
+                        "hfac70": "1일3",
+                        "hhome60": "1일3",
+                        "hhome70": "1일3",
+                        "etc": "주계약3백,종신,특약90세,70세15년납",
+                        "m60": "93,775",
+                        "f60": "138,470",
+                        "m70": "163,200",
+                        "f70": "265,920"
+                    },
+                    "농협생명": {
+                        "prod": "NH올더풀 기억안심치매",
+                        "welf60": "10",
+                        "welf70": "10",
+                        "day60": "50",
+                        "day70": "50",
+                        "dx60": "2백",
+                        "dx70": "2백",
+                        "fac60": "20",
+                        "fac70": "20",
+                        "home60": "20+복합70",
+                        "home70": "10+복합70",
+                        "visit60": "30",
+                        "visit70": "30",
+                        "hfac60": "30",
+                        "hfac70": "30",
+                        "hhome60": "30",
+                        "hhome70": "30",
+                        "etc": "주계약3백,1-2등급5백",
+                        "m60": "83,540",
+                        "f60": "127,550",
+                        "m70": "125,160",
+                        "f70": "184,840"
+                    },
+                    "KB라이프": {
+                        "prod": "골든라이프 딱좋은간병보험",
+                        "welf60": "20",
+                        "welf70": "10",
+                        "day60": "30",
+                        "day70": "10",
+                        "dx60": "1백",
+                        "dx70": "50",
+                        "fac60": "20",
+                        "fac70": "10",
+                        "home60": "20+복합30",
+                        "home70": "10+복합30",
+                        "visit60": "20",
+                        "visit70": "10",
+                        "hfac60": "70",
+                        "hfac70": "30",
+                        "hhome60": "70",
+                        "hhome70": "30",
+                        "etc": "주계약3백,중증치매1백",
+                        "m60": "82,997",
+                        "f60": "133,883",
+                        "m70": "79,730",
+                        "f70": "119,069"
+                    },
+                    "동양생명": {
+                        "prod": "우리WON하는 치매간병보험",
+                        "welf60": "30",
+                        "welf70": "15",
+                        "day60": "50",
+                        "day70": "30",
+                        "dx60": "1백",
+                        "dx70": "-",
+                        "fac60": "50",
+                        "fac70": "30",
+                        "home60": "50",
+                        "home70": "30",
+                        "visit60": "30",
+                        "visit70": "15",
+                        "hfac60": "100",
+                        "hfac70": "50",
+                        "hhome60": "100",
+                        "hhome70": "50",
+                        "etc": "주계약3백",
+                        "m60": "97,656",
+                        "f60": "169,449",
+                        "m70": "88,238",
+                        "f70": "135,848"
+                    },
+                    "흥국생명": {
+                        "prod": "치매담은 시니어보장",
+                        "welf60": "20",
+                        "welf70": "5",
+                        "day60": "50",
+                        "day70": "10",
+                        "dx60": "70",
+                        "dx70": "25",
+                        "fac60": "100",
+                        "fac70": "50",
+                        "home60": "복합80",
+                        "home70": "복합10",
+                        "visit60": "20",
+                        "visit70": "5",
+                        "hfac60": "100",
+                        "hfac70": "70",
+                        "hhome60": "75",
+                        "hhome70": "15",
+                        "etc": "주계약3백,치매통원3",
+                        "m60": "98,439",
+                        "f60": "167,466",
+                        "m70": "60,746",
+                        "f70": "96,125"
+                    },
+                    "DB생명": {
+                        "prod": "당신곁에치매 간병보험(1종)",
+                        "welf60": "30",
+                        "welf70": "20",
+                        "day60": "60*",
+                        "day70": "60*",
+                        "dx60": "-",
+                        "dx70": "-",
+                        "fac60": "70",
+                        "fac70": "50",
+                        "home60": "50",
+                        "home70": "30",
+                        "visit60": "30*",
+                        "visit70": "20",
+                        "hfac60": "100",
+                        "hfac70": "50",
+                        "hhome60": "50",
+                        "hhome70": "30",
+                        "etc": "주계약3백,무해약환급형,*데이케어",
+                        "m60": "86,635",
+                        "f60": "134,873",
+                        "m70": "96,207",
+                        "f70": "140,916"
+                    },
+                    "ABL생명": {
+                        "prod": "우리WON 케어간병보험",
+                        "welf60": "20",
+                        "welf70": "10",
+                        "day60": "60",
+                        "day70": "20",
+                        "dx60": "1백",
+                        "dx70": "-",
+                        "fac60": "100",
+                        "fac70": "50",
+                        "home60": "80",
+                        "home70": "40",
+                        "visit60": "20",
+                        "visit70": "10",
+                        "hfac60": "100",
+                        "hfac70": "50",
+                        "hhome60": "100",
+                        "hhome70": "50",
+                        "etc": "주계약1백,일반심사형,1-5등급방문·재가합산1백한도",
+                        "m60": "181,441",
+                        "f60": "284,620",
+                        "m70": "129,890",
+                        "f70": "229,180"
+                    }
+                }
+            }
+        ]
+    },
+    "치매진단비": {
+        "label": "치매진단비",
+        "date": "",
+        "html": "",
+        "note": "",
+        "groups": []
+    },
+    "고혈압진단비": {
+        "label": "고혈압진단비",
+        "date": "",
+        "html": "",
+        "note": "",
+        "groups": []
+    }
+};
+  const LIMIT_CATEGORIES = [
+    { key:"2대질환", icon:"🫀" },
+    { key:"암비급여통합치료비", icon:"🧬" },
+    { key:"암통합치료비", icon:"💰" },
+    { key:"유방암진단비", icon:"🎗️" },
+    { key:"간병인사용일당", icon:"🏥" },
+    { key:"장기요양등급담보", icon:"📋" },
+    { key:"치매진단비", icon:"🧠" },
+    { key:"고혈압진단비", icon:"💊" }
+  ];
+  const limitViewState = { key:null, view:'card', groupIdx:0, companyIdx:0 };
+
+  function renderLimitCompareMenu(){
+    const wrap = document.getElementById('limitCompareMenu');
+    if(!wrap) return;
+    wrap.innerHTML = LIMIT_CATEGORIES.map(c => {
+      const d = limitCompareData[c.key];
+      const ready = d && d.groups && d.groups.length > 0;
+      return `<button type="button" class="lb-menu-item" data-limitkey="${c.key}">
+        <span class="dm-icon">${c.icon}</span><span class="dm-label">${d ? d.label : c.key}${ready ? '' : ' <span style="color:var(--slate);font-weight:400;">(준비중)</span>'}</span><span class="dm-arrow">›</span>
+      </button>`;
+    }).join('');
+    wrap.querySelectorAll('[data-limitkey]').forEach(btn => {
+      btn.addEventListener('click', () => openLimitModal(btn.dataset.limitkey));
+    });
+  }
+
+  function limitCardHtml(group, company){
+    const rows = group.attrs.map(([label, key]) => {
+      if(key === '---') return `<div class="limit-card-section">${escapeHtml(label)}</div>`;
+      const val = (group.data[company] || {})[key];
+      return `<div class="limit-card-row"><div class="lc-label">${escapeHtml(label)}</div><div class="lc-value">${escapeHtml(String(val || '-'))}</div></div>`;
+    }).join('');
+    return `<div class="limit-card"><div class="limit-card-head">${escapeHtml(company)}</div><div class="limit-card-body">${rows}</div></div>`;
+  }
+
+  function renderLimitBody(){
+    const d = limitCompareData[limitViewState.key];
+    if(!d) return;
+    const body = document.getElementById('limitModalBody');
+    if(limitViewState.view === 'table'){
+      body.innerHTML = d.html + (d.note ? `<div class="limit-empty-note" style="margin-top:12px;">${d.note}</div>` : '');
+      return;
+    }
+    // card view
+    let chipHtml = '';
+    d.groups.forEach((g, gi) => {
+      if(g.title) chipHtml += `<span class="limit-chip-group">${escapeHtml(g.title)}</span>`;
+      g.companies.forEach((c, ci) => {
+        const active = (gi === limitViewState.groupIdx && ci === limitViewState.companyIdx) ? ' active' : '';
+        chipHtml += `<button type="button" class="limit-chip${active}" data-gi="${gi}" data-ci="${ci}">${escapeHtml(c)}</button>`;
+      });
+    });
+    const g = d.groups[limitViewState.groupIdx];
+    const company = g.companies[limitViewState.companyIdx];
+    body.innerHTML = `<div class="limit-chiprow">${chipHtml}</div>` + limitCardHtml(g, company) +
+      (d.note ? `<div class="limit-empty-note" style="margin-top:14px;">${d.note}</div>` : '');
+    body.querySelectorAll('.limit-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        limitViewState.groupIdx = parseInt(chip.dataset.gi, 10);
+        limitViewState.companyIdx = parseInt(chip.dataset.ci, 10);
+        renderLimitBody();
+      });
+    });
+  }
+
+  function openLimitModal(key){
+    const d = limitCompareData[key];
+    if(!d) return;
+    document.getElementById('limitModalName').textContent = d.label;
+    document.getElementById('limitModalDate').textContent = d.date || '자료 준비 중';
+    const toolbar = document.getElementById('limitToolbar');
+    const body = document.getElementById('limitModalBody');
+    if(d.groups && d.groups.length > 0){
+      toolbar.style.display = 'flex';
+      limitViewState.key = key; limitViewState.view = 'card'; limitViewState.groupIdx = 0; limitViewState.companyIdx = 0;
+      toolbar.querySelectorAll('.limit-viewtoggle button').forEach(b => b.classList.toggle('active', b.dataset.view === 'card'));
+      renderLimitBody();
+    } else {
+      toolbar.style.display = 'none';
+      limitViewState.key = null;
+      body.innerHTML = `<div class="limit-empty-note">아직 "${d.label}"의 회사별 한도 자료가 입력되지 않았습니다.<br><br>
+        화진님이 병명·보험사·상품명·한도(비고)를 정리해 주시면(엑셀 캡처나 표 이미지도 좋습니다) 이 표에 그대로 반영됩니다. 추측 수치는 넣지 않습니다.</div>`;
+    }
+    document.getElementById('limitModalBackdrop').classList.add('open');
+  }
+  function closeLimitModal(){ document.getElementById('limitModalBackdrop').classList.remove('open'); }
+  renderLimitCompareMenu();
+  const _lmc = document.getElementById('limitModalClose');
+  if(_lmc) _lmc.addEventListener('click', closeLimitModal);
+  const _lmb = document.getElementById('limitModalBackdrop');
+  if(_lmb) _lmb.addEventListener('click', (e) => { if(e.target.id === 'limitModalBackdrop') closeLimitModal(); });
+
+  const _lvt = document.getElementById('limitToolbar');
+  if(_lvt) _lvt.querySelectorAll('.limit-viewtoggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _lvt.querySelectorAll('.limit-viewtoggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      limitViewState.view = btn.dataset.view;
+      renderLimitBody();
+    });
+  });
+
+  function limitStandaloneHtml(){
+    const d = limitCompareData[limitViewState.key];
+    const title = d ? d.label : '';
+    const bodyHtml = document.getElementById('limitModalBody').innerHTML;
+    return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - 다온지사</title>
+      <style>
+        body{font-family:-apple-system,'Malgun Gothic',sans-serif; padding:24px; color:#16202b; background:#fff;}
+        h1{font-size:20px; margin-bottom:16px;}
+        .limit-scroll{overflow-x:auto; border:1px solid #dfe4e9; border-radius:10px; margin-bottom:16px;}
+        .limit-table{width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap;}
+        .limit-table th, .limit-table td{padding:7px 10px; border-bottom:1px solid #dfe4e9; border-right:1px solid #eef0f4;}
+        .limit-table th{text-align:center; color:#fff; font-weight:700; background:#1c2b4a;}
+        .limit-table td{text-align:center;}
+        .limit-table .lt-attr-head{text-align:left; background:#1c2b4a;}
+        .limit-table .lt-attr{text-align:left; font-weight:700; color:#1c2b4a; background:#f2f4f6; white-space:normal; min-width:110px;}
+        .limit-table tr.lt-group td{background:#EEF0FC; color:#1c2b4a; font-weight:800; text-align:left; font-size:11px;}
+        .limit-subtitle{font-size:14px; font-weight:800; color:#1c2b4a; margin:18px 0 6px;}
+        .limit-card{background:#fff; border:1px solid #dfe4e9; border-radius:14px; overflow:hidden; margin-bottom:16px;}
+        .limit-card-head{background:#1c2b4a; color:#fff; padding:14px 18px; font-size:16px; font-weight:800;}
+        .limit-card-body{padding:6px 18px 16px;}
+        .limit-card-row{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid #f0f1f5; font-size:13.5px;}
+        .limit-card-row .lc-label{color:#6b7684; font-weight:700; width:150px; flex:none;}
+        .limit-card-row .lc-value{text-align:right; flex:1;}
+        .limit-card-section{background:#EEF0FC; color:#1c2b4a; font-weight:800; font-size:11.5px; padding:8px 18px; margin:8px -18px 0;}
+        .limit-chiprow{display:none;}
+        .limit-empty-note{margin-top:14px; background:#f2f4f6; border-radius:12px; padding:16px; font-size:12.5px; color:#6b7684; line-height:1.6;}
+        @media print{ body{padding:0;} }
+      </style></head><body><h1>${title}</h1>${bodyHtml}</body></html>`;
+  }
+  const _lpo = document.getElementById('limitPopoutBtn');
+  if(_lpo) _lpo.addEventListener('click', () => {
+    const w = window.open('', '_blank');
+    if(!w) return;
+    w.document.write(limitStandaloneHtml());
+    w.document.close();
+  });
+
+  const _lpr = document.getElementById('limitPrintBtn');
+  if(_lpr) _lpr.addEventListener('click', () => {
+    const area = document.getElementById('limitPrintArea');
+    const title = limitCompareData[limitViewState.key] ? limitCompareData[limitViewState.key].label : '';
+    area.innerHTML = `<h2 style="font-size:18px; margin-bottom:14px;">${title}</h2>` + document.getElementById('limitModalBody').innerHTML;
+    document.documentElement.classList.add('me-printing');
+    document.body.classList.add('me-printing');
+    window.print();
+    setTimeout(() => {
+      document.documentElement.classList.remove('me-printing');
+      document.body.classList.remove('me-printing');
+    }, 500);
+  });
+
+  function limitLoadHtml2Canvas(){
+    return new Promise((res, rej) => {
+      if(window.html2canvas) return res();
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  const _lsv = document.getElementById('limitSaveBtn');
+  if(_lsv) _lsv.addEventListener('click', async () => {
+    _lsv.disabled = true;
+    const orig = _lsv.textContent;
+    _lsv.textContent = '저장 중...';
+    try{
+      await limitLoadHtml2Canvas();
+      const title = limitCompareData[limitViewState.key] ? limitCompareData[limitViewState.key].label : '인수한도비교';
+      const stage = document.createElement('div');
+      stage.style.cssText = 'position:fixed; left:-9999px; top:0; background:#fff; padding:24px; width:1000px;';
+      stage.innerHTML = `<h2 style="font-size:18px; margin-bottom:14px; color:#1c2b4a;">${title}</h2>` + document.getElementById('limitModalBody').innerHTML;
+      document.body.appendChild(stage);
+      const canvas = await window.html2canvas(stage, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+      document.body.removeChild(stage);
+      const a = document.createElement('a');
+      a.download = title + '.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    } catch(e){ console.error(e); alert('이미지 저장에 실패했습니다.'); }
+    _lsv.disabled = false;
+    _lsv.textContent = orig;
+  });
+
   // ================= 보험사별 수술비 분류표 (원본자료 이미지) =================
   const SURGERY_COMPANIES = [
     { key:"kb",       label:"KB손보",   pages:5, ext:"jpg", title:"116대 질병수술비 분류표" },
@@ -5828,12 +8039,12 @@ body.growon{ background:var(--g-navy); }
     }
     return '<div class="uw-screen-notice" style="background:#EAF2FF;color:#1B4E9B;">🔎 <b>' + cond.label + '</b> 기준 11개 생보사 종신·간편건강보험 인수 가능성입니다.</div>' +
       '<div class="uw-result-list">' + rows + '</div>' +
-      '<div class="uw-screen-foot">※ 2026년 8월 언더라이팅 자료 기준 참고용입니다. 병력 상세·가입금액·최종심사에 따라 달라질 수 있으니, 확정 답변은 보플·세일즈플러스 또는 공식 약관 기준으로 안내해주세요.</div>';
+      '<div class="uw-screen-foot">※ 2026년 8월 언더라이팅 자료 기준 참고용입니다. 병력 상세·가입금액·최종심사에 따라 달라질 수 있으니, 확정 답변은 공식 약관·최신 인수지침 기준으로 안내해주세요.</div>';
   }
   function uwRenderNoMatch(){
     var names = [];
     for(var i=0;i<UW_SCREEN_CONDITIONS.length;i++) names.push(UW_SCREEN_CONDITIONS[i].label);
-    return '<div class="uw-screen-notice">🔍 입력하신 병력만으로는 자동 조회가 어려우습니다. 질환명을 아래 목록 중 하나로 다시 입력해보세요: ' + names.join(', ') + '<br><br>목록에 없는 질환이나 정확한 판단이 필요한 경우 보플·세일즈플러스 또는 해당 보험사에 직접 확인해주세요.</div>';
+    return '<div class="uw-screen-notice">🔍 입력하신 병력만으로는 자동 조회가 어려우습니다. 질환명을 아래 목록 중 하나로 다시 입력해보세요: ' + names.join(', ') + '<br><br>목록에 없는 질환이나 정확한 판단이 필요한 경우 해당 보험사에 직접 확인해주세요.</div>';
   }
   function uwRenderNoHistory(){
     return '<div class="uw-screen-notice" style="background:#E5F5EC;color:#12805A;">✅ 특이 고지사항이 없는 것으로 확인됩니다. 대부분 보험사에서 표준체 인수가 가능할 것으로 보이나, 최종 인수는 반드시 해당 보험사 심사 결과를 따릅니다.</div>';
