@@ -4372,6 +4372,27 @@ body.growon{ background:var(--g-navy); }
   const DOC_AI_SEARCH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-doc-ai-search';
 
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // 타 도메인(raw.githubusercontent.com 등) 파일은 <a download> 속성이 브라우저에서 무시되어(다른 출처라 강제저장 불가)
+  // 클릭해도 새 탭에 열리기만 하고 저장이 안 됩니다. fetch로 파일을 받아 blob으로 강제 다운로드시킵니다.
+  window.forceDownload = async function(url, filename, evt){
+    if(evt){ evt.stopPropagation(); evt.preventDefault(); }
+    try{
+      const resp = await fetch(url);
+      if(!resp.ok) throw new Error('fetch failed');
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename || '';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+    }catch(e){
+      // 실패 시(CORS 등) 기존 방식대로 새 탭에서 열기
+      window.open(url, '_blank');
+    }
+  };
   function galleryHtml(images){
     if(!images || !images.length) return '';
     return `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:6px; margin-top:8px;">${images.map(src => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">`).join('')}</div>`;
@@ -7476,6 +7497,9 @@ const limitCompareData = {};
     box.innerHTML = bar + list.map((f, idx) => {
       const imgCount = (f.links || []).filter(l => l.type === 'image').length;
       const firstLink = (f.links && f.links[0] && f.links[0].link) || '#';
+      const extMatch = firstLink.match(/\.([a-zA-Z0-9]{2,5})(?:\?|$)/);
+      const dlExt = extMatch ? '.' + extMatch[1] : '';
+      const dlName = (f.name || '') + (dlExt && !(f.name || '').toLowerCase().endsWith(dlExt.toLowerCase()) ? dlExt : '');
       const hasImages = imgCount > 0;
       return `
       <div class="sm-item" data-idx="${idx}" data-key="${key}" ${hasImages ? 'style="cursor:pointer;"' : ''}>
@@ -7485,7 +7509,7 @@ const limitCompareData = {};
         ${f.meta ? `<span class="sm-meta">${escapeHtml(f.meta)}</span>` : ''}
         ${f.author || f.date ? `<span class="sm-by">${escapeHtml([f.author, (f.date||'').slice(0,10)].filter(Boolean).join(' · '))}</span>` : ''}
         ${hasImages ? `<span class="sm-view">🔍 확인</span>` : ''}
-        <a class="sm-dl" href="${escapeHtml(firstLink)}" download="${escapeHtml(f.name||'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">다운로드</a>
+        <a class="sm-dl" href="${escapeHtml(firstLink)}" data-dlname="${escapeHtml(dlName)}" target="_blank" rel="noopener">다운로드</a>
         ${canEdit && !f.legacyDoc ? `<button type="button" class="sm-edit" data-ekey="${key}" data-eidx="${idx}" onclick="event.stopPropagation()">수정</button>
         <button type="button" class="sm-del" data-dkey="${key}" data-didx="${idx}" onclick="event.stopPropagation()">삭제</button>` : ''}
       </div>`;
@@ -7505,6 +7529,9 @@ const limitCompareData = {};
     box.querySelectorAll('.sm-del').forEach(b => {
       b.addEventListener('click', () => smDelete(b.dataset.dkey, Number(b.dataset.didx)));
     });
+    box.querySelectorAll('.sm-dl').forEach(a => {
+      a.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); forceDownload(a.getAttribute('href'), a.dataset.dlname, e); });
+    });
   }
 
   /* 영업자료실 이미지 미리보기 (카드뉴스 등). 게시물 하나에 첨부된 이미지들끼리만 넘겨봅니다. */
@@ -7520,8 +7547,11 @@ const limitCompareData = {};
     const f = list[smPreviewIdx];
     document.getElementById('smLbImg').src = f.link;
     document.getElementById('smLbCap').textContent = item.name + (list.length > 1 ? ` (${smPreviewIdx + 1}/${list.length})` : '');
+    const extMatch2 = (f.link || '').match(/\.([a-zA-Z0-9]{2,5})(?:\?|$)/);
+    const dlExt2 = extMatch2 ? '.' + extMatch2[1] : '';
+    const dlName2 = (item.name || '') + (list.length > 1 ? '_' + (smPreviewIdx + 1) : '') + (dlExt2 && !(item.name||'').toLowerCase().endsWith(dlExt2.toLowerCase()) ? dlExt2 : '');
     document.getElementById('smLbDl').href = f.link;
-    document.getElementById('smLbDl').setAttribute('download', item.name || '');
+    document.getElementById('smLbDl').onclick = (e) => forceDownload(f.link, dlName2, e);
     const showNav = list.length > 1;
     const _p = document.getElementById('smLbPrev'), _n = document.getElementById('smLbNext');
     if(_p) _p.style.display = showNav ? '' : 'none';
