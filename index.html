@@ -1561,14 +1561,20 @@ body.growon{ background:var(--g-navy); }
 
         <!-- ① 보험교육 -->
         <div class="edu-panel edu-toplevel active" id="edu-training">
-          <div class="sc-sub-grid">
-            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">신입교육과정</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">영업교육</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">온라인영업</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">AI 실무</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">외부기타교육</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-            <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('edu')"><div class="sc-sub-t">📁 관련 교육자료 보기</div><div class="sc-sub-d">자료센터 &gt; 보험교육자료 바로가기 →</div></div>
+          <div class="sc-sub-grid" id="eduTrainingTabs">
+            <div class="sc-sub-card sc-sub-link active" data-trtab="trNewbie"><div class="sc-sub-t">신입교육과정</div><div class="sc-sub-d">게시판 열기 →</div></div>
+            <div class="sc-sub-card sc-sub-link" data-trtab="trSales"><div class="sc-sub-t">영업교육</div><div class="sc-sub-d">게시판 열기 →</div></div>
+            <div class="sc-sub-card sc-sub-link" data-trtab="trOnline"><div class="sc-sub-t">온라인영업</div><div class="sc-sub-d">게시판 열기 →</div></div>
+            <div class="sc-sub-card sc-sub-link" data-trtab="trAI"><div class="sc-sub-t">AI 실무</div><div class="sc-sub-d">게시판 열기 →</div></div>
+            <div class="sc-sub-card sc-sub-link" data-trtab="trExternal"><div class="sc-sub-t">외부기타교육</div><div class="sc-sub-d">게시판 열기 →</div></div>
+            <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('edu')"><div class="sc-sub-t">📁 관련 교육자료 보기</div><div class="sc-sub-d">자료센터 &gt; 교육자료 바로가기 →</div></div>
           </div>
+
+          <div class="edu-panel active" id="tr-trNewbie"><div id="smList-trNewbie"></div></div>
+          <div class="edu-panel" id="tr-trSales"><div id="smList-trSales"></div></div>
+          <div class="edu-panel" id="tr-trOnline"><div id="smList-trOnline"></div></div>
+          <div class="edu-panel" id="tr-trAI"><div id="smList-trAI"></div></div>
+          <div class="edu-panel" id="tr-trExternal"><div id="smList-trExternal"></div></div>
         </div>
 
         <!-- ② 교육일정 및 공지 -->
@@ -6956,6 +6962,17 @@ const limitCompareData = {};
     document.getElementById('sc-ctab-' + card.dataset.ctab).classList.add('active');
   });
 
+  // ================= 교육센터 보험교육 내 박스 전환 (신입/영업/온라인/AI/외부기타) =================
+  const _eduTrainingTabs = document.getElementById('eduTrainingTabs');
+  if(_eduTrainingTabs) _eduTrainingTabs.addEventListener('click', (e) => {
+    const card = e.target.closest('.sc-sub-card[data-trtab]');
+    if(!card) return;
+    _eduTrainingTabs.querySelectorAll('.sc-sub-card[data-trtab]').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('#edu-training > .edu-panel').forEach(p => p.classList.remove('active'));
+    card.classList.add('active');
+    document.getElementById('tr-' + card.dataset.trtab).classList.add('active');
+  });
+
   // ================= 직접입력 비교표 (me-) =================
   (function initManualEntry(){
     const MEROOT = document.getElementById('sc-analysis');
@@ -7397,12 +7414,18 @@ const limitCompareData = {};
     forms:       [], // 자료센터 ⑥ 서식·업무자료
     eduSchedule: [], // 교육센터 전용: 교육일정 및 상세공지(리플렛 이미지 포함). 자료센터 통합 대상 아님.
     designProposal: [], // 영업센터 계약업무 전용: 설계안추천. 자료센터 통합 대상 아님.
+    trNewbie:  [], // 교육센터 보험교육 전용: 신입교육과정. 자료센터 통합 대상 아님.
+    trSales:   [], // 교육센터 보험교육 전용: 영업교육. 자료센터 통합 대상 아님.
+    trOnline:  [], // 교육센터 보험교육 전용: 온라인영업. 자료센터 통합 대상 아님.
+    trAI:      [], // 교육센터 보험교육 전용: AI 실무. 자료센터 통합 대상 아님.
+    trExternal: [], // 교육센터 보험교육 전용: 외부기타교육. 자료센터 통합 대상 아님.
   };
   const smFolderLabel = {
     salesData: '영업자료', counsel: '상담(화법) 및 스크립트', insurance: '보험자료',
     eduInternal: '교육자료(내부교육)', eduExternal: '교육자료(외부강사교육)', eduOther: '교육자료(기타영업교육)',
     cardimg: '카드·콘텐츠', forms: '서식·업무자료',
-    eduSchedule: '교육일정 및 상세공지', designProposal: '설계안추천'
+    eduSchedule: '교육일정 및 상세공지', designProposal: '설계안추천',
+    trNewbie: '신입교육과정', trSales: '영업교육', trOnline: '온라인영업', trAI: 'AI 실무', trExternal: '외부기타교육'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
 
