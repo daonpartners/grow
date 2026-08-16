@@ -531,6 +531,14 @@
   .doc-search-result .doc-snippet mark{background:var(--orange-tint); color:var(--orange-deep); font-weight:700; padding:0 1px;}
   .doc-search-result a{font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:6px; display:inline-block;}
   .doc-empty-note{font-size:12px; color:var(--slate); padding:14px; text-align:center; background:var(--canvas); border-radius:10px;}
+  .sc-sub-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:10px; margin-bottom:16px;}
+  .sc-sub-card{display:block; text-decoration:none; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:14px; transition:.13s;}
+  .sc-sub-t{font-size:13px; font-weight:800; color:var(--navy-2);}
+  .sc-sub-d{font-size:11px; color:var(--slate); margin-top:4px;}
+  .sc-sub-soon{opacity:.6;}
+  .sc-sub-link{cursor:pointer; border-color:var(--orange);}
+  .sc-sub-link:hover{background:#fff; box-shadow:0 3px 10px rgba(27,42,78,0.08);}
+  .sc-sub-link .sc-sub-d{color:var(--orange-deep); font-weight:700;}
   .qna-item{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:15px; margin-bottom:10px;}
   .qna-item-head{display:flex; align-items:center; gap:10px;}
   .qna-item-title{font-size:13.5px; font-weight:800; color:var(--navy-2); flex:1;}
@@ -1629,9 +1637,11 @@ body.growon{ background:var(--g-navy); }
           <div class="edu-tabs" id="salesCenterTabs" data-reveal>
             <!-- 버그 다발로 잠정 비활성화(2026-08-16). 코드는 보존, 복원 시 style="display:none" 제거 -->
             <button class="edu-tab" data-sctab="coveragecompare" style="display:none;">📊 고객보장비교(AI)</button>
-            <button class="edu-tab active" data-sctab="manualentry">📝 직접입력 비교표</button>
-            <button class="edu-tab" data-sctab="archive">🗂️ 서식·다운로드</button>
-            <button class="edu-tab" data-sctab="salesmat">🗣️ 상담·영업자료</button>
+            <button class="edu-tab active" data-sctab="counsel">💬 고객상담</button>
+            <button class="edu-tab" data-sctab="analysis">📊 보장분석 및 비교</button>
+            <button class="edu-tab" data-sctab="contract">📑 계약업무</button>
+            <button class="edu-tab" data-sctab="crm">👥 고객관리</button>
+            <button class="edu-tab" data-sctab="market">🌐 영업시장</button>
           </div>
 
           <div class="edu-panel" id="sc-coveragecompare">
@@ -1663,9 +1673,23 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
-          <div class="edu-panel active" id="sc-manualentry">
+          <!-- ① 고객상담 -->
+          <div class="edu-panel active" id="sc-counsel">
+            <div class="sc-sub-grid">
+              <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">온라인 프로세스</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+              <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">오프라인 초회상담일지</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+              <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">니즈분석 및 질문</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+              <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('counsel')"><div class="sc-sub-t">🗣️ 상담스크립트</div><div class="sc-sub-d">자료센터 &gt; 상담자료 바로가기 →</div></div>
+            </div>
+          </div>
+
+          <!-- ② 보장분석 및 비교 -->
+          <div class="edu-panel" id="sc-analysis">
+            <div class="sc-sub-grid" style="margin-bottom:16px;">
+              <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">보험증권 분석</div><div class="sc-sub-d">준비중 · AI 분석 기능은 버그 수정 후 재오픈 예정</div></div>
+            </div>
             <div class="disease-notice">
-              📝 설계사가 직접 숫자를 입력하는 고정 양식입니다. AI 자동추출 없이 100% 직접 입력이라 정확합니다.
+              📝 비교·설계표 — 설계사가 직접 숫자를 입력하는 고정 양식입니다. AI 자동추출 없이 100% 직접 입력이라 정확합니다.
             </div>
 
             <div class="edu-tabs" id="meTabs" data-reveal style="margin-bottom:14px;">
@@ -1701,8 +1725,14 @@ body.growon{ background:var(--g-navy); }
             </div>
           </div>
 
-          <div class="edu-panel" id="sc-archive">
-            <div class="disease-notice">🗂️ 이 자료들은 <b>자료센터 &gt; 보험자료</b>에서도 검색됩니다. 새 서식·자료는 자료센터에서 등록해주세요.</div>
+          <!-- ③ 계약업무 -->
+          <div class="edu-panel" id="sc-contract">
+            <div class="sc-sub-grid" style="margin-bottom:16px;">
+              <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">청약 프로세스</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+              <div class="sc-sub-card sc-sub-link" onclick="showView('qna'); setTimeout(() => { const b = document.querySelector('#qnaTabs [data-qtab=&quot;underwrite&quot;]'); if(b) b.click(); }, 50);"><div class="sc-sub-t">📋 고지의무</div><div class="sc-sub-d">가이드센터 &gt; 가입·인수 가이드 바로가기 →</div></div>
+              <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">계약변경·배서</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+            </div>
+            <div class="disease-notice">🗂️ 관련 서식 — 자료들은 <b>자료센터 &gt; 보험자료</b>에서도 검색됩니다. 새 서식·자료는 자료센터에서 등록해주세요.</div>
             <div id="edu-archive">
               <div class="filter-row" id="filterRow" data-reveal>
                 <button class="filter-pill active" data-cat="전체">전체</button>
@@ -1723,6 +1753,21 @@ body.growon{ background:var(--g-navy); }
               </div>
               <div class="doc-grid" id="docGrid" data-reveal></div>
             </div>
+          </div>
+
+          <!-- ④ 고객관리 -->
+          <div class="edu-panel" id="sc-crm">
+            <div class="sc-sub-grid">
+              <div class="sc-sub-card sc-sub-link" onclick="showView('fclookup')"><div class="sc-sub-t">👤 고객관리</div><div class="sc-sub-d">내 고객 조회(FC 전용) 바로가기 →</div></div>
+              <a class="sc-sub-card" href="https://www.nps.or.kr" target="_blank" rel="noopener"><div class="sc-sub-t">🧮 연금계산기</div><div class="sc-sub-d">국민연금공단</div></a>
+              <a class="sc-sub-card" href="https://carinfo.knia.or.kr/lmxsrv/main/main.do" target="_blank" rel="noopener"><div class="sc-sub-t">🚗 자동차보험종합포털</div><div class="sc-sub-d">손해보험협회</div></a>
+              <a class="sc-sub-card" href="https://www.hira.or.kr/main.do" target="_blank" rel="noopener"><div class="sc-sub-t">🏥 건강보험심사평가원</div><div class="sc-sub-d">질병·진료 정보 조회</div></a>
+            </div>
+          </div>
+
+          <!-- ⑤ 영업시장 -->
+          <div class="edu-panel" id="sc-market">
+            <div class="disease-notice">🌐 온라인영업·소상공인영업·기업보험·행사부스영업·제휴영업 등의 시장별 자료가 준비되면 이곳에 채워집니다.</div>
           </div>
 
           <div class="edu-panel" id="sc-salesmat">
@@ -4211,6 +4256,14 @@ body.growon{ background:var(--g-navy); }
   }
   let dcAllItems = [];
   let dcActiveFilter = '전체';
+  // 다른 화면(영업센터 등)에서 자료센터로 카테고리를 지정해 바로 이동하는 헬퍼
+  window.dcGoTo = function(filterKey){
+    showView('datacenter');
+    setTimeout(() => {
+      const btn = document.querySelector('#dcFilterRow .filter-pill[data-dccat="' + filterKey + '"]');
+      if(btn) btn.click();
+    }, 50);
+  };
   function renderDataCenter(){
     dcAllItems = dcBuildList();
     dcRenderAdminBar();
@@ -6937,7 +6990,7 @@ const limitCompareData = {};
 
   // ================= 직접입력 비교표 (me-) =================
   (function initManualEntry(){
-    const MEROOT = document.getElementById('sc-manualentry');
+    const MEROOT = document.getElementById('sc-analysis');
     if(!MEROOT) return;
 
     let meState = {
