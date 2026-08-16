@@ -1742,6 +1742,27 @@ body.growon{ background:var(--g-navy); }
           <div id="mePrintArea" style="display:none;"></div>
         </section>
       </div>
+      <div class="gview" id="view-datacenter">
+<section class="panel">
+        <div class="panel-head">
+          <div><div class="panel-eyebrow">Data Center</div><h2 class="panel-title">🗂️ 자료센터</h2></div>
+        </div>
+        <div class="disease-notice">
+          🔍 필요한 보험·상담·교육자료를 한곳에서 찾아보세요. 지금은 <b>교육센터의 교육자료실</b>과 <b>영업센터의 상담·영업자료·서식·다운로드</b>에 있는 자료를 통합 검색합니다.
+          <br><span style="font-size:11.5px;">※ 보험가이드(14개 카테고리)·회사별 인수한도 비교 자료는 다음 업데이트에서 통합 예정입니다.</span>
+        </div>
+        <div class="guide-search-top">
+          <input type="text" class="faq-search guide-search-input" id="dcSearch" placeholder="🔍 자료명으로 검색 (예: 화재보험, 암, 컨설팅자료)">
+        </div>
+        <div class="filter-row" id="dcFilterRow" data-reveal>
+          <button class="filter-pill active" data-dccat="전체">전체</button>
+          <button class="filter-pill" data-dccat="salesmat">상담·영업자료</button>
+          <button class="filter-pill" data-dccat="edu">교육자료</button>
+          <button class="filter-pill" data-dccat="archive">서식·업무자료</button>
+        </div>
+        <div class="doc-grid" id="dcGrid" data-reveal></div>
+      </section>
+      </div>
       <div class="gview" id="view-qna">
 <section class="panel panel-navy" id="qna">
         <div class="panel-head">
@@ -2205,6 +2226,7 @@ body.growon{ background:var(--g-navy); }
     <div class="rail-t">주요 메뉴</div>
     <button class="gbtn" data-view="materials">🎓 교육센터</button>
     <button class="gbtn" data-view="salescenter">🧾 영업센터</button>
+    <button class="gbtn" data-view="datacenter">🗂️ 자료센터</button>
     <button class="gbtn" data-view="qna">📖 가이드센터</button>
     <a class="gbtn" href="https://openga.calsplatz.com/login" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">미래에셋금융서비스<small>(M포스트)</small></a>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
@@ -4152,6 +4174,86 @@ body.growon{ background:var(--g-navy); }
     const cat = btn.dataset.cat;
     renderDocs(cat === '전체' ? docs : docs.filter(d => d.category === cat));
   });
+
+  // ================= 자료센터 (통합 자료 검색) =================
+  // Phase 1: 교육자료실(내부/외부교육) + 상담·영업자료 5개 폴더 + 서식·다운로드(docs)를 한 화면에서 검색.
+  // 보험가이드 14개 카테고리·회사별 인수한도 비교는 n8n Data Table 기반이라 별도 통합 예정(다음 단계).
+  function dcBuildList(){
+    const list = [];
+    docs.forEach((d, idx) => {
+      list.push({
+        group: 'archive', groupLabel: '서식·업무자료',
+        name: d.title, meta: (d.category || '').replace(/\./g, ' · '),
+        date: d.date || '', count: (d.links || []).length,
+        openFn: () => openDocModal(d)
+      });
+    });
+    const smGroups = {
+      cardnews: '카드뉴스', leaflet: '리플렛', pitch: '상담화법', consulting: '컨설팅자료', industry: '업종별 제안서'
+    };
+    const eduGroups = { eduInternal: '내부교육', eduExternal: '외부교육' };
+    Object.keys(salesMaterials).forEach(key => {
+      const isEdu = !!eduGroups[key];
+      const isSm = !!smGroups[key];
+      if(!isEdu && !isSm) return;
+      (salesMaterials[key] || []).forEach((f, idx) => {
+        const hasImages = (f.links || []).some(l => l.type === 'image');
+        list.push({
+          group: isEdu ? 'edu' : 'salesmat',
+          groupLabel: isEdu ? ('교육자료(' + eduGroups[key] + ')') : ('상담·영업자료(' + smGroups[key] + ')'),
+          name: f.name, meta: f.meta || '',
+          date: (f.date || '').slice(0, 10), count: (f.links || []).length,
+          openFn: () => hasImages ? smPreviewOpen(key, idx, 0) : (f.links[0] && window.open(f.links[0].link, '_blank'))
+        });
+      });
+    });
+    list.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    return list;
+  }
+  let dcAllItems = [];
+  let dcActiveFilter = '전체';
+  function renderDataCenter(){
+    dcAllItems = dcBuildList();
+    dcApplyFilters();
+  }
+  function dcApplyFilters(){
+    const q = (document.getElementById('dcSearch') || {}).value || '';
+    const qn = q.trim().toLowerCase();
+    let items = dcAllItems;
+    if(dcActiveFilter !== '전체') items = items.filter(it => it.group === dcActiveFilter);
+    if(qn) items = items.filter(it => (it.name + ' ' + it.meta + ' ' + it.groupLabel).toLowerCase().includes(qn));
+    const grid = document.getElementById('dcGrid');
+    if(!grid) return;
+    if(!items.length){
+      grid.innerHTML = '<div class="doc-empty-note">검색 결과가 없습니다.</div>';
+      return;
+    }
+    grid.innerHTML = items.map((it, idx) => `
+      <div class="doc-card" data-dcidx="${idx}" style="cursor:pointer;">
+        <span class="doc-row-icon">📄</span>
+        <div class="doc-row-body">
+          <div class="doc-cat">${escapeHtml(it.groupLabel)}</div>
+          <div class="doc-name">${escapeHtml(it.name)}</div>
+          <div class="doc-meta">${escapeHtml([it.meta, it.date].filter(Boolean).join(' · '))}</div>
+        </div>
+        ${it.count ? `<span class="doc-row-badge">${it.count}개 자료</span>` : ''}
+      </div>`).join('');
+    grid.querySelectorAll('.doc-card').forEach(card => {
+      card.addEventListener('click', () => items[Number(card.dataset.dcidx)].openFn());
+    });
+  }
+  const _dcSearch = document.getElementById('dcSearch');
+  if(_dcSearch) _dcSearch.addEventListener('input', dcApplyFilters);
+  const _dcFilterRow = document.getElementById('dcFilterRow');
+  if(_dcFilterRow) _dcFilterRow.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-pill');
+    if(!btn) return;
+    _dcFilterRow.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    dcActiveFilter = btn.dataset.dccat;
+    dcApplyFilters();
+  });
+  // renderDataCenter()는 salesMaterials 로드 완료 후(loadSalesMaterials 내부)에 최초 호출됩니다.
 
   // ================= 강의자료요청 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, author, content, date)
@@ -7275,6 +7377,7 @@ const limitCompareData = {};
       /* sales.json 이 아직 없으면 빈 목록으로 표시 */
     }
     Object.keys(salesMaterials).forEach(renderSmFolder);
+    if(typeof renderDataCenter === 'function') renderDataCenter();
   }
 
   function renderSmFolder(key){
