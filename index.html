@@ -1751,28 +1751,10 @@ body.growon{ background:var(--g-navy); }
               <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">청약 프로세스</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
               <div class="sc-sub-card sc-sub-link" onclick="showView('qna'); setTimeout(() => { const b = document.querySelector('#qnaTabs [data-qtab=&quot;underwrite&quot;]'); if(b) b.click(); }, 50);"><div class="sc-sub-t">📋 고지의무</div><div class="sc-sub-d">가이드센터 &gt; 가입·인수 가이드 바로가기 →</div></div>
               <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">계약변경·배서</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+              <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('insurance')"><div class="sc-sub-t">🗂️ 보험자료(암·뇌심·실손 등)</div><div class="sc-sub-d">자료센터 &gt; 보험자료 바로가기 →</div></div>
             </div>
-            <div class="disease-notice">🗂️ 관련 서식 — 자료들은 <b>자료센터 &gt; 보험자료</b>에서도 검색됩니다. 새 서식·자료는 자료센터에서 등록해주세요.</div>
-            <div id="edu-archive">
-              <div class="filter-row" id="filterRow" data-reveal>
-                <button class="filter-pill active" data-cat="전체">전체</button>
-                <button class="filter-pill" data-cat="실손보험">실손보험</button>
-                <button class="filter-pill" data-cat="암">암</button>
-                <button class="filter-pill" data-cat="뇌.심">뇌·심</button>
-                <button class="filter-pill" data-cat="수술비.기타">수술비·기타</button>
-                <button class="filter-pill" data-cat="운전자.상해">운전자·상해</button>
-                <button class="filter-pill" data-cat="치아.펫.태아">치아·펫·태아</button>
-                <button class="filter-pill" data-cat="자동차">자동차</button>
-                <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상·중대재해단체</button>
-                <button class="filter-pill" data-cat="후유장해.치매.간병">후유장해·치매·간병</button>
-                <button class="filter-pill" data-cat="고지의무.보상사례">고지의무·보상사례</button>
-                <button class="filter-pill" data-cat="세일즈">세일즈</button>
-                <button class="filter-pill" data-cat="DB스크립트">DB스크립트</button>
-                <button class="filter-pill" data-cat="CEO.법인.세금">CEO·법인·세금</button>
-                <button class="filter-pill" data-cat="연금.종신">연금·종신</button>
-              </div>
-              <div class="doc-grid" id="docGrid" data-reveal></div>
-            </div>
+            <div class="disease-notice">📑 설계안추천 — 고객 상황에 맞는 설계안·제안서를 올려두는 폴더입니다.</div>
+            <div id="smList-designProposal"></div>
           </div>
 
           <!-- ④ 고객관리 -->
@@ -4235,15 +4217,8 @@ body.growon{ background:var(--g-navy); }
   function closeDocModal(){ document.getElementById('docModalBackdrop').classList.remove('open'); }
   document.getElementById('docModalClose').addEventListener('click', closeDocModal);
   document.getElementById('docModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'docModalBackdrop') closeDocModal(); });
-  renderDocs(docs);
-  document.getElementById('filterRow').addEventListener('click', (e) => {
-    const btn = e.target.closest('.filter-pill');
-    if(!btn) return;
-    document.querySelectorAll('#filterRow .filter-pill').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    const cat = btn.dataset.cat;
-    renderDocs(cat === '전체' ? docs : docs.filter(d => d.category === cat));
-  });
+  // 서식·다운로드(docGrid/filterRow) 보드는 영업센터 계약업무에서 제거되고 자료센터(보험자료)로 완전히 이관되었습니다.
+  // docs 원본은 loadSalesMaterials()의 docsToSmItems()를 통해 salesMaterials.insurance로 계속 공급됩니다.
 
   // ================= 자료센터 (통합 자료 검색) =================
   // 2026-08-16 구조개편: 상담·영업자료, 서식·다운로드(구 docs), 교육자료실이 salesMaterials 하나로 통합되었습니다.
@@ -4297,7 +4272,7 @@ body.growon{ background:var(--g-navy); }
     bar.innerHTML = `
       <div class="sm-adminbar">
         <select id="dcRegSelect" style="font-size:12px; padding:6px 8px; border-radius:8px; border:1px solid var(--line);">
-          ${Object.keys(smFolderLabel).filter(k => k !== 'eduSchedule').map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
+          ${Object.keys(smFolderLabel).filter(k => k !== 'eduSchedule' && k !== 'designProposal').map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
         </select>
         <button type="button" class="sm-newbtn" id="dcRegBtn">＋ 새 자료 등록</button>
       </div>`;
@@ -7447,12 +7422,13 @@ const limitCompareData = {};
     cardimg:     [], // ④ 카드·이미지자료 (구: 카드뉴스·리플렛)
     forms:       [], // ⑤ 각종 신청서·업무서식
     eduSchedule: [], // 교육센터 전용: 교육일정 및 상세공지(리플렛 이미지 포함). 자료센터 통합 대상 아님.
+    designProposal: [], // 영업센터 계약업무 전용: 설계안추천. 자료센터 통합 대상 아님.
   };
   const smFolderLabel = {
     counsel: '상담자료', insurance: '보험자료',
     eduInternal: '보험교육자료(내부교육)', eduExternal: '보험교육자료(외부강사교육)', eduOther: '보험교육자료(기타영업교육)',
     cardimg: '카드·이미지자료', forms: '서식·업무자료',
-    eduSchedule: '교육일정 및 상세공지'
+    eduSchedule: '교육일정 및 상세공지', designProposal: '설계안추천'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
 
