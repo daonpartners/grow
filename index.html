@@ -3901,7 +3901,7 @@ body.growon{ background:var(--g-navy); }
       const y = now.toISOString().slice(0,10);
       const existing = editing ? strategyPosts[strategyFormIdx] : null;
       const finalLink = file ? URL.createObjectURL(file) : (link || (existing ? existing.link : ''));
-      const newPost = { id: pid, title: title, content: content, link: finalLink, author: smWhoAmI(), date: y.replace(/-/g,'.') + ' 게시', sortKey: y, images: [] };
+      const newPost = { id: pid, title: title, content: content, link: finalLink, author: smWhoAmI(), date: y.replace(/-/g,'.') + ' 게시', sortKey: now.toISOString(), images: [] };
       if(editing) strategyPosts[strategyFormIdx] = newPost;
       else strategyPosts.unshift(newPost);
       strategyCloseForm();
