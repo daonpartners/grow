@@ -2105,7 +2105,6 @@ body.growon{ background:var(--g-navy); }
                 <div class="surgery-pin-desc">(가입한도나 보험료 등은 피보험자의 건강상태, 연령, 치료력 등에 의해 변경될 수 있으므로 꼭 원수사의 인수조건을 확인해야 합니다)</div>
               </div>
               <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn cb-register-btn" data-board="limit_compare" style="display:none;" onclick="limitOpenUpload('limit_compare')">＋ 게시물 등록</button>
-              <button type="button" id="limitBackupAllBtn" class="lc-upload-btn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);" onclick="limitBackupAll()">⬇ 전체 백업 다운로드</button>
             </div>
             <div class="driver-menu" id="limitCompareMenu"></div>
           </div>
@@ -5687,43 +5686,6 @@ const limitCompareData = {};
     } catch(e){ /* 목록 로딩 실패는 조용히 무시 (built-in 항목은 정상 노출) */ }
   }
   loadLimitUploadedImages();
-
-  // 화진님이 직접 올린 게시물(built-in 제외) 전체를 한 번에 백업 다운로드.
-  // staticUrl로 연결된(=기존 이미지를 그대로 참조만 한) 항목은 원본이 GitHub에 계속 남아있으므로 건너뜁니다.
-  async function limitBackupAll(){
-    const btn = document.getElementById('limitBackupAllBtn');
-    const orig = btn.textContent;
-    const targets = [];
-    Object.keys(limitCompareData).forEach(key => {
-      const d = limitCompareData[key];
-      if(!d || !d.isUploaded || !d.images) return;
-      d.images.forEach((im, i) => {
-        if(im.src && im.src.startsWith('assets/')) return; // staticUrl 참조는 원본이 이미 GitHub에 있음
-        targets.push({ label: d.label, im, idx: i, total: d.images.length });
-      });
-    });
-    if(targets.length === 0){ alert('백업할 게시물이 없습니다.'); return; }
-    if(!confirm(`화진님이 직접 등록한 게시물 ${targets.length}개 파일을 순서대로 다운로드합니다. 계속할까요?`)) return;
-    btn.disabled = true;
-    for(let i=0; i<targets.length; i++){
-      const t = targets[i];
-      btn.textContent = `백업 중... (${i+1}/${targets.length})`;
-      try{
-        const resp = await fetch(t.im.src);
-        const blob = await resp.blob();
-        const ext = t.im.mime === 'application/pdf' ? '.pdf' : (t.im.mime === 'image/jpeg' ? '.jpg' : '.png');
-        const a = document.createElement('a');
-        a.download = t.label + (t.total > 1 ? '_' + (t.idx+1) : '') + ext;
-        a.href = URL.createObjectURL(blob);
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 3000);
-      } catch(e){ console.error('백업 실패:', t.label, e); }
-      await new Promise(r => setTimeout(r, 300));
-    }
-    btn.disabled = false;
-    btn.textContent = orig;
-    alert('백업 다운로드가 끝났습니다.');
-  }
 
   // 등록 버튼은 관리자 로그인 시에만 노출(게시판 3곳 모두). 어떤 경로로 로그인하든(탭 전환·새로고침 등)
   // 확실히 반영되도록 주기적으로 동기화. 클릭 동작 자체는 버튼의 onclick 속성이라 이 로직과 무관하게 항상 작동.
