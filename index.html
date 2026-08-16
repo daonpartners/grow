@@ -2280,9 +2280,6 @@ body.growon{ background:var(--g-navy); }
 
   <div class="gcol" id="colRight">
     <div class="rail-t">그로우설계사공간</div>
-    <div style="margin-bottom:10px;">
-      <input type="text" id="railSearch" placeholder="🔍 메뉴 검색 (예: 교육, 상담, 청구)" style="width:100%; box-sizing:border-box; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit;">
-    </div>
     <button class="gbtn" data-view="fclookup">👤 내 고객 조회<small>FC 전용</small></button>
     <button class="gbtn" data-view="materials">🎓 교육센터</button>
     <button class="gbtn" data-view="salescenter">🧾 영업센터</button>
@@ -4828,35 +4825,6 @@ body.growon{ background:var(--g-navy); }
   }
   document.querySelectorAll('[data-view]').forEach(el=>{
     el.addEventListener('click',e=>{ e.preventDefault(); showView(el.dataset.view); });
-  });
-
-  // ================= 그로우설계사공간 메뉴 검색 =================
-  // 상단 메뉴 버튼 + 아래 업무링크(자동차보험/화재배상보험 등) 전체를 대상으로 검색합니다.
-  const _railSearch = document.getElementById('railSearch');
-  if(_railSearch) _railSearch.addEventListener('input', () => {
-    const q = _railSearch.value.trim().toLowerCase();
-    const col = document.getElementById('colRight');
-    if(!col) return;
-    // 상단 메뉴 버튼(gbtn)
-    col.querySelectorAll(':scope > .gbtn, :scope > a.gbtn').forEach(btn => {
-      const match = !q || btn.textContent.toLowerCase().includes(q);
-      btn.style.display = match ? '' : 'none';
-    });
-    // 업무링크 그룹(rgroup) 안의 개별 링크 + 그룹 제목
-    col.querySelectorAll('.rgroup').forEach(group => {
-      let anyMatch = false;
-      group.querySelectorAll('a').forEach(a => {
-        const match = !q || a.textContent.toLowerCase().includes(q);
-        a.style.display = match ? '' : 'none';
-        if(match) anyMatch = true;
-      });
-      group.style.display = anyMatch ? '' : 'none';
-    });
-    // 하단 즉시링크 묶음(rstack)
-    col.querySelectorAll('.rstack a').forEach(a => {
-      const match = !q || a.textContent.toLowerCase().includes(q);
-      a.style.display = match ? '' : 'none';
-    });
   });
 
   function renderGrowDaily(){
