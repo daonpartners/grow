@@ -836,6 +836,12 @@
   .limit-table.lt-annuity td{white-space:normal;}
 
   .limit-slide-img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:10px; margin-top:6px;}
+  /* 데스크톱: 장표 한 장이 화면 안에 통째로 들어오도록 높이를 맞춤. 이미지를 클릭하면 원본 크기로 확대 */
+  @media (min-width:900px){
+    .limit-slide-img{width:auto; max-width:100%; max-height:56vh; margin:6px auto 0; cursor:zoom-in;}
+    .limit-slide-img.lz-zoom{width:100%; max-width:100%; max-height:none; cursor:zoom-out;}
+  }
+  #limitModalBackdrop .modal-card{max-height:92vh;}
   .limit-pdf-box{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:48px 24px; border:1px dashed var(--line); border-radius:12px; background:var(--canvas); margin-top:6px;}
   .limit-pdf-icon{font-size:40px;}
   .limit-pdf-text{font-size:13px; color:var(--slate);}
@@ -2501,7 +2507,7 @@ body.growon{ background:var(--g-navy); }
           <div class="dz-modal-group" id="limitModalGroup">회사별 인수한도 비교</div>
           <div class="dz-modal-name" id="limitModalName"></div>
           <div class="limit-toolbar" id="limitToolbar" style="display:none;">
-            <div class="limit-slide-hint">📊 원본 장표 그대로</div>
+            <div class="limit-slide-hint">📊 원본 장표 그대로 · 이미지를 클릭하면 원본 크기로 확대됩니다</div>
             <div class="limit-actions">
               <button type="button" id="limitSaveBtn">⬇ 다운로드</button>
               <button type="button" id="limitPopoutBtn">↗ 새창에서 보기·인쇄</button>
@@ -5625,6 +5631,17 @@ const limitCompareData = {};
   if(_lmc) _lmc.addEventListener('click', closeLimitModal);
   const _lmb = document.getElementById('limitModalBackdrop');
   if(_lmb) _lmb.addEventListener('click', (e) => { if(e.target.id === 'limitModalBackdrop') closeLimitModal(); });
+  // 장표 이미지 클릭 → 화면맞춤 ↔ 원본크기 확대 토글
+  const _lmBodyEl = document.getElementById('limitModalBody');
+  if(_lmBodyEl) _lmBodyEl.addEventListener('click', (e) => {
+    const img = e.target.closest ? e.target.closest('.limit-slide-img') : null;
+    if(!img) return;
+    img.classList.toggle('lz-zoom');
+    if(img.classList.contains('lz-zoom')){
+      const page = img.closest('.limit-page') || img;
+      page.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+  });
 
   /* ===== 화진님 직접 등록: 게시판 방식 (n8n Data Table 저장, GitHub 업로드 불필요) ===== */
   const LIMIT_LIST_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-images';
