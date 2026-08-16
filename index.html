@@ -1566,10 +1566,12 @@ body.growon{ background:var(--g-navy); }
         <div class="edu-panel edu-toplevel" id="edu-materialboard">
           <div class="edu-tabs" id="eduArchiveTabs" data-reveal>
             <button class="edu-tab active" data-eatab="eduInternal">🏢 내부교육</button>
-            <button class="edu-tab" data-eatab="eduExternal">🌐 외부교육</button>
+            <button class="edu-tab" data-eatab="eduExternal">🌐 외부강사교육</button>
+            <button class="edu-tab" data-eatab="eduOther">📌 기타 영업교육</button>
           </div>
           <div class="edu-panel active" id="ea-eduInternal"><div id="smList-eduInternal"></div></div>
           <div class="edu-panel" id="ea-eduExternal"><div id="smList-eduExternal"></div></div>
+          <div class="edu-panel" id="ea-eduOther"><div id="smList-eduOther"></div></div>
         </div>
 
         <!-- 자료실 상세보기 모달 -->
@@ -1700,6 +1702,7 @@ body.growon{ background:var(--g-navy); }
           </div>
 
           <div class="edu-panel" id="sc-archive">
+            <div class="disease-notice">🗂️ 이 자료들은 <b>자료센터 &gt; 보험자료</b>에서도 검색됩니다. 새 서식·자료는 자료센터에서 등록해주세요.</div>
             <div id="edu-archive">
               <div class="filter-row" id="filterRow" data-reveal>
                 <button class="filter-pill active" data-cat="전체">전체</button>
@@ -1724,18 +1727,13 @@ body.growon{ background:var(--g-navy); }
 
           <div class="edu-panel" id="sc-salesmat">
             <div id="salesmaterials">
+              <div class="disease-notice">🗂️ 이 자료들은 이제 <b>자료센터</b>에 통합 저장됩니다. 등록·수정도 자료센터에서 하시면 됩니다.</div>
               <div class="edu-tabs" id="smTabs" data-reveal>
-                <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
-                <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
-                <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
-                <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
-                <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
+                <button class="edu-tab active" data-smtab="counsel">🗣️ 상담자료</button>
+                <button class="edu-tab" data-smtab="cardimg">🖼️ 카드·이미지자료</button>
               </div>
-              <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
-              <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
-              <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
-              <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
-              <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
+              <div class="edu-panel active" id="sm-counsel"><div class="sm-list" id="smList-counsel"></div></div>
+              <div class="edu-panel" id="sm-cardimg"><div class="sm-list" id="smList-cardimg"></div></div>
             </div>
           </div>
 
@@ -1748,7 +1746,7 @@ body.growon{ background:var(--g-navy); }
           <div><div class="panel-eyebrow">Data Center</div><h2 class="panel-title">🗂️ 자료센터</h2></div>
         </div>
         <div class="disease-notice">
-          🔍 필요한 보험·상담·교육자료를 한곳에서 찾아보세요. 지금은 <b>교육센터의 교육자료실</b>과 <b>영업센터의 상담·영업자료·서식·다운로드</b>에 있는 자료를 통합 검색합니다.
+          🔍 필요한 보험·상담·교육자료를 한곳에서 찾아보세요. 상담자료·보험자료·보험교육자료·카드/이미지자료·서식자료 원본이 모두 이곳 하나에만 저장되고, 교육센터·영업센터에서는 이 자료를 불러와서 씁니다.
           <br><span style="font-size:11.5px;">※ 보험가이드(14개 카테고리)·회사별 인수한도 비교 자료는 다음 업데이트에서 통합 예정입니다.</span>
         </div>
         <div class="guide-search-top">
@@ -1756,10 +1754,13 @@ body.growon{ background:var(--g-navy); }
         </div>
         <div class="filter-row" id="dcFilterRow" data-reveal>
           <button class="filter-pill active" data-dccat="전체">전체</button>
-          <button class="filter-pill" data-dccat="salesmat">상담·영업자료</button>
-          <button class="filter-pill" data-dccat="edu">교육자료</button>
-          <button class="filter-pill" data-dccat="archive">서식·업무자료</button>
+          <button class="filter-pill" data-dccat="counsel">상담자료</button>
+          <button class="filter-pill" data-dccat="insurance">보험자료</button>
+          <button class="filter-pill" data-dccat="edu">보험교육자료</button>
+          <button class="filter-pill" data-dccat="cardimg">카드·이미지자료</button>
+          <button class="filter-pill" data-dccat="forms">서식·업무자료</button>
         </div>
+        <div id="dcAdminBar" style="display:none; margin-bottom:10px;"></div>
         <div class="doc-grid" id="dcGrid" data-reveal></div>
       </section>
       </div>
@@ -4180,31 +4181,25 @@ body.growon{ background:var(--g-navy); }
   });
 
   // ================= 자료센터 (통합 자료 검색) =================
-  // Phase 1: 교육자료실(내부/외부교육) + 상담·영업자료 5개 폴더 + 서식·다운로드(docs)를 한 화면에서 검색.
+  // 2026-08-16 구조개편: 상담·영업자료, 서식·다운로드(구 docs), 교육자료실이 salesMaterials 하나로 통합되었습니다.
   // 보험가이드 14개 카테고리·회사별 인수한도 비교는 n8n Data Table 기반이라 별도 통합 예정(다음 단계).
+  const DC_FILTER_GROUP = {
+    counsel: 'counsel',
+    insurance: 'insurance',
+    eduInternal: 'edu', eduExternal: 'edu', eduOther: 'edu',
+    cardimg: 'cardimg',
+    forms: 'forms'
+  };
   function dcBuildList(){
     const list = [];
-    docs.forEach((d, idx) => {
-      list.push({
-        group: 'archive', groupLabel: '서식·업무자료',
-        name: d.title, meta: (d.category || '').replace(/\./g, ' · '),
-        date: d.date || '', count: (d.links || []).length,
-        openFn: () => openDocModal(d)
-      });
-    });
-    const smGroups = {
-      cardnews: '카드뉴스', leaflet: '리플렛', pitch: '상담화법', consulting: '컨설팅자료', industry: '업종별 제안서'
-    };
-    const eduGroups = { eduInternal: '내부교육', eduExternal: '외부교육' };
     Object.keys(salesMaterials).forEach(key => {
-      const isEdu = !!eduGroups[key];
-      const isSm = !!smGroups[key];
-      if(!isEdu && !isSm) return;
+      const filterGroup = DC_FILTER_GROUP[key];
+      if(!filterGroup) return;
       (salesMaterials[key] || []).forEach((f, idx) => {
         const hasImages = (f.links || []).some(l => l.type === 'image');
         list.push({
-          group: isEdu ? 'edu' : 'salesmat',
-          groupLabel: isEdu ? ('교육자료(' + eduGroups[key] + ')') : ('상담·영업자료(' + smGroups[key] + ')'),
+          group: filterGroup,
+          groupLabel: smFolderLabel[key] || key,
           name: f.name, meta: f.meta || '',
           date: (f.date || '').slice(0, 10), count: (f.links || []).length,
           openFn: () => hasImages ? smPreviewOpen(key, idx, 0) : (f.links[0] && window.open(f.links[0].link, '_blank'))
@@ -4218,7 +4213,26 @@ body.growon{ background:var(--g-navy); }
   let dcActiveFilter = '전체';
   function renderDataCenter(){
     dcAllItems = dcBuildList();
+    dcRenderAdminBar();
     dcApplyFilters();
+  }
+  function dcRenderAdminBar(){
+    const bar = document.getElementById('dcAdminBar');
+    if(!bar) return;
+    if(typeof smCanEdit !== 'function' || !smCanEdit()){ bar.style.display = 'none'; bar.innerHTML = ''; return; }
+    bar.style.display = '';
+    bar.innerHTML = `
+      <div class="sm-adminbar">
+        <select id="dcRegSelect" style="font-size:12px; padding:6px 8px; border-radius:8px; border:1px solid var(--line);">
+          ${Object.keys(smFolderLabel).map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
+        </select>
+        <button type="button" class="sm-newbtn" id="dcRegBtn">＋ 새 자료 등록</button>
+      </div>`;
+    const btn = document.getElementById('dcRegBtn');
+    if(btn) btn.addEventListener('click', () => {
+      const key = document.getElementById('dcRegSelect').value;
+      smOpenForm(key, null);
+    });
   }
   function dcApplyFilters(){
     const q = (document.getElementById('dcSearch') || {}).value || '';
@@ -7350,19 +7364,20 @@ const limitCompareData = {};
   const SALES_JSON    = 'sales/sales.json';
   const SALES_MAX_MB  = 25;
 
+  /* 자료센터 5개 카테고리 (2026-08-16 구조개편). 예전 폴더는 호환을 위해 loadSalesMaterials에서 자동 매핑됩니다. */
   const salesMaterials = {
-    cardnews:   [], // 이미지, 압축파일
-    leaflet:    [], // pdf파일, 이미지
-    pitch:      [], // 상담화법
-    consulting: [], // 컨설팅자료
-    industry:   [], // 업종별 제안서
-    eduInternal: [], // 교육자료실(내부교육)
-    eduExternal: [], // 교육자료실(외부교육)
+    counsel:     [], // ① 상담자료 (구: 상담화법·컨설팅자료·업종별제안서)
+    insurance:   [], // ② 보험자료 (구: 서식·다운로드 10건 포함)
+    eduInternal: [], // ③ 보험교육자료 - 내부교육
+    eduExternal: [], // ③ 보험교육자료 - 외부강사교육
+    eduOther:    [], // ③ 보험교육자료 - 기타 영업교육
+    cardimg:     [], // ④ 카드·이미지자료 (구: 카드뉴스·리플렛)
+    forms:       [], // ⑤ 각종 신청서·업무서식
   };
   const smFolderLabel = {
-    cardnews: '카드뉴스', leaflet: '리플렛', pitch: '상담화법',
-    consulting: '컨설팅자료', industry: '업종별 제안서',
-    eduInternal: '교육자료실(내부교육)', eduExternal: '교육자료실(외부교육)'
+    counsel: '상담자료', insurance: '보험자료',
+    eduInternal: '보험교육자료(내부교육)', eduExternal: '보험교육자료(외부강사교육)', eduOther: '보험교육자료(기타영업교육)',
+    cardimg: '카드·이미지자료', forms: '서식·업무자료'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
 
@@ -7380,6 +7395,26 @@ const limitCompareData = {};
     return sessionStorage.getItem('growName') || sessionStorage.getItem('growLabel') || '관리자';
   }
 
+  /* 기존(구조개편 이전) 폴더 키 → 새 자료센터 5개 카테고리 자동 매핑. 원본 게시물은 그대로 보존됩니다. */
+  const SM_LEGACY_FOLDER_MAP = {
+    eduArchive: 'eduInternal',
+    cardnews: 'cardimg', leaflet: 'cardimg',
+    pitch: 'counsel', consulting: 'counsel', industry: 'counsel'
+  };
+  /* 기존 "서식·다운로드"(docs 배열, 10건)를 보험자료 폴더로 편입. 관리자 게시판(sales.json) 데이터가 아니라
+     직접 수정/삭제는 지원하지 않고 조회·다운로드만 가능합니다(legacyDoc 플래그로 구분). */
+  function docsToSmItems(){
+    return docs.map((d, idx) => ({
+      id: 'legacydoc-' + idx,
+      name: d.title,
+      type: (d.links && d.links[0] && /\.pdf($|\?)/i.test(d.links[0])) ? 'pdf' : 'doc',
+      meta: [(d.category || '').replace(/\./g, ' · '), d.content].filter(Boolean).join(' · '),
+      links: (d.links || []).map(l => ({ link: l, type: 'doc' })),
+      author: '', date: d.date || '',
+      legacyDoc: true
+    }));
+  }
+
   async function loadSalesMaterials(){
     try{
       const res = await fetch(SALES_JSON + '?t=' + Date.now(), { cache:'no-store' });
@@ -7388,8 +7423,7 @@ const limitCompareData = {};
       Object.keys(salesMaterials).forEach(k => { salesMaterials[k] = []; });
       const rows = Array.isArray(data) ? data : (data.items || []);
       rows.forEach(r => {
-        let key = r.folder;
-        if(key === 'eduArchive') key = 'eduInternal'; // 기존(구조개편 이전) 게시물 호환: 내부교육으로 자동 이관, 필요시 수정에서 폴더만 변경 가능
+        let key = SM_LEGACY_FOLDER_MAP[r.folder] || r.folder;
         if(!salesMaterials[key]) return;
         let links = Array.isArray(r.links) ? r.links.filter(x => x && x.link) : [];
         if(!links.length && r.link) links = [{ link: r.link, type: r.type || smTypeOf(r.name, r.mime) }];
@@ -7403,13 +7437,15 @@ const limitCompareData = {};
           date: r.date || ''
         });
       });
-      /* 최신글이 위로 */
-      Object.keys(salesMaterials).forEach(k => {
-        salesMaterials[k].sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
-      });
     }catch(e){
       /* sales.json 이 아직 없으면 빈 목록으로 표시 */
     }
+    /* 보험자료 폴더에 기존 서식·다운로드 10건을 항상 편입(관리자 등록 자료와 병합) */
+    salesMaterials.insurance = docsToSmItems().concat(salesMaterials.insurance);
+    /* 최신글이 위로 */
+    Object.keys(salesMaterials).forEach(k => {
+      salesMaterials[k].sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+    });
     Object.keys(salesMaterials).forEach(renderSmFolder);
     if(typeof renderDataCenter === 'function') renderDataCenter();
   }
@@ -7446,7 +7482,7 @@ const limitCompareData = {};
         ${f.author || f.date ? `<span class="sm-by">${escapeHtml([f.author, (f.date||'').slice(0,10)].filter(Boolean).join(' · '))}</span>` : ''}
         ${hasImages ? `<span class="sm-view">🔍 확인</span>` : ''}
         <a class="sm-dl" href="${escapeHtml(firstLink)}" download="${escapeHtml(f.name||'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">다운로드</a>
-        ${canEdit ? `<button type="button" class="sm-edit" data-ekey="${key}" data-eidx="${idx}" onclick="event.stopPropagation()">수정</button>
+        ${canEdit && !f.legacyDoc ? `<button type="button" class="sm-edit" data-ekey="${key}" data-eidx="${idx}" onclick="event.stopPropagation()">수정</button>
         <button type="button" class="sm-del" data-dkey="${key}" data-didx="${idx}" onclick="event.stopPropagation()">삭제</button>` : ''}
       </div>`;
     }).join('');
@@ -7636,6 +7672,7 @@ const limitCompareData = {};
       else salesMaterials[smFormKey].unshift(newItem);
       smCloseForm();
       renderSmFolder(smFormKey);
+      if(typeof renderDataCenter === 'function') renderDataCenter();
       showConfirmPopup(editing ? '수정완료' : '등록완료');
     }catch(err){
       msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류') + ' · 잠시 후 다시 시도해주세요.';
@@ -7657,6 +7694,7 @@ const limitCompareData = {};
       if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
       salesMaterials[key].splice(idx, 1);
       renderSmFolder(key);
+      if(typeof renderDataCenter === 'function') renderDataCenter();
       showConfirmPopup('삭제완료');
     }catch(err){
       alert('삭제에 실패했습니다: ' + (err.message || '네트워크 오류'));
@@ -7785,6 +7823,8 @@ const limitCompareData = {};
     if(window.reloadLectures) window.reloadLectures();
     if(typeof renderScheduleAdminBar === 'function') renderScheduleAdminBar();
     if(typeof renderLectureAdminBar === 'function') renderLectureAdminBar();
+    if(typeof renderDataCenter === 'function') renderDataCenter();
+    if(typeof Object !== 'undefined' && typeof salesMaterials !== 'undefined') Object.keys(salesMaterials).forEach(k => { if(typeof renderSmFolder === 'function') renderSmFolder(k); });
     const _dnTab = document.getElementById('dailyNewsTabBtn');
     if(_dnTab) _dnTab.style.display = isTopAdmin() ? '' : 'none';
     const _noTab = document.getElementById('noticeAdminTabBtn');
