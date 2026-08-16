@@ -1593,17 +1593,6 @@ body.growon{ background:var(--g-navy); }
           <div class="lecture-grid" id="lectureGrid" data-reveal></div>
         </div>
 
-        <div class="edu-panel edu-toplevel" id="edu-materialboard">
-          <div class="edu-tabs" id="eduArchiveTabs" data-reveal>
-            <button class="edu-tab active" data-eatab="eduInternal">🏢 내부교육</button>
-            <button class="edu-tab" data-eatab="eduExternal">🌐 외부강사교육</button>
-            <button class="edu-tab" data-eatab="eduOther">📌 기타 영업교육</button>
-          </div>
-          <div class="edu-panel active" id="ea-eduInternal"><div id="smList-eduInternal"></div></div>
-          <div class="edu-panel" id="ea-eduExternal"><div id="smList-eduExternal"></div></div>
-          <div class="edu-panel" id="ea-eduOther"><div id="smList-eduOther"></div></div>
-        </div>
-
         <!-- 자료실 상세보기 모달 -->
         <div class="modal-backdrop" id="docModalBackdrop">
           <div class="modal-card">
@@ -1789,18 +1778,6 @@ body.growon{ background:var(--g-navy); }
             <div class="disease-notice">🌐 온라인영업·소상공인영업·기업보험·행사부스영업·제휴영업 등의 시장별 자료가 준비되면 이곳에 채워집니다.</div>
           </div>
 
-          <div class="edu-panel" id="sc-salesmat">
-            <div id="salesmaterials">
-              <div class="disease-notice">🗂️ 이 자료들은 이제 <b>자료센터</b>에 통합 저장됩니다. 등록·수정도 자료센터에서 하시면 됩니다.</div>
-              <div class="edu-tabs" id="smTabs" data-reveal>
-                <button class="edu-tab active" data-smtab="counsel">🗣️ 상담자료</button>
-                <button class="edu-tab" data-smtab="cardimg">🖼️ 카드·이미지자료</button>
-              </div>
-              <div class="edu-panel active" id="sm-counsel"><div class="sm-list" id="smList-counsel"></div></div>
-              <div class="edu-panel" id="sm-cardimg"><div class="sm-list" id="smList-cardimg"></div></div>
-            </div>
-          </div>
-
           <div id="mePrintArea" style="display:none;"></div>
         </section>
       </div>
@@ -1811,8 +1788,12 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-tabs honey-tabs" id="dcTabs" data-reveal>
-          <button class="edu-tab active" data-dctab="guide">📚 보험가이드</button>
-          <button class="edu-tab" data-dctab="search">🔍 전체자료 검색</button>
+          <button class="edu-tab active" data-dctab="guide">📚 보험지식가이드</button>
+          <button class="edu-tab" data-dctab="salesData">💼 영업자료</button>
+          <button class="edu-tab" data-dctab="edu">🎓 교육자료</button>
+          <button class="edu-tab" data-dctab="counsel">🗣️ 상담(화법) 및 스크립트</button>
+          <button class="edu-tab" data-dctab="cardimg">🖼️ 카드·콘텐츠</button>
+          <button class="edu-tab" data-dctab="forms">📑 서식·업무자료</button>
         </div>
 
         <div class="edu-panel dc-toplevel active" id="dc-guide-panel">
@@ -2106,22 +2087,31 @@ body.growon{ background:var(--g-navy); }
           <div class="disease-grid" id="guideGrid"></div>
         </div>
 
-        <div class="edu-panel dc-toplevel" id="dc-search">
-          <div class="disease-notice">
-            🔍 필요한 상담·교육·카드·서식자료를 한곳에서 찾아보세요. 원본이 이곳 하나에만 저장되고, 교육센터·영업센터에서는 이 자료를 불러와서 씁니다.
+        <div class="edu-panel dc-toplevel" id="dc-salesData">
+          <div id="smList-salesData"></div>
+        </div>
+
+        <div class="edu-panel dc-toplevel" id="dc-edu">
+          <div class="edu-tabs" id="dcEduTabs" data-reveal>
+            <button class="edu-tab active" data-deatab="eduInternal">🏢 내부교육</button>
+            <button class="edu-tab" data-deatab="eduExternal">🌐 외부강사교육</button>
+            <button class="edu-tab" data-deatab="eduOther">📌 기타 영업교육</button>
           </div>
-          <div class="guide-search-top">
-            <input type="text" class="faq-search guide-search-input" id="dcSearch" placeholder="🔍 자료명으로 검색 (예: 화재보험, 암, 컨설팅자료)">
-          </div>
-          <div class="filter-row" id="dcFilterRow" data-reveal>
-            <button class="filter-pill active" data-dccat="전체">전체</button>
-            <button class="filter-pill" data-dccat="counsel">상담자료</button>
-            <button class="filter-pill" data-dccat="edu">보험교육자료</button>
-            <button class="filter-pill" data-dccat="cardimg">카드·이미지자료</button>
-            <button class="filter-pill" data-dccat="forms">서식·업무자료</button>
-          </div>
-          <div id="dcAdminBar" style="display:none; margin-bottom:10px;"></div>
-          <div class="doc-grid" id="dcGrid" data-reveal></div>
+          <div class="edu-panel active" id="dea-eduInternal"><div id="smList-eduInternal"></div></div>
+          <div class="edu-panel" id="dea-eduExternal"><div id="smList-eduExternal"></div></div>
+          <div class="edu-panel" id="dea-eduOther"><div id="smList-eduOther"></div></div>
+        </div>
+
+        <div class="edu-panel dc-toplevel" id="dc-counsel">
+          <div id="smList-counsel"></div>
+        </div>
+
+        <div class="edu-panel dc-toplevel" id="dc-cardimg">
+          <div id="smList-cardimg"></div>
+        </div>
+
+        <div class="edu-panel dc-toplevel" id="dc-forms">
+          <div id="smList-forms"></div>
         </div>
       </section>
       </div>
@@ -4230,45 +4220,18 @@ body.growon{ background:var(--g-navy); }
   // 서식·다운로드(docGrid/filterRow) 보드는 영업센터 계약업무에서 제거되고 자료센터(보험자료)로 완전히 이관되었습니다.
   // docs 원본은 loadSalesMaterials()의 docsToSmItems()를 통해 salesMaterials.insurance로 계속 공급됩니다.
 
-  // ================= 자료센터 (통합 자료 검색) =================
-  // 2026-08-16 구조개편: 상담·영업자료, 서식·다운로드(구 docs), 교육자료실이 salesMaterials 하나로 통합되었습니다.
-  // 보험가이드 14개 카테고리·회사별 인수한도 비교는 n8n Data Table 기반이라 별도 통합 예정(다음 단계).
-  const DC_FILTER_GROUP = {
-    counsel: 'counsel',
-    eduInternal: 'edu', eduExternal: 'edu', eduOther: 'edu',
-    cardimg: 'cardimg',
-    forms: 'forms'
-  };
-  function dcBuildList(){
-    const list = [];
-    Object.keys(salesMaterials).forEach(key => {
-      const filterGroup = DC_FILTER_GROUP[key];
-      if(!filterGroup) return;
-      (salesMaterials[key] || []).forEach((f, idx) => {
-        const hasImages = (f.links || []).some(l => l.type === 'image');
-        list.push({
-          group: filterGroup,
-          groupLabel: smFolderLabel[key] || key,
-          name: f.name, meta: f.meta || '',
-          date: (f.date || '').slice(0, 10), count: (f.links || []).length,
-          openFn: () => hasImages ? smPreviewOpen(key, idx, 0) : (f.links[0] && window.open(f.links[0].link, '_blank'))
-        });
-      });
-    });
-    list.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
-    return list;
-  }
-  let dcAllItems = [];
-  let dcActiveFilter = '전체';
-  // 다른 화면(영업센터 등)에서 자료센터로 카테고리를 지정해 바로 이동하는 헬퍼
+  // ================= 자료센터 =================
+  // 2026-08-16 구조개편: 보험지식가이드(구 보험가이드)/영업자료/교육자료/상담(화법)및스크립트/카드·콘텐츠/서식·업무자료
+  // 6개 폴더가 자료센터 최상위 탭으로 나열됩니다. 각 폴더(guide 제외)는 renderSmFolder()가 자동으로 그립니다.
+  // 다른 화면(영업센터·교육센터 등)에서 자료센터의 특정 폴더 탭으로 바로 이동하는 헬퍼
   window.dcGoTo = function(filterKey){
     showView('datacenter');
     setTimeout(() => {
-      const btn = document.querySelector('#dcFilterRow .filter-pill[data-dccat="' + filterKey + '"]');
+      const btn = document.querySelector('#dcTabs [data-dctab="' + filterKey + '"]');
       if(btn) btn.click();
     }, 50);
   };
-  // ================= 자료센터 탭 전환 (보험가이드 / 전체자료검색) =================
+  // ================= 자료센터 탭 전환 (보험지식가이드/영업자료/교육자료/상담스크립트/카드콘텐츠/서식업무자료) =================
   const _dcTabs = document.getElementById('dcTabs');
   if(_dcTabs) _dcTabs.addEventListener('click', (e) => {
     const btn = e.target.closest('.edu-tab');
@@ -4276,60 +4239,18 @@ body.growon{ background:var(--g-navy); }
     _dcTabs.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('#view-datacenter .dc-toplevel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById(btn.dataset.dctab === 'guide' ? 'dc-guide-panel' : 'dc-search').classList.add('active');
+    document.getElementById(btn.dataset.dctab === 'guide' ? 'dc-guide-panel' : 'dc-' + btn.dataset.dctab).classList.add('active');
   });
-
-  function renderDataCenter(){
-    dcAllItems = dcBuildList();
-    dcRenderAdminBar();
-    dcApplyFilters();
-  }
-  function dcRenderAdminBar(){
-    const bar = document.getElementById('dcAdminBar');
-    if(!bar) return;
-    if(typeof smCanEdit !== 'function' || !smCanEdit()){ bar.style.display = 'none'; bar.innerHTML = ''; return; }
-    bar.style.display = '';
-    bar.innerHTML = `
-      <div class="sm-adminbar">
-        <select id="dcRegSelect" style="font-size:12px; padding:6px 8px; border-radius:8px; border:1px solid var(--line);">
-          ${Object.keys(smFolderLabel).filter(k => !['eduSchedule','designProposal','insurance'].includes(k)).map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
-        </select>
-        <button type="button" class="sm-newbtn" id="dcRegBtn">＋ 새 자료 등록</button>
-      </div>`;
-    const btn = document.getElementById('dcRegBtn');
-    if(btn) btn.addEventListener('click', () => {
-      const key = document.getElementById('dcRegSelect').value;
-      smOpenForm(key, null);
-    });
-  }
-  function dcApplyFilters(){
-    const q = (document.getElementById('dcSearch') || {}).value || '';
-    const qn = q.trim().toLowerCase();
-    let items = dcAllItems;
-    if(dcActiveFilter !== '전체') items = items.filter(it => it.group === dcActiveFilter);
-    if(qn) items = items.filter(it => (it.name + ' ' + it.meta + ' ' + it.groupLabel).toLowerCase().includes(qn));
-    const grid = document.getElementById('dcGrid');
-    if(!grid) return;
-    if(!items.length){
-      grid.innerHTML = '<div class="doc-empty-note">검색 결과가 없습니다.</div>';
-      return;
-    }
-    grid.innerHTML = items.map((it, idx) => `
-      <div class="doc-card" data-dcidx="${idx}" style="cursor:pointer;">
-        <span class="doc-row-icon">📄</span>
-        <div class="doc-row-body">
-          <div class="doc-cat">${escapeHtml(it.groupLabel)}</div>
-          <div class="doc-name">${escapeHtml(it.name)}</div>
-          <div class="doc-meta">${escapeHtml([it.meta, it.date].filter(Boolean).join(' · '))}</div>
-        </div>
-        ${it.count ? `<span class="doc-row-badge">${it.count}개 자료</span>` : ''}
-      </div>`).join('');
-    grid.querySelectorAll('.doc-card').forEach(card => {
-      card.addEventListener('click', () => items[Number(card.dataset.dcidx)].openFn());
-    });
-  }
-  const _dcSearch = document.getElementById('dcSearch');
-  if(_dcSearch) _dcSearch.addEventListener('input', dcApplyFilters);
+  // 자료센터 내 교육자료 하위 탭 (내부교육/외부강사교육/기타영업교육)
+  const _dcEduTabs = document.getElementById('dcEduTabs');
+  if(_dcEduTabs) _dcEduTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.edu-tab');
+    if(!btn) return;
+    _dcEduTabs.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#dc-edu > .edu-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('dea-' + btn.dataset.deatab).classList.add('active');
+  });
   const _dcFilterRow = document.getElementById('dcFilterRow');
   if(_dcFilterRow) _dcFilterRow.addEventListener('click', (e) => {
     const btn = e.target.closest('.filter-pill');
@@ -7445,20 +7366,21 @@ const limitCompareData = {};
 
   /* 자료센터 5개 카테고리 (2026-08-16 구조개편). 예전 폴더는 호환을 위해 loadSalesMaterials에서 자동 매핑됩니다. */
   const salesMaterials = {
-    counsel:     [], // ① 상담자료 (구: 상담화법·컨설팅자료·업종별제안서)
-    insurance:   [], // ② 보험자료 (구: 서식·다운로드 10건 포함)
-    eduInternal: [], // ③ 보험교육자료 - 내부교육
-    eduExternal: [], // ③ 보험교육자료 - 외부강사교육
-    eduOther:    [], // ③ 보험교육자료 - 기타 영업교육
-    cardimg:     [], // ④ 카드·이미지자료 (구: 카드뉴스·리플렛)
-    forms:       [], // ⑤ 각종 신청서·업무서식
+    salesData:   [], // 자료센터 ② 영업자료 (신규)
+    counsel:     [], // 자료센터 ④ 상담(화법) 및 스크립트 (구: 상담화법·컨설팅자료·업종별제안서)
+    insurance:   [], // 구: 보험자료(서식·다운로드 10건). 자료센터 폴더 목록에서 제외됨(2026-08-16), 데이터는 보존.
+    eduInternal: [], // 자료센터 ③ 교육자료 - 내부교육
+    eduExternal: [], // 자료센터 ③ 교육자료 - 외부강사교육
+    eduOther:    [], // 자료센터 ③ 교육자료 - 기타 영업교육
+    cardimg:     [], // 자료센터 ⑤ 카드·콘텐츠 (구: 카드뉴스·리플렛)
+    forms:       [], // 자료센터 ⑥ 서식·업무자료
     eduSchedule: [], // 교육센터 전용: 교육일정 및 상세공지(리플렛 이미지 포함). 자료센터 통합 대상 아님.
     designProposal: [], // 영업센터 계약업무 전용: 설계안추천. 자료센터 통합 대상 아님.
   };
   const smFolderLabel = {
-    counsel: '상담자료', insurance: '보험자료',
-    eduInternal: '보험교육자료(내부교육)', eduExternal: '보험교육자료(외부강사교육)', eduOther: '보험교육자료(기타영업교육)',
-    cardimg: '카드·이미지자료', forms: '서식·업무자료',
+    salesData: '영업자료', counsel: '상담(화법) 및 스크립트', insurance: '보험자료',
+    eduInternal: '교육자료(내부교육)', eduExternal: '교육자료(외부강사교육)', eduOther: '교육자료(기타영업교육)',
+    cardimg: '카드·콘텐츠', forms: '서식·업무자료',
     eduSchedule: '교육일정 및 상세공지', designProposal: '설계안추천'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
