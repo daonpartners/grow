@@ -1088,6 +1088,8 @@ body.growon{ background:var(--g-navy); }
 .sm-item .sm-meta{font-size:11px; color:var(--slate);}
 .sm-item .sm-dl{background:var(--navy-2); color:#fff; font-size:12px; font-weight:700; padding:7px 13px; border-radius:7px; text-decoration:none; flex:none;}
 .sm-item .sm-dl:hover{background:var(--navy-3,#0F2740);}
+.sm-item .sm-print{background:#fff; color:var(--navy-2); border:1px solid var(--line); font-size:12px; font-weight:700; padding:6px 12px; border-radius:7px; flex:none; cursor:pointer;}
+.sm-item .sm-print:hover{border-color:var(--navy-2);}
 .sm-item .sm-view{font-size:11px; font-weight:800; color:var(--orange-deep); background:var(--canvas); padding:5px 10px; border-radius:999px; flex:none;}
 .sm-lb-dl{display:inline-block; margin-top:10px; background:var(--orange); color:#fff; font-size:13px; font-weight:800; padding:9px 20px; border-radius:8px; text-decoration:none;}
 .sm-lb-dl:hover{background:var(--orange-deep);}
@@ -2757,6 +2759,7 @@ body.growon{ background:var(--g-navy); }
     <img id="smLbImg" src="" alt="">
     <div class="alb-lb-cap" id="smLbCap"></div>
     <a id="smLbDl" href="#" download class="sm-lb-dl">⬇ 다운로드</a>
+    <button type="button" id="smLbPrint" class="sm-lb-dl" style="background:var(--navy-2); border:none; margin-left:8px; cursor:pointer;">🖨 인쇄</button>
   </div>
 </div>
 <div class="dn-modal" id="dnModal">
@@ -4398,6 +4401,34 @@ body.growon{ background:var(--g-navy); }
       // 실패 시(CORS 등) 기존 방식대로 새 탭에서 열기
       window.open(url, '_blank');
     }
+  };
+  // 게시물 인쇄: 이미지 자료는 새 창에 깔끔하게 띄워서 인쇄 버튼 제공(여러 장이면 페이지별로 인쇄).
+  // PDF 등 이미지가 아닌 자료는 브라우저 자체 뷰어로 열어 그 안의 인쇄 버튼을 쓰도록 새 창으로 엽니다.
+  window.smPrintOpen = function(links, title, evt){
+    if(evt){ evt.stopPropagation(); evt.preventDefault(); }
+    const images = (links || []).filter(l => l.type === 'image');
+    if(!images.length){
+      const first = links && links[0];
+      if(first) window.open(first.link, '_blank');
+      return;
+    }
+    const w = window.open('', '_blank');
+    if(!w) return;
+    const imgsHtml = images.map(l => `<img src="${l.link}" class="sp-img">`).join('');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(title || '인쇄')}</title>
+      <style>
+        body{font-family:'Malgun Gothic',sans-serif; padding:20px; margin:0;}
+        .sp-bar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:12px; border-bottom:2px solid #1c2b4a; margin-bottom:18px;}
+        .sp-title{font-size:18px; font-weight:800; color:#1c2b4a;}
+        .sp-btn{background:#1c2b4a; color:#fff; border:none; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:700; cursor:pointer;}
+        .sp-img{width:100%; max-width:900px; display:block; margin:0 auto 24px; page-break-after:always;}
+        .sp-img:last-child{page-break-after:auto;}
+        @media print{ .sp-bar{display:none;} body{padding:0;} }
+      </style></head><body>
+      <div class="sp-bar"><div class="sp-title">${escapeHtml(title || '')}</div><button class="sp-btn" onclick="window.print()">🖨 인쇄하기</button></div>
+      ${imgsHtml}
+      </body></html>`);
+    w.document.close();
   };
   function galleryHtml(images){
     if(!images || !images.length) return '';
@@ -7533,6 +7564,7 @@ const limitCompareData = {};
         ${f.author || f.date ? `<span class="sm-by">${escapeHtml([f.author, (f.date||'').slice(0,10)].filter(Boolean).join(' · '))}</span>` : ''}
         ${hasImages ? `<span class="sm-view">🔍 확인</span>` : ''}
         <a class="sm-dl" href="${escapeHtml(firstLink)}" data-dlname="${escapeHtml(dlName)}" target="_blank" rel="noopener">다운로드</a>
+        <button type="button" class="sm-print" data-pkey="${key}" data-pidx="${idx}" onclick="event.stopPropagation()">🖨 인쇄</button>
         ${canEdit && !f.legacyDoc ? `<button type="button" class="sm-edit" data-ekey="${key}" data-eidx="${idx}" onclick="event.stopPropagation()">수정</button>
         <button type="button" class="sm-del" data-dkey="${key}" data-didx="${idx}" onclick="event.stopPropagation()">삭제</button>` : ''}
       </div>`;
@@ -7555,6 +7587,13 @@ const limitCompareData = {};
     box.querySelectorAll('.sm-dl').forEach(a => {
       a.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); forceDownload(a.getAttribute('href'), a.dataset.dlname, e); });
     });
+    box.querySelectorAll('.sm-print').forEach(b => {
+      b.addEventListener('click', (e) => {
+        const key = b.dataset.pkey, idx = Number(b.dataset.pidx);
+        const item = (salesMaterials[key] || [])[idx];
+        if(item) smPrintOpen(item.links, item.name, e);
+      });
+    });
   }
 
   /* 영업자료실 이미지 미리보기 (카드뉴스 등). 게시물 하나에 첨부된 이미지들끼리만 넘겨봅니다. */
@@ -7575,6 +7614,8 @@ const limitCompareData = {};
     const dlName2 = (item.name || '') + (list.length > 1 ? '_' + (smPreviewIdx + 1) : '') + (dlExt2 && !(item.name||'').toLowerCase().endsWith(dlExt2.toLowerCase()) ? dlExt2 : '');
     document.getElementById('smLbDl').href = f.link;
     document.getElementById('smLbDl').onclick = (e) => forceDownload(f.link, dlName2, e);
+    const _smlPrint = document.getElementById('smLbPrint');
+    if(_smlPrint) _smlPrint.onclick = (e) => smPrintOpen(list, item.name, e);
     const showNav = list.length > 1;
     const _p = document.getElementById('smLbPrev'), _n = document.getElementById('smLbNext');
     if(_p) _p.style.display = showNav ? '' : 'none';
