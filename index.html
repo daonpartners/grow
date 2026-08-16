@@ -1546,7 +1546,6 @@ body.growon{ background:var(--g-navy); }
         <div class="edu-tabs" id="eduTabs" data-reveal>
           <button class="edu-tab active" data-tab="lecture">🎬 강의실</button>
           <button class="edu-tab" data-tab="materialboard">📁 교육자료실</button>
-          <button class="edu-tab" data-tab="salesmat">🗣️ 상담·영업자료</button>
         </div>
 
         <div class="edu-panel edu-toplevel active" id="edu-lecture">
@@ -1565,24 +1564,12 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div class="edu-panel edu-toplevel" id="edu-materialboard">
-          <div id="smList-eduArchive"></div>
-        </div>
-
-        <div class="edu-panel edu-toplevel" id="edu-salesmat">
-          <div id="salesmaterials">
-            <div class="edu-tabs" id="smTabs" data-reveal>
-              <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
-              <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
-              <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
-              <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
-              <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
-            </div>
-            <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
-            <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
-            <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
-            <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
-            <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
+          <div class="edu-tabs" id="eduArchiveTabs" data-reveal>
+            <button class="edu-tab active" data-eatab="eduInternal">🏢 내부교육</button>
+            <button class="edu-tab" data-eatab="eduExternal">🌐 외부교육</button>
           </div>
+          <div class="edu-panel active" id="ea-eduInternal"><div id="smList-eduInternal"></div></div>
+          <div class="edu-panel" id="ea-eduExternal"><div id="smList-eduExternal"></div></div>
         </div>
 
         <!-- 자료실 상세보기 모달 -->
@@ -1642,6 +1629,7 @@ body.growon{ background:var(--g-navy); }
             <button class="edu-tab" data-sctab="coveragecompare" style="display:none;">📊 고객보장비교(AI)</button>
             <button class="edu-tab active" data-sctab="manualentry">📝 직접입력 비교표</button>
             <button class="edu-tab" data-sctab="archive">🗂️ 서식·다운로드</button>
+            <button class="edu-tab" data-sctab="salesmat">🗣️ 상담·영업자료</button>
           </div>
 
           <div class="edu-panel" id="sc-coveragecompare">
@@ -1733,6 +1721,24 @@ body.growon{ background:var(--g-navy); }
               <div class="doc-grid" id="docGrid" data-reveal></div>
             </div>
           </div>
+
+          <div class="edu-panel" id="sc-salesmat">
+            <div id="salesmaterials">
+              <div class="edu-tabs" id="smTabs" data-reveal>
+                <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
+                <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
+                <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
+                <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
+                <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
+              </div>
+              <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
+              <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
+              <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
+              <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
+              <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
+            </div>
+          </div>
+
           <div id="mePrintArea" style="display:none;"></div>
         </section>
       </div>
@@ -3555,6 +3561,17 @@ body.growon{ background:var(--g-navy); }
     document.querySelectorAll('#view-materials .edu-toplevel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('edu-' + btn.dataset.tab).classList.add('active');
+  });
+
+  // ================= 교육자료실 내부/외부교육 서브탭 전환 =================
+  const _eaTabs = document.getElementById('eduArchiveTabs');
+  if(_eaTabs) _eaTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.edu-tab');
+    if(!btn) return;
+    _eaTabs.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#edu-materialboard > .edu-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('ea-' + btn.dataset.eatab).classList.add('active');
   });
 
   // ================= 영업전략 (게시판화: 관리자센터에서 등록/수정/삭제) =================
@@ -6763,7 +6780,7 @@ const limitCompareData = {};
     const btn = e.target.closest('.edu-tab');
     if(!btn) return;
     _scTabs.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('#view-salescenter .edu-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#view-salescenter > section > .edu-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('sc-' + btn.dataset.sctab).classList.add('active');
   });
@@ -7203,11 +7220,13 @@ const limitCompareData = {};
     pitch:      [], // 상담화법
     consulting: [], // 컨설팅자료
     industry:   [], // 업종별 제안서
-    eduArchive: [], // 교육센터 자료실
+    eduInternal: [], // 교육자료실(내부교육)
+    eduExternal: [], // 교육자료실(외부교육)
   };
   const smFolderLabel = {
     cardnews: '카드뉴스', leaflet: '리플렛', pitch: '상담화법',
-    consulting: '컨설팅자료', industry: '업종별 제안서', eduArchive: '교육자료실'
+    consulting: '컨설팅자료', industry: '업종별 제안서',
+    eduInternal: '교육자료실(내부교육)', eduExternal: '교육자료실(외부교육)'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
 
@@ -7233,7 +7252,8 @@ const limitCompareData = {};
       Object.keys(salesMaterials).forEach(k => { salesMaterials[k] = []; });
       const rows = Array.isArray(data) ? data : (data.items || []);
       rows.forEach(r => {
-        const key = r.folder;
+        let key = r.folder;
+        if(key === 'eduArchive') key = 'eduInternal'; // 기존(구조개편 이전) 게시물 호환: 내부교육으로 자동 이관, 필요시 수정에서 폴더만 변경 가능
         if(!salesMaterials[key]) return;
         let links = Array.isArray(r.links) ? r.links.filter(x => x && x.link) : [];
         if(!links.length && r.link) links = [{ link: r.link, type: r.type || smTypeOf(r.name, r.mime) }];
