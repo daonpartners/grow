@@ -1749,11 +1749,23 @@ body.growon{ background:var(--g-navy); }
           <div class="edu-panel" id="sc-contract">
             <div class="sc-sub-grid" style="margin-bottom:16px;">
               <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">청약 프로세스</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-              <div class="sc-sub-card sc-sub-link" onclick="showView('qna'); setTimeout(() => { const b = document.querySelector('#qnaTabs [data-qtab=&quot;underwrite&quot;]'); if(b) b.click(); }, 50);"><div class="sc-sub-t">📋 고지의무</div><div class="sc-sub-d">가이드센터 &gt; 가입·인수 가이드 바로가기 →</div></div>
+              <div class="sc-sub-card sc-sub-link" onclick="showView('qna'); setTimeout(() => { const b = document.querySelector('#qnaTabs [data-qtab=&quot;underwrite&quot;]'); if(b) b.click(); }, 50);"><div class="sc-sub-t">📋 고지의무</div><div class="sc-sub-d">업무지원센터 &gt; 가입·인수 가이드 바로가기 →</div></div>
               <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">계약변경·배서</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-              <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('insurance')"><div class="sc-sub-t">🗂️ 보험자료(암·뇌심·실손 등)</div><div class="sc-sub-d">자료센터 &gt; 보험자료 바로가기 →</div></div>
             </div>
-            <div class="disease-notice">📑 설계안추천 — 고객 상황에 맞는 설계안·제안서를 올려두는 폴더입니다.</div>
+
+            <div class="surgery-pin" id="limitComparePin">
+              <div class="surgery-pin-head">
+                <span class="surgery-pin-icon">📊</span>
+                <div>
+                  <div class="surgery-pin-title">회사별 인수한도 비교</div>
+                  <div class="surgery-pin-desc">(가입한도나 보험료 등은 피보험자의 건강상태, 연령, 치료력 등에 의해 변경될 수 있으므로 꼭 원수사의 인수조건을 확인해야 합니다)</div>
+                </div>
+                <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn cb-register-btn" data-board="limit_compare" style="display:none;" onclick="limitOpenUpload('limit_compare')">＋ 게시물 등록</button>
+              </div>
+              <div class="driver-menu" id="limitCompareMenu"></div>
+            </div>
+
+            <div class="disease-notice" style="margin-top:16px;">📑 설계안추천</div>
             <div id="smList-designProposal"></div>
           </div>
 
@@ -1792,39 +1804,13 @@ body.growon{ background:var(--g-navy); }
         <div class="panel-head">
           <div><div class="panel-eyebrow">Data Center</div><h2 class="panel-title">🗂️ 자료센터</h2></div>
         </div>
-        <div class="disease-notice">
-          🔍 필요한 보험·상담·교육자료를 한곳에서 찾아보세요. 상담자료·보험자료·보험교육자료·카드/이미지자료·서식자료 원본이 모두 이곳 하나에만 저장되고, 교육센터·영업센터에서는 이 자료를 불러와서 씁니다.
-          <br><span style="font-size:11.5px;">※ 보험가이드(14개 카테고리)·회사별 인수한도 비교 자료는 다음 업데이트에서 통합 예정입니다.</span>
-        </div>
-        <div class="guide-search-top">
-          <input type="text" class="faq-search guide-search-input" id="dcSearch" placeholder="🔍 자료명으로 검색 (예: 화재보험, 암, 컨설팅자료)">
-        </div>
-        <div class="filter-row" id="dcFilterRow" data-reveal>
-          <button class="filter-pill active" data-dccat="전체">전체</button>
-          <button class="filter-pill" data-dccat="counsel">상담자료</button>
-          <button class="filter-pill" data-dccat="insurance">보험자료</button>
-          <button class="filter-pill" data-dccat="edu">보험교육자료</button>
-          <button class="filter-pill" data-dccat="cardimg">카드·이미지자료</button>
-          <button class="filter-pill" data-dccat="forms">서식·업무자료</button>
-        </div>
-        <div id="dcAdminBar" style="display:none; margin-bottom:10px;"></div>
-        <div class="doc-grid" id="dcGrid" data-reveal></div>
-      </section>
-      </div>
-      <div class="gview" id="view-qna">
-<section class="panel panel-navy" id="qna">
-        <div class="panel-head">
-          <div><h2 class="panel-title">📖 가이드센터</h2></div>
+
+        <div class="edu-tabs honey-tabs" id="dcTabs" data-reveal>
+          <button class="edu-tab active" data-dctab="guide">📚 보험가이드</button>
+          <button class="edu-tab" data-dctab="search">🔍 전체자료 검색</button>
         </div>
 
-        <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
-          <button class="edu-tab active" data-qtab="guide">📚 보험가이드</button>
-          <button class="edu-tab" data-qtab="underwrite">🔎 가입·인수 가이드</button>
-          <button class="edu-tab" data-qtab="claim2">📮 보상·청구 가이드</button>
-          <button class="edu-tab" data-qtab="center">💬 FAQ</button>
-        </div>
-
-        <div class="edu-panel active" id="qna-guide">
+        <div class="edu-panel dc-toplevel active" id="dc-guide-panel">
           <div class="disease-notice">
             📚 카테고리를 선택하거나 검색하면 관련 담보·상품 가이드를 볼 수 있습니다.
           </div>
@@ -2115,7 +2101,39 @@ body.growon{ background:var(--g-navy); }
           <div class="disease-grid" id="guideGrid"></div>
         </div>
 
-        <div class="edu-panel" id="qna-underwrite">
+        <div class="edu-panel dc-toplevel" id="dc-search">
+          <div class="disease-notice">
+            🔍 필요한 상담·교육·카드·서식자료를 한곳에서 찾아보세요. 원본이 이곳 하나에만 저장되고, 교육센터·영업센터에서는 이 자료를 불러와서 씁니다.
+          </div>
+          <div class="guide-search-top">
+            <input type="text" class="faq-search guide-search-input" id="dcSearch" placeholder="🔍 자료명으로 검색 (예: 화재보험, 암, 컨설팅자료)">
+          </div>
+          <div class="filter-row" id="dcFilterRow" data-reveal>
+            <button class="filter-pill active" data-dccat="전체">전체</button>
+            <button class="filter-pill" data-dccat="counsel">상담자료</button>
+            <button class="filter-pill" data-dccat="edu">보험교육자료</button>
+            <button class="filter-pill" data-dccat="cardimg">카드·이미지자료</button>
+            <button class="filter-pill" data-dccat="forms">서식·업무자료</button>
+          </div>
+          <div id="dcAdminBar" style="display:none; margin-bottom:10px;"></div>
+          <div class="doc-grid" id="dcGrid" data-reveal></div>
+        </div>
+      </section>
+      </div>
+      <div class="gview" id="view-qna">
+<section class="panel panel-navy" id="qna">
+        <div class="panel-head">
+          <div><h2 class="panel-title">🛠️ 업무지원센터</h2></div>
+        </div>
+
+        <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
+          <button class="edu-tab active" data-qtab="underwrite">🔎 가입·인수 가이드</button>
+          <button class="edu-tab" data-qtab="claim2">📮 보험금청구</button>
+          <button class="edu-tab" data-qtab="center">💬 Q&amp;A</button>
+        </div>
+
+
+        <div class="edu-panel active" id="qna-underwrite">
           <div class="disease-notice">
             🔎 가입 전 확인해야 할 <b>고지·통지의무, 인수·부담보 기준, 설계 팁</b>을 한 곳에서 확인하세요.
           </div>
@@ -2172,19 +2190,6 @@ body.growon{ background:var(--g-navy); }
             <div id="uwScreenResult" style="display:none;"></div>
           </div>
           -->
-
-          <div class="surgery-pin" id="limitComparePin">
-            <div class="surgery-pin-head">
-              <span class="surgery-pin-icon">📊</span>
-              <div>
-                <div class="surgery-pin-title">회사별 인수한도 비교</div>
-                <div class="surgery-pin-desc">(가입한도나 보험료 등은 피보험자의 건강상태, 연령, 치료력 등에 의해 변경될 수 있으므로 꼭 원수사의 인수조건을 확인해야 합니다)</div>
-              </div>
-              <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn cb-register-btn" data-board="limit_compare" style="display:none;" onclick="limitOpenUpload('limit_compare')">＋ 게시물 등록</button>
-            </div>
-            <div class="driver-menu" id="limitCompareMenu"></div>
-          </div>
-
 
           <div class="guide-search-top">
             <input type="text" class="faq-search guide-search-input" id="underwriteSearch" placeholder="🔍 전체 카테고리에서 검색 (예: 고지의무, 고혈압, 부담보)">
@@ -2279,7 +2284,7 @@ body.growon{ background:var(--g-navy); }
     <button class="gbtn" data-view="materials">🎓 교육센터</button>
     <button class="gbtn" data-view="salescenter">🧾 영업센터</button>
     <button class="gbtn" data-view="datacenter">🗂️ 자료센터</button>
-    <button class="gbtn" data-view="qna">📖 가이드센터</button>
+    <button class="gbtn" data-view="qna">🛠️ 업무지원센터</button>
     <a class="gbtn" href="https://openga.calsplatz.com/login" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">미래에셋금융서비스<small>(M포스트)</small></a>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
 
@@ -4225,7 +4230,6 @@ body.growon{ background:var(--g-navy); }
   // 보험가이드 14개 카테고리·회사별 인수한도 비교는 n8n Data Table 기반이라 별도 통합 예정(다음 단계).
   const DC_FILTER_GROUP = {
     counsel: 'counsel',
-    insurance: 'insurance',
     eduInternal: 'edu', eduExternal: 'edu', eduOther: 'edu',
     cardimg: 'cardimg',
     forms: 'forms'
@@ -4259,6 +4263,17 @@ body.growon{ background:var(--g-navy); }
       if(btn) btn.click();
     }, 50);
   };
+  // ================= 자료센터 탭 전환 (보험가이드 / 전체자료검색) =================
+  const _dcTabs = document.getElementById('dcTabs');
+  if(_dcTabs) _dcTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.edu-tab');
+    if(!btn) return;
+    _dcTabs.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#view-datacenter .dc-toplevel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.dctab === 'guide' ? 'dc-guide-panel' : 'dc-search').classList.add('active');
+  });
+
   function renderDataCenter(){
     dcAllItems = dcBuildList();
     dcRenderAdminBar();
@@ -4272,7 +4287,7 @@ body.growon{ background:var(--g-navy); }
     bar.innerHTML = `
       <div class="sm-adminbar">
         <select id="dcRegSelect" style="font-size:12px; padding:6px 8px; border-radius:8px; border:1px solid var(--line);">
-          ${Object.keys(smFolderLabel).filter(k => k !== 'eduSchedule' && k !== 'designProposal').map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
+          ${Object.keys(smFolderLabel).filter(k => !['eduSchedule','designProposal','insurance'].includes(k)).map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
         </select>
         <button type="button" class="sm-newbtn" id="dcRegBtn">＋ 새 자료 등록</button>
       </div>`;
