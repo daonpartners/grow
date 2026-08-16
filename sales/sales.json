@@ -64,6 +64,21 @@
       ],
       "author": "김화진",
       "date": "2026-07-21T05:17:34.739Z"
+    },
+    {
+      "id": "1786884893530",
+      "folder": "salesData",
+      "name": "라이나손보 주택화재보험 리플렛",
+      "meta": "유리손해보장외",
+      "type": "image",
+      "links": [
+        {
+          "link": "https://raw.githubusercontent.com/daonpartners/grow/main/assets/sales/salesData/1786884898870_0_라이나손보_주택화재보험_리플렛.jpg",
+          "type": "image"
+        }
+      ],
+      "author": "김화진",
+      "date": "2026-08-16T12:54:58.869Z"
     }
   ]
 }
