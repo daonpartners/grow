@@ -1552,11 +1552,35 @@ body.growon{ background:var(--g-navy); }
           <div><div class="panel-eyebrow">Education</div><h2 class="panel-title">교육센터</h2></div>
         </div>
         <div class="edu-tabs" id="eduTabs" data-reveal>
-          <button class="edu-tab active" data-tab="lecture">🎬 강의실</button>
-          <button class="edu-tab" data-tab="materialboard">📁 교육자료실</button>
+          <button class="edu-tab active" data-tab="training">📚 보험교육</button>
+          <button class="edu-tab" data-tab="schedule">📅 교육일정 및 공지</button>
+          <button class="edu-tab" data-tab="replay">🎬 교육 다시보기</button>
         </div>
 
-        <div class="edu-panel edu-toplevel active" id="edu-lecture">
+        <!-- ① 보험교육 -->
+        <div class="edu-panel edu-toplevel active" id="edu-training">
+          <div class="sc-sub-grid">
+            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">신입교육과정</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">영업교육</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">온라인영업</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">AI 실무</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">외부기타교육</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+            <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('edu')"><div class="sc-sub-t">📁 관련 교육자료 보기</div><div class="sc-sub-d">자료센터 &gt; 보험교육자료 바로가기 →</div></div>
+          </div>
+        </div>
+
+        <!-- ② 교육일정 및 공지 -->
+        <div class="edu-panel edu-toplevel" id="edu-schedule">
+          <div class="sc-sub-grid">
+            <div class="sc-sub-card sc-sub-link" onclick="showView('notice')"><div class="sc-sub-t">📢 그로우 공지사항</div><div class="sc-sub-d">전체 공지 바로가기 →</div></div>
+            <div class="sc-sub-card sc-sub-link" onclick="showView('schedule')"><div class="sc-sub-t">🗓️ 일정달력</div><div class="sc-sub-d">그로우사업부 일정 바로가기 →</div></div>
+            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">리플렛공지</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">온라인강의 특강·세미나</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
+          </div>
+        </div>
+
+        <!-- ③ 교육 다시보기 (구: 강의실) -->
+        <div class="edu-panel edu-toplevel" id="edu-replay">
           <div id="lectureAdminBar" style="display:none; margin-bottom:12px;"></div>
           <div class="filter-row" id="lectureFilterRow" data-reveal>
             <button class="filter-pill active" data-lcat="전체">전체</button>
