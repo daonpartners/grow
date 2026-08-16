@@ -1571,12 +1571,8 @@ body.growon{ background:var(--g-navy); }
 
         <!-- ② 교육일정 및 공지 -->
         <div class="edu-panel edu-toplevel" id="edu-schedule">
-          <div class="sc-sub-grid">
-            <div class="sc-sub-card sc-sub-link" onclick="showView('notice')"><div class="sc-sub-t">📢 그로우 공지사항</div><div class="sc-sub-d">전체 공지 바로가기 →</div></div>
-            <div class="sc-sub-card sc-sub-link" onclick="showView('schedule')"><div class="sc-sub-t">🗓️ 일정달력</div><div class="sc-sub-d">그로우사업부 일정 바로가기 →</div></div>
-            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">리플렛공지</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-            <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">온라인강의 특강·세미나</div><div class="sc-sub-d">준비중 · 자료 등록 예정</div></div>
-          </div>
+          <div class="disease-notice">📅 교육 일정과 리플렛 이미지를 함께 올려서 안내하는 게시판입니다. 세부일정·특강/세미나 공지를 한곳에 통합해서 관리합니다.</div>
+          <div id="smList-eduSchedule"></div>
         </div>
 
         <!-- ③ 교육 다시보기 (구: 강의실) -->
@@ -4301,7 +4297,7 @@ body.growon{ background:var(--g-navy); }
     bar.innerHTML = `
       <div class="sm-adminbar">
         <select id="dcRegSelect" style="font-size:12px; padding:6px 8px; border-radius:8px; border:1px solid var(--line);">
-          ${Object.keys(smFolderLabel).map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
+          ${Object.keys(smFolderLabel).filter(k => k !== 'eduSchedule').map(k => `<option value="${k}">${escapeHtml(smFolderLabel[k])}</option>`).join('')}
         </select>
         <button type="button" class="sm-newbtn" id="dcRegBtn">＋ 새 자료 등록</button>
       </div>`;
@@ -7450,11 +7446,13 @@ const limitCompareData = {};
     eduOther:    [], // ③ 보험교육자료 - 기타 영업교육
     cardimg:     [], // ④ 카드·이미지자료 (구: 카드뉴스·리플렛)
     forms:       [], // ⑤ 각종 신청서·업무서식
+    eduSchedule: [], // 교육센터 전용: 교육일정 및 상세공지(리플렛 이미지 포함). 자료센터 통합 대상 아님.
   };
   const smFolderLabel = {
     counsel: '상담자료', insurance: '보험자료',
     eduInternal: '보험교육자료(내부교육)', eduExternal: '보험교육자료(외부강사교육)', eduOther: '보험교육자료(기타영업교육)',
-    cardimg: '카드·이미지자료', forms: '서식·업무자료'
+    cardimg: '카드·이미지자료', forms: '서식·업무자료',
+    eduSchedule: '교육일정 및 상세공지'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
 
