@@ -1,0 +1,84 @@
+{
+  "items": [
+    {
+      "icon": "🏥",
+      "name": "사업장컨설팅센터",
+      "summary": "일반 소상공인 및 기업 보험 전문센터",
+      "desc": "일반 소상공인 및 기업 보험 전문센터\n중대재해 대응 및 안전점검 센터\nSafe Consulting 지원",
+      "category": "사장님클리닉",
+      "showPosts": false
+    },
+    {
+      "icon": "🎪",
+      "name": "행사컸설팅센터",
+      "summary": "1:1 산모교실 및 출산박람회 등",
+      "desc": "1:1 산모교실 및 출산박람회 등\n펛페어\n지문 상담 행사 등",
+      "category": "행사컸설팅",
+      "showPosts": false
+    },
+    {
+      "icon": "💻",
+      "name": "온라인센터",
+      "summary": "카페, 블로그 등 온라인 전문채널",
+      "desc": "카페, 블로그 등 온라인 전문채널",
+      "category": "온라인영업",
+      "showPosts": false
+    },
+    {
+      "icon": "💡",
+      "name": "수익확장센터",
+      "summary": "다양한 추가 수익화",
+      "desc": "다양한 추가 수익화",
+      "category": "수익화모델",
+      "showPosts": false
+    },
+    {
+      "icon": "🤝",
+      "name": "비즈니스파트너스",
+      "summary": "그로우사업부 제휴업체",
+      "desc": "그로우사업부 제휴업체",
+      "category": "제휴업체",
+      "showPosts": true
+    }
+  ],
+  "posts": [
+    {
+      "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
+      "title": "산모교실 신청",
+      "category": "행사컸설팅",
+      "content": "7/9 15시 천안 산모교실 행사 신청 ",
+      "images": [],
+      "date": "2026.07.06 게시",
+      "replies": []
+    },
+    {
+      "id": "395e0c8a-96e6-813c-bd91-f7403ed72a72",
+      "title": "음봉프라자",
+      "category": "제휴업체",
+      "content": "업종: 음식/휴게 | 연락처: 041-531-3538 \n정육/판매/도소매   <혜택> 10% 할인",
+      "images": [],
+      "date": "2026.07.03 게시",
+      "replies": []
+    },
+    {
+      "id": "395e0c8a-96e6-816d-adca-ff26872ed607",
+      "title": "치과",
+      "category": "제휴업체",
+      "content": "업종: 병.의원/약국 | 연락처: 041-111-1111\n병원   <혜택> 비급여 10% 할인",
+      "images": [],
+      "date": "2026.07.03 게시",
+      "replies": []
+    },
+    {
+      "id": "395e0c8a-96e6-8178-8b26-c1e327c9feca",
+      "title": "법률사무소 태선",
+      "category": "제휴업체",
+      "content": "업종: 법률/금융 | 연락처: 010-3520-1386\n기업법무/ 민.형사 일반 / 건설/부동산 등",
+      "images": [],
+      "date": "2026.07.03 게시",
+      "replies": []
+    }
+  ],
+  "author": "김화진",
+  "updatedAt": "2026-08-18T10:10:51.081+09:00"
+}
