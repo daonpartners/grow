@@ -1438,11 +1438,25 @@ body.growon{ background:var(--g-navy); }
 
           <!-- 사업소개 관리 (관리자A 전용) -->
           <div class="edu-panel" id="admin-bizmgr">
-            <div class="disease-notice">🤝 5개 사업센터 설명 문구와, 자주 바뀌는 비즈니스파트너스(제휴업체) 게시물을 관리합니다.</div>
+            <div class="disease-notice">🤝 사업센터를 추가·수정하고, 자주 바뀌는 비즈니스파트너스(제휴업체) 게시물을 관리합니다.</div>
 
-            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:14px 0 8px;">사업센터 설명</div>
+            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:14px 0 8px;">사업센터 목록</div>
             <div id="bizMgrCategories"></div>
             <button type="button" class="qna-new-btn" id="bizMgrCatSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 사업센터 설명 저장</button>
+
+            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 사업센터 추가</div>
+            <div class="qna-form" style="display:block;">
+              <div class="qna-form-row">
+                <input type="text" id="bizMgrNewIcon" placeholder="아이콘(이모지 1개, 예: 🏢)" maxlength="4" style="max-width:160px;">
+                <input type="text" id="bizMgrNewName" placeholder="센터 이름 (예: 신규사업센터)">
+              </div>
+              <input type="text" id="bizMgrNewSummary" placeholder="한 줄 요약(카드에 짧게 표시됨)">
+              <textarea id="bizMgrNewDesc" placeholder="상세 설명(줄바꿈 가능, 클릭 시 팝업에 표시됨)"></textarea>
+              <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--slate); margin:4px 0 10px;">
+                <input type="checkbox" id="bizMgrNewShowPosts" style="width:auto;"> 이 센터는 게시물 목록형(비즈니스파트너스처럼 개별 항목을 등록·관리)으로 운영
+              </label>
+              <button type="button" class="qna-new-btn" id="bizMgrCatAddBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 사업센터 추가</button>
+            </div>
 
             <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">🤝 비즈니스파트너스(제휴업체)</div>
             <button type="button" class="qna-new-btn" id="bizMgrPostNewBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">＋ 제휴업체 등록</button>
@@ -7894,10 +7908,22 @@ const limitCompareData = {};
     if(catBox){
       catBox.innerHTML = bizItems.map((b, i) => `
         <div class="cm-edit" style="display:block; margin-bottom:10px;">
-          <div style="font-size:12px; font-weight:800; color:var(--navy-2); margin-bottom:6px;">${b.icon} ${escapeHtml(b.name)}</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+            <div style="font-size:12px; font-weight:800; color:var(--navy-2);">${b.icon} ${escapeHtml(b.name)}</div>
+            <button type="button" class="sm-del" data-bicatdel="${i}">🗑️ 삭제</button>
+          </div>
           <input type="text" class="cm-f-title" data-bi="${i}" data-f="summary" value="${escapeHtml(b.summary)}" placeholder="한 줄 요약">
           <textarea class="cm-f-content" data-bi="${i}" data-f="desc" placeholder="상세 설명(줄바꿈 가능)">${escapeHtml(b.desc)}</textarea>
         </div>`).join('');
+      catBox.querySelectorAll('[data-bicatdel]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const i = Number(btn.dataset.bicatdel);
+          if(!confirm('"' + bizItems[i].name + '" 사업센터를 삭제할까요? (게시물이 있다면 함께 안 보이게 됩니다)')) return;
+          bizItems.splice(i, 1);
+          await bizSaveAll(document.getElementById('bizMgrMsg'));
+          bizMgrLoad();
+        });
+      });
     }
     bizMgrRenderPosts();
   }
@@ -7962,6 +7988,25 @@ const limitCompareData = {};
       bizItems[i][f] = el.value;
     });
     bizSaveAll(document.getElementById('bizMgrMsg'), _bizMgrCatSaveBtn);
+  });
+  const _bizMgrCatAddBtn = document.getElementById('bizMgrCatAddBtn');
+  if(_bizMgrCatAddBtn) _bizMgrCatAddBtn.addEventListener('click', async () => {
+    const icon = document.getElementById('bizMgrNewIcon').value.trim() || '🏢';
+    const name = document.getElementById('bizMgrNewName').value.trim();
+    const summary = document.getElementById('bizMgrNewSummary').value.trim();
+    const desc = document.getElementById('bizMgrNewDesc').value.trim();
+    const showPosts = document.getElementById('bizMgrNewShowPosts').checked;
+    const msg = document.getElementById('bizMgrMsg');
+    if(!name || !summary || !desc){ msg.textContent = '이름·요약·상세설명을 모두 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    bizItems.push({ icon, name, summary, desc, category: name, showPosts });
+    await bizSaveAll(msg, _bizMgrCatAddBtn);
+    document.getElementById('bizMgrNewIcon').value = '';
+    document.getElementById('bizMgrNewName').value = '';
+    document.getElementById('bizMgrNewSummary').value = '';
+    document.getElementById('bizMgrNewDesc').value = '';
+    document.getElementById('bizMgrNewShowPosts').checked = false;
+    bizMgrLoad();
+    if(showPosts) msg.textContent = '사업센터가 추가되었습니다. (게시물형으로 등록하셨는데, 개별 게시물을 등록하려면 말씀해주세요 — 지금은 비즈니스파트너스 게시판만 직접 등록됩니다.)';
   });
 
   function guideMgrLoad(){
