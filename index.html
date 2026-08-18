@@ -2734,7 +2734,7 @@ body.growon{ background:var(--g-navy); }
     <button class="modal-close" id="bizModalClose">&times;</button>
     <div class="modal-title" id="bizModalName">분야명</div>
     <div class="modal-tag" id="bizModalSummary" style="white-space:pre-line; line-height:1.6; text-align:left;">요약</div>
-    <div class="modal-tile wide" style="margin-top:16px;">
+    <div class="modal-tile wide" id="bizModalCaseTile" style="margin-top:16px;">
       <div class="tile-icon">📌</div>
       <div class="tile-body">
         <div class="label" id="bizModalCaseLabel">대표사례</div>
@@ -3616,14 +3616,14 @@ body.growon{ background:var(--g-navy); }
     const sumEl = document.getElementById('bizModalSummary');
     const caseEl = document.getElementById('bizModalCase');
     const labelEl = document.getElementById('bizModalCaseLabel');
+    const tileEl = document.getElementById('bizModalCaseTile');
 
     /* 게시물은 showPosts 인 센터에만 표시. 나머지는 설명을 크게 채운다. */
     if(!b.showPosts){
       sumEl.className = 'biz-desc-full';
       sumEl.innerHTML = b.desc.split('\n').map(line => line.trim() ? `<div class="biz-desc-line">${linkifyText(line.trim())}</div>` : '').join('');
-      labelEl.style.display = 'none';
       caseEl.innerHTML = '';
-      caseEl.style.display = 'none';
+      if(tileEl) tileEl.style.display = 'none';
       document.getElementById('bizModalBackdrop').classList.add('open');
       return;
     }
@@ -3633,8 +3633,7 @@ body.growon{ background:var(--g-navy); }
     sumEl.style.whiteSpace = '';
     sumEl.textContent = b.desc;
     labelEl.textContent = '게시물';
-    labelEl.style.display = '';
-    caseEl.style.display = '';
+    if(tileEl) tileEl.style.display = '';
 
     const posts = bizPosts.filter(p => p.category === b.category);
     if(posts.length === 0){
