@@ -33,20 +33,20 @@
       "showPosts": true
     },
     {
-      "icon": "💻",
-      "name": "온라인 DB 사이트",
-      "summary": "그로우사업부전용 온라인 DB사이트",
-      "desc": "",
-      "category": "온라인 DB 사이트",
-      "showPosts": true
-    },
-    {
       "icon": "📝",
       "name": "월간금융신문",
       "summary": "그로우사업부 운영 신문",
       "desc": "https://www.groweconomy.kr/",
       "category": "월간금융신문",
       "showPosts": false
+    },
+    {
+      "icon": "💻",
+      "name": "온라인 DB 사이트",
+      "summary": "그로우사업부전용 온라인 DB사이트",
+      "desc": "",
+      "category": "온라인 DB 사이트",
+      "showPosts": true
     }
   ],
   "posts": [
@@ -88,5 +88,5 @@
     }
   ],
   "author": "김화진",
-  "updatedAt": "2026-08-18T11:37:14.375+09:00"
+  "updatedAt": "2026-08-18T11:37:16.408+09:00"
 }
