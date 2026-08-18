@@ -1873,7 +1873,11 @@ body.growon{ background:var(--g-navy); }
           <!-- ④ 고객관리 -->
           <div class="edu-panel" id="sc-crm">
             <div class="sc-sub-grid" id="crmLinksGrid">
-              <div class="sc-sub-card sc-sub-link" onclick="showView('fclookup')"><div class="sc-sub-t">👤 고객관리</div><div class="sc-sub-d">내 고객 조회(FC 전용) 바로가기 →</div></div>
+              <div class="sc-sub-card sc-sub-link" id="crmCardsToggle"><div class="sc-sub-t">📮 고객관리 카드발송</div><div class="sc-sub-d">계약축하·생일카드 등 이미지 다운로드 →</div></div>
+            </div>
+            <div class="edu-panel" id="crmCardsPanel" style="margin-top:16px;">
+              <div class="disease-notice">📮 계약후 SNS이미지·계약100일·계약1주년·생일축하카드·매월첫날 이미지 등을 올려두면, 필요할 때 다운로드해서 고객에게 바로 보낼 수 있습니다.</div>
+              <div id="smList-crmCards"></div>
             </div>
           </div>
 
@@ -7526,6 +7530,7 @@ const limitCompareData = {};
     csOnline:  [], // 영업센터 고객상담 전용: 온라인 프로세스. 자료센터 통합 대상 아님.
     csOffline: [], // 영업센터 고객상담 전용: 오프라인 초회상담일지. 자료센터 통합 대상 아님.
     csNeeds:   [], // 영업센터 고객상담 전용: 니즈분석 및 질문. 자료센터 통합 대상 아님.
+    crmCards:  [], // 영업센터 고객관리 전용: 카드발송(계약축하·생일카드 등 이미지). 자료센터 통합 대상 아님.
   };
   const smFolderLabel = {
     salesData: '영업자료', counsel: '상담(화법) 및 스크립트', insurance: '보험자료',
@@ -7533,7 +7538,8 @@ const limitCompareData = {};
     cardimg: '카드·콘텐츠', forms: '서식·업무자료',
     eduSchedule: '교육일정 및 상세공지', designProposal: '설계안추천',
     trNewbie: '신입교육과정', trSales: '영업교육', trOnline: '온라인영업', trAI: 'AI 실무', trExternal: '외부기타교육',
-    csOnline: '온라인 프로세스', csOffline: '오프라인 초회상담일지', csNeeds: '니즈분석 및 질문'
+    csOnline: '온라인 프로세스', csOffline: '오프라인 초회상담일지', csNeeds: '니즈분석 및 질문',
+    crmCards: '고객관리 카드발송'
   };
   const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
 
@@ -7949,6 +7955,11 @@ const limitCompareData = {};
   }
   loadCrmLinks();
   window.reloadCrmLinks = loadCrmLinks;
+  const _crmCardsToggle = document.getElementById('crmCardsToggle');
+  if(_crmCardsToggle) _crmCardsToggle.addEventListener('click', () => {
+    _crmCardsToggle.classList.toggle('active');
+    document.getElementById('crmCardsPanel').classList.toggle('active');
+  });
   async function crmSaveAll(msgEl, btnEl){
     if(msgEl){ msgEl.textContent = '저장 중...'; msgEl.style.color = 'var(--slate)'; }
     if(btnEl) btnEl.disabled = true;
