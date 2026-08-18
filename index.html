@@ -326,7 +326,7 @@
   .subsection-title{font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 10px; display:flex; align-items:center; gap:6px;}
   /* ===== 그로우꿀단지 FAQ ===== */
   .honey-tabs{flex-wrap:wrap;}
-  .ai-float-btn{position:fixed; right:20px; bottom:22px; z-index:500; display:flex; align-items:center; gap:8px;
+  .ai-float-btn{position:fixed; right:20px; bottom:22px; z-index:500; display:flex; align-items:center; gap:8px; min-height:54px; box-sizing:border-box;
     background:var(--orange); color:#fff; border:none; border-radius:999px; padding:13px 18px; font-size:19px;
     box-shadow:0 8px 22px rgba(245,130,32,.35); cursor:pointer; transition:.15s;}
   .ai-float-btn:hover{background:var(--orange-deep); transform:translateY(-2px);}
@@ -7893,7 +7893,9 @@ const limitCompareData = {};
       if(data && Array.isArray(data.items)) bizItems = data.items;
       if(data && Array.isArray(data.posts)) bizPosts = data.posts;
       renderBiz();
-      if(typeof bizMgrLoad === 'function' && document.getElementById('admin-bizmgr')) bizMgrLoad();
+      // (주의) 관리자 화면(사업소개 탭)의 목록 새로고침은 adminTabs 클릭 핸들러에서 bizMgrLoad()를 직접 호출합니다.
+      // 여기서도 자동으로 다시 호출하면, 방금 저장한 순서변경/수정 내용이 뒤늦게 도착한 이 요청으로 덮어써지는
+      // 경쟁상태(race condition) 버그가 발생하므로 의도적으로 호출하지 않습니다.
     }catch(e){ /* 저장된 내용이 아직 없으면 기본 화면 그대로 둠 */ }
   }
   loadBizContent();
