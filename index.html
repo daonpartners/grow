@@ -1443,6 +1443,46 @@ body.growon{ background:var(--g-navy); }
             <button class="edu-tab" id="strategyAdminTabBtn" data-atab="strategymgr" style="display:none;">📈 영업전략</button>
             <button class="edu-tab" id="guideAdminTabBtn" data-atab="guidemgr" style="display:none;">🏢 제도안내</button>
             <button class="edu-tab" id="bizAdminTabBtn" data-atab="bizmgr" style="display:none;">🤝 사업소개</button>
+            <button class="edu-tab" id="crmAdminTabBtn" data-atab="crmmgr" style="display:none;">👥 고객관리 링크</button>
+            <button class="edu-tab" id="onlineAdminTabBtn" data-atab="onlinemgr" style="display:none;">💻 온라인영업 폴더</button>
+          </div>
+
+          <!-- 고객관리 링크 관리 (관리자A 전용) -->
+          <div class="edu-panel" id="admin-crmmgr">
+            <div class="disease-notice">👥 영업센터 &gt; 고객관리 탭의 바로가기 카드를 직접 추가·수정·삭제·순서변경합니다. ("내 고객 조회"는 고정 항목이라 여기서 관리하지 않습니다)</div>
+
+            <div id="crmMgrList"></div>
+            <button type="button" class="qna-new-btn" id="crmMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 수정사항 저장</button>
+
+            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 링크 추가</div>
+            <div class="qna-form" style="display:block;">
+              <div class="qna-form-row">
+                <input type="text" id="crmMgrNewIcon" placeholder="아이콘(이모지 1개, 예: 🔗)" maxlength="4" style="max-width:160px;">
+                <input type="text" id="crmMgrNewTitle" placeholder="제목 (예: 자동차보험종합포털)">
+              </div>
+              <input type="text" id="crmMgrNewDesc" placeholder="한 줄 설명 (예: 손해보험협회)">
+              <input type="text" id="crmMgrNewLink" placeholder="연결 주소 (https://...)">
+              <button type="button" class="qna-new-btn" id="crmMgrAddBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 링크 추가</button>
+            </div>
+            <div class="cm-msg" id="crmMgrMsg"></div>
+          </div>
+
+          <!-- 온라인영업 폴더 관리 (관리자A 전용) -->
+          <div class="edu-panel" id="admin-onlinemgr">
+            <div class="disease-notice">💻 영업센터 &gt; 온라인영업 탭의 폴더(온라인카페·온라인DB사이트·온라인신문 등)와 그 안의 링크를 직접 추가·수정·삭제·순서변경합니다.</div>
+
+            <div id="onlineMgrFolders"></div>
+            <button type="button" class="qna-new-btn" id="onlineMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 수정사항 저장</button>
+
+            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 폴더 추가</div>
+            <div class="qna-form" style="display:block;">
+              <div class="qna-form-row">
+                <input type="text" id="onlineMgrNewIcon" placeholder="아이콘(이모지 1개)" maxlength="4" style="max-width:160px;">
+                <input type="text" id="onlineMgrNewTitle" placeholder="폴더 이름 (예: 온라인카페)">
+              </div>
+              <button type="button" class="qna-new-btn" id="onlineMgrAddFolderBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 폴더 추가</button>
+            </div>
+            <div class="cm-msg" id="onlineMgrMsg"></div>
           </div>
 
           <!-- 사업소개 관리 (관리자A 전용) -->
@@ -1720,11 +1760,10 @@ body.growon{ background:var(--g-navy); }
           <div class="edu-tabs" id="salesCenterTabs" data-reveal>
             <!-- 버그 다발로 잠정 비활성화(2026-08-16). 코드는 보존, 복원 시 style="display:none" 제거 -->
             <button class="edu-tab" data-sctab="coveragecompare" style="display:none;">📊 고객보장비교(AI)</button>
-            <button class="edu-tab active" data-sctab="counsel">💬 고객상담</button>
+            <button class="edu-tab active" data-sctab="counsel">💻 온라인영업</button>
             <button class="edu-tab" data-sctab="analysis">📊 보장분석 및 비교</button>
             <button class="edu-tab" data-sctab="contract">📑 계약업무</button>
             <button class="edu-tab" data-sctab="crm">👥 고객관리</button>
-            <button class="edu-tab" data-sctab="market">🌐 영업시장</button>
           </div>
 
           <div class="edu-panel" id="sc-coveragecompare">
@@ -1758,16 +1797,8 @@ body.growon{ background:var(--g-navy); }
 
           <!-- ① 고객상담 -->
           <div class="edu-panel active" id="sc-counsel">
-            <div class="sc-sub-grid" id="scCounselTabs">
-              <div class="sc-sub-card sc-sub-link active" data-cstab="csOnline"><div class="sc-sub-t">온라인 프로세스</div></div>
-              <div class="sc-sub-card sc-sub-link" data-cstab="csOffline"><div class="sc-sub-t">오프라인 초회상담일지</div></div>
-              <div class="sc-sub-card sc-sub-link" data-cstab="csNeeds"><div class="sc-sub-t">니즈분석 및 질문</div></div>
-              <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('counsel')"><div class="sc-sub-t">🗣️ 상담스크립트</div><div class="sc-sub-d">자료센터 &gt; 상담자료 바로가기 →</div></div>
-            </div>
-
-            <div class="edu-panel active" id="cs-csOnline"><div id="smList-csOnline"></div></div>
-            <div class="edu-panel" id="cs-csOffline"><div id="smList-csOffline"></div></div>
-            <div class="edu-panel" id="cs-csNeeds"><div id="smList-csNeeds"></div></div>
+            <div class="sc-sub-grid" id="scCounselTabs"></div>
+            <div id="scCounselPanels"></div>
           </div>
 
           <!-- ② 보장분석 및 비교 -->
@@ -1841,17 +1872,9 @@ body.growon{ background:var(--g-navy); }
 
           <!-- ④ 고객관리 -->
           <div class="edu-panel" id="sc-crm">
-            <div class="sc-sub-grid">
+            <div class="sc-sub-grid" id="crmLinksGrid">
               <div class="sc-sub-card sc-sub-link" onclick="showView('fclookup')"><div class="sc-sub-t">👤 고객관리</div><div class="sc-sub-d">내 고객 조회(FC 전용) 바로가기 →</div></div>
-              <a class="sc-sub-card" href="https://www.nps.or.kr" target="_blank" rel="noopener"><div class="sc-sub-t">🧮 연금계산기</div><div class="sc-sub-d">국민연금공단</div></a>
-              <a class="sc-sub-card" href="https://carinfo.knia.or.kr/lmxsrv/main/main.do" target="_blank" rel="noopener"><div class="sc-sub-t">🚗 자동차보험종합포털</div><div class="sc-sub-d">손해보험협회</div></a>
-              <a class="sc-sub-card" href="https://www.hira.or.kr/main.do" target="_blank" rel="noopener"><div class="sc-sub-t">🏥 건강보험심사평가원</div><div class="sc-sub-d">질병·진료 정보 조회</div></a>
             </div>
-          </div>
-
-          <!-- ⑤ 영업시장 -->
-          <div class="edu-panel" id="sc-market">
-            <div class="disease-notice">🌐 온라인영업·소상공인영업·기업보험·행사부스영업·제휴영업 등의 시장별 자료가 준비되면 이곳에 채워집니다.</div>
           </div>
 
           <div id="mePrintArea" style="display:none;"></div>
@@ -5939,6 +5962,9 @@ const limitCompareData = {};
         const images = rowsForCat.map(r => ({ imgId: r.imgId, src: (r.staticUrl && !r.hasImage) ? r.staticUrl : `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
         const section = rowsForCat[0].section || 'limit_compare';
         const guideCat = rowsForCat[0].guideCat || '';
+        // section이 'guide'/'claim2'/'limit_compare' 셋 중 하나가 아니면(예: 'event_notice' = 행사신청 첨부이미지)
+        // 이 게시판들과 무관한 용도이므로 건너뛴다. 실제 이미지 데이터는 그대로 두고, 목록에만 안 보이게 한다.
+        if(section !== 'guide' && section !== 'claim2' && section !== 'limit_compare') return;
         limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true, section, guideCat };
         if(section === 'guide') guideBoardOrder.push(catKey);
         else if(section === 'claim2') claimBoardOrder.push(catKey);
@@ -7051,17 +7077,6 @@ const limitCompareData = {};
     document.getElementById('tr-' + card.dataset.trtab).classList.add('active');
   });
 
-  // ================= 영업센터 고객상담 내 박스 전환 (온라인/오프라인/니즈분석) =================
-  const _scCounselTabs = document.getElementById('scCounselTabs');
-  if(_scCounselTabs) _scCounselTabs.addEventListener('click', (e) => {
-    const card = e.target.closest('.sc-sub-card[data-cstab]');
-    if(!card) return;
-    _scCounselTabs.querySelectorAll('.sc-sub-card[data-cstab]').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('#sc-counsel > .edu-panel').forEach(p => p.classList.remove('active'));
-    card.classList.add('active');
-    document.getElementById('cs-' + card.dataset.cstab).classList.add('active');
-  });
-
   // ================= 직접입력 비교표 (me-) =================
   (function initManualEntry(){
     const MEROOT = document.getElementById('sc-analysis');
@@ -7907,6 +7922,264 @@ const limitCompareData = {};
   loadBizContent();
   window.reloadBizContent = loadBizContent;
 
+  // ================= 영업센터 > 고객관리 링크 (관리자A 직접 편집 가능) =================
+  const CRM_LINKS_JSON = 'board/crm-links.json';
+  const CRM_LINKS_SAVE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-crm-links-save';
+  let crmLinks = [];
+  function renderCrmLinks(){
+    const grid = document.getElementById('crmLinksGrid');
+    if(!grid) return;
+    grid.querySelectorAll('.crm-dyn-card').forEach(el => el.remove());
+    crmLinks.forEach(item => {
+      const a = document.createElement('a');
+      a.className = 'sc-sub-card crm-dyn-card';
+      a.href = item.link; a.target = '_blank'; a.rel = 'noopener';
+      a.innerHTML = `<div class="sc-sub-t">${escapeHtml(item.icon || '🔗')} ${escapeHtml(item.title)}</div><div class="sc-sub-d">${escapeHtml(item.desc || '')}</div>`;
+      grid.appendChild(a);
+    });
+  }
+  async function loadCrmLinks(){
+    try{
+      const res = await fetch(CRM_LINKS_JSON + '?t=' + Date.now(), { cache: 'no-store' });
+      if(!res.ok) throw new Error('no file');
+      const data = await res.json();
+      if(data && Array.isArray(data.items)) crmLinks = data.items;
+      renderCrmLinks();
+    }catch(e){ /* 저장된 내용이 아직 없으면 기본 화면 그대로 둠 */ }
+  }
+  loadCrmLinks();
+  window.reloadCrmLinks = loadCrmLinks;
+  async function crmSaveAll(msgEl, btnEl){
+    if(msgEl){ msgEl.textContent = '저장 중...'; msgEl.style.color = 'var(--slate)'; }
+    if(btnEl) btnEl.disabled = true;
+    try{
+      const res = await fetch(CRM_LINKS_SAVE_WEBHOOK, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: crmLinks, author: admName || admLabel || '관리자' })
+      });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      renderCrmLinks();
+      if(msgEl){ msgEl.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msgEl.style.color = 'var(--orange-deep)'; }
+    }catch(err){
+      if(msgEl){ msgEl.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msgEl.style.color = 'red'; }
+    }finally{
+      if(btnEl) btnEl.disabled = false;
+    }
+  }
+  function crmMgrLoad(){
+    const box = document.getElementById('crmMgrList');
+    if(!box) return;
+    if(!crmLinks.length){ box.innerHTML = '<div class="doc-empty-note">등록된 링크가 없습니다.</div>'; return; }
+    box.innerHTML = crmLinks.map((item, i) => `
+      <div class="cm-edit" style="display:block; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; gap:8px;">
+          <div style="font-size:12px; font-weight:800; color:var(--navy-2);">${escapeHtml(item.icon || '🔗')} ${escapeHtml(item.title)}</div>
+          <div style="display:flex; gap:4px; flex:none;">
+            <button type="button" class="sm-edit" data-crmup="${i}" ${i === 0 ? 'disabled style="opacity:.35;"' : ''}>▲</button>
+            <button type="button" class="sm-edit" data-crmdown="${i}" ${i === crmLinks.length - 1 ? 'disabled style="opacity:.35;"' : ''}>▼</button>
+            <button type="button" class="sm-del" data-crmdel="${i}">🗑️ 삭제</button>
+          </div>
+        </div>
+        <input type="text" class="cm-f-title" data-crmi="${i}" data-crmf="desc" value="${escapeHtml(item.desc || '')}" placeholder="한 줄 설명">
+        <input type="text" class="cm-f-title" data-crmi="${i}" data-crmf="link" value="${escapeHtml(item.link || '')}" placeholder="연결 주소" style="margin-top:6px;">
+      </div>`).join('');
+    box.querySelectorAll('[data-crmdel]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const i = Number(btn.dataset.crmdel);
+        if(!confirm('"' + crmLinks[i].title + '" 링크를 삭제할까요?')) return;
+        crmLinks.splice(i, 1);
+        await crmSaveAll(document.getElementById('crmMgrMsg'));
+        crmMgrLoad();
+      });
+    });
+    box.querySelectorAll('[data-crmup]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const i = Number(btn.dataset.crmup);
+        if(i <= 0) return;
+        [crmLinks[i-1], crmLinks[i]] = [crmLinks[i], crmLinks[i-1]];
+        await crmSaveAll(document.getElementById('crmMgrMsg'));
+        crmMgrLoad();
+      });
+    });
+    box.querySelectorAll('[data-crmdown]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const i = Number(btn.dataset.crmdown);
+        if(i >= crmLinks.length - 1) return;
+        [crmLinks[i+1], crmLinks[i]] = [crmLinks[i], crmLinks[i+1]];
+        await crmSaveAll(document.getElementById('crmMgrMsg'));
+        crmMgrLoad();
+      });
+    });
+  }
+  const _crmMgrSaveBtn = document.getElementById('crmMgrSaveBtn');
+  if(_crmMgrSaveBtn) _crmMgrSaveBtn.addEventListener('click', () => {
+    crmSaveAll(document.getElementById('crmMgrMsg'), _crmMgrSaveBtn);
+  });
+  const _crmMgrList = document.getElementById('crmMgrList');
+  if(_crmMgrList) _crmMgrList.addEventListener('change', (e) => {
+    const el = e.target;
+    if(!el.dataset.crmi) return;
+    crmLinks[Number(el.dataset.crmi)][el.dataset.crmf] = el.value;
+  });
+  const _crmMgrAddBtn = document.getElementById('crmMgrAddBtn');
+  if(_crmMgrAddBtn) _crmMgrAddBtn.addEventListener('click', async () => {
+    const icon = document.getElementById('crmMgrNewIcon').value.trim() || '🔗';
+    const title = document.getElementById('crmMgrNewTitle').value.trim();
+    const desc = document.getElementById('crmMgrNewDesc').value.trim();
+    const link = document.getElementById('crmMgrNewLink').value.trim();
+    const msg = document.getElementById('crmMgrMsg');
+    if(!title || !link){ msg.textContent = '제목과 연결 주소는 반드시 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    if(!/^https?:\/\//.test(link)){ msg.textContent = '연결 주소는 http:// 또는 https://로 시작해야 합니다.'; msg.style.color = 'var(--orange-deep)'; return; }
+    crmLinks.push({ icon, title, desc, link });
+    await crmSaveAll(msg, _crmMgrAddBtn);
+    document.getElementById('crmMgrNewIcon').value = '';
+    document.getElementById('crmMgrNewTitle').value = '';
+    document.getElementById('crmMgrNewDesc').value = '';
+    document.getElementById('crmMgrNewLink').value = '';
+    crmMgrLoad();
+  });
+
+  // ================= 영업센터 > 온라인영업 폴더+링크 (관리자A 직접 편집 가능) =================
+  const SALES_ONLINE_JSON = 'board/sales-online.json';
+  const SALES_ONLINE_SAVE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-sales-online-save';
+  let salesOnlineFolders = [];
+  let salesOnlineActiveId = '';
+  function renderSalesOnline(){
+    const tabBox = document.getElementById('scCounselTabs');
+    const panelBox = document.getElementById('scCounselPanels');
+    if(!tabBox || !panelBox) return;
+    if(!salesOnlineFolders.length){
+      tabBox.innerHTML = '';
+      panelBox.innerHTML = '<div class="doc-empty-note">등록된 폴더가 없습니다.</div>';
+      return;
+    }
+    if(!salesOnlineFolders.some(f => f.id === salesOnlineActiveId)) salesOnlineActiveId = salesOnlineFolders[0].id;
+    tabBox.innerHTML = salesOnlineFolders.map(f => `
+      <div class="sc-sub-card sc-sub-link${f.id === salesOnlineActiveId ? ' active' : ''}" data-solid="${escapeHtml(f.id)}">
+        <div class="sc-sub-t">${escapeHtml(f.icon || '📁')} ${escapeHtml(f.title)}</div>
+      </div>`).join('');
+    tabBox.querySelectorAll('[data-solid]').forEach(el => {
+      el.addEventListener('click', () => { salesOnlineActiveId = el.dataset.solid; renderSalesOnline(); });
+    });
+    const active = salesOnlineFolders.find(f => f.id === salesOnlineActiveId);
+    panelBox.innerHTML = (active.links && active.links.length) ? `<div class="sc-sub-grid">${active.links.map(l => l.url ? `
+      <a class="sc-sub-card" href="${escapeHtml(l.url)}" target="_blank" rel="noopener"><div class="sc-sub-t">🔗 ${escapeHtml(l.title)}</div></a>` : `
+      <div class="sc-sub-card sc-sub-soon"><div class="sc-sub-t">${escapeHtml(l.title)}</div><div class="sc-sub-d">주소 미등록 · 관리자센터에서 추가해주세요</div></div>`).join('')}</div>`
+      : '<div class="doc-empty-note">등록된 링크가 없습니다.</div>';
+  }
+  async function loadSalesOnline(){
+    try{
+      const res = await fetch(SALES_ONLINE_JSON + '?t=' + Date.now(), { cache: 'no-store' });
+      if(!res.ok) throw new Error('no file');
+      const data = await res.json();
+      if(data && Array.isArray(data.folders)) salesOnlineFolders = data.folders;
+      renderSalesOnline();
+    }catch(e){ /* 저장된 내용이 아직 없으면 빈 상태로 둠 */ }
+  }
+  loadSalesOnline();
+  window.reloadSalesOnline = loadSalesOnline;
+  async function salesOnlineSaveAll(msgEl, btnEl){
+    if(msgEl){ msgEl.textContent = '저장 중...'; msgEl.style.color = 'var(--slate)'; }
+    if(btnEl) btnEl.disabled = true;
+    try{
+      const res = await fetch(SALES_ONLINE_SAVE_WEBHOOK, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folders: salesOnlineFolders, author: admName || admLabel || '관리자' })
+      });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      renderSalesOnline();
+      if(msgEl){ msgEl.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msgEl.style.color = 'var(--orange-deep)'; }
+    }catch(err){
+      if(msgEl){ msgEl.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msgEl.style.color = 'red'; }
+    }finally{
+      if(btnEl) btnEl.disabled = false;
+    }
+  }
+  function onlineMgrLoad(){
+    const box = document.getElementById('onlineMgrFolders');
+    if(!box) return;
+    if(!salesOnlineFolders.length){ box.innerHTML = '<div class="doc-empty-note">등록된 폴더가 없습니다.</div>'; return; }
+    box.innerHTML = salesOnlineFolders.map((f, fi) => `
+      <div style="margin-bottom:16px; border:1px solid var(--line); border-radius:12px; padding:14px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          <input type="text" data-folicon="${fi}" value="${escapeHtml(f.icon || '📁')}" maxlength="4" style="max-width:60px; text-align:center; padding:8px; border:1px solid var(--line); border-radius:8px;">
+          <input type="text" data-foltitle="${fi}" value="${escapeHtml(f.title)}" placeholder="폴더 이름" style="flex:1; padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-weight:800;">
+          <button type="button" class="sm-edit" data-folup="${fi}" ${fi === 0 ? 'disabled style="opacity:.35;"' : ''}>▲</button>
+          <button type="button" class="sm-edit" data-foldown="${fi}" ${fi === salesOnlineFolders.length - 1 ? 'disabled style="opacity:.35;"' : ''}>▼</button>
+          <button type="button" class="sm-del" data-foldel="${fi}">🗑️ 폴더삭제</button>
+        </div>
+        <div style="padding-left:6px;">
+          ${(f.links || []).map((l, li) => `
+          <div style="display:flex; gap:8px; margin-bottom:6px; align-items:center;">
+            <input type="text" data-linktitle="${fi}:${li}" value="${escapeHtml(l.title)}" placeholder="링크 제목" style="flex:1; padding:7px 9px; border:1px solid var(--line); border-radius:7px; font-size:12.5px;">
+            <input type="text" data-linkurl="${fi}:${li}" value="${escapeHtml(l.url || '')}" placeholder="https://..." style="flex:2; padding:7px 9px; border:1px solid var(--line); border-radius:7px; font-size:12.5px;">
+            <button type="button" class="sm-del" data-linkdel="${fi}:${li}" style="flex:none;">🗑️</button>
+          </div>`).join('')}
+          <button type="button" class="sm-edit" data-linkadd="${fi}" style="margin-top:4px;">＋ 링크 추가</button>
+        </div>
+      </div>`).join('');
+    box.querySelectorAll('[data-folicon]').forEach(el => el.addEventListener('change', () => { salesOnlineFolders[Number(el.dataset.folicon)].icon = el.value; }));
+    box.querySelectorAll('[data-foltitle]').forEach(el => el.addEventListener('change', () => { salesOnlineFolders[Number(el.dataset.foltitle)].title = el.value; }));
+    box.querySelectorAll('[data-linktitle]').forEach(el => el.addEventListener('change', () => {
+      const [fi, li] = el.dataset.linktitle.split(':').map(Number);
+      salesOnlineFolders[fi].links[li].title = el.value;
+    }));
+    box.querySelectorAll('[data-linkurl]').forEach(el => el.addEventListener('change', () => {
+      const [fi, li] = el.dataset.linkurl.split(':').map(Number);
+      salesOnlineFolders[fi].links[li].url = el.value;
+    }));
+    box.querySelectorAll('[data-folup]').forEach(btn => btn.addEventListener('click', async () => {
+      const i = Number(btn.dataset.folup);
+      if(i <= 0) return;
+      [salesOnlineFolders[i-1], salesOnlineFolders[i]] = [salesOnlineFolders[i], salesOnlineFolders[i-1]];
+      await salesOnlineSaveAll(document.getElementById('onlineMgrMsg'));
+      onlineMgrLoad();
+    }));
+    box.querySelectorAll('[data-foldown]').forEach(btn => btn.addEventListener('click', async () => {
+      const i = Number(btn.dataset.foldown);
+      if(i >= salesOnlineFolders.length - 1) return;
+      [salesOnlineFolders[i+1], salesOnlineFolders[i]] = [salesOnlineFolders[i], salesOnlineFolders[i+1]];
+      await salesOnlineSaveAll(document.getElementById('onlineMgrMsg'));
+      onlineMgrLoad();
+    }));
+    box.querySelectorAll('[data-foldel]').forEach(btn => btn.addEventListener('click', async () => {
+      const i = Number(btn.dataset.foldel);
+      if(!confirm('"' + salesOnlineFolders[i].title + '" 폴더를 삭제할까요? (안의 링크도 함께 삭제됩니다)')) return;
+      salesOnlineFolders.splice(i, 1);
+      await salesOnlineSaveAll(document.getElementById('onlineMgrMsg'));
+      onlineMgrLoad();
+    }));
+    box.querySelectorAll('[data-linkdel]').forEach(btn => btn.addEventListener('click', async () => {
+      const [fi, li] = btn.dataset.linkdel.split(':').map(Number);
+      salesOnlineFolders[fi].links.splice(li, 1);
+      await salesOnlineSaveAll(document.getElementById('onlineMgrMsg'));
+      onlineMgrLoad();
+    }));
+    box.querySelectorAll('[data-linkadd]').forEach(btn => btn.addEventListener('click', async () => {
+      const fi = Number(btn.dataset.linkadd);
+      if(!salesOnlineFolders[fi].links) salesOnlineFolders[fi].links = [];
+      salesOnlineFolders[fi].links.push({ title: '새 링크', url: '' });
+      await salesOnlineSaveAll(document.getElementById('onlineMgrMsg'));
+      onlineMgrLoad();
+    }));
+  }
+  const _onlineMgrSaveBtn = document.getElementById('onlineMgrSaveBtn');
+  if(_onlineMgrSaveBtn) _onlineMgrSaveBtn.addEventListener('click', () => {
+    salesOnlineSaveAll(document.getElementById('onlineMgrMsg'), _onlineMgrSaveBtn);
+  });
+  const _onlineMgrAddFolderBtn = document.getElementById('onlineMgrAddFolderBtn');
+  if(_onlineMgrAddFolderBtn) _onlineMgrAddFolderBtn.addEventListener('click', async () => {
+    const icon = document.getElementById('onlineMgrNewIcon').value.trim() || '📁';
+    const title = document.getElementById('onlineMgrNewTitle').value.trim();
+    const msg = document.getElementById('onlineMgrMsg');
+    if(!title){ msg.textContent = '폴더 이름을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    salesOnlineFolders.push({ id: 'f' + Date.now(), icon, title, links: [] });
+    await salesOnlineSaveAll(msg, _onlineMgrAddFolderBtn);
+    document.getElementById('onlineMgrNewIcon').value = '';
+    document.getElementById('onlineMgrNewTitle').value = '';
+    onlineMgrLoad();
+  });
+
   async function bizSaveAll(msgEl, btnEl){
     if(msgEl){ msgEl.textContent = '저장 중...'; msgEl.style.color = 'var(--slate)'; }
     if(btnEl) btnEl.disabled = true;
@@ -8250,6 +8523,10 @@ const limitCompareData = {};
     if(_guTab) _guTab.style.display = isTopAdmin() ? '' : 'none';
     const _bzTab = document.getElementById('bizAdminTabBtn');
     if(_bzTab) _bzTab.style.display = isTopAdmin() ? '' : 'none';
+    const _crmTab = document.getElementById('crmAdminTabBtn');
+    if(_crmTab) _crmTab.style.display = isTopAdmin() ? '' : 'none';
+    const _onlTab = document.getElementById('onlineAdminTabBtn');
+    if(_onlTab) _onlTab.style.display = isTopAdmin() ? '' : 'none';
   }
 
   function admSaveSession(){
@@ -9263,6 +9540,8 @@ const limitCompareData = {};
     if(btn.dataset.atab === 'strategymgr') renderStrategyAllList();
     if(btn.dataset.atab === 'guidemgr') guideMgrLoad();
     if(btn.dataset.atab === 'bizmgr') bizMgrLoad();
+    if(btn.dataset.atab === 'crmmgr') crmMgrLoad();
+    if(btn.dataset.atab === 'onlinemgr') onlineMgrLoad();
   });
 
   /* ===== 데일리뉴스 웹 발행 (관리자 전용) ===== */
