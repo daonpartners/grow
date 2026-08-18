@@ -1256,6 +1256,7 @@ body.growon{ background:var(--g-navy); }
           <div class="panel-count">통합 운영메뉴얼 요약</div>
         </div>
 
+        <div id="guideContentBody">
         <div class="gi-hero">
           <div class="gi-hero-tag">Partner + Grow</div>
           <div class="gi-hero-t">설계사가 오랫동안 일할 수 있는<br>가장 좋은 회사</div>
@@ -1342,6 +1343,7 @@ body.growon{ background:var(--g-navy); }
             우리는 따뜻하고 공정한 시스템으로 구성원 모두의 커리어·삶·미래를 함께 만들어간다.<br>
             우리는 개인의 성공이 곧 조직의 성공이 되는 새로운 보험 영업 조직의 기준을 세운다.
           </div>
+        </div>
         </div>
 
       </section>
@@ -1430,6 +1432,45 @@ body.growon{ background:var(--g-navy); }
             <button class="edu-tab" id="dailyNewsTabBtn" data-atab="dailynews" style="display:none;">📰 데일리뉴스</button>
             <button class="edu-tab" id="noticeAdminTabBtn" data-atab="noticemgr" style="display:none;">📢 공지사항</button>
             <button class="edu-tab" id="strategyAdminTabBtn" data-atab="strategymgr" style="display:none;">📈 영업전략</button>
+            <button class="edu-tab" id="guideAdminTabBtn" data-atab="guidemgr" style="display:none;">🏢 제도안내</button>
+            <button class="edu-tab" id="bizAdminTabBtn" data-atab="bizmgr" style="display:none;">🤝 사업소개</button>
+          </div>
+
+          <!-- 사업소개 관리 (관리자A 전용) -->
+          <div class="edu-panel" id="admin-bizmgr">
+            <div class="disease-notice">🤝 5개 사업센터 설명 문구와, 자주 바뀌는 비즈니스파트너스(제휴업체) 게시물을 관리합니다.</div>
+
+            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:14px 0 8px;">사업센터 설명</div>
+            <div id="bizMgrCategories"></div>
+            <button type="button" class="qna-new-btn" id="bizMgrCatSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 사업센터 설명 저장</button>
+
+            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">🤝 비즈니스파트너스(제휴업체)</div>
+            <button type="button" class="qna-new-btn" id="bizMgrPostNewBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">＋ 제휴업체 등록</button>
+            <div class="qna-form" id="bizMgrPostForm">
+              <input type="text" id="bizMgrPostTitle" placeholder="업체명">
+              <textarea id="bizMgrPostContent" placeholder="업종 / 연락처 / 혜택 등"></textarea>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="qna-new-btn" id="bizMgrPostSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">저장</button>
+                <button type="button" class="qna-new-btn" id="bizMgrPostCancelBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">취소</button>
+              </div>
+            </div>
+            <div id="bizMgrPosts" style="margin-top:10px;"></div>
+            <div class="cm-msg" id="bizMgrMsg"></div>
+          </div>
+
+          <!-- 제도안내 관리 (관리자A 전용) -->
+          <div class="edu-panel" id="admin-guidemgr">
+            <div class="disease-notice">🏢 그로우사업부 제도안내 페이지를 직접 수정합니다. HTML 태그를 그대로 사용하며(예: &lt;b&gt;, &lt;br&gt;), 저장하면 실제 페이지에 바로 반영됩니다.</div>
+            <textarea id="guideMgrEditor" style="width:100%; min-height:400px; box-sizing:border-box; padding:12px; border:1px solid var(--line); border-radius:10px; font-family:monospace; font-size:12.5px; line-height:1.6;"></textarea>
+            <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+              <button type="button" class="qna-new-btn" id="guideMgrPreviewBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">👁️ 미리보기</button>
+              <button type="button" class="qna-new-btn" id="guideMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 저장</button>
+            </div>
+            <div class="cm-msg" id="guideMgrMsg"></div>
+            <div id="guideMgrPreviewWrap" style="display:none; margin-top:20px; border:2px dashed var(--line); border-radius:12px; padding:16px;">
+              <div style="font-size:12px; font-weight:800; color:var(--slate); margin-bottom:10px;">미리보기</div>
+              <div id="guideMgrPreview"></div>
+            </div>
           </div>
 
           <!-- 회의자료 -->
@@ -3457,7 +3498,7 @@ body.growon{ background:var(--g-navy); }
 
   // ================= 사업소개 =================
   // showPosts: true 인 센터에만 게시물 목록이 표시됩니다. (현재 비즈니스파트너스만)
-  const bizItems = [
+  let bizItems = [
     {
       icon: "🏥",
       name: "사업장컨설팅센터",
@@ -3501,7 +3542,7 @@ body.growon{ background:var(--g-navy); }
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [
+  let bizPosts = [
     {
         "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
         "title": "산모교실 신청",
@@ -7794,6 +7835,174 @@ const limitCompareData = {};
   loadSalesMaterials();
   window.reloadSalesMaterials = loadSalesMaterials;
 
+  // ================= 제도안내 (관리자A 직접 편집 가능) =================
+  const GUIDE_CONTENT_JSON = 'board/guide-content.json';
+  const GUIDE_SAVE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-guide-content-save';
+  let guideContentHtml = '';
+  async function loadGuideContent(){
+    try{
+      const res = await fetch(GUIDE_CONTENT_JSON + '?t=' + Date.now(), { cache: 'no-store' });
+      if(!res.ok) throw new Error('no file');
+      const data = await res.json();
+      if(data && data.html){
+        guideContentHtml = data.html;
+        const box = document.getElementById('guideContentBody');
+        if(box) box.innerHTML = data.html;
+      }
+    }catch(e){ /* 저장된 내용이 아직 없으면 기본 화면 그대로 둠 */ }
+  }
+  loadGuideContent();
+  window.reloadGuideContent = loadGuideContent;
+
+  // ================= 사업소개 (관리자A 직접 편집 가능) =================
+  const BIZ_CONTENT_JSON = 'board/business-content.json';
+  const BIZ_SAVE_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-business-content-save';
+  async function loadBizContent(){
+    try{
+      const res = await fetch(BIZ_CONTENT_JSON + '?t=' + Date.now(), { cache: 'no-store' });
+      if(!res.ok) throw new Error('no file');
+      const data = await res.json();
+      if(data && Array.isArray(data.items)) bizItems = data.items;
+      if(data && Array.isArray(data.posts)) bizPosts = data.posts;
+      renderBiz();
+      if(typeof bizMgrLoad === 'function' && document.getElementById('admin-bizmgr')) bizMgrLoad();
+    }catch(e){ /* 저장된 내용이 아직 없으면 기본 화면 그대로 둠 */ }
+  }
+  loadBizContent();
+  window.reloadBizContent = loadBizContent;
+
+  async function bizSaveAll(msgEl, btnEl){
+    if(msgEl){ msgEl.textContent = '저장 중...'; msgEl.style.color = 'var(--slate)'; }
+    if(btnEl) btnEl.disabled = true;
+    try{
+      const res = await fetch(BIZ_SAVE_WEBHOOK, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: bizItems, posts: bizPosts, author: admName || admLabel || '관리자' })
+      });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      renderBiz();
+      if(msgEl){ msgEl.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msgEl.style.color = 'var(--orange-deep)'; }
+    }catch(err){
+      if(msgEl){ msgEl.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msgEl.style.color = 'red'; }
+    }finally{
+      if(btnEl) btnEl.disabled = false;
+    }
+  }
+
+  function bizMgrLoad(){
+    const catBox = document.getElementById('bizMgrCategories');
+    if(catBox){
+      catBox.innerHTML = bizItems.map((b, i) => `
+        <div class="cm-edit" style="display:block; margin-bottom:10px;">
+          <div style="font-size:12px; font-weight:800; color:var(--navy-2); margin-bottom:6px;">${b.icon} ${escapeHtml(b.name)}</div>
+          <input type="text" class="cm-f-title" data-bi="${i}" data-f="summary" value="${escapeHtml(b.summary)}" placeholder="한 줄 요약">
+          <textarea class="cm-f-content" data-bi="${i}" data-f="desc" placeholder="상세 설명(줄바꿈 가능)">${escapeHtml(b.desc)}</textarea>
+        </div>`).join('');
+    }
+    bizMgrRenderPosts();
+  }
+  function bizMgrRenderPosts(){
+    const box = document.getElementById('bizMgrPosts');
+    if(!box) return;
+    const list = bizPosts.filter(p => p.category === '제휴업체');
+    box.innerHTML = (list.length ? list.map((p) => {
+      const idx = bizPosts.indexOf(p);
+      return `
+      <div class="sm-item">
+        <span class="sm-icon">🤝</span>
+        <span class="sm-name">${escapeHtml(p.title)}</span>
+        <span class="sm-by">${escapeHtml(p.date || '')}</span>
+        <button type="button" class="sm-edit" data-bpidx="${idx}" onclick="event.stopPropagation()">수정</button>
+        <button type="button" class="sm-del" data-bpdel="${idx}" onclick="event.stopPropagation()">삭제</button>
+      </div>` ;
+    }).join('') : '<div class="doc-empty-note">등록된 제휴업체가 없습니다.</div>');
+    box.querySelectorAll('[data-bpidx]').forEach(b => b.addEventListener('click', () => bizMgrOpenPostForm(Number(b.dataset.bpidx))));
+    box.querySelectorAll('[data-bpdel]').forEach(b => b.addEventListener('click', async () => {
+      const idx = Number(b.dataset.bpdel);
+      if(!confirm('"' + bizPosts[idx].title + '" 게시물을 삭제할까요?')) return;
+      bizPosts.splice(idx, 1);
+      await bizSaveAll(document.getElementById('bizMgrMsg'));
+      bizMgrRenderPosts();
+    }));
+  }
+  let bizMgrEditIdx = null;
+  function bizMgrOpenPostForm(idx){
+    bizMgrEditIdx = idx;
+    const p = (idx === null || idx === undefined) ? null : bizPosts[idx];
+    document.getElementById('bizMgrPostTitle').value = p ? p.title : '';
+    document.getElementById('bizMgrPostContent').value = p ? p.content : '';
+    document.getElementById('bizMgrPostForm').classList.add('open');
+  }
+  const _bizMgrNewBtn = document.getElementById('bizMgrPostNewBtn');
+  if(_bizMgrNewBtn) _bizMgrNewBtn.addEventListener('click', () => bizMgrOpenPostForm(null));
+  const _bizMgrCancelBtn = document.getElementById('bizMgrPostCancelBtn');
+  if(_bizMgrCancelBtn) _bizMgrCancelBtn.addEventListener('click', () => document.getElementById('bizMgrPostForm').classList.remove('open'));
+  const _bizMgrSaveBtn = document.getElementById('bizMgrPostSaveBtn');
+  if(_bizMgrSaveBtn) _bizMgrSaveBtn.addEventListener('click', async () => {
+    const title = document.getElementById('bizMgrPostTitle').value.trim();
+    const content = document.getElementById('bizMgrPostContent').value.trim();
+    const msg = document.getElementById('bizMgrMsg');
+    if(!title || !content){ msg.textContent = '제목과 내용을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0,10).replace(/-/g,'.') + ' 게시';
+    if(bizMgrEditIdx === null || bizMgrEditIdx === undefined){
+      bizPosts.push({ id: String(Date.now()), title, category: '제휴업체', content, images: [], date: dateStr, replies: [] });
+    } else {
+      bizPosts[bizMgrEditIdx].title = title;
+      bizPosts[bizMgrEditIdx].content = content;
+    }
+    await bizSaveAll(msg, _bizMgrSaveBtn);
+    document.getElementById('bizMgrPostForm').classList.remove('open');
+    bizMgrRenderPosts();
+  });
+  const _bizMgrCatSaveBtn = document.getElementById('bizMgrCatSaveBtn');
+  if(_bizMgrCatSaveBtn) _bizMgrCatSaveBtn.addEventListener('click', () => {
+    document.querySelectorAll('#bizMgrCategories [data-bi]').forEach(el => {
+      const i = Number(el.dataset.bi), f = el.dataset.f;
+      bizItems[i][f] = el.value;
+    });
+    bizSaveAll(document.getElementById('bizMgrMsg'), _bizMgrCatSaveBtn);
+  });
+
+  function guideMgrLoad(){
+    const ta = document.getElementById('guideMgrEditor');
+    if(ta) ta.value = guideContentHtml || (document.getElementById('guideContentBody') || {}).innerHTML || '';
+  }
+  const _gmPreviewBtn = document.getElementById('guideMgrPreviewBtn');
+  if(_gmPreviewBtn) _gmPreviewBtn.addEventListener('click', () => {
+    const wrap = document.getElementById('guideMgrPreviewWrap');
+    const prev = document.getElementById('guideMgrPreview');
+    const ta = document.getElementById('guideMgrEditor');
+    if(!wrap || !prev || !ta) return;
+    const show = wrap.style.display === 'none';
+    wrap.style.display = show ? 'block' : 'none';
+    if(show) prev.innerHTML = ta.value;
+  });
+  const _gmSaveBtn = document.getElementById('guideMgrSaveBtn');
+  if(_gmSaveBtn) _gmSaveBtn.addEventListener('click', async () => {
+    const ta = document.getElementById('guideMgrEditor');
+    const msg = document.getElementById('guideMgrMsg');
+    const html = (ta && ta.value || '').trim();
+    if(!html){ msg.textContent = '내용을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    msg.textContent = '저장 중...'; msg.style.color = 'var(--slate)';
+    _gmSaveBtn.disabled = true;
+    try{
+      const res = await fetch(GUIDE_SAVE_WEBHOOK, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: html, author: admName || admLabel || '관리자' })
+      });
+      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      guideContentHtml = html;
+      const box = document.getElementById('guideContentBody');
+      if(box) box.innerHTML = html;
+      msg.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msg.style.color = 'var(--orange-deep)';
+    }catch(err){
+      msg.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msg.style.color = 'red';
+    }finally{
+      _gmSaveBtn.disabled = false;
+    }
+  });
+
 
   // ================= 관리자센터 =================
   const PARTNER_APPLY_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-partner-apply';
@@ -7922,6 +8131,10 @@ const limitCompareData = {};
     if(_noTab) _noTab.style.display = isTopAdmin() ? '' : 'none';
     const _stTab = document.getElementById('strategyAdminTabBtn');
     if(_stTab) _stTab.style.display = isTopAdmin() ? '' : 'none';
+    const _guTab = document.getElementById('guideAdminTabBtn');
+    if(_guTab) _guTab.style.display = isTopAdmin() ? '' : 'none';
+    const _bzTab = document.getElementById('bizAdminTabBtn');
+    if(_bzTab) _bzTab.style.display = isTopAdmin() ? '' : 'none';
   }
 
   function admSaveSession(){
@@ -8933,6 +9146,8 @@ const limitCompareData = {};
     if(btn.dataset.atab === 'album') albLoad();
     if(btn.dataset.atab === 'noticemgr') renderNoticeBoardList();
     if(btn.dataset.atab === 'strategymgr') renderStrategyAllList();
+    if(btn.dataset.atab === 'guidemgr') guideMgrLoad();
+    if(btn.dataset.atab === 'bizmgr') bizMgrLoad();
   });
 
   /* ===== 데일리뉴스 웹 발행 (관리자 전용) ===== */
