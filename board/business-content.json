@@ -33,20 +33,20 @@
       "showPosts": true
     },
     {
-      "icon": "🤝",
-      "name": "비즈니스파트너스",
-      "summary": "그로우사업부 제휴업체",
-      "desc": "그로우사업부 제휴업체",
-      "category": "제휴업체",
-      "showPosts": true
-    },
-    {
       "icon": "📝",
       "name": "월간금융신문",
       "summary": "그로우사업부 운영 신문",
       "desc": "https://www.groweconomy.kr/",
       "category": "월간금융신문",
       "showPosts": false
+    },
+    {
+      "icon": "🤝",
+      "name": "비즈니스파트너스",
+      "summary": "그로우사업부 제휴업체",
+      "desc": "그로우사업부 제휴업체",
+      "category": "제휴업체",
+      "showPosts": true
     }
   ],
   "posts": [
@@ -88,5 +88,5 @@
     }
   ],
   "author": "김화진",
-  "updatedAt": "2026-08-18T11:59:16.009+09:00"
+  "updatedAt": "2026-08-18T11:59:20.042+09:00"
 }
