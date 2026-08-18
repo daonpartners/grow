@@ -7849,11 +7849,17 @@ const limitCompareData = {};
     { name: '김덕규', title: '교육본부장' },
     { name: '이수정', title: '교육본부장' }
   ];
+  const POINT_ADMIN_MEMBERS = [
+    { name: '김승준', title: '지점장' },
+    { name: '성영진', title: '지점장' }
+  ];
   const ADMIN_ACCOUNTS = {
     'grow26':     { role: 'admin' },
     'edu2026':    { role: 'eduadmin' },
+    'point2026':  { role: 'pointadmin' },
     'dy2026':     { role: 'manager', branch: '도약', label: '도약지사장' },
     'dh2026':     { role: 'manager', branch: '동행', label: '동행지사장' },
+    'rc2026':     { role: 'manager', branch: '리치로드맵', label: '리치로드맵지사장' },
     'hs2026':     { role: 'manager', branch: '혁신', label: '혁신지사장' }
   };
 
@@ -7966,6 +7972,26 @@ const limitCompareData = {};
     });
   }
 
+  function admShowPointPicker(){
+    document.getElementById('admStep1').style.display = 'none';
+    document.getElementById('admStep2').style.display = 'block';
+    const box = document.getElementById('admPick');
+    box.innerHTML = POINT_ADMIN_MEMBERS.map((m, i) =>
+      '<button type="button" data-mi="' + i + '"><b>' + m.name + '</b><span>' + m.title + '</span></button>'
+    ).join('');
+    box.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const m = POINT_ADMIN_MEMBERS[Number(btn.dataset.mi)];
+        admRole = 'pointadmin';
+        admName = m.name;
+        admBranch = '';
+        admLabel = m.title;
+        admSaveSession();
+        unlockAdmin();
+      });
+    });
+  }
+
   const _agb = document.getElementById('adminGateBtn');
   if(_agb) _agb.addEventListener('click', () => {
     const code = document.getElementById('adminCode').value.trim();
@@ -7979,6 +8005,8 @@ const limitCompareData = {};
       admShowPicker();
     } else if(acct.role === 'eduadmin'){
       admShowEduPicker();
+    } else if(acct.role === 'pointadmin'){
+      admShowPointPicker();
     } else {
       admRole = 'manager';
       admBranch = acct.branch;
@@ -8575,7 +8603,7 @@ const limitCompareData = {};
   const DB_BOARD_FEED   = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-board';
   const DB_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-post';
   const DB_APPLY_WEBHOOK= 'https://daonpartners.app.n8n.cloud/webhook/daon-db-apply';
-  const DB_BRANCHES = ['광명','다온','도약','동행','혁신'];
+  const DB_BRANCHES = ['광명','다온','도약','동행','리치로드맵','혁신'];
 
   let dbbPosts = [];
   let dbbLoaded = false;
@@ -8673,7 +8701,7 @@ const limitCompareData = {};
       '</div>' +
       '<div class="cm-msg" id="cmPostMsg"></div>' : '';
 
-    const isAdmin = admRole === 'admin';
+    const isAdmin = admRole === 'admin' || !admBranch;
     const branchField = isAdmin
       ? '<select id="dbbApplyBranch">' +
           '<option value="">지사 선택</option>' +
