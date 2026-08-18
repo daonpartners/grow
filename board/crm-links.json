@@ -3,8 +3,8 @@
     {
       "icon": "🧮",
       "title": "연금계산기",
-      "desc": "국민연금공단",
-      "link": "https://www.nps.or.kr"
+      "desc": "내 연금 조회",
+      "link": "https://www.nps.or.kr/comm/quick/getOHAH0011M0.do"
     },
     {
       "icon": "🚗",
@@ -20,5 +20,5 @@
     }
   ],
   "author": "김화진",
-  "updatedAt": "2026-08-18T16:06:11.890+09:00"
+  "updatedAt": "2026-08-18T17:03:30.443+09:00"
 }
