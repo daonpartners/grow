@@ -568,6 +568,8 @@
   .qna-form button{align-self:flex-end; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:8px 16px; font-size:12px; font-weight:700; cursor:pointer;}
   .qna-form-msg{font-size:11.5px; margin-top:2px;}
   .qna-new-btn{width:100%; padding:11px; border:1px dashed var(--line); border-radius:10px; background:#fff; color:var(--navy-2); font-size:12.5px; font-weight:700; cursor:pointer; margin-bottom:12px;}
+  .sc-inline-edit-btn{width:auto !important; flex:none; padding:9px 16px !important; border:none !important; border-radius:999px; background:var(--orange) !important; color:#fff !important; font-weight:800; margin-bottom:0 !important; box-shadow:0 3px 10px rgba(245,130,32,.3); white-space:nowrap;}
+  .sc-inline-edit-btn:hover{background:var(--orange-deep) !important;}
   .qna-new-btn:hover{border-color:var(--orange); color:var(--orange-deep);}
   .qna-notice{font-size:11px; color:var(--slate); margin-bottom:10px;}
 
@@ -1167,7 +1169,16 @@ body.growon{ background:var(--g-navy); }
 <div class="gwrap">
   <div class="gcol" id="colLeft">
     <div class="gcard">
-      <div class="gcard-t">📰 데일리뉴스</div>
+      <div class="gcard-t" style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <span>📰 데일리뉴스</span>
+        <button type="button" id="dnEditJumpBtn" class="qna-new-btn sc-inline-edit-btn" style="display:none; width:auto; padding:5px 10px; font-size:11px;" onclick="document.getElementById('dnPublishInline').classList.toggle('active');">✏️ 발행</button>
+      </div>
+      <div class="edu-panel" id="dnPublishInline" style="padding:10px 2px 4px;">
+        <div class="qna-notice">뉴스 기사 링크를 한 줄에 하나씩 붙여넣으세요 (최대 6개). 발행 버튼을 누르면 자동으로 요약·날씨·증시·검색어트렌드까지 합쳐서 오늘의 뉴스한입이 만들어집니다. 처리에 40초~1분, 사이트 반영까지 추가로 최대 5분 정도 걸릴 수 있습니다.</div>
+        <textarea id="dnPublishUrls" placeholder="https://...&#10;https://...&#10;https://..." style="width:100%; box-sizing:border-box; min-height:100px; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px; font-family:inherit; resize:vertical;"></textarea>
+        <div class="qna-form-msg" id="dnPublishMsg" style="margin-top:8px;"></div>
+        <button type="button" id="dnPublishBtn" style="margin-top:8px; background:var(--orange); color:#fff; border:none; border-radius:10px; padding:12px 0; width:100%; font-size:13.5px; font-weight:800; cursor:pointer;">📰 발행하기</button>
+      </div>
       <div id="gDaily"><div class="dn-empty">오늘의 뉴스를<br>준비 중입니다.</div></div>
     </div>
     <div class="gcard">
@@ -1263,7 +1274,21 @@ body.growon{ background:var(--g-navy); }
         <div class="panel-head">
           <div><div class="panel-eyebrow">About GROW</div><h2 class="panel-title">그로우사업부 제도안내</h2></div>
           <div class="panel-count">통합 운영메뉴얼 요약</div>
-          <button type="button" id="guideEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none;" onclick="jumpToAdminTab('guidemgr')">✏️ 관리자 편집</button>
+          <button type="button" id="guideEditJumpBtn" class="qna-new-btn sc-inline-edit-btn" style="display:none;" onclick="document.getElementById('guideMgrInline').classList.toggle('active'); guideMgrLoad();">✏️ 관리자 편집</button>
+        </div>
+
+        <div class="edu-panel" id="guideMgrInline" style="margin-bottom:16px; border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--canvas);">
+          <div class="disease-notice">🏢 그로우사업부 제도안내 페이지를 직접 수정합니다. HTML 태그를 그대로 사용하며(예: &lt;b&gt;, &lt;br&gt;), 저장하면 실제 페이지에 바로 반영됩니다.</div>
+          <textarea id="guideMgrEditor" style="width:100%; min-height:400px; box-sizing:border-box; padding:12px; border:1px solid var(--line); border-radius:10px; font-family:monospace; font-size:12.5px; line-height:1.6;"></textarea>
+          <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+            <button type="button" class="qna-new-btn" id="guideMgrPreviewBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">👁️ 미리보기</button>
+            <button type="button" class="qna-new-btn" id="guideMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 저장</button>
+          </div>
+          <div class="cm-msg" id="guideMgrMsg"></div>
+          <div id="guideMgrPreviewWrap" style="display:none; margin-top:20px; border:2px dashed var(--line); border-radius:12px; padding:16px;">
+            <div style="font-size:12px; font-weight:800; color:var(--slate); margin-bottom:10px;">미리보기</div>
+            <div id="guideMgrPreview"></div>
+          </div>
         </div>
 
         <div id="guideContentBody">
@@ -1363,9 +1388,43 @@ body.growon{ background:var(--g-navy); }
 <section class="panel panel-navy" id="business">
         <div class="panel-head">
           <div><div class="panel-eyebrow">About Our Business</div><h2 class="panel-title">그로우사업부 사업소개</h2></div>
-          <button type="button" id="bizEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none;" onclick="jumpToAdminTab('bizmgr')">✏️ 관리자 편집</button>
+          <button type="button" id="bizEditJumpBtn" class="qna-new-btn sc-inline-edit-btn" style="display:none;" onclick="document.getElementById('bizMgrInline').classList.toggle('active'); bizMgrLoad();">✏️ 관리자 편집</button>
         </div>
         <div class="biz-grid" id="bizGrid" data-reveal></div>
+        <div class="edu-panel" id="bizMgrInline" style="margin-top:16px; border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--canvas);">
+          <div class="disease-notice">🤝 사업센터를 추가·수정·순서변경하고, 게시물형 센터(비즈니스파트너스 등)는 각 센터별로 게시물을 직접 등록·수정·삭제할 수 있습니다.</div>
+
+          <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:14px 0 8px;">사업센터 목록 (▲▼로 순서 변경, 실제 화면에 이 순서로 표시됩니다)</div>
+          <div id="bizMgrCategories"></div>
+          <button type="button" class="qna-new-btn" id="bizMgrCatSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 사업센터 설명 저장</button>
+
+          <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 사업센터 추가</div>
+          <div class="qna-form" style="display:block;">
+            <div class="qna-form-row">
+              <input type="text" id="bizMgrNewIcon" placeholder="아이콘(이모지 1개, 예: 🏢)" maxlength="4" style="max-width:160px;">
+              <input type="text" id="bizMgrNewName" placeholder="센터 이름 (예: 신규사업센터)">
+            </div>
+            <input type="text" id="bizMgrNewSummary" placeholder="한 줄 요약(카드에 짧게 표시됨)">
+            <textarea id="bizMgrNewDesc" placeholder="상세 설명(게시물형이면 비워두어도 됨. 줄바꿈 가능)"></textarea>
+            <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--slate); margin:4px 0 10px;">
+              <input type="checkbox" id="bizMgrNewShowPosts" style="width:auto;"> 이 센터는 게시물 목록형(개별 항목을 직접 등록·수정·삭제)으로 운영
+            </label>
+            <button type="button" class="qna-new-btn" id="bizMgrCatAddBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 사업센터 추가</button>
+          </div>
+
+          <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">📋 게시물형 센터 관리</div>
+          <div id="bizMgrPostSections"></div>
+
+          <div class="qna-form" id="bizMgrPostForm">
+            <input type="text" id="bizMgrPostTitle" placeholder="제목(업체명 등)">
+            <textarea id="bizMgrPostContent" placeholder="내용(업종 / 연락처 / 혜택 등)"></textarea>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="qna-new-btn" id="bizMgrPostSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">저장</button>
+              <button type="button" class="qna-new-btn" id="bizMgrPostCancelBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">취소</button>
+            </div>
+          </div>
+          <div class="cm-msg" id="bizMgrMsg"></div>
+        </div>
       </section>
       </div>
       <div class="gview" id="view-fclookup">
@@ -1440,102 +1499,6 @@ body.growon{ background:var(--g-navy); }
             <button class="edu-tab" data-atab="event">📋 행사신청</button>
             <button class="edu-tab" data-atab="db">🗂️ DB신청</button>
             <button class="edu-tab" data-atab="album">🖼️ 앨범</button>
-            <button class="edu-tab" id="dailyNewsTabBtn" data-atab="dailynews" style="display:none;">📰 데일리뉴스</button>
-            <button class="edu-tab" id="noticeAdminTabBtn" data-atab="noticemgr" style="display:none;">📢 공지사항</button>
-            <button class="edu-tab" id="strategyAdminTabBtn" data-atab="strategymgr" style="display:none;">📈 영업전략</button>
-            <button class="edu-tab" id="guideAdminTabBtn" data-atab="guidemgr" style="display:none;">🏢 제도안내</button>
-            <button class="edu-tab" id="bizAdminTabBtn" data-atab="bizmgr" style="display:none;">🤝 사업소개</button>
-            <button class="edu-tab" id="crmAdminTabBtn" data-atab="crmmgr" style="display:none;">👥 고객관리 링크</button>
-            <button class="edu-tab" id="onlineAdminTabBtn" data-atab="onlinemgr" style="display:none;">💻 온라인영업 폴더</button>
-          </div>
-
-          <!-- 고객관리 링크 관리 (관리자A 전용) -->
-          <div class="edu-panel" id="admin-crmmgr">
-            <div class="disease-notice">👥 영업센터 &gt; 고객관리 탭의 바로가기 카드를 직접 추가·수정·삭제·순서변경합니다. ("내 고객 조회"는 고정 항목이라 여기서 관리하지 않습니다)</div>
-
-            <div id="crmMgrList"></div>
-            <button type="button" class="qna-new-btn" id="crmMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 수정사항 저장</button>
-
-            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 링크 추가</div>
-            <div class="qna-form" style="display:block;">
-              <div class="qna-form-row">
-                <input type="text" id="crmMgrNewIcon" placeholder="아이콘(이모지 1개, 예: 🔗)" maxlength="4" style="max-width:160px;">
-                <input type="text" id="crmMgrNewTitle" placeholder="제목 (예: 자동차보험종합포털)">
-              </div>
-              <input type="text" id="crmMgrNewDesc" placeholder="한 줄 설명 (예: 손해보험협회)">
-              <input type="text" id="crmMgrNewLink" placeholder="연결 주소 (https://...)">
-              <button type="button" class="qna-new-btn" id="crmMgrAddBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 링크 추가</button>
-            </div>
-            <div class="cm-msg" id="crmMgrMsg"></div>
-          </div>
-
-          <!-- 온라인영업 폴더 관리 (관리자A 전용) -->
-          <div class="edu-panel" id="admin-onlinemgr">
-            <div class="disease-notice">💻 영업센터 &gt; 온라인영업 탭의 폴더(온라인카페·온라인DB사이트·온라인신문 등)와 그 안의 링크를 직접 추가·수정·삭제·순서변경합니다.</div>
-
-            <div id="onlineMgrFolders"></div>
-            <button type="button" class="qna-new-btn" id="onlineMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 수정사항 저장</button>
-
-            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 폴더 추가</div>
-            <div class="qna-form" style="display:block;">
-              <div class="qna-form-row">
-                <input type="text" id="onlineMgrNewIcon" placeholder="아이콘(이모지 1개)" maxlength="4" style="max-width:160px;">
-                <input type="text" id="onlineMgrNewTitle" placeholder="폴더 이름 (예: 온라인카페)">
-              </div>
-              <button type="button" class="qna-new-btn" id="onlineMgrAddFolderBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 폴더 추가</button>
-            </div>
-            <div class="cm-msg" id="onlineMgrMsg"></div>
-          </div>
-
-          <!-- 사업소개 관리 (관리자A 전용) -->
-          <div class="edu-panel" id="admin-bizmgr">
-            <div class="disease-notice">🤝 사업센터를 추가·수정·순서변경하고, 게시물형 센터(비즈니스파트너스 등)는 각 센터별로 게시물을 직접 등록·수정·삭제할 수 있습니다.</div>
-
-            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:14px 0 8px;">사업센터 목록 (▲▼로 순서 변경, 실제 화면에 이 순서로 표시됩니다)</div>
-            <div id="bizMgrCategories"></div>
-            <button type="button" class="qna-new-btn" id="bizMgrCatSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 사업센터 설명 저장</button>
-
-            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 사업센터 추가</div>
-            <div class="qna-form" style="display:block;">
-              <div class="qna-form-row">
-                <input type="text" id="bizMgrNewIcon" placeholder="아이콘(이모지 1개, 예: 🏢)" maxlength="4" style="max-width:160px;">
-                <input type="text" id="bizMgrNewName" placeholder="센터 이름 (예: 신규사업센터)">
-              </div>
-              <input type="text" id="bizMgrNewSummary" placeholder="한 줄 요약(카드에 짧게 표시됨)">
-              <textarea id="bizMgrNewDesc" placeholder="상세 설명(게시물형이면 비워두어도 됨. 줄바꿈 가능)"></textarea>
-              <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--slate); margin:4px 0 10px;">
-                <input type="checkbox" id="bizMgrNewShowPosts" style="width:auto;"> 이 센터는 게시물 목록형(개별 항목을 직접 등록·수정·삭제)으로 운영
-              </label>
-              <button type="button" class="qna-new-btn" id="bizMgrCatAddBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 사업센터 추가</button>
-            </div>
-
-            <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">📋 게시물형 센터 관리</div>
-            <div id="bizMgrPostSections"></div>
-
-            <div class="qna-form" id="bizMgrPostForm">
-              <input type="text" id="bizMgrPostTitle" placeholder="제목(업체명 등)">
-              <textarea id="bizMgrPostContent" placeholder="내용(업종 / 연락처 / 혜택 등)"></textarea>
-              <div style="display:flex; gap:8px;">
-                <button type="button" class="qna-new-btn" id="bizMgrPostSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">저장</button>
-                <button type="button" class="qna-new-btn" id="bizMgrPostCancelBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">취소</button>
-              </div>
-            </div>
-            <div class="cm-msg" id="bizMgrMsg"></div>
-          </div>
-
-          <!-- 제도안내 관리 (관리자A 전용) -->
-          <div class="edu-panel" id="admin-guidemgr">
-            <div class="disease-notice">🏢 그로우사업부 제도안내 페이지를 직접 수정합니다. HTML 태그를 그대로 사용하며(예: &lt;b&gt;, &lt;br&gt;), 저장하면 실제 페이지에 바로 반영됩니다.</div>
-            <textarea id="guideMgrEditor" style="width:100%; min-height:400px; box-sizing:border-box; padding:12px; border:1px solid var(--line); border-radius:10px; font-family:monospace; font-size:12.5px; line-height:1.6;"></textarea>
-            <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-              <button type="button" class="qna-new-btn" id="guideMgrPreviewBtn" style="background:#fff; color:var(--navy-2); border:1px solid var(--line);">👁️ 미리보기</button>
-              <button type="button" class="qna-new-btn" id="guideMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 저장</button>
-            </div>
-            <div class="cm-msg" id="guideMgrMsg"></div>
-            <div id="guideMgrPreviewWrap" style="display:none; margin-top:20px; border:2px dashed var(--line); border-radius:12px; padding:16px;">
-              <div style="font-size:12px; font-weight:800; color:var(--slate); margin-bottom:10px;">미리보기</div>
-              <div id="guideMgrPreview"></div>
-            </div>
           </div>
 
           <!-- 회의자료 -->
@@ -1634,24 +1597,6 @@ body.growon{ background:var(--g-navy); }
             </div>
             <div class="dbb-sec">🖼️ 등록된 사진</div>
             <div class="alb-grid" id="albGridAdmin"></div>
-          </div>
-
-          <!-- 데일리뉴스 발행 (관리자 전용) -->
-          <div class="edu-panel" id="admin-dailynews">
-            <div class="qna-notice">뉴스 기사 링크를 한 줄에 하나씩 붙여넣으세요 (최대 6개). 발행 버튼을 누르면 자동으로 요약·날씨·증시·검색어트렌드까지 합쳐서 오늘의 뉴스한입이 만들어집니다. 처리에 40초~1분, 사이트 반영까지 추가로 최대 5분 정도 걸릴 수 있습니다.</div>
-            <textarea id="dnPublishUrls" placeholder="https://...&#10;https://...&#10;https://..." style="width:100%; box-sizing:border-box; min-height:120px; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:13px; font-family:inherit; resize:vertical;"></textarea>
-            <div class="qna-form-msg" id="dnPublishMsg" style="margin-top:8px;"></div>
-            <button type="button" id="dnPublishBtn" style="margin-top:8px; background:var(--orange); color:#fff; border:none; border-radius:10px; padding:12px 0; width:100%; font-size:13.5px; font-weight:800; cursor:pointer;">📰 발행하기</button>
-          </div>
-
-          <!-- 공지사항 관리 (관리자 전용) -->
-          <div class="edu-panel" id="admin-noticemgr">
-            <div id="noticeAdminList"></div>
-          </div>
-
-          <!-- 영업전략 관리 (관리자 전용) -->
-          <div class="edu-panel" id="admin-strategymgr">
-            <div id="strategyAdminList"></div>
           </div>
         </div>
       </section>
@@ -1799,7 +1744,25 @@ body.growon{ background:var(--g-navy); }
 
           <!-- ① 고객상담 -->
           <div class="edu-panel active" id="sc-counsel">
-            <button type="button" id="onlineEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none; margin-bottom:10px;" onclick="jumpToAdminTab('onlinemgr')">✏️ 관리자 편집(폴더·링크)</button>
+            <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+              <button type="button" id="onlineEditJumpBtn" class="qna-new-btn sc-inline-edit-btn" style="display:none;" onclick="document.getElementById('onlineMgrInline').classList.toggle('active'); onlineMgrLoad();">✏️ 관리자 편집(폴더·링크)</button>
+            </div>
+            <div class="edu-panel" id="onlineMgrInline" style="margin-bottom:16px; border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--canvas);">
+              <div class="disease-notice">💻 영업센터 &gt; 온라인영업 탭의 폴더(온라인카페·온라인DB사이트·온라인신문 등)와 그 안의 링크를 직접 추가·수정·삭제·순서변경합니다.</div>
+
+              <div id="onlineMgrFolders"></div>
+              <button type="button" class="qna-new-btn" id="onlineMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 수정사항 저장</button>
+
+              <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 폴더 추가</div>
+              <div class="qna-form" style="display:block;">
+                <div class="qna-form-row">
+                  <input type="text" id="onlineMgrNewIcon" placeholder="아이콘(이모지 1개)" maxlength="4" style="max-width:160px;">
+                  <input type="text" id="onlineMgrNewTitle" placeholder="폴더 이름 (예: 온라인카페)">
+                </div>
+                <button type="button" class="qna-new-btn" id="onlineMgrAddFolderBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 폴더 추가</button>
+              </div>
+              <div class="cm-msg" id="onlineMgrMsg"></div>
+            </div>
             <div class="sc-sub-grid" id="scCounselTabs"></div>
             <div id="scCounselPanels"></div>
           </div>
@@ -1875,7 +1838,27 @@ body.growon{ background:var(--g-navy); }
 
           <!-- ④ 고객관리 -->
           <div class="edu-panel" id="sc-crm">
-            <button type="button" id="crmEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none; margin-bottom:10px;" onclick="jumpToAdminTab('crmmgr')">✏️ 관리자 편집(링크)</button>
+            <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+              <button type="button" id="crmEditJumpBtn" class="qna-new-btn sc-inline-edit-btn" style="display:none;" onclick="document.getElementById('crmMgrInline').classList.toggle('active'); crmMgrLoad();">✏️ 관리자 편집(링크)</button>
+            </div>
+            <div class="edu-panel" id="crmMgrInline" style="margin-bottom:16px; border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--canvas);">
+              <div class="disease-notice">👥 영업센터 &gt; 고객관리 탭의 바로가기 카드를 직접 추가·수정·삭제·순서변경합니다. ("내 고객 조회"는 고정 항목이라 여기서 관리하지 않습니다)</div>
+
+              <div id="crmMgrList"></div>
+              <button type="button" class="qna-new-btn" id="crmMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 수정사항 저장</button>
+
+              <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">＋ 새 링크 추가</div>
+              <div class="qna-form" style="display:block;">
+                <div class="qna-form-row">
+                  <input type="text" id="crmMgrNewIcon" placeholder="아이콘(이모지 1개, 예: 🔗)" maxlength="4" style="max-width:160px;">
+                  <input type="text" id="crmMgrNewTitle" placeholder="제목 (예: 자동차보험종합포털)">
+                </div>
+                <input type="text" id="crmMgrNewDesc" placeholder="한 줄 설명 (예: 손해보험협회)">
+                <input type="text" id="crmMgrNewLink" placeholder="연결 주소 (https://...)">
+                <button type="button" class="qna-new-btn" id="crmMgrAddBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 링크 추가</button>
+              </div>
+              <div class="cm-msg" id="crmMgrMsg"></div>
+            </div>
             <div class="sc-sub-grid" id="crmLinksGrid">
               <div class="sc-sub-card sc-sub-link" id="crmCardsToggle"><div class="sc-sub-t">📮 고객관리 카드발송</div><div class="sc-sub-d">계약축하·생일카드 등 이미지 다운로드 →</div></div>
             </div>
@@ -8536,21 +8519,7 @@ const limitCompareData = {};
     if(typeof renderLectureAdminBar === 'function') renderLectureAdminBar();
     if(typeof renderDataCenter === 'function') renderDataCenter();
     if(typeof Object !== 'undefined' && typeof salesMaterials !== 'undefined') Object.keys(salesMaterials).forEach(k => { if(typeof renderSmFolder === 'function') renderSmFolder(k); });
-    const _dnTab = document.getElementById('dailyNewsTabBtn');
-    if(_dnTab) _dnTab.style.display = isTopAdmin() ? '' : 'none';
-    const _noTab = document.getElementById('noticeAdminTabBtn');
-    if(_noTab) _noTab.style.display = isTopAdmin() ? '' : 'none';
-    const _stTab = document.getElementById('strategyAdminTabBtn');
-    if(_stTab) _stTab.style.display = isTopAdmin() ? '' : 'none';
-    const _guTab = document.getElementById('guideAdminTabBtn');
-    if(_guTab) _guTab.style.display = isTopAdmin() ? '' : 'none';
-    const _bzTab = document.getElementById('bizAdminTabBtn');
-    if(_bzTab) _bzTab.style.display = isTopAdmin() ? '' : 'none';
-    const _crmTab = document.getElementById('crmAdminTabBtn');
-    if(_crmTab) _crmTab.style.display = isTopAdmin() ? '' : 'none';
-    const _onlTab = document.getElementById('onlineAdminTabBtn');
-    if(_onlTab) _onlTab.style.display = isTopAdmin() ? '' : 'none';
-    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn'].forEach(id => {
+    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn','dnEditJumpBtn'].forEach(id => {
       const el = document.getElementById(id);
       if(el) el.style.display = isTopAdmin() ? 'inline-block' : 'none';
     });
@@ -9573,12 +9542,6 @@ const limitCompareData = {};
     document.getElementById('admin-' + btn.dataset.atab).classList.add('active');
     if(btn.dataset.atab === 'db') dbbLoad(false);
     if(btn.dataset.atab === 'album') albLoad();
-    if(btn.dataset.atab === 'noticemgr') renderNoticeBoardList();
-    if(btn.dataset.atab === 'strategymgr') renderStrategyAllList();
-    if(btn.dataset.atab === 'guidemgr') guideMgrLoad();
-    if(btn.dataset.atab === 'bizmgr') bizMgrLoad();
-    if(btn.dataset.atab === 'crmmgr') crmMgrLoad();
-    if(btn.dataset.atab === 'onlinemgr') onlineMgrLoad();
   });
 
   /* ===== 데일리뉴스 웹 발행 (관리자 전용) ===== */
