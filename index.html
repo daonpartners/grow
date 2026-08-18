@@ -7960,8 +7960,10 @@ const limitCompareData = {};
       if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
       renderCrmLinks();
       if(msgEl){ msgEl.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msgEl.style.color = 'var(--orange-deep)'; }
+      cmToast('✅ 저장되었습니다', 'ok');
     }catch(err){
       if(msgEl){ msgEl.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msgEl.style.color = 'red'; }
+      cmToast('❌ 저장에 실패했습니다', 'err');
     }finally{
       if(btnEl) btnEl.disabled = false;
     }
@@ -8089,8 +8091,10 @@ const limitCompareData = {};
       if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
       renderSalesOnline();
       if(msgEl){ msgEl.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msgEl.style.color = 'var(--orange-deep)'; }
+      cmToast('✅ 저장되었습니다', 'ok');
     }catch(err){
       if(msgEl){ msgEl.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msgEl.style.color = 'red'; }
+      cmToast('❌ 저장에 실패했습니다', 'err');
     }finally{
       if(btnEl) btnEl.disabled = false;
     }
@@ -8191,8 +8195,10 @@ const limitCompareData = {};
       if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
       renderBiz();
       if(msgEl){ msgEl.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msgEl.style.color = 'var(--orange-deep)'; }
+      cmToast('✅ 저장되었습니다', 'ok');
     }catch(err){
       if(msgEl){ msgEl.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msgEl.style.color = 'red'; }
+      cmToast('❌ 저장에 실패했습니다', 'err');
     }finally{
       if(btnEl) btnEl.disabled = false;
     }
@@ -8384,8 +8390,10 @@ const limitCompareData = {};
       const box = document.getElementById('guideContentBody');
       if(box) box.innerHTML = html;
       msg.textContent = '저장되었습니다. 실제 페이지에 반영됐습니다.'; msg.style.color = 'var(--orange-deep)';
+      cmToast('✅ 저장되었습니다', 'ok');
     }catch(err){
       msg.textContent = '저장에 실패했습니다: ' + (err.message || '네트워크 오류'); msg.style.color = 'red';
+      cmToast('❌ 저장에 실패했습니다', 'err');
     }finally{
       _gmSaveBtn.disabled = false;
     }
