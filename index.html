@@ -1263,6 +1263,7 @@ body.growon{ background:var(--g-navy); }
         <div class="panel-head">
           <div><div class="panel-eyebrow">About GROW</div><h2 class="panel-title">그로우사업부 제도안내</h2></div>
           <div class="panel-count">통합 운영메뉴얼 요약</div>
+          <button type="button" id="guideEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none;" onclick="jumpToAdminTab('guidemgr')">✏️ 관리자 편집</button>
         </div>
 
         <div id="guideContentBody">
@@ -1362,6 +1363,7 @@ body.growon{ background:var(--g-navy); }
 <section class="panel panel-navy" id="business">
         <div class="panel-head">
           <div><div class="panel-eyebrow">About Our Business</div><h2 class="panel-title">그로우사업부 사업소개</h2></div>
+          <button type="button" id="bizEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none;" onclick="jumpToAdminTab('bizmgr')">✏️ 관리자 편집</button>
         </div>
         <div class="biz-grid" id="bizGrid" data-reveal></div>
       </section>
@@ -1797,6 +1799,7 @@ body.growon{ background:var(--g-navy); }
 
           <!-- ① 고객상담 -->
           <div class="edu-panel active" id="sc-counsel">
+            <button type="button" id="onlineEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none; margin-bottom:10px;" onclick="jumpToAdminTab('onlinemgr')">✏️ 관리자 편집(폴더·링크)</button>
             <div class="sc-sub-grid" id="scCounselTabs"></div>
             <div id="scCounselPanels"></div>
           </div>
@@ -1872,6 +1875,7 @@ body.growon{ background:var(--g-navy); }
 
           <!-- ④ 고객관리 -->
           <div class="edu-panel" id="sc-crm">
+            <button type="button" id="crmEditJumpBtn" class="qna-new-btn" style="display:none; background:var(--navy-2); color:#fff; border:none; margin-bottom:10px;" onclick="jumpToAdminTab('crmmgr')">✏️ 관리자 편집(링크)</button>
             <div class="sc-sub-grid" id="crmLinksGrid">
               <div class="sc-sub-card sc-sub-link" id="crmCardsToggle"><div class="sc-sub-t">📮 고객관리 카드발송</div><div class="sc-sub-d">계약축하·생일카드 등 이미지 다운로드 →</div></div>
             </div>
@@ -8546,6 +8550,20 @@ const limitCompareData = {};
     if(_crmTab) _crmTab.style.display = isTopAdmin() ? '' : 'none';
     const _onlTab = document.getElementById('onlineAdminTabBtn');
     if(_onlTab) _onlTab.style.display = isTopAdmin() ? '' : 'none';
+    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.style.display = isTopAdmin() ? 'inline-block' : 'none';
+    });
+  }
+  // 각 페이지의 "✏️ 관리자 편집" 버튼: 관리자센터로 이동해 해당 관리 탭을 바로 열어준다.
+  function jumpToAdminTab(tabId){
+    showView('admin');
+    setTimeout(() => {
+      const btn = document.querySelector('#adminTabs [data-atab="' + tabId + '"]');
+      if(btn) btn.click();
+      const panel = document.getElementById('admin-' + tabId);
+      if(panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   function admSaveSession(){
