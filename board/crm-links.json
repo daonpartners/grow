@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "icon": "🧮",
+      "title": "연금계산기",
+      "desc": "국민연금공단",
+      "link": "https://www.nps.or.kr"
+    },
+    {
+      "icon": "🚗",
+      "title": "자동차보험종합포털",
+      "desc": "손해보험협회",
+      "link": "https://carinfo.knia.or.kr/lmxsrv/main/main.do"
+    },
+    {
+      "icon": "🏥",
+      "title": "건강보험심사평가원",
+      "desc": "질병·진료 정보 조회",
+      "link": "https://www.hira.or.kr/main.do"
+    }
+  ],
+  "author": "김화진",
+  "updatedAt": "2026-08-18T16:06:11.890+09:00"
+}
