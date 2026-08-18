@@ -25,19 +25,19 @@
       "showPosts": false
     },
     {
-      "icon": "🤝",
-      "name": "비즈니스파트너스",
-      "summary": "그로우사업부 제휴업체",
-      "desc": "그로우사업부 제휴업체",
-      "category": "제휴업체",
-      "showPosts": true
-    },
-    {
       "icon": "💻",
       "name": "온라인 DB 사이트",
       "summary": "그로우사업부전용 온라인 DB사이트",
       "desc": "",
       "category": "온라인 DB 사이트",
+      "showPosts": true
+    },
+    {
+      "icon": "🤝",
+      "name": "비즈니스파트너스",
+      "summary": "그로우사업부 제휴업체",
+      "desc": "그로우사업부 제휴업체",
+      "category": "제휴업체",
       "showPosts": true
     },
     {
@@ -88,5 +88,5 @@
     }
   ],
   "author": "김화진",
-  "updatedAt": "2026-08-18T11:37:37.392+09:00"
+  "updatedAt": "2026-08-18T11:40:45.088+09:00"
 }
