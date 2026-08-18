@@ -3620,7 +3620,7 @@ body.growon{ background:var(--g-navy); }
     /* 게시물은 showPosts 인 센터에만 표시. 나머지는 설명을 크게 채운다. */
     if(!b.showPosts){
       sumEl.className = 'biz-desc-full';
-      sumEl.innerHTML = b.desc.split('\n').map(line => line.trim() ? `<div class="biz-desc-line">${escapeHtml(line.trim())}</div>` : '').join('');
+      sumEl.innerHTML = b.desc.split('\n').map(line => line.trim() ? `<div class="biz-desc-line">${linkifyText(line.trim())}</div>` : '').join('');
       labelEl.style.display = 'none';
       caseEl.innerHTML = '';
       caseEl.style.display = 'none';
@@ -3644,7 +3644,7 @@ body.growon{ background:var(--g-navy); }
         <div class="doc-search-result" style="text-align:left;">
           <div class="doc-name">${escapeHtml(p.title)}</div>
           <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}</div>
-          <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(p.content)}</div>
+          <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${linkifyText(p.content)}</div>
           ${(p.images && p.images.length) ? `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:10px;">${p.images.map(src => `
             <img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">
           `).join('')}</div>` : ''}
@@ -4437,6 +4437,17 @@ body.growon{ background:var(--g-navy); }
   const DOC_AI_SEARCH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-doc-ai-search';
 
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // 텍스트 안의 URL(http(s):// 또는 www.로 시작)을 자동으로 클릭 가능한 링크로 바꿔줌. 나머지 텍스트는 그대로 이스케이프 처리.
+  function linkifyText(s){
+    const parts = String(s == null ? '' : s).split(/(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/g);
+    return parts.map(part => {
+      if(/^https?:\/\//.test(part) || /^www\./i.test(part)){
+        const href = /^www\./i.test(part) ? 'https://' + part : part;
+        return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener" style="color:var(--orange-deep); text-decoration:underline; word-break:break-all;">${escapeHtml(part)}</a>`;
+      }
+      return escapeHtml(part);
+    }).join('');
+  }
   // 타 도메인(raw.githubusercontent.com 등) 파일은 <a download> 속성이 브라우저에서 무시되어(다른 출처라 강제저장 불가)
   // 클릭해도 새 탭에 열리기만 하고 저장이 안 됩니다. fetch로 파일을 받아 blob으로 강제 다운로드시킵니다.
   window.forceDownload = async function(url, filename, evt){
