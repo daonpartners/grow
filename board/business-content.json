@@ -39,6 +39,14 @@
       "desc": "https://www.groweconomy.kr/",
       "category": "월간금융신문",
       "showPosts": false
+    },
+    {
+      "icon": "💻",
+      "name": "온라인 DB 사이트",
+      "summary": "그로우사업부전용 온라인 DB사이트",
+      "desc": "암보험 : https://partnergrow.12font.com/",
+      "category": "온라인 DB 사이트",
+      "showPosts": true
     }
   ],
   "posts": [
@@ -62,5 +70,5 @@
     }
   ],
   "author": "김화진",
-  "updatedAt": "2026-08-18T11:03:58.925+09:00"
+  "updatedAt": "2026-08-18T11:05:55.370+09:00"
 }
