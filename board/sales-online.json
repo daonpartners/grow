@@ -7,14 +7,18 @@
       "links": [
         {
           "title": "거북이카페",
-          "url": ""
+          "url": "https://cafe.naver.com/geobuk2"
         },
         {
           "title": "전기박사",
-          "url": ""
+          "url": "https://cafe.naver.com/power119"
         },
         {
           "title": "아프니까사장이다",
+          "url": "https://cafe.naver.com/jihosoccer123"
+        },
+        {
+          "title": "새 링크",
           "url": ""
         }
       ]
@@ -26,11 +30,11 @@
       "links": [
         {
           "title": "암보험",
-          "url": ""
+          "url": "https://partnergrow.12font.com/"
         },
         {
           "title": "간병보험",
-          "url": ""
+          "url": "http://carer.12font.com/"
         }
       ]
     },
@@ -41,11 +45,11 @@
       "links": [
         {
           "title": "월간금융신문",
-          "url": ""
+          "url": "https://www.groweconomy.kr/"
         }
       ]
     }
   ],
   "author": "김화진",
-  "updatedAt": "2026-08-18T16:19:24.603+09:00"
+  "updatedAt": "2026-08-18T16:42:02.433+09:00"
 }
