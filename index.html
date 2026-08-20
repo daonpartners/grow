@@ -630,7 +630,7 @@
   .dn-mini-in .dnc-wrap{border:none; border-radius:0;}
 
   /* 모달 */
-  .dn-modal{display:none; position:fixed; inset:0; z-index:200; background:rgba(18,21,43,.62); align-items:flex-start; justify-content:center; padding:24px 16px; overflow-y:auto;}
+  .dn-modal{display:none; position:fixed; inset:0; z-index:2001; background:rgba(18,21,43,.62); align-items:flex-start; justify-content:center; padding:24px 16px; overflow-y:auto;}
   .dn-modal.open{display:flex;}
   .dn-modal-box{width:100%; max-width:560px; background:#fff; border-radius:14px; padding:18px; position:relative;}
   .dn-modal-x{position:absolute; top:12px; right:14px; background:none; border:none; font-size:24px; line-height:1; color:#9AA6B8; cursor:pointer; z-index:2;}
@@ -746,7 +746,7 @@
   .alb-cap span{display:block; font-size:9.5px; opacity:.82; margin-top:2px; font-weight:700;}
   .alb-empty{grid-column:1/-1; text-align:center; padding:40px 16px; color:var(--slate); font-size:12.5px; border:1px dashed var(--line); border-radius:12px;}
 
-  .alb-lb{display:none; position:fixed; inset:0; z-index:220; background:rgba(18,21,43,.88); align-items:center; justify-content:center; padding:24px;}
+  .alb-lb{display:none; position:fixed; inset:0; z-index:2010; background:rgba(18,21,43,.88); align-items:center; justify-content:center; padding:24px;}
   .alb-lb.open{display:flex;}
   .alb-lb img{max-width:92vw; max-height:78vh; border-radius:10px; display:block;}
   .alb-lb-box{position:relative; text-align:center;}
@@ -755,7 +755,7 @@
   .lb-download-btn:hover{background:#c97a1e; transform:translateY(-1px);}
   .alb-lb-sub{color:#B9C4D9; font-size:11px; font-weight:700; margin-top:3px;}
   .alb-lb-x{position:absolute; top:-14px; right:-8px; background:none; border:none; color:#fff; font-size:30px; line-height:1; cursor:pointer;}
-  .alb-lb-nav{position:fixed; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.14); border:none; color:#fff; font-size:24px; width:44px; height:44px; border-radius:50%; cursor:pointer; z-index:230; display:flex; align-items:center; justify-content:center;}
+  .alb-lb-nav{position:fixed; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.14); border:none; color:#fff; font-size:24px; width:44px; height:44px; border-radius:50%; cursor:pointer; z-index:2011; display:flex; align-items:center; justify-content:center;}
   .alb-lb-nav:hover{background:rgba(255,255,255,.28);}
   .alb-lb-nav.prev{left:14px;}
   .alb-lb-nav.next{right:14px;}
@@ -786,10 +786,10 @@
   .claim-form-btn:hover{background:var(--orange);}
 
   /* ---------- MODAL ---------- */
-  .modal-backdrop{display:none; position:fixed; inset:0; z-index:100; background:rgba(18,21,43,0.6); align-items:center; justify-content:center; padding:20px;}
+  .modal-backdrop{display:none; position:fixed; inset:0; z-index:2000; background:rgba(18,21,43,0.6); align-items:center; justify-content:center; padding:20px;}
   /* 목록 모달 위에서 다시 열리는 상세 모달은 항상 위에 그린다.
      (z-index가 같으면 HTML에서 나중에 나온 목록 모달이 상세를 덮어버린다) */
-  #noticeModalBackdrop{z-index:300;}
+  #noticeModalBackdrop{z-index:2002;}
   .modal-backdrop.open{display:flex;}
   .modal-card{background:#fff; border-radius:18px; max-width:520px; width:100%; padding:30px; position:relative; max-height:86vh; overflow-y:auto;}
   .modal-close{position:absolute; top:16px; right:18px; border:none; background:none; font-size:22px; color:var(--slate); cursor:pointer; line-height:1;}
@@ -1040,7 +1040,7 @@ body.growon{ background:var(--g-navy); }
   .gi-decl-d{font-size:12.5px; line-height:1.85; margin-top:10px; opacity:.9;}
   .gi-foot{font-size:11.5px; line-height:1.75; color:var(--slate); margin-top:18px; padding-top:14px; border-top:1px dashed var(--line);}
 .map-wrap{display:grid; grid-template-columns:1fr 250px; gap:18px; align-items:start;}
-.kmap-box{position:relative;}
+.kmap-box{position:relative; isolation:isolate;}
 .branch-popup{position:absolute; z-index:20; min-width:180px; max-width:220px; background:#fff; border:1px solid var(--line); border-radius:12px;
   box-shadow:0 10px 28px rgba(15,39,64,.22); padding:12px 14px; transform:translate(-50%,-116%); pointer-events:auto;}
 .branch-popup::after{content:""; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); width:14px; height:14px; background:#fff;
@@ -4936,6 +4936,8 @@ body.growon{ background:var(--g-navy); }
     homeScheduleOffset = 0;
     showView('home');
     renderHome();
+    if(typeof dnRenderMini === 'function') dnRenderMini();
+    if(sessionStorage.getItem('growAdmin') === '1' && typeof applyAdminRole === 'function') applyAdminRole();
   }
   const _ghHomeBtn = document.getElementById('ghHomeBtn');
   if(_ghHomeBtn) _ghHomeBtn.addEventListener('click', e => { e.preventDefault(); goHome(); });
