@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GROW ON 그로우온 | 미래에셋 그로우 사업부</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
 
   :root{
@@ -2337,6 +2339,7 @@ body.growon{ background:var(--g-navy); }
               <option value="남양주">남양주</option>
               <option value="천안아산">천안아산</option>
               <option value="전라도광주">전라도광주</option>
+              <option value="평택">평택</option>
             </select>
             <input type="text" id="partnerName" placeholder="이름">
           </div>
@@ -4796,26 +4799,37 @@ body.growon{ background:var(--g-navy); }
 
 
   const gBranches = [
-    { name:'광명지사', city:'광명',   x:208, y:206, addr:'경기도 광명시 일직로 12번길 21 SH&01프라자 503,504호', manager:'황경호 (사업부총괄대표)', phone:'010-6301-6808', lx:-11, ly:14 },
-    { name:'동행지사', city:'인천', x:168, y:190, addr:'인천광역시 검단구 완정로 165번안길 1 이편한프라자 503,504호', manager:'허준', phone:'010-9116-4634', lx:-11, ly:4 },
-    { name:'도약지사', city:'남양주',  x:262, y:190, addr:'경기 남양주시 다산중앙로123번길 21-3 다산역리더스타워 301호', manager:'박진근', phone:'010-5271-4491', lx:11,  ly:4 },
-    { name:'다온지사', city:'천안아산', x:224, y:268, addr:'충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C301호', manager:'김화진', phone:'010-4007-7901', lx:11, ly:4 },
-    { name:'혁신지사', city:'광주',   x:198, y:430, addr:'광주광역시 광산구 하남을로24 우솔빌딩 3층 302호', manager:'양길성', phone:'010-2972-3966', lx:-11, ly:4 }
+    { name:'광명지사', city:'광명',   lat:37.4208606, lng:126.8824876, addr:'경기도 광명시 일직로 12번길 21 SH&01프라자 503,504호', manager:'황경호 (사업부총괄대표)', phone:'010-6301-6808' },
+    { name:'동행지사', city:'인천', lat:37.5966048, lng:126.7186398, addr:'인천광역시 검단구 완정로 165번안길 1 이편한프라자 503,504호', manager:'허준', phone:'010-9116-4634' },
+    { name:'도약지사', city:'남양주',  lat:37.6233968, lng:127.1514528, addr:'경기 남양주시 다산중앙로123번길 21-3 다산역리더스타워 301호', manager:'박진근', phone:'010-5271-4491' },
+    { name:'다온지사', city:'천안아산', lat:36.7948074, lng:127.048816, addr:'충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C301호', manager:'김화진', phone:'010-4007-7901' },
+    { name:'혁신지사', city:'광주',   lat:35.1668392, lng:126.7980429, addr:'광주광역시 광산구 하남을로24 우솔빌딩 3층 302호', manager:'양길성', phone:'010-2972-3966' },
+    { name:'리치로드맵지사', city:'평택', lat:37.027336, lng:127.0158529, addr:'경기 평택시 도시지원로121 아이타워 933호', manager:'곽현진', phone:'010-2988-6843' }
   ];
-  function gMapSvg(){
-    const pins = gBranches.map((b,i)=>{
-      const dx=b.lx, dy=b.ly, anchor = dx<0?'end':'start';
-      return `<g class="pin-g" data-bi="${i}"><circle class="pin" cx="${b.x}" cy="${b.y}" r="7"></circle><text class="pin-label" x="${b.x+dx}" y="${b.y+dy}" text-anchor="${anchor}">${escapeHtml(b.city)}</text></g>`;
-    }).join('');
-    return `<svg class="kmap" viewBox="0 0 460 560" xmlns="http://www.w3.org/2000/svg">
-      <path class="region" d="M175 120 L250 95 L300 130 L292 190 L245 215 L195 195 Z"/>
-      <path class="region" d="M300 130 L360 150 L375 215 L330 250 L292 190 Z"/>
-      <path class="region" d="M195 195 L245 215 L292 190 L330 250 L300 305 L235 320 L180 280 Z"/>
-      <path class="region" d="M330 250 L375 215 L400 290 L370 370 L300 305 Z"/>
-      <path class="region" d="M180 280 L235 320 L300 305 L370 370 L340 450 L245 470 L175 400 Z"/>
-      <path class="region" d="M175 400 L245 470 L215 500 L160 460 Z"/>
-      <ellipse class="region" cx="150" cy="520" rx="34" ry="17"/>
-      ${pins}</svg>`;
+  let gMapInstance = null;
+  let gMapMarkers = [];
+  function initGMap(){
+    const el = document.getElementById('gLeafletMap');
+    if(!el || typeof L === 'undefined') return;
+    if(gMapInstance){ gMapInstance.remove(); gMapInstance = null; }
+    gMapInstance = L.map('gLeafletMap', { scrollWheelZoom: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(gMapInstance);
+    const orangeIcon = L.divIcon({
+      className: 'gmap-pin-icon',
+      html: '<div style="width:16px; height:16px; border-radius:50%; background:var(--orange); border:3px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.35);"></div>',
+      iconSize: [16, 16], iconAnchor: [8, 8], popupAnchor: [0, -10]
+    });
+    gMapMarkers = gBranches.map(b => {
+      const marker = L.marker([b.lat, b.lng], { icon: orangeIcon }).addTo(gMapInstance);
+      marker.bindPopup(`<b>${escapeHtml(b.name)}</b><br>📍 ${escapeHtml(b.addr)}<br>📞 ${escapeHtml(b.phone||'')}`);
+      return marker;
+    });
+    const bounds = L.latLngBounds(gBranches.map(b => [b.lat, b.lng]));
+    gMapInstance.fitBounds(bounds, { padding: [30, 30] });
+    setTimeout(() => { if(gMapInstance) gMapInstance.invalidateSize(); }, 100);
   }
   let homeScheduleOffset = 0;
   function renderHome(){
@@ -4823,7 +4837,7 @@ body.growon{ background:var(--g-navy); }
     box.innerHTML = `
       <div class="panel-head"><div><div class="panel-eyebrow">Grow On</div><h2 class="panel-title">전국지사안내</h2></div></div>
       <div class="map-wrap">
-        <div class="kmap-box" id="kmapBox">${gMapSvg()}</div>
+        <div class="kmap-box" id="kmapBox"><div id="gLeafletMap" style="width:100%; height:360px; border-radius:14px; overflow:hidden;"></div></div>
         <div><h4 style="font-size:14px;font-weight:900;margin-bottom:10px;">지사 목록</h4>
           ${gBranches.map((b,i)=>`<div class="branch" data-bi="${i}"><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.manager||'')} · ${escapeHtml(b.phone||'')}</span></div>`).join('')}
         </div>
@@ -4848,32 +4862,16 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('homeSchedPrev').addEventListener('click', () => { homeScheduleOffset--; renderHomeSchedule(); });
     document.getElementById('homeSchedNext').addEventListener('click', () => { homeScheduleOffset++; renderHomeSchedule(); });
     renderHomeSchedule();
-    function showBranchPopup(i){
-      const b = gBranches[i]; if(!b) return;
-      const kbox = document.getElementById('kmapBox');
-      if(!kbox) return;
-      let pop = document.getElementById('branchPopup');
-      if(!pop){
-        pop = document.createElement('div');
-        pop.className = 'branch-popup';
-        pop.id = 'branchPopup';
-        kbox.appendChild(pop);
-      }
-      pop.style.left = (b.x / 460 * 100) + '%';
-      pop.style.top = (b.y / 560 * 100) + '%';
-      pop.innerHTML = `<button type="button" class="branch-popup-x" id="branchPopupX">&times;</button>
-        <div class="branch-popup-name">${escapeHtml(b.name)}</div>
-        <div class="branch-popup-line">📍 ${escapeHtml(b.addr)}</div>
-        <div class="branch-popup-line">📞 ${escapeHtml(b.phone||'')}</div>`;
-      const xBtn = document.getElementById('branchPopupX');
-      if(xBtn) xBtn.addEventListener('click', (e) => { e.stopPropagation(); pop.remove(); });
-    }
-    box.querySelectorAll('.branch,.pin-g').forEach(el=>{
-      el.addEventListener('click',(e)=>{ e.stopPropagation(); showBranchPopup(Number(el.dataset.bi)); });
-    });
-    document.addEventListener('click', (e) => {
-      const pop = document.getElementById('branchPopup');
-      if(pop && !pop.contains(e.target) && !e.target.closest('.branch,.pin-g')) pop.remove();
+    initGMap();
+    box.querySelectorAll('.branch').forEach(el=>{
+      el.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        const i = Number(el.dataset.bi);
+        const b = gBranches[i];
+        if(!b || !gMapInstance || !gMapMarkers[i]) return;
+        gMapInstance.setView([b.lat, b.lng], 13, { animate: true });
+        gMapMarkers[i].openPopup();
+      });
     });
   }
   function renderHomeSchedule(){
