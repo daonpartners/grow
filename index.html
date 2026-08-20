@@ -2064,24 +2064,22 @@ body.growon{ background:var(--g-navy); }
                   <span class="surgery-pin-icon">🏥</span>
                   <div>
                     <div class="surgery-pin-title">간병진단비가이드</div>
-                    <div class="surgery-pin-desc">자료 준비 중입니다.</div>
+                    <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                   </div>
+                  <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','간병진단비')">＋ 게시물 등록</button>
                 </div>
-                <div class="driver-menu">
-                  <div class="driver-img-empty" style="aspect-ratio:auto; padding:24px 10px;">이미지 자료 준비 중<br><span>자료 주시면 채워드립니다</span></div>
-                </div>
+                <div class="driver-menu" id="cbMenu_guide_간병진단비"></div>
               </div>
               <div class="surgery-pin guide-box">
                 <div class="surgery-pin-head">
                   <span class="surgery-pin-icon">💵</span>
                   <div>
                     <div class="surgery-pin-title">간병인일당가이드</div>
-                    <div class="surgery-pin-desc">자료 준비 중입니다.</div>
+                    <div class="surgery-pin-desc">이미지를 클릭하면 크게 볼 수 있습니다.</div>
                   </div>
+                  <button type="button" class="lc-upload-btn cb-register-btn" data-board="guide" style="display:none;" onclick="limitOpenUpload('guide','간병인일당')">＋ 게시물 등록</button>
                 </div>
-                <div class="driver-menu">
-                  <div class="driver-img-empty" style="aspect-ratio:auto; padding:24px 10px;">이미지 자료 준비 중<br><span>자료 주시면 채워드립니다</span></div>
-                </div>
+                <div class="driver-menu" id="cbMenu_guide_간병인일당"></div>
               </div>
             </div>
           </div>
@@ -5711,6 +5709,8 @@ const limitCompareData = {};
     "화재보험": "cbMenu_guide_화재보험",
     "배상책임보험": "cbMenu_guide_배상책임보험",
     "치매·간병": "cbMenu_guide_치매·간병",
+    "간병진단비": "cbMenu_guide_간병진단비",
+    "간병인일당": "cbMenu_guide_간병인일당",
     "실손보험": "cbMenu_guide_실손보험",
     "자동차보험": "cbMenu_guide_자동차보험",
     "종신·정기보험": "cbMenu_guide_종신·정기보험",
