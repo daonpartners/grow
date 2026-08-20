@@ -8447,18 +8447,15 @@ const limitCompareData = {};
     { name: '김화진', title: '다온지사장', branch: '다온' },
     { name: '황경호', title: '그로우사업부 대표 · 광명지사장', branch: '광명' }
   ];
-  const EDU_ADMIN_MEMBERS = [
-    { name: '김덕규', title: '교육본부장' },
-    { name: '이수정', title: '교육본부장' }
-  ];
-  const POINT_ADMIN_MEMBERS = [
-    { name: '김승준', title: '지점장' },
-    { name: '성영진', title: '지점장' }
+  const MASTER_ADMIN_MEMBERS = [
+    { name: '김덕규', title: '교육본부장', canManageEdu: true },
+    { name: '이수정', title: '교육본부장', canManageEdu: true },
+    { name: '김승준', title: '지점장', canManageEdu: true },
+    { name: '성영진', title: '지점장', canManageEdu: true }
   ];
   const ADMIN_ACCOUNTS = {
     'grow26':     { role: 'admin' },
-    'edu2026':    { role: 'eduadmin' },
-    'point2026':  { role: 'pointadmin' },
+    'master26':   { role: 'masteradmin' },
     'dy2026':     { role: 'manager', branch: '도약', label: '도약지사장' },
     'dh2026':     { role: 'manager', branch: '동행', label: '동행지사장' },
     'rc2026':     { role: 'manager', branch: '리치로드맵', label: '리치로드맵지사장' },
@@ -8470,16 +8467,16 @@ const limitCompareData = {};
   let admName = '';
   let admLabel = '';
 
-  /* 교육관리자(교육본부장): 교육센터(강의실·자료실)만 편집 가능. 최상위 관리자는 이 조건도 항상 참. */
-  function isEduAdmin(){ return sessionStorage.getItem('growAdmin') === '1' && sessionStorage.getItem('growRole') === 'eduadmin'; }
+  /* 교육본부장·지점장(master26) 4명 전원 동일 권한: 교육센터 강의실·자료실 포함 전 영역 편집 가능. 최상위 관리자는 항상 참. */
+  function isEduAdmin(){ return sessionStorage.getItem('growAdmin') === '1' && sessionStorage.getItem('growCanManageEdu') === '1'; }
   function canManageEdu(){ return isTopAdmin() || isEduAdmin(); }
 
   function applyAdminRole(){
     const isAdmin = admRole === 'admin';
-    const isEdu = admRole === 'eduadmin';
+    const isMaster = admRole === 'masteradmin';
     const badge = document.getElementById('admBadge');
     if(badge){
-      badge.textContent = isAdmin ? '관리자' : (isEdu ? '교육관리자' : '지사장');
+      badge.textContent = isAdmin ? '관리자' : (isMaster ? admLabel : '지사장');
       badge.className = 'adm-badge' + (isAdmin ? '' : ' mgr');
     }
     const who = document.getElementById('admWho');
@@ -8487,7 +8484,7 @@ const limitCompareData = {};
     const role = document.getElementById('admRole');
     if(role) role.textContent = isAdmin
       ? '· ' + admLabel + ' · DB 게시물 등록 및 전체 관리 권한'
-      : (isEdu ? '· ' + admLabel + ' · 교육센터(강의실·자료실) 관리 권한' : '· ' + admBranch + '지사 명의로 DB 신청 가능');
+      : (isMaster ? '· ' + admLabel + ' · 회의자료·행사신청·DB신청·앨범 및 교육·영업·자료·업무지원센터 관리 권한' : '· ' + admBranch + '지사 명의로 DB 신청 가능');
 
     const newBtn = document.getElementById('dbbNewBtn');
     const newForm = document.getElementById('dbbNewForm');
@@ -8562,41 +8559,22 @@ const limitCompareData = {};
     });
   }
 
-  function admShowEduPicker(){
+  function admShowMasterPicker(){
     document.getElementById('admStep1').style.display = 'none';
     document.getElementById('admStep2').style.display = 'block';
     const box = document.getElementById('admPick');
-    box.innerHTML = EDU_ADMIN_MEMBERS.map((m, i) =>
+    box.innerHTML = MASTER_ADMIN_MEMBERS.map((m, i) =>
       '<button type="button" data-mi="' + i + '"><b>' + m.name + '</b><span>' + m.title + '</span></button>'
     ).join('');
     box.querySelectorAll('button').forEach(btn => {
       btn.addEventListener('click', () => {
-        const m = EDU_ADMIN_MEMBERS[Number(btn.dataset.mi)];
-        admRole = 'eduadmin';
+        const m = MASTER_ADMIN_MEMBERS[Number(btn.dataset.mi)];
+        admRole = 'masteradmin';
         admName = m.name;
         admBranch = '';
         admLabel = m.title;
         admSaveSession();
-        unlockAdmin();
-      });
-    });
-  }
-
-  function admShowPointPicker(){
-    document.getElementById('admStep1').style.display = 'none';
-    document.getElementById('admStep2').style.display = 'block';
-    const box = document.getElementById('admPick');
-    box.innerHTML = POINT_ADMIN_MEMBERS.map((m, i) =>
-      '<button type="button" data-mi="' + i + '"><b>' + m.name + '</b><span>' + m.title + '</span></button>'
-    ).join('');
-    box.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const m = POINT_ADMIN_MEMBERS[Number(btn.dataset.mi)];
-        admRole = 'pointadmin';
-        admName = m.name;
-        admBranch = '';
-        admLabel = m.title;
-        admSaveSession();
+        sessionStorage.setItem('growCanManageEdu', m.canManageEdu ? '1' : '0');
         unlockAdmin();
       });
     });
@@ -8613,10 +8591,8 @@ const limitCompareData = {};
     }
     if(acct.role === 'admin'){
       admShowPicker();
-    } else if(acct.role === 'eduadmin'){
-      admShowEduPicker();
-    } else if(acct.role === 'pointadmin'){
-      admShowPointPicker();
+    } else if(acct.role === 'masteradmin'){
+      admShowMasterPicker();
     } else {
       admRole = 'manager';
       admBranch = acct.branch;
@@ -8632,7 +8608,7 @@ const limitCompareData = {};
 
   const _ao = document.getElementById('admOut');
   if(_ao) _ao.addEventListener('click', () => {
-    ['growAdmin','growRole','growBranch','growName','growLabel'].forEach(k => sessionStorage.removeItem(k));
+    ['growAdmin','growRole','growBranch','growName','growLabel','growCanManageEdu'].forEach(k => sessionStorage.removeItem(k));
     location.reload();
   });
 
