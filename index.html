@@ -1154,8 +1154,8 @@ body.growon{ background:var(--g-navy); }
 <div class="growon-hd">
   <div class="gh-l">미래에셋 그로우 사업부</div>
   <div class="gh-c">
-    <button type="button" class="gh-home-btn" data-view="home" title="홈으로">🏠 홈으로</button>
-    <div class="gh-t" data-view="home" style="cursor:pointer;" title="홈으로">GROW ON</div>
+    <button type="button" id="ghHomeBtn" class="gh-home-btn" title="홈으로">🏠 홈으로</button>
+    <div class="gh-t" id="ghTitleHome" style="cursor:pointer;" title="홈으로">GROW ON</div>
     <div class="gh-s">함께 배우고, 연결하고, 성장하는 그로우사업부 통합 플랫폼</div>
   </div>
   <div class="gh-r" id="ghLogo"><img src="assets/mirae-logo.png" alt="미래에셋금융서비스"></div>
@@ -4819,8 +4819,8 @@ body.growon{ background:var(--g-navy); }
     }).addTo(gMapInstance);
     const orangeIcon = L.divIcon({
       className: 'gmap-pin-icon',
-      html: '<div style="width:16px; height:16px; border-radius:50%; background:var(--orange); border:3px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.35);"></div>',
-      iconSize: [16, 16], iconAnchor: [8, 8], popupAnchor: [0, -10]
+      html: '<div style="width:20px; height:20px; border-radius:50%; background:#E8342A; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.45);"></div>',
+      iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -12]
     });
     gMapMarkers = gBranches.map(b => {
       const marker = L.marker([b.lat, b.lng], { icon: orangeIcon }).addTo(gMapInstance);
@@ -4913,6 +4913,23 @@ body.growon{ background:var(--g-navy); }
     document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active', el.dataset.view===v));
     closeDrawer(); window.scrollTo({top:0,behavior:'smooth'});
   }
+  // 홈 버튼 전용: 열려있는 모든 팝업/모달을 강제로 닫고, 홈 화면(지도·일정·앨범)을 완전히 새로 그려서
+  // "새로고침"처럼 항상 깨끗한 첫 화면으로 돌아가게 한다. (지사 팝업 등을 열어본 뒤에도 확실히 복귀되도록)
+  function goHome(){
+    document.querySelectorAll('.modal-backdrop, .dn-modal, .alb-lb').forEach(m => {
+      m.classList.remove('open');
+      m.style.display = 'none';
+    });
+    document.querySelectorAll('.qna-form.open').forEach(f => f.classList.remove('open'));
+    if(gMapInstance){ gMapInstance.remove(); gMapInstance = null; }
+    homeScheduleOffset = 0;
+    showView('home');
+    renderHome();
+  }
+  const _ghHomeBtn = document.getElementById('ghHomeBtn');
+  if(_ghHomeBtn) _ghHomeBtn.addEventListener('click', e => { e.preventDefault(); goHome(); });
+  const _ghTitleHome = document.getElementById('ghTitleHome');
+  if(_ghTitleHome) _ghTitleHome.addEventListener('click', e => { e.preventDefault(); goHome(); });
   document.querySelectorAll('[data-view]').forEach(el=>{
     el.addEventListener('click',e=>{ e.preventDefault(); showView(el.dataset.view); });
   });
