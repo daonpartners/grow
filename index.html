@@ -7452,6 +7452,7 @@ const limitCompareData = {};
         let val = inp.value;
         if(/^[0-9]+$/.test(val.trim())) val = Number(val.trim()).toLocaleString('ko-KR');
         span.textContent = val;
+        span.style.cssText = 'display:block; width:100%; box-sizing:border-box; padding:8px; font-size:12.5px; font-family:inherit; text-align:center;';
         if(inp.parentElement.tagName === 'TH' || inp.className.indexOf('premium')>=0) span.style.fontWeight = '800';
         inp.replaceWith(span);
       });
