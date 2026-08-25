@@ -3220,14 +3220,18 @@ body.growon{ background:var(--g-navy); }
     renderCardnews(cat === '전체' ? cardNews : cardNews.filter(c => c.category === cat));
   });
 
-  const CARDNEWS_FEED = 'https://daonpartners.app.n8n.cloud/webhook/daon-cardnews-feed';
+  const CARDNEWS_FEED = 'https://daonpartners.app.n8n.cloud/webhook/daon-cardnews-feed'; // 개별 새로고침용으로 보존
+  const HOME_BOOTSTRAP_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-home-bootstrap';
   (async () => {
     try {
-      const res = await fetch(CARDNEWS_FEED);
+      const res = await fetch(HOME_BOOTSTRAP_URL);
       const data = await res.json();
       if (data && Array.isArray(data.cards)) {
         cardNews.length = 0;
         data.cards.forEach(c => cardNews.push(c));
+      }
+      if (data && Array.isArray(data.limitImages) && typeof applyLimitRows === 'function') {
+        applyLimitRows(data.limitImages);
       }
     } catch (e) { /* 실패 시 빈 배열 유지 — 화면은 깨지지 않음 */ }
     renderCardnewsHero();
@@ -5954,44 +5958,48 @@ const limitCompareData = {};
   const LIMIT_REPLACE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-page-replace';
   const LIMIT_PAGE_DELETE_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-limit-page-delete';
 
+  function applyLimitRows(rows){
+    if(!Array.isArray(rows)) return;
+    const byCat = {};
+    rows.forEach(r => {
+      if(!r || !r.catKey) return; // 손상되었거나 테스트용 빈 행은 무시
+      (byCat[r.catKey] = byCat[r.catKey] || []).push(r);
+    });
+    // 업로드 게시물만 board 순서에서 제거 후 다시 채움(최신 목록 반영)
+    limitBoardOrder = limitBoardOrder.filter(k => LIMIT_BUILTIN_KEYS.includes(k));
+    guideBoardOrder = [];
+    claimBoardOrder = [];
+    const uploadedKeys = Object.keys(byCat).sort((a,b) => {
+      const aMin = Math.min(...byCat[a].map(r => r.sortOrder||0));
+      const bMin = Math.min(...byCat[b].map(r => r.sortOrder||0));
+      return bMin - aMin; // 최신 게시물이 위로
+    });
+    uploadedKeys.forEach(catKey => {
+      if(LIMIT_BUILTIN_KEYS.includes(catKey)) return; // built-in 장표와 겹치면 건드리지 않음
+      const rowsForCat = byCat[catKey].sort((a,b) => (a.sortOrder||0) - (b.sortOrder||0));
+      const images = rowsForCat.map(r => ({ imgId: r.imgId, src: (r.staticUrl && !r.hasImage) ? r.staticUrl : `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
+      const section = rowsForCat[0].section || 'limit_compare';
+      const guideCat = rowsForCat[0].guideCat || '';
+      // section이 'guide'/'claim2'/'limit_compare' 셋 중 하나가 아니면(예: 'event_notice' = 행사신청 첨부이미지)
+      // 이 게시판들과 무관한 용도이므로 건너뛴다. 실제 이미지 데이터는 그대로 두고, 목록에만 안 보이게 한다.
+      if(section !== 'guide' && section !== 'claim2' && section !== 'limit_compare') return;
+      limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true, section, guideCat };
+      if(section === 'guide') guideBoardOrder.push(catKey);
+      else if(section === 'claim2') claimBoardOrder.push(catKey);
+      else limitBoardOrder.push(catKey);
+    });
+    renderAllBoards();
+  }
   async function loadLimitUploadedImages(){
     try{
       const res = await fetch(LIMIT_LIST_URL);
       if(!res.ok) return;
       const rows = await res.json();
-      if(!Array.isArray(rows)) return;
-      const byCat = {};
-      rows.forEach(r => {
-        if(!r || !r.catKey) return; // 손상되었거나 테스트용 빈 행은 무시
-        (byCat[r.catKey] = byCat[r.catKey] || []).push(r);
-      });
-      // 업로드 게시물만 board 순서에서 제거 후 다시 채움(최신 목록 반영)
-      limitBoardOrder = limitBoardOrder.filter(k => LIMIT_BUILTIN_KEYS.includes(k));
-      guideBoardOrder = [];
-      claimBoardOrder = [];
-      const uploadedKeys = Object.keys(byCat).sort((a,b) => {
-        const aMin = Math.min(...byCat[a].map(r => r.sortOrder||0));
-        const bMin = Math.min(...byCat[b].map(r => r.sortOrder||0));
-        return bMin - aMin; // 최신 게시물이 위로
-      });
-      uploadedKeys.forEach(catKey => {
-        if(LIMIT_BUILTIN_KEYS.includes(catKey)) return; // built-in 장표와 겹치면 건드리지 않음
-        const rowsForCat = byCat[catKey].sort((a,b) => (a.sortOrder||0) - (b.sortOrder||0));
-        const images = rowsForCat.map(r => ({ imgId: r.imgId, src: (r.staticUrl && !r.hasImage) ? r.staticUrl : `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
-        const section = rowsForCat[0].section || 'limit_compare';
-        const guideCat = rowsForCat[0].guideCat || '';
-        // section이 'guide'/'claim2'/'limit_compare' 셋 중 하나가 아니면(예: 'event_notice' = 행사신청 첨부이미지)
-        // 이 게시판들과 무관한 용도이므로 건너뛴다. 실제 이미지 데이터는 그대로 두고, 목록에만 안 보이게 한다.
-        if(section !== 'guide' && section !== 'claim2' && section !== 'limit_compare') return;
-        limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true, section, guideCat };
-        if(section === 'guide') guideBoardOrder.push(catKey);
-        else if(section === 'claim2') claimBoardOrder.push(catKey);
-        else limitBoardOrder.push(catKey);
-      });
-      renderAllBoards();
+      applyLimitRows(rows);
     } catch(e){ /* 목록 로딩 실패는 조용히 무시 (built-in 항목은 정상 노출) */ }
   }
-  loadLimitUploadedImages();
+  // 페이지 최초 로드 시에는 daon-home-bootstrap(통합 엔드포인트, 카드뉴스와 함께 1회 호출)이 대신 채워준다.
+  // (아래쪽 카드뉴스 로딩 위치에서 applyLimitRows()를 함께 호출함)
 
   // 등록 버튼은 관리자 로그인 시에만 노출(게시판 3곳 모두). 어떤 경로로 로그인하든(탭 전환·새로고침 등)
   // 확실히 반영되도록 주기적으로 동기화. 클릭 동작 자체는 버튼의 onclick 속성이라 이 로직과 무관하게 항상 작동.
