@@ -1826,6 +1826,7 @@ body.growon{ background:var(--g-navy); }
             <div class="sc-sub-grid" id="scContractTabs" style="margin-bottom:16px;">
               <div class="sc-sub-card sc-sub-link active" data-ctab="design"><div class="sc-sub-t">📑 설계안추천</div></div>
               <div class="sc-sub-card sc-sub-link" data-ctab="limit"><div class="sc-sub-t">📊 회사별 인수한도 비교</div></div>
+              <div class="sc-sub-card sc-sub-link" data-ctab="monitoring"><div class="sc-sub-t">🖥️ 모니터링</div></div>
               <div class="sc-sub-card sc-sub-link" onclick="showView('qna'); setTimeout(() => { const b = document.querySelector('#qnaTabs [data-qtab=&quot;underwrite&quot;]'); if(b) b.click(); }, 50);"><div class="sc-sub-t">📋 고지의무</div><div class="sc-sub-d">업무지원센터 &gt; 가입·인수 가이드 바로가기 →</div></div>
             </div>
 
@@ -1844,6 +1845,20 @@ body.growon{ background:var(--g-navy); }
                   <button type="button" id="limitUploadOpenBtn" class="lc-upload-btn cb-register-btn" data-board="limit_compare" style="display:none;" onclick="limitOpenUpload('limit_compare')">＋ 게시물 등록</button>
                 </div>
                 <div class="driver-menu" id="limitCompareMenu"></div>
+              </div>
+            </div>
+
+            <div class="edu-panel" id="sc-ctab-monitoring">
+              <div class="surgery-pin" id="monitoringPin">
+                <div class="surgery-pin-head">
+                  <span class="surgery-pin-icon">🖥️</span>
+                  <div>
+                    <div class="surgery-pin-title">모니터링</div>
+                    <div class="surgery-pin-desc">게시물(이미지·PDF)을 등록해두면 여기서 바로 확인·수정·삭제할 수 있습니다.</div>
+                  </div>
+                  <button type="button" class="lc-upload-btn cb-register-btn" data-board="monitoring" style="display:none;" onclick="limitOpenUpload('monitoring')">＋ 게시물 등록</button>
+                </div>
+                <div class="driver-menu" id="monitoringMenu"></div>
               </div>
             </div>
           </div>
@@ -5704,6 +5719,7 @@ const limitCompareData = {};
 
   let guideBoardOrder = [];
   let claimBoardOrder = [];
+  let monitoringBoardOrder = [];
   function renderLimitCompareMenu(){ renderBoard('limitCompareMenu', limitBoardOrder); }
   const GUIDE_CAT_CONTAINERS = {
     "운전자보험": "cbMenu_guide_운전자보험",
@@ -5733,7 +5749,8 @@ const limitCompareData = {};
     });
   }
   function renderClaimBoard(){ renderBoard('cbMenu_claim2', claimBoardOrder); }
-  function renderAllBoards(){ renderLimitCompareMenu(); renderGuideBoard(); renderClaimBoard(); }
+  function renderMonitoringBoard(){ renderBoard('monitoringMenu', monitoringBoardOrder); }
+  function renderAllBoards(){ renderLimitCompareMenu(); renderGuideBoard(); renderClaimBoard(); renderMonitoringBoard(); }
 
   async function deleteLimitPost(key){
     const d = limitCompareData[key];
@@ -5969,6 +5986,7 @@ const limitCompareData = {};
     limitBoardOrder = limitBoardOrder.filter(k => LIMIT_BUILTIN_KEYS.includes(k));
     guideBoardOrder = [];
     claimBoardOrder = [];
+    monitoringBoardOrder = [];
     const uploadedKeys = Object.keys(byCat).sort((a,b) => {
       const aMin = Math.min(...byCat[a].map(r => r.sortOrder||0));
       const bMin = Math.min(...byCat[b].map(r => r.sortOrder||0));
@@ -5980,12 +5998,13 @@ const limitCompareData = {};
       const images = rowsForCat.map(r => ({ imgId: r.imgId, src: (r.staticUrl && !r.hasImage) ? r.staticUrl : `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
       const section = rowsForCat[0].section || 'limit_compare';
       const guideCat = rowsForCat[0].guideCat || '';
-      // section이 'guide'/'claim2'/'limit_compare' 셋 중 하나가 아니면(예: 'event_notice' = 행사신청 첨부이미지)
+      // section이 'guide'/'claim2'/'limit_compare'/'monitoring' 넷 중 하나가 아니면(예: 'event_notice' = 행사신청 첨부이미지)
       // 이 게시판들과 무관한 용도이므로 건너뛴다. 실제 이미지 데이터는 그대로 두고, 목록에만 안 보이게 한다.
-      if(section !== 'guide' && section !== 'claim2' && section !== 'limit_compare') return;
+      if(section !== 'guide' && section !== 'claim2' && section !== 'limit_compare' && section !== 'monitoring') return;
       limitCompareData[catKey] = { label: rowsForCat[0].catLabel || catKey, date: '', images, note: '', isUploaded: true, section, guideCat };
       if(section === 'guide') guideBoardOrder.push(catKey);
       else if(section === 'claim2') claimBoardOrder.push(catKey);
+      else if(section === 'monitoring') monitoringBoardOrder.push(catKey);
       else limitBoardOrder.push(catKey);
     });
     renderAllBoards();
