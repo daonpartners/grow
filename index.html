@@ -7170,6 +7170,7 @@ const limitCompareData = {};
       const groups = meState.kind === 'driver' ? ME_DRIVER_GROUPS : [];
       const companies = (prefill && prefill.companies) || meCurrentCompanies();
       if(meState.kind === 'driver') meState.driverCompanies = companies; else meState.otherCompanies = companies;
+      if(prefill && prefill.noteHeader !== undefined) meState.noteHeader = prefill.noteHeader;
       const nCols = companies.length;
       const t = document.getElementById('meSheetTable');
       function companyTh(idx){
@@ -7212,7 +7213,7 @@ const limitCompareData = {};
 
       t.innerHTML = `
         <tr><td class="me-titlecell" colspan="${totalCols}">${ccEsc(meTitleText())}</td></tr>
-        <tr><th${groups.length?' colspan="2"':''}>보험회사</th>${companies.map((c,i)=>companyTh(i)).join('')}<th style="background:#F4A6A6;">비고</th></tr>
+        <tr><th${groups.length?' colspan="2"':''}>보험회사</th>${companies.map((c,i)=>companyTh(i)).join('')}<th class="me-company-th" style="background:#F4A6A6;"><input type="text" class="me-note-header-input" value="${ccEsc(meState.noteHeader || '비고')}" placeholder="비고"></th></tr>
         <tr><td class="me-rowlabel"${groups.length?' colspan="2"':''} style="text-align:center; padding:8px; font-weight:700;">납입/보장기간</td>${termInputs}<td></td></tr>
         <tr class="me-prem-row"><td class="me-rowlabel"${groups.length?' colspan="2"':''} style="text-align:center; padding:8px; font-weight:700;">납입보험료</td>${premInputs}<td></td></tr>
         <tr><td class="me-divider" colspan="${totalCols}">담보 비교</td></tr>
@@ -7248,7 +7249,8 @@ const limitCompareData = {};
         const note = tr.querySelector('.me-note-input') ? tr.querySelector('.me-note-input').value : '';
         return { coverage, values: vinputs, note };
       });
-      return { companies, terms, premiums, rows, extraRows };
+      const noteHeader = t.querySelector('.me-note-header-input') ? t.querySelector('.me-note-header-input').value : '';
+      return { companies, terms, premiums, rows, extraRows, noteHeader };
     }
 
     function meRenderConsulting(prefill){
