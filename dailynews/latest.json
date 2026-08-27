@@ -1,126 +1,126 @@
 {
-  "date": "2026-08-20",
-  "dateLabel": "2026.08.20(목)",
+  "date": "2026-08-27",
+  "dateLabel": "2026.08.27(목)",
   "weather": [
     {
       "city": "서울",
-      "min": 23,
-      "max": 26,
-      "code": 53
+      "min": 22,
+      "max": 30,
+      "code": 2
     },
     {
       "city": "부산",
-      "min": 24,
-      "max": 32,
-      "code": 3
-    },
-    {
-      "city": "대구",
-      "min": 24,
-      "max": 30,
+      "min": 26,
+      "max": 29,
       "code": 61
     },
     {
+      "city": "대구",
+      "min": 25,
+      "max": 31,
+      "code": 51
+    },
+    {
       "city": "인천",
-      "min": 23,
-      "max": 26,
-      "code": 53
+      "min": 22,
+      "max": 29,
+      "code": 3
     },
     {
       "city": "광주",
-      "min": 24,
+      "min": 25,
       "max": 32,
-      "code": 53
+      "code": 51
     },
     {
       "city": "대전",
-      "min": 23,
-      "max": 27,
-      "code": 65
+      "min": 24,
+      "max": 31,
+      "code": 3
     },
     {
       "city": "강릉",
-      "min": 22,
-      "max": 27,
+      "min": 23,
+      "max": 29,
       "code": 51
     },
     {
       "city": "제주",
-      "min": 25,
-      "max": 31,
-      "code": 51
+      "min": 27,
+      "max": 32,
+      "code": 2
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,471.17",
-      "diff": "-506.77",
-      "dir": "down"
+      "value": "6,894.01",
+      "diff": "+85.80",
+      "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "824.46",
-      "diff": "-40.19",
-      "dir": "down"
+      "value": "827.88",
+      "diff": "+1.01",
+      "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,386.79",
-      "diff": "-26.79",
+      "value": "1,378.68",
+      "diff": "-2.81",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "84.4",
-      "diff": "-0.5",
+      "value": "82.0",
+      "diff": "-0.4",
       "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "765,887",
-      "diff": "+21,795",
+      "value": "776,967",
+      "diff": "+4,446",
       "dir": "up"
     }
   ],
   "trends": [
-    "atlético madrid vs málaga",
-    "정연",
-    "엔비디아"
+    "달",
+    "병사",
+    "페달"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "AIA프리미어파트너스 대표, 묵인 의혹",
-      "summary": "공태식 대표가 일부 영업 조직의 불법 계약을 알고도 조치를 취하지 않은 정황이 드러났다. 이로 인해 수억 원대 환수금과 설계사들의 피해가 발생한 것으로 보인다.",
-      "url": "https://www.newstomato.com/ReadNews.aspx?no=1310533&inflow=N",
-      "host": "newstomato.com"
-    },
-    {
-      "cat": "사회",
-      "title": "서울아산병원, 통합적 암 치료 플랫폼 도입",
-      "summary": "서울아산병원이 암 환자의 치료 과정과 삶을 지원하는 플랫폼을 도입했다. 이를 통해 환자의 다양한 문제를 함께 관리할 수 있는 체계를 마련하고 있다.",
-      "url": "https://v.daum.net/v/20260820060451622?from=newsbot&botref=KN&botevent=q",
-      "host": "v.daum.net"
-    },
-    {
-      "cat": "생활",
-      "title": "척추관 협착증 증상과 치료법",
-      "summary": "척추관 협착증은 허리를 숙이면 증상이 완화되는 특징이 있다. 방치 시 활동 부족으로 수명이 단축될 수 있어 주의가 필요하다.",
-      "url": "https://v.daum.net/v/20260820004157508?from=newsbot&botref=CN2&botevent=q",
+      "title": "보험사 상반기 순이익 9조원 증가",
+      "summary": "올해 상반기 보험사 순이익이 9조138억원으로 전년 대비 13% 증가했다. 투자손익 개선과 보험손익 증가가 주요 요인으로 작용했다.",
+      "url": "https://v.daum.net/v/20260827060159547?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     },
     {
       "cat": "보험",
-      "title": "생보사, 노후소득 연금보험 출시",
-      "summary": "국민연금 보험료 인상에 따라 생보사들이 노후소득 보장 강화를 위한 연금보험을 출시하고 있다. 다양한 상품이 등장하며, 가입자와 수급자 간 불균형 해소를 목표로 하고 있다.",
-      "url": "https://www.cstimes.com/news/articleView.html?idxno=717122",
-      "host": "cstimes.com"
+      "title": "보험사-GA 정보보안 협의체 출범",
+      "summary": "금융보안원이 보험사와 GA의 정보보안 협의체를 발족했다. 이는 해킹 및 정보 유출 위험에 대응하기 위한 조치이다.",
+      "url": "https://v.daum.net/v/20260826100839154?from=newsbot&botref=KN&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "보험",
+      "title": "비만치료제 처방, 보험 가입 영향",
+      "summary": "비만치료제를 처방받은 경우 보험 가입이 어려울 수 있지만, 일률적으로 거절되지는 않는다.",
+      "url": "https://v.daum.net/v/20260827060326727?from=newsbot&botref=KN&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "항체 치료제, 질병 치료의 새 전환점",
+      "summary": "항체 치료제가 알츠하이머와 암 치료에 혁신적인 변화를 가져오고 있다. 특정 단백질을 타겟으로 하는 이 치료법은 치료 성과를 향상시키고 있다.",
+      "url": "https://v.daum.net/v/20260827004052341?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "큰 그릇은 늦게 이루어진다",
-    "author": "노자"
+    "text": "우환에서 살고 안락에서 죽는다",
+    "author": "맹자"
   },
-  "updatedAt": "2026-08-20T06:47:36.000Z"
+  "updatedAt": "2026-08-27T10:41:40.000Z"
 }
