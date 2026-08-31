@@ -54,20 +54,20 @@
   "market": [
     {
       "label": "코스피",
-      "value": "6,641.04",
-      "diff": "-147.84",
+      "value": "6,629.78",
+      "diff": "-159.10",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "812.32",
-      "diff": "-26.09",
+      "value": "812.05",
+      "diff": "-26.36",
       "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,376.08",
-      "diff": "-4.37",
+      "value": "1,376.73",
+      "diff": "-3.72",
       "dir": "down"
     },
     {
@@ -78,9 +78,9 @@
     },
     {
       "label": "금(돈)",
-      "value": "745,539",
-      "diff": "+229",
-      "dir": "up"
+      "value": "745,127",
+      "diff": "-183",
+      "dir": "down"
     }
   ],
   "trends": [
@@ -91,15 +91,15 @@
   "news": [
     {
       "cat": "보험",
-      "title": "보험사, 시니어 사업 확대 본격화",
-      "summary": "보험사들이 시니어 인프라를 확대하며 보험과 돌봄 서비스를 연계하고 있다. 초고령사회 진입과 시장 성장 한계로 새로운 수익원 확보가 필요해지고 있다.",
-      "url": "https://n.news.naver.com/article/119/0003126386?sid=101",
-      "host": "n.news.naver.com"
+      "title": "보험사 자본부담 완화, 생보사 변수",
+      "summary": "보험사 자본부담이 줄어들었으나 생보사는 보험수익성 회복이 과제로 남았다. 손보사는 기본자본 규제 대응이 중요할 것으로 보인다.",
+      "url": "https://www.financialpost.co.kr/news/articleView.html?idxno=272618",
+      "host": "financialpost.co.kr"
     }
   ],
   "quote": {
     "text": "작은 일을 참지 못하면 큰 계획을 그르친다",
     "author": "공자"
   },
-  "updatedAt": "2026-08-31T10:19:06.000Z"
+  "updatedAt": "2026-08-31T10:19:56.000Z"
 }
