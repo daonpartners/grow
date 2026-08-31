@@ -1,126 +1,126 @@
 {
-  "date": "2026-08-27",
-  "dateLabel": "2026.08.27(목)",
+  "date": "2026-08-31",
+  "dateLabel": "2026.08.31(월)",
   "weather": [
     {
       "city": "서울",
       "min": 22,
-      "max": 30,
-      "code": 2
+      "max": 24,
+      "code": 65
     },
     {
       "city": "부산",
-      "min": 26,
-      "max": 29,
-      "code": 61
+      "min": 25,
+      "max": 31,
+      "code": 53
     },
     {
       "city": "대구",
-      "min": 25,
-      "max": 31,
-      "code": 51
+      "min": 24,
+      "max": 34,
+      "code": 63
     },
     {
       "city": "인천",
       "min": 22,
-      "max": 29,
-      "code": 3
+      "max": 24,
+      "code": 65
     },
     {
       "city": "광주",
       "min": 25,
-      "max": 32,
-      "code": 51
+      "max": 31,
+      "code": 53
     },
     {
       "city": "대전",
-      "min": 24,
-      "max": 31,
-      "code": 3
+      "min": 23,
+      "max": 29,
+      "code": 63
     },
     {
       "city": "강릉",
       "min": 23,
-      "max": 29,
-      "code": 51
+      "max": 25,
+      "code": 65
     },
     {
       "city": "제주",
       "min": 27,
       "max": 32,
-      "code": 2
+      "code": 3
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,894.01",
-      "diff": "+85.80",
-      "dir": "up"
+      "value": "6,699.93",
+      "diff": "-88.95",
+      "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "827.88",
-      "diff": "+1.01",
-      "dir": "up"
+      "value": "818.51",
+      "diff": "-19.90",
+      "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,378.68",
-      "diff": "-2.81",
+      "value": "1,377.98",
+      "diff": "-2.47",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "82.0",
-      "diff": "-0.4",
-      "dir": "down"
+      "value": "84.4",
+      "diff": "+1.0",
+      "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "776,967",
-      "diff": "+4,446",
+      "value": "750,738",
+      "diff": "+5,428",
       "dir": "up"
     }
   ],
   "trends": [
-    "달",
-    "병사",
-    "페달"
+    "남편",
+    "김원훈",
+    "유학생"
   ],
   "news": [
     {
-      "cat": "보험",
-      "title": "보험사 상반기 순이익 9조원 증가",
-      "summary": "올해 상반기 보험사 순이익이 9조138억원으로 전년 대비 13% 증가했다. 투자손익 개선과 보험손익 증가가 주요 요인으로 작용했다.",
-      "url": "https://v.daum.net/v/20260827060159547?from=newsbot&botref=KN&botevent=q",
-      "host": "v.daum.net"
+      "cat": "경제",
+      "title": "보험사, 시니어 사업 확대 가속화",
+      "summary": "보험사들이 시니어 인프라를 확대하며 보험과 돌봄 서비스를 연계하고 있다. 초고령사회 진입에 따라 시니어 시장의 수요가 증가하고 있다.",
+      "url": "https://n.news.naver.com/article/119/0003126386?sid=101",
+      "host": "n.news.naver.com"
     },
     {
       "cat": "보험",
-      "title": "보험사-GA 정보보안 협의체 출범",
-      "summary": "금융보안원이 보험사와 GA의 정보보안 협의체를 발족했다. 이는 해킹 및 정보 유출 위험에 대응하기 위한 조치이다.",
-      "url": "https://v.daum.net/v/20260826100839154?from=newsbot&botref=KN&botevent=q",
+      "title": "보험사 자본부담 완화, 생보사 변수",
+      "summary": "보험사 자본부담이 줄어들었으나 생보사와 손보사가 각각 다른 중장기 과제를 안고 있다.",
+      "url": "https://www.financialpost.co.kr/news/articleView.html?idxno=272618",
+      "host": "financialpost.co.kr"
+    },
+    {
+      "cat": "IT",
+      "title": "일라이릴리 당뇨약, 심혈관 치료제 승인",
+      "summary": "일라이릴리의 당뇨병 약 ‘마운자로’가 미국에서 심혈관 치료제로 추가 승인됐다. 이 약은 심혈관 질환 위험이 높은 2형 당뇨병 환자의 위험을 낮추는 데 효과적이다.",
+      "url": "https://v.daum.net/v/20260831003613694?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     },
     {
-      "cat": "보험",
-      "title": "비만치료제 처방, 보험 가입 영향",
-      "summary": "비만치료제를 처방받은 경우 보험 가입이 어려울 수 있지만, 일률적으로 거절되지는 않는다.",
-      "url": "https://v.daum.net/v/20260827060326727?from=newsbot&botref=KN&botevent=q",
-      "host": "v.daum.net"
-    },
-    {
-      "cat": "생활",
-      "title": "항체 치료제, 질병 치료의 새 전환점",
-      "summary": "항체 치료제가 알츠하이머와 암 치료에 혁신적인 변화를 가져오고 있다. 특정 단백질을 타겟으로 하는 이 치료법은 치료 성과를 향상시키고 있다.",
-      "url": "https://v.daum.net/v/20260827004052341?from=newsbot&botref=CN2&botevent=q",
+      "cat": "사회",
+      "title": "특발성 폐섬유증, 치명적 질환",
+      "summary": "특발성 폐섬유증은 원인 없이 폐가 굳어지는 질환으로, 평균 생존 기간이 3~5년이다. 최근 환자 수가 증가하며, 초기 증상은 노화로 오인될 수 있다.",
+      "url": "https://v.daum.net/v/20260831020305113?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "우환에서 살고 안락에서 죽는다",
-    "author": "맹자"
+    "text": "작은 일을 참지 못하면 큰 계획을 그르친다",
+    "author": "공자"
   },
-  "updatedAt": "2026-08-27T10:41:40.000Z"
+  "updatedAt": "2026-08-31T09:51:56.000Z"
 }
