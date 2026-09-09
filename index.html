@@ -1248,7 +1248,7 @@ body.growon{ background:var(--g-navy); }
               <div class="panel-head" style="margin-bottom:12px;">
                 <div><h2 class="panel-title" style="font-size:16px;">📊 회사별 인수한도</h2></div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <button type="button" id="limitUploadOpenBtnStrategy" class="qna-new-btn sc-inline-edit-btn cb-register-btn" data-board="limit_compare" style="display:none;" onclick="limitOpenUpload('limit_compare')">＋ 게시물 등록</button>
+                  <button type="button" id="limitUploadOpenBtnStrategy" class="qna-new-btn sc-inline-edit-btn cb-register-btn" data-board="limit_compare" style="display:none;">＋ 게시물 등록</button>
                   <button type="button" class="qna-new-btn" style="width:auto; padding:8px 16px; margin-bottom:0;" onclick="showView('salescenter'); document.querySelector('[data-sctab=&quot;contract&quot;]')?.click(); document.querySelector('[data-ctab=&quot;limit&quot;]')?.click();">📋 게시물 보기</button>
                 </div>
               </div>
@@ -6116,6 +6116,8 @@ const limitCompareData = {};
     const btn = e.target.closest && e.target.closest('.cb-register-btn');
     if(btn && !btn.hasAttribute('onclick')){ limitOpenUpload(btn.dataset.board); }
   });
+  const _luOpenStrategy = document.getElementById('limitUploadOpenBtnStrategy');
+  if(_luOpenStrategy) _luOpenStrategy.addEventListener('click', () => limitOpenUpload('limit_compare'));
 
   const _luModal = document.getElementById('limitUploadModalBackdrop');
   if(_luModal) _luModal.addEventListener('click', (e) => { if(e.target.id === 'limitUploadModalBackdrop') _luModal.classList.remove('open'); });
