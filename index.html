@@ -125,6 +125,7 @@
   .cardnews-hero-summary{ font-size:13.5px; color:var(--slate); line-height:1.55; }
   .cardnews-hero-date{ font-size:11.5px; color:var(--slate); font-weight:600; margin-top:8px; }
   @media (max-width:640px){ .cardnews-hero{ flex-direction:column; } .cardnews-hero-img{ width:100%; height:140px; } }
+  @media (max-width:860px){ .sc-strategy-2col{ grid-template-columns:1fr !important; } }
 
   /* 카드뉴스 아카이브 그리드 */
   .cardnews-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:16px; }
@@ -1230,13 +1231,30 @@ body.growon{ background:var(--g-navy); }
       <div class="gview" id="view-salesstrategy">
 <section class="panel" id="salesstrategy">
           <div class="panel-head">
-            <div><div class="panel-eyebrow">Sales Strategy</div><h2 class="panel-title">이달의 판매전략 및 소식지</h2></div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="qna-new-btn sc-inline-edit-btn" id="strategyQuickAddBtn" style="display:none;">✏️ 게시물 등록</button>
-              <button class="qna-new-btn" id="strategyViewAllBtn" style="width:auto; padding:8px 16px; margin-bottom:0;">📋 게시물 보기</button>
+            <div><div class="panel-eyebrow">Sales Strategy</div><h2 class="panel-title">이달의 영업전략</h2></div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;" class="sc-strategy-2col">
+            <div>
+              <div class="panel-head" style="margin-bottom:12px;">
+                <div><h2 class="panel-title" style="font-size:16px;">📈 영업전략 소식지</h2></div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="qna-new-btn sc-inline-edit-btn" id="strategyQuickAddBtn" style="display:none;">✏️ 게시물 등록</button>
+                  <button class="qna-new-btn" id="strategyViewAllBtn" style="width:auto; padding:8px 16px; margin-bottom:0;">📋 게시물 보기</button>
+                </div>
+              </div>
+              <div id="strategyLatest" data-reveal></div>
+            </div>
+            <div>
+              <div class="panel-head" style="margin-bottom:12px;">
+                <div><h2 class="panel-title" style="font-size:16px;">📊 회사별 인수한도</h2></div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button type="button" id="limitUploadOpenBtnStrategy" class="qna-new-btn sc-inline-edit-btn cb-register-btn" data-board="limit_compare" style="display:none;" onclick="limitOpenUpload('limit_compare')">＋ 게시물 등록</button>
+                  <button type="button" class="qna-new-btn" style="width:auto; padding:8px 16px; margin-bottom:0;" onclick="showView('salescenter'); document.querySelector('[data-sctab=&quot;contract&quot;]')?.click(); document.querySelector('[data-ctab=&quot;limit&quot;]')?.click();">📋 게시물 보기</button>
+                </div>
+              </div>
+              <div class="driver-menu" id="limitCompareMenuInStrategy"></div>
             </div>
           </div>
-          <div id="strategyLatest" data-reveal></div>
         </section>
       </div>
       <div class="gview" id="view-schedule">
@@ -5775,7 +5793,10 @@ const limitCompareData = {};
   let guideBoardOrder = [];
   let claimBoardOrder = [];
   let monitoringBoardOrder = [];
-  function renderLimitCompareMenu(){ renderBoard('limitCompareMenu', limitBoardOrder); }
+  function renderLimitCompareMenu(){
+    renderBoard('limitCompareMenu', limitBoardOrder);
+    if(document.getElementById('limitCompareMenuInStrategy')) renderBoard('limitCompareMenuInStrategy', limitBoardOrder);
+  }
   const GUIDE_CAT_CONTAINERS = {
     "운전자보험": "cbMenu_guide_운전자보험",
     "수술비": "cbMenu_guide_수술비",
