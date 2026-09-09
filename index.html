@@ -1231,7 +1231,10 @@ body.growon{ background:var(--g-navy); }
 <section class="panel" id="salesstrategy">
           <div class="panel-head">
             <div><div class="panel-eyebrow">Sales Strategy</div><h2 class="panel-title">이달의 판매전략 및 소식지</h2></div>
-            <button class="qna-new-btn" id="strategyViewAllBtn" style="width:auto; padding:8px 16px; margin-bottom:0;">📋 게시물 보기</button>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="qna-new-btn sc-inline-edit-btn" id="strategyQuickAddBtn" style="display:none;">✏️ 게시물 등록</button>
+              <button class="qna-new-btn" id="strategyViewAllBtn" style="width:auto; padding:8px 16px; margin-bottom:0;">📋 게시물 보기</button>
+            </div>
           </div>
           <div id="strategyLatest" data-reveal></div>
         </section>
@@ -2848,6 +2851,15 @@ body.growon{ background:var(--g-navy); }
     <div class="alb-lb-sub" id="albLbSub"></div>
   </div>
 </div>
+<div class="alb-lb" id="postGalleryLb">
+  <div class="alb-lb-box">
+    <button class="alb-lb-x" id="postGalleryLbX">&times;</button>
+    <button class="alb-lb-nav prev" id="postGalleryLbPrev">‹</button>
+    <button class="alb-lb-nav next" id="postGalleryLbNext">›</button>
+    <img id="postGalleryLbImg" src="" alt="">
+    <div class="alb-lb-cap" id="postGalleryLbCap"></div>
+  </div>
+</div>
 <div class="alb-lb" id="cardPayLb">
   <div class="alb-lb-box">
     <button class="alb-lb-x" id="cardPayLbX">&times;</button>
@@ -3949,6 +3961,12 @@ body.growon{ background:var(--g-navy); }
     renderStrategyAllList();
     document.getElementById('strategyModalBackdrop').classList.add('open');
   });
+  const _strategyQuickAddBtn = document.getElementById('strategyQuickAddBtn');
+  if(_strategyQuickAddBtn) _strategyQuickAddBtn.addEventListener('click', () => {
+    renderStrategyAllList();
+    document.getElementById('strategyModalBackdrop').classList.add('open');
+    strategyOpenForm(null);
+  });
 
   /* ===== 영업전략 등록/수정/삭제 ===== */
   let strategyFormIdx = null;
@@ -4550,10 +4568,39 @@ body.growon{ background:var(--g-navy); }
       </body></html>`);
     w.document.close();
   };
+  window.__postGalleries = window.__postGalleries || {};
+  let __postGalleryIdSeq = 0;
   function galleryHtml(images){
     if(!images || !images.length) return '';
-    return `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:6px; margin-top:8px;">${images.map(src => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">`).join('')}</div>`;
+    const galId = 'pg' + (++__postGalleryIdSeq);
+    window.__postGalleries[galId] = images;
+    return `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:6px; margin-top:8px;">${images.map((src,i) => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="postGalleryPreviewOpen('${galId}', ${i})">`).join('')}</div>`;
   }
+  let postGalleryCurId = '', postGalleryCurIdx = 0;
+  function postGalleryRenderLb(){
+    const images = window.__postGalleries[postGalleryCurId] || [];
+    if(!images.length) return;
+    postGalleryCurIdx = (postGalleryCurIdx + images.length) % images.length;
+    document.getElementById('postGalleryLbImg').src = images[postGalleryCurIdx];
+    document.getElementById('postGalleryLbCap').textContent = (images.length > 1) ? (postGalleryCurIdx + 1) + ' / ' + images.length : '';
+    const nav = images.length > 1;
+    document.getElementById('postGalleryLbPrev').style.display = nav ? '' : 'none';
+    document.getElementById('postGalleryLbNext').style.display = nav ? '' : 'none';
+  }
+  function postGalleryPreviewOpen(galId, idx){
+    postGalleryCurId = galId; postGalleryCurIdx = idx;
+    postGalleryRenderLb();
+    document.getElementById('postGalleryLb').classList.add('open');
+  }
+  const _pglx = document.getElementById('postGalleryLbX');
+  if(_pglx) _pglx.addEventListener('click', () => document.getElementById('postGalleryLb').classList.remove('open'));
+  const _pglb = document.getElementById('postGalleryLb');
+  if(_pglb) _pglb.addEventListener('click', (e) => { if(e.target.id === 'postGalleryLb') _pglb.classList.remove('open'); });
+  const _pgprev = document.getElementById('postGalleryLbPrev');
+  if(_pgprev) _pgprev.addEventListener('click', (e) => { e.stopPropagation(); postGalleryCurIdx--; postGalleryRenderLb(); });
+  const _pgnext = document.getElementById('postGalleryLbNext');
+  if(_pgnext) _pgnext.addEventListener('click', (e) => { e.stopPropagation(); postGalleryCurIdx++; postGalleryRenderLb(); });
+  if(typeof attachLbSwipe === 'function') attachLbSwipe('postGalleryLb', () => { postGalleryCurIdx--; postGalleryRenderLb(); }, () => { postGalleryCurIdx++; postGalleryRenderLb(); });
 
   function aiChatAddMsg(role, text, sources, answerType){
     const body = document.getElementById('aiChatBody');
@@ -8591,7 +8638,7 @@ const limitCompareData = {};
     if(typeof renderLectureAdminBar === 'function') renderLectureAdminBar();
     if(typeof renderDataCenter === 'function') renderDataCenter();
     if(typeof Object !== 'undefined' && typeof salesMaterials !== 'undefined') Object.keys(salesMaterials).forEach(k => { if(typeof renderSmFolder === 'function') renderSmFolder(k); });
-    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn','dnEditJumpBtn'].forEach(id => {
+    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn','dnEditJumpBtn','strategyQuickAddBtn'].forEach(id => {
       const el = document.getElementById(id);
       if(el) el.style.display = isTopAdmin() ? 'inline-block' : 'none';
     });
