@@ -1,105 +1,133 @@
 {
-  "date": "2026-08-31",
-  "dateLabel": "2026.08.31(월)",
+  "date": "2026-09-09",
+  "dateLabel": "2026.09.09(수)",
   "weather": [
     {
       "city": "서울",
-      "min": 22,
+      "min": 18,
       "max": 24,
-      "code": 65
+      "code": 2
     },
     {
       "city": "부산",
-      "min": 25,
-      "max": 31,
-      "code": 53
+      "min": 21,
+      "max": 25,
+      "code": 1
     },
     {
       "city": "대구",
-      "min": 24,
-      "max": 34,
-      "code": 63
+      "min": 19,
+      "max": 25,
+      "code": 2
     },
     {
       "city": "인천",
-      "min": 22,
+      "min": 17,
       "max": 24,
-      "code": 65
+      "code": 2
     },
     {
       "city": "광주",
-      "min": 25,
-      "max": 31,
-      "code": 53
+      "min": 18,
+      "max": 28,
+      "code": 1
     },
     {
       "city": "대전",
-      "min": 23,
-      "max": 29,
-      "code": 63
+      "min": 18,
+      "max": 25,
+      "code": 2
     },
     {
       "city": "강릉",
-      "min": 23,
-      "max": 25,
-      "code": 65
+      "min": 18,
+      "max": 21,
+      "code": 53
     },
     {
       "city": "제주",
-      "min": 27,
-      "max": 32,
-      "code": 3
+      "min": 22,
+      "max": 26,
+      "code": 1
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,629.78",
-      "diff": "-159.10",
-      "dir": "down"
+      "value": "7,042.34",
+      "diff": "+87.82",
+      "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "812.05",
-      "diff": "-26.36",
-      "dir": "down"
+      "value": "825.90",
+      "diff": "+14.02",
+      "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,376.73",
-      "diff": "-3.72",
+      "value": "1,336.38",
+      "diff": "-7.19",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "85.1",
-      "diff": "+1.7",
+      "value": "94.1",
+      "diff": "+1.1",
       "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "745,127",
-      "diff": "-183",
+      "value": "711,591",
+      "diff": "-168",
       "dir": "down"
     }
   ],
   "trends": [
-    "안성시",
-    "드라이브",
-    "이범호"
+    "카를로스 알카라스",
+    "진중권",
+    "아이폰 폴드"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "보험사 자본부담 완화, 생보사 변수",
-      "summary": "보험사 자본부담이 줄어들었으나 생보사는 보험수익성 회복이 과제로 남았다. 손보사는 기본자본 규제 대응이 중요할 것으로 보인다.",
-      "url": "https://www.financialpost.co.kr/news/articleView.html?idxno=272618",
-      "host": "financialpost.co.kr"
+      "title": "동양생명 과징금 1400억에서 100억으로 감경",
+      "summary": "금융위가 동양생명의 과징금을 1400억원에서 100억원대로 대폭 감경할 예정이다. 과징금 부과 기준 개선도 검토 중이다.",
+      "url": "https://n.news.naver.com/article/008/0005411016?sid=101",
+      "host": "n.news.naver.com"
+    },
+    {
+      "cat": "사회",
+      "title": "건강보험료 동결, 재정 불안 여전",
+      "summary": "정부가 건강보험료율을 동결했지만 고령화와 지출 증가로 재정 불안이 지속되고 있다.",
+      "url": "https://v.daum.net/v/20260909063151173?from=newsbot&botref=KN&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "사회",
+      "title": "치매환자 100만명 시대, 조기 발견 중요",
+      "summary": "올해 국내 치매 환자가 100만 명을 넘을 것으로 예상된다. 조기 발견과 치료 가능성이 높아지면서 치매에 대한 인식이 변화하고 있다.",
+      "url": "https://v.daum.net/v/20260909043347193?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "사회",
+      "title": "여성 폐암환자 92%가 비흡연자",
+      "summary": "여성 폐암환자의 92%가 담배를 피운 적이 없는 것으로 나타났다. 검진 기준이 비흡연 폐암 환자와 맞지 않다는 지적이 제기됐다.",
+      "url": "https://v.daum.net/v/20260909050218829?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "9월부터 증가하는 독감, 주의 필요",
+      "summary": "9월 초부터 독감 환자가 증가하고 있으며, 개학으로 확산 가능성이 높아지고 있다. 독감은 고열과 근육통 등 강한 전신 증상이 특징으로, 고위험군은 예방접종이 중요하다.",
+      "url": "https://v.daum.net/v/20260909063021124?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "작은 일을 참지 못하면 큰 계획을 그르친다",
-    "author": "공자"
+    "text": "백 번 듣는 것이 한 번 보는 것만 못하다",
+    "author": "한서"
   },
-  "updatedAt": "2026-08-31T10:19:56.000Z"
+  "updatedAt": "2026-09-09T13:28:55.000Z"
 }
