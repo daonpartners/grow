@@ -1746,6 +1746,16 @@ async function savePdf(c){
     pdf.addImage(cv.toDataURL('image/jpeg',0.9),'JPEG',0,0,210,297,undefined,'FAST');
   }
   pdf.save(fileName(c));
+  growLogReport(c.mode, adv().name);
+}
+/* ---------- 사용실적 기록 (설계사명·리포트 종류만 전송, 고객 정보는 보내지 않음) ---------- */
+function growLogReport(mode, fcName){
+  try{
+    fetch('https://daonpartners.app.n8n.cloud/webhook/grow-usage-log',{
+      method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true,
+      body:JSON.stringify({event:'report_pdf', reportType:mode, fcName:fcName||'', branch:''})
+    }).catch(function(){});
+  }catch(e){}
 }
 function needAdv(){
   if(!adv().name){ alert('먼저 왼쪽 "내 정보"에 설계사 이름을 입력해 주세요.'); $('advName').focus(); return true; }
