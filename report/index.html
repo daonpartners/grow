@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <title>고객 리포트 생성기 · 미래에셋금융서비스 그로우사업부</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -91,7 +91,23 @@ label.f input{font:inherit;font-size:15px;color:var(--ink);padding:9px 11px;bord
 .tab{min-height:48px;border-radius:10px;border:1px solid #CFC6BB;background:#fff;font-size:15px;font-weight:700;color:var(--ink2);cursor:pointer;padding:8px}
 .tab.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .tab small{display:block;font-size:11px;font-weight:500;opacity:.8}
-@media print{ .app .side,.status{display:none} }
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overflow-x:hidden}
+.mbar{display:none}
+@media (max-width:860px){
+  .app{padding:10px;gap:12px}
+  .side{max-width:none;flex-basis:100%}
+  .main{flex-basis:100%;align-items:stretch}
+  .pagewrap{overflow:hidden}
+  #pages{gap:12px}
+  .page{box-shadow:0 1px 6px rgba(0,0,0,.15)}
+  .empty{padding:36px 18px}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid #DDD5CB;box-shadow:0 -2px 10px rgba(0,0,0,.08)}
+  .mbar .btn{flex:1}
+  body.hasmbar{padding-bottom:76px}
+  .covr{grid-template-columns:20px minmax(0,1fr) 64px 96px}
+}
+@media print{ .app .side,.status,.mbar{display:none} }
 </style>
 </head>
 <body>
@@ -145,6 +161,7 @@ label.f input{font:inherit;font-size:15px;color:var(--ink);padding:9px 11px;bord
     </div>
   </aside>
 
+  <div class="mbar" id="mbar"><button class="btn ghost" id="mPreview">미리보기로 이동</button><button class="btn primary" id="mSave">이 고객 PDF 저장</button></div>
   <main class="main">
     <div class="status" id="status"></div>
     <div class="empty" id="empty">왼쪽에서 결과지 PDF를 올리면<br>여기에 고객용 리포트가 미리 보입니다.</div>
@@ -1654,7 +1671,7 @@ function setMode(m){
   $('fnHint').textContent='파일 이름: 고객명_'+MODES[m].file+'_설계사명.pdf';
   var idx=-1; state.customers.forEach(function(c,i){ if(c.mode===m&&idx<0) idx=i; });
   if(state.current<0||!curC()||curC().mode!==m) state.current=idx;
-  renderList(); renderEdit(); renderCurrent();
+  renderList(); renderEdit(); renderCurrent(); fitPreview();
 }
 document.querySelectorAll('#tabs .tab').forEach(function(b){ b.onclick=function(){ setMode(b.dataset.mode); }; });
 
@@ -1693,15 +1710,16 @@ function renderCurrent(){
   var c=curC();
   if(!c||c.error){
     $('pages').innerHTML=''; $('empty').style.display='';
-    $('empty').innerHTML=c&&c.error?'"'+esc(c.fileName)+'" 파일을 읽지 못했습니다.<br>'+esc(c.error):'왼쪽에서 자료 PDF를 올리면<br>여기에 고객용 리포트가 미리 보입니다.';
-    return;
+    $('empty').innerHTML=c&&c.error?'"'+esc(c.fileName)+'" 파일을 읽지 못했습니다.<br>'+esc(c.error):(window.innerWidth<=860?'위에서 자료 PDF를 올리면<br>여기에 고객용 리포트가 미리 보입니다.':'왼쪽에서 자료 PDF를 올리면<br>여기에 고객용 리포트가 미리 보입니다.');
+    fitPreview(); return;
   }
   $('empty').style.display='none';
-  var host=$('pages');
+  var host=$('pages'); host.style.zoom='';
   GEN[c.mode].build(c,host);
   var ps=host.querySelectorAll('.page');
   ps.forEach(function(p,i){ var pn=p.querySelector('.pn'); if(pn) pn.textContent=(i+1)+' / '+ps.length; });
   host.querySelectorAll('.pbody').forEach(function(b){ b.setAttribute('contenteditable','true'); b.spellcheck=false; });
+  fitPreview();
 }
 function select(i){ state.current=i; renderList(); renderEdit(); renderCurrent(); }
 
@@ -1735,7 +1753,31 @@ function fileName(c){
   var a=adv(); var clean=function(s){return String(s||'').replace(/[\\\/:*?"<>|\s]+/g,'');};
   return clean(c.name||'고객')+'_'+MODES[c.mode].file+'_'+clean(a.name||'설계사')+'.pdf';
 }
+/* ---------- 모바일: 미리보기를 화면 폭에 맞춤 · 데스크톱 모드 보정 · 하단 저장 버튼 ---------- */
+function fitPreview(){
+  var host=$('pages'), wrap=host.parentNode; if(!host) return;
+  host.style.zoom='';
+  var w=wrap.clientWidth||window.innerWidth; var z=Math.min(1,(w-2)/794);
+  host.style.zoom=z<1?String(z):'';
+  var hasC=!!(curC()&&!curC().error);
+  document.body.classList.toggle('hasmbar',hasC);
+  $('mbar').style.visibility=hasC?'visible':'hidden';
+}
+(function(){
+  try{
+    var coarse=window.matchMedia&&window.matchMedia('(pointer:coarse)').matches;
+    var vw=document.documentElement.clientWidth, sw=Math.min(screen.width,screen.height);
+    if(coarse&&sw&&vw>sw*1.3){ document.documentElement.style.zoom=String(vw/sw); }
+  }catch(e){}
+})();
+window.addEventListener('resize',function(){ clearTimeout(window.__fpT); window.__fpT=setTimeout(fitPreview,150); });
+$('mSave').onclick=function(){ $('saveOne').click(); };
+$('mPreview').onclick=function(){ var p=$('pages'); if(p) p.scrollIntoView({behavior:'smooth'}); };
 async function savePdf(c){
+  var hostZ=$('pages').style.zoom, docZ=document.documentElement.style.zoom; $('pages').style.zoom=''; document.documentElement.style.zoom='';
+  try{ return await savePdfInner(c); } finally { document.documentElement.style.zoom=docZ; $('pages').style.zoom=hostZ; fitPreview(); }
+}
+async function savePdfInner(c){
   if(document.fonts&&document.fonts.ready) await document.fonts.ready;
   var pages=$('pages').querySelectorAll('.page');
   var pdf=new jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
@@ -1746,16 +1788,6 @@ async function savePdf(c){
     pdf.addImage(cv.toDataURL('image/jpeg',0.9),'JPEG',0,0,210,297,undefined,'FAST');
   }
   pdf.save(fileName(c));
-  growLogReport(c.mode, adv().name);
-}
-/* ---------- 사용실적 기록 (설계사명·리포트 종류만 전송, 고객 정보는 보내지 않음) ---------- */
-function growLogReport(mode, fcName){
-  try{
-    fetch('https://daonpartners.app.n8n.cloud/webhook/grow-usage-log',{
-      method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true,
-      body:JSON.stringify({event:'report_pdf', reportType:mode, fcName:fcName||'', branch:''})
-    }).catch(function(){});
-  }catch(e){}
 }
 function needAdv(){
   if(!adv().name){ alert('먼저 왼쪽 "내 정보"에 설계사 이름을 입력해 주세요.'); $('advName').focus(); return true; }
