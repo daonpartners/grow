@@ -376,6 +376,98 @@ function insuranceRows(c){
   return rows.slice(0,5);
 }
 
+/* ---------- 직업 우선순위 (모든 고객 동일 규칙) ----------
+   1) 주성향·보조성향 직업군에 모두 나온 직업
+   2) 주성향 특징 키워드와 맞는 직업 (키워드 순서가 앞일수록 우선)
+   3) 보조성향 특징 키워드와 맞는 직업
+   4) 원 결과지 순서 — 상위 10개만 표시 */
+var JOB_KEY={
+  '안정형':['공무원','행정','회계','사무','은행','비서','사서','관리'],
+  '연구형':['연구','과학','교수','학자','개발','분석','의사','엔지니어'],
+  '감성형':['상담','교사','선생','교육','간호','복지','봉사','서비스','예술','작가','디자인'],
+  '관찰형':['기자','분석','연구','사진','디자인','큐레이터','비평','감정'],
+  '현실형':['기술','엔지니어','기능','건축','정비','요리','운동','제조'],
+  '관계형':['영업','세일즈','마케팅','상담','홍보','고객','승무원','서비스','판매'],
+  '사고형':['변호사','법','판사','분석','컨설턴트','프로그래머','시스템','연구','회계'],
+  '리더형':['CEO','경영','창업','지도자','관리자','정치','컨설턴트','매니저','교장','감독'],
+  '완벽형':['회계','감사','법','판사','의사','약사','엔지니어','품질','연구'],
+  '열정형':['마케팅','기획','이벤트','방송','연예','스포츠','광고','창업','예술']
+};
+function jobKeyIdx(type,job){ var ks=JOB_KEY[type]||[]; for(var i=0;i<ks.length;i++){ if(job.indexOf(ks[i])>=0) return i; } return -1; }
+function rankJobs(c){
+  var norm=function(j){return j.replace(/\s+/g,'');};
+  var m=c.sections.main['직업']||[], s=c.sections.sub['직업']||[];
+  var sn={}; s.forEach(function(j){sn[norm(j)]=1;});
+  var both=[], qm=[], qs=[], seen={};
+  var push=function(arr,j,type,pos,why){ var k=jobKeyIdx(type,j); arr.push({job:j,why:why,k:k<0?99:k,pos:pos}); };
+  m.forEach(function(j,i){ var n=norm(j); if(!n||seen[n]) return; seen[n]=1; if(sn[n]) both.push({job:j,why:'두 성향 모두',k:Math.min(jobKeyIdx(c.main,j)<0?99:jobKeyIdx(c.main,j),jobKeyIdx(c.sub,j)<0?99:jobKeyIdx(c.sub,j)),pos:i}); else push(qm,j,c.main,i,c.main); });
+  s.forEach(function(j,i){ var n=norm(j); if(!n||seen[n]) return; seen[n]=1; push(qs,j,c.sub,i,c.sub); });
+  var ord=function(x,y){return (x.k-y.k)||(x.pos-y.pos);};
+  both.sort(ord); qm.sort(ord); qs.sort(ord);
+  var out=both.slice(0,4), turn=0;
+  while(out.length<10&&(qm.length||qs.length)){
+    var take=(turn%5===2||turn%5===4)?(qs.length?qs:qm):(qm.length?qm:qs);   // 주성향 3 : 보조성향 2 비율
+    out.push(take.shift()); turn++;
+  }
+  return out.slice(0,10);
+}
+function jobBlock(c){
+  var r=rankJobs(c); if(!r.length) return '';
+  if(isChild(c)) return kidJobBlock(c,r);
+  var col=function(x){return /두 성향/.test(x.why)?'var(--navy)':(x.why===c.main?'var(--warm)':'var(--blue)');};
+  return '<div class="card"><div class="ctitle"><span class="dot" style="background:var(--navy)"></span>잘 어울리는 직업 TOP '+r.length+'</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px">'+r.map(function(x,i){
+      return '<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;background:'+(i<3?'#F1EAE2':'#FBF8F4')+';border-radius:10px">'+
+        '<div style="width:28px;height:28px;border-radius:50%;background:'+(i<3?'var(--navy)':'#C9BFB4')+';color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center">'+(i+1)+'</div>'+
+        '<div style="font-size:16px;font-weight:'+(i<3?800:600)+'">'+esc(x.job)+'</div>'+
+        '<div style="font-size:12px;font-weight:700;color:'+col(x)+';white-space:nowrap">'+esc(x.why)+'</div></div>';
+    }).join('')+'</div>'+
+    '<div style="font-size:12.5px;color:var(--muted);line-height:1.55">순위 기준: 두 성향에 모두 나온 직업을 먼저 두고, 이어서 주성향('+esc(c.main)+')과 보조성향('+esc(c.sub)+') 직업을 3:2 비율로 번갈아 배치했습니다. 각 성향 안에서는 그 성향의 대표 특징과 맞는 직업이 앞섭니다. 원 결과지의 직업군 '+((c.sections.main['직업']||[]).length+(c.sections.sub['직업']||[]).length)+'개 중 상위 10개입니다.</div></div>';
+}
+
+
+/* ---------- 자녀용: 쉬운 직업 설명 + 진로 분야 묶기 ---------- */
+var KID_FIELDS=[
+  ['교육·상담',/교사|선생|교육|상담|교수|강사|사회복지|특수교육|교장|보육|코치/],
+  ['의료·보건',/의사|간호|약사|치료사|보건|수의|한의|임상|간병|물리치료/],
+  ['과학·기술',/과학|연구|엔지니어|기술|컴퓨터|프로그래머|시스템|건축|공학|발명|기능공|개발/],
+  ['법·사회·공공',/법|변호사|판사|검사|정치|공무원|행정|경찰|군인|외교|사회운동|성직|목사|신부|지도자|감독관|사회학|철학|자선/],
+  ['경영·서비스',/CEO|경영|창업|마케팅|매니저|영업|세일즈|서비스|고객|승무원|비서|회계|금융|컨설턴트|기획|이벤트|웨딩|파티|가이드|판매/],
+  ['예체능·미디어',/예술|음악|미술|가수|배우|작가|디자인|패션|무용|운동|스포츠|체육|연예|개그|사진|방송|창작|기자|아나운서|작곡|연주|성악|화가|만화|PD/]
+];
+var KID_DESC=[
+  ['법률고문','회사나 사람에게 법을 알려주고 지켜주는 전문가'],['법조인','판사·검사·변호사처럼 법으로 일하는 사람'],['변호사','어려운 사람 편에서 법으로 도와주는 사람'],['판사','법에 따라 옳고 그름을 판단하는 사람'],
+  ['성직자','종교 기관에서 사람들의 마음을 돌보는 사람'],['목사','교회에서 사람들의 마음을 돌보는 사람'],['신부','성당에서 사람들의 마음을 돌보는 사람'],
+  ['특수교육','도움이 필요한 친구들을 맞춤으로 가르치는 선생님'],['인사교육','회사에서 직원을 뽑고 가르치는 사람'],['교장','학교 전체를 이끄는 선생님'],['교수','대학에서 연구하고 학생을 가르치는 사람'],['선생','학생들에게 지식과 바른 생활을 가르치는 사람'],['교사','학생들에게 지식과 바른 생활을 가르치는 사람'],
+  ['상담','고민을 들어주고 함께 해결 방법을 찾는 사람'],['사회복지','어려운 이웃이 잘 지내도록 돕는 사람'],['사회봉사','이웃과 사회를 위해 봉사하는 사람'],['사회운동','사회를 더 좋게 바꾸려고 앞장서는 사람'],['자선사업','어려운 사람을 돕는 일을 하는 사람'],
+  ['간호','병원에서 환자를 돌보고 치료를 돕는 사람'],['의사','아픈 사람을 진찰하고 치료하는 사람'],['약사','알맞은 약을 만들고 설명해 주는 사람'],
+  ['엔지니어','기계·건물·프로그램을 설계하고 만드는 사람'],['컴퓨터','컴퓨터로 문제를 분석하고 해결하는 사람'],['과학자','자연의 원리를 연구하고 실험하는 사람'],['건축','건물을 설계하고 짓는 사람'],
+  ['CEO','회사를 이끌고 중요한 결정을 내리는 대표'],['경영컨설턴트','회사가 더 잘 되도록 방법을 알려주는 전문가'],['마케팅','물건이나 서비스를 사람들에게 알리는 사람'],['회계','돈의 흐름을 정확히 계산하고 기록하는 사람'],['승무원','비행기에서 승객의 안전과 편안함을 책임지는 사람'],['세일즈','물건을 소개하고 판매하는 사람'],['비서','대표의 일정과 업무를 꼼꼼히 챙기는 사람'],['웨딩','결혼식을 계획하고 진행을 돕는 사람'],['파티','행사를 계획하고 꾸미는 사람'],['이벤트','행사를 진행하고 분위기를 이끄는 사람'],['가이드','여행지를 안내하고 설명하는 사람'],['고객관리','고객의 불편을 살피고 도와주는 사람'],['서비스','사람들이 편하게 이용하도록 돕는 일'],
+  ['정치','나라와 지역의 일을 결정하고 이끄는 사람'],['경찰','사람들의 안전을 지키는 사람'],['군인','나라를 지키는 사람'],['지도자','여러 사람을 이끌고 방향을 정하는 사람'],['감독관','일이 규칙대로 잘 되는지 살피는 사람'],['철학','삶과 세상에 대해 깊이 생각하는 사람'],['사회학','사람들이 함께 사는 모습을 연구하는 사람'],
+  ['기자','세상 소식을 취재해 알리는 사람'],['아나운서','방송에서 소식을 정확하게 전하는 사람'],['작가','글로 이야기와 생각을 전하는 사람'],['예술','그림·음악 등으로 생각과 감정을 표현하는 사람'],['패션','옷과 스타일을 기획하고 만드는 사람'],['디자인','보기 좋고 쓰기 좋게 모양을 만드는 사람'],['가수','노래로 마음을 전하는 사람'],['배우','연기로 이야기를 전하는 사람'],['개그','웃음을 주는 방송인'],['연설','많은 사람 앞에서 생각을 전하는 사람']
+];
+function kidField(job){ for(var i=0;i<KID_FIELDS.length;i++){ if(KID_FIELDS[i][1].test(job)) return KID_FIELDS[i][0]; } return '기타'; }
+function kidDesc(job){ for(var i=0;i<KID_DESC.length;i++){ if(job.indexOf(KID_DESC[i][0])>=0) return KID_DESC[i][1]; } return ''; }
+function kidJobBlock(c,r){
+  var col=function(x){return /두 성향/.test(x.why)?'var(--navy)':(x.why===c.main?'var(--warm)':'var(--blue)');};
+  var groups={}, order=[];
+  r.forEach(function(x,i){ x.rank=i+1; var f=kidField(x.job); if(!groups[f]){groups[f]=[];order.push(f);} groups[f].push(x); });
+  order.sort(function(a,b){ return (groups[b].length-groups[a].length)||(groups[a][0].rank-groups[b][0].rank); });
+  var top=order[0];
+  return '<div class="card"><div class="ctitle"><span class="dot" style="background:var(--navy)"></span>잘 어울리는 진로 분야와 직업 TOP '+r.length+'</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:8px">'+order.map(function(f){return '<span style="font-size:14px;font-weight:700;padding:6px 12px;border-radius:20px;'+(f===top?'background:var(--navy);color:#fff':'background:#F1EAE2;color:var(--ink2)')+'">'+f+' '+groups[f].length+'</span>';}).join('')+'</div>'+
+    '<div style="font-size:15px;line-height:1.6;color:var(--ink2)">TOP 10 직업 중 <b>'+top+'</b> 분야가 가장 많습니다. 학습 방향과 체험활동을 고를 때 참고해 보세요.</div>'+
+    '<div class="bl" style="gap:12px">'+order.map(function(f){
+      return '<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:16px;font-weight:800;color:var(--navy);border-bottom:2px solid #E4DCD2;padding-bottom:4px">'+f+'</div>'+
+        groups[f].map(function(x){ var d=kidDesc(x.job);
+          return '<div style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center"><div style="width:26px;height:26px;border-radius:50%;background:'+(x.rank<=3?'var(--navy)':'#C9BFB4')+';color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center">'+x.rank+'</div>'+
+            '<div><span style="font-size:16px;font-weight:'+(x.rank<=3?800:700)+'">'+esc(x.job)+'</span>'+(d?'<span style="font-size:14px;color:var(--muted)"> — '+esc(d)+'</span>':'')+'</div>'+
+            '<div style="font-size:12px;font-weight:700;color:'+col(x)+';white-space:nowrap">'+esc(x.why)+'</div></div>';
+        }).join('')+'</div>';
+    }).join('')+'</div>'+
+    '<div style="font-size:12.5px;color:var(--muted);line-height:1.55">순위 기준: 두 성향에 모두 나온 직업을 먼저 두고, 주성향('+esc(c.main)+')과 보조성향('+esc(c.sub)+') 직업을 3:2 비율로 번갈아 배치. 진로 분야 묶음과 직업 설명은 이해를 돕기 위한 참고입니다.</div></div>';
+}
+
 /* ---------- 리포트 HTML ---------- */
 function isChild(c){return c.kind==='child';}
 function bullets(arr){
@@ -481,7 +573,7 @@ function bothBlocks(c){
   }
   out.push(pair(child?'공부할 때 이런 모습':'일할 때 이런 모습','일'));
   out.push(pair(child?'이렇게 대화하면 잘 통해요 (부모님께)':'이렇게 대화하면 잘 통해요','대화'));
-  out.push('<div class="card"><div class="ctitle"><span class="dot" style="background:var(--navy)"></span>잘 어울리는 분야</div><div class="two"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:14px;font-weight:700;color:var(--warm2)">'+esc(c.main)+'</div>'+chips(m['직업'])+'</div><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:14px;font-weight:700;color:var(--blue)">'+esc(c.sub)+'</div>'+chips(s['직업'])+'</div></div></div>');
+  out.push(jobBlock(c));
   out.push('<div class="small">본 해설은 한국유전자지문적성연구소 KGATest 결과를 '+(child?'부모님':'고객님')+'이 읽기 쉽게 다시 배치한 것입니다. 성향 검사는 자기이해를 돕는 참고자료이며, 현재의 모습이나 능력을 판정하지 않습니다.</div>');
   return out.filter(Boolean);
 }
