@@ -15,7 +15,7 @@
   --paper:#FBF8F4; --navy:#1F2A44; --blue:#2F4B8A; --warm:#B4472F; --warm2:#8A3A26;
   --sans:'Pretendard','Malgun Gothic','Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif;
   --serif:var(--sans);
-  --fs:16px;
+  --fs:15px;
 }
 *{box-sizing:border-box}
 body{margin:0;background:#E9E4DD;font-family:var(--sans);color:var(--ink)}
@@ -66,20 +66,21 @@ label.f input{font:inherit;font-size:15px;color:var(--ink);padding:9px 11px;bord
 
 /* ---------- 리포트 페이지 (A4 794x1123) ---------- */
 .page{width:794px;height:1123px;background:var(--paper);position:relative;overflow:hidden;font-family:var(--sans);color:var(--ink);box-shadow:0 2px 12px rgba(0,0,0,.12);display:flex;flex-direction:column}
-.pbody{flex:1;min-height:0;padding:52px 56px 0 56px;display:flex;flex-direction:column;gap:18px;overflow:hidden}
-.pfoot{height:58px;margin:0 56px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#6B625A;gap:12px}
+.pbody{flex:1;min-height:0;padding:38px 42px 0 42px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.sech{margin-top:6px}
+.pfoot{height:46px;margin:0 42px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#6B625A;gap:12px}
 .pfoot .l{display:flex;align-items:center;gap:10px}
-.pfoot img{height:26px}
-.kicker{font-size:15px;font-weight:700;letter-spacing:.02em}
-.h2{margin:0;font-family:var(--sans);font-size:34px;font-weight:800;line-height:1.3;letter-spacing:-.01em}
-.lead{margin:0;font-size:var(--fs);line-height:1.7;color:var(--ink2)}
-.card{background:#fff;border:1px solid #E4DCD2;border-radius:14px;padding:18px 22px;display:flex;flex-direction:column;gap:10px}
+.pfoot img{height:22px}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.02em}
+.h2{margin:0;font-family:var(--sans);font-size:28px;font-weight:800;line-height:1.3;letter-spacing:-.01em}
+.lead{margin:0;font-size:var(--fs);line-height:1.6;color:var(--ink2)}
+.card{background:#fff;border:1px solid #E4DCD2;border-radius:12px;padding:13px 18px;display:flex;flex-direction:column;gap:7px}
 .card.tint-w{background:#FDF1EC;border-color:#EBC9BE}
 .card.tint-b{background:#EEF2FA;border-color:#C3CDE3}
-.ctitle{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;color:var(--navy)}
+.ctitle{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:800;color:var(--navy)}
 .dot{width:10px;height:10px;border-radius:50%;flex:none}
-.bl{display:flex;flex-direction:column;gap:7px}
-.bi{display:flex;gap:10px;font-size:var(--fs);line-height:1.62;letter-spacing:-.005em;color:var(--ink2)}
+.bl{display:flex;flex-direction:column;gap:4px}
+.bi{display:flex;gap:9px;font-size:var(--fs);line-height:1.55;letter-spacing:-.005em;color:var(--ink2)}
 .bi .m{flex:none;width:6px;height:6px;border-radius:50%;margin-top:.62em;background:#9A8F84}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -620,21 +621,23 @@ function insBlocks(c,a){
   return out;
 }
 
-/* 내용이 넘치면 다음 장으로 자동으로 넘김 */
+/* 내용이 넘치면 다음 장으로 자동으로 넘김 (섹션이 바뀌어도 새 장을 시작하지 않고 이어서 배치) */
 function flowPages(host,headFn,blocks,a,fs){
-  var made=[];
+  var made=[], part=0;
   function newPage(cont){
     var pg=document.createElement('div'); pg.className='page'; made.push(pg);
     if(fs) pg.style.setProperty('--fs',fs+'px');
-    pg.innerHTML='<div class="pbody">'+headFn(cont)+'</div>'+foot(a);
+    pg.innerHTML='<div class="pbody">'+(cont?headFn(true,part):'')+'</div>'+foot(a);
     host.appendChild(pg); return pg.querySelector('.pbody');
   }
   var body=newPage(false),onPage=0;
   function over(){return body.scrollHeight>body.clientHeight+1;}
-  blocks.forEach(function(h){
+  blocks.forEach(function(b){
+    var h=typeof b==='string'?b:b.html; if(typeof b==='object'&&b.part!=null) part=b.part;
     var tmp=document.createElement('div'); tmp.innerHTML=h; var el=tmp.firstElementChild; if(!el) return;
     body.appendChild(el);
     if(!over()){onPage++;return;}
+    var prev=el.previousElementSibling, keep=prev&&prev.classList.contains('keepnext')&&onPage>1;
     // 카드 안의 항목을 나눠서 다음 장으로 이어 붙임
     var list=el.querySelector(':scope > .bl'), moved=[];
     if(list&&onPage>0){
@@ -647,22 +650,41 @@ function flowPages(host,headFn,blocks,a,fs){
       }
       moved.forEach(function(m){list.appendChild(m);});
     }
-    if(onPage>0){ body.removeChild(el); body=newPage(true); body.appendChild(el); onPage=0; }
+    if(onPage>0){
+      body.removeChild(el);
+      if(keep){ body.removeChild(prev); body=newPage(false); body.appendChild(prev); body.appendChild(el); onPage=1; return; }
+      body=newPage(true); body.appendChild(el); onPage=0;
+    }
     onPage++;
   });
   return made;
 }
+/* 여러 섹션을 한 흐름으로: parts=[{head:fn(cont), blocks:fn()}] */
+function chainBlocks(parts){
+  var out=[];
+  parts.forEach(function(p,i){
+    var bl=p.blocks(); if(!bl.length) return;
+    out.push({part:i,html:'<div class="sech keepnext">'+p.head(false)+'</div>'});
+    bl.forEach(function(h){ out.push({part:i,html:h}); });
+  });
+  return out;
+}
+function chainFlow(host,parts,a){
+  fitFlow(host,function(cont,i){ return '<div style="margin-bottom:-2px">'+parts[i].head(true)+'</div>'; },function(){return chainBlocks(parts);},a);
+}
 
 /* 마지막 장이 거의 비면 글자를 조금 줄여서 장수를 줄임 */
 function fitFlow(host,headFn,blocksFn,a){
-  var base=flowPages(host,headFn,blocksFn(),a,16);
+  var hf=headFn.length>=2?headFn:function(cont){return cont?headFn(true):headFn(false);};
+  var bf=headFn.length>=2?blocksFn:function(){ return [{part:0,html:'<div class="sech keepnext">'+headFn(false)+'</div>'}].concat(blocksFn()); };
+  var base=flowPages(host,hf,bf(),a,15);
   if(base.length<2) return;
   var last=base[base.length-1].querySelector('.pbody');
   var used=0; [].forEach.call(last.children,function(ch){used=Math.max(used,ch.offsetTop+ch.offsetHeight);});
   if(used>last.clientHeight*0.45) return;
-  var sizes=[15.5,15,14.5];
+  var sizes=[14.5,14,13.5];
   for(var k=0;k<sizes.length;k++){
-    var trial=flowPages(host,headFn,blocksFn(),a,sizes[k]);
+    var trial=flowPages(host,hf,bf(),a,sizes[k]);
     if(trial.length<base.length){ base.forEach(function(p){host.removeChild(p);}); return; }
     trial.forEach(function(p){host.removeChild(p);});
   }
@@ -836,8 +858,8 @@ function parseDiseaseRaw(all,c){
     var ab=items.filter(function(i){return i.grade>0;}).sort(function(x,y){return y.grade-x.grade;});
     if(!ab.length) return;
     var nor=items.filter(function(i){return i.grade===0;});
-    var found=ab.slice(0,6).map(rawFoundLine);
-    if(ab.length>6) found.push('이 밖에 '+ab.slice(6).map(function(i){return i.name;}).join(', ')+' 등 '+(ab.length-6)+'개 항목도 보고서 정상범위를 벗어났습니다.');
+    var found=ab.slice(0,4).map(rawFoundLine);
+    if(ab.length>4) found.push('이 밖에 '+ab.slice(4).map(function(i){return i.name;}).join(', ')+' 등 '+(ab.length-4)+'개 항목도 보고서 정상범위를 벗어났습니다.');
     if(nor.length) found.push(nor.slice(0,4).map(function(i){return i.name;}).join(', ')+(nor.length>4?' 등 '+nor.length+'개 항목':'')+'은(는) 보고서 정상범위입니다.');
     areas.push({key:A.key,no:0,title:A.title,found:found,easy:[A.easy],manage:A.manage.slice(),checkup:A.checkup.slice(),life:A.life.slice(),ins:A.ins.slice(),
       score:ab.reduce(function(s,i){return s+i.grade;},0),short:A.short,top:A.top,topCover:A.topCover,abNames:ab.slice(0,3).map(function(i){return i.name;})});
@@ -994,20 +1016,24 @@ function disSummaryBlocks(c){
 }
 function disAreaBlocks(c){
   var out=[];
+  var mini=function(arr){ return '<div style="display:flex;flex-direction:column;gap:2px">'+arr.map(function(t){return '<div style="font-size:12.5px;line-height:1.45;color:var(--ink2)">· '+esc(t)+'</div>';}).join('')+'</div>'; };
+  var chipsS=function(arr,bg){ return '<div style="display:flex;flex-wrap:wrap;gap:4px">'+arr.map(function(j){return '<span style="font-size:12px;padding:2px 8px;border-radius:12px;background:'+(bg||'#F1EAE2')+';color:var(--ink2)">'+esc(j)+'</span>';}).join('')+'</div>'; };
   c.areas.filter(function(a){return a.on;}).forEach(function(a,i){
-    out.push('<div class="card" style="border-top:5px solid var(--navy)"><div class="ctitle" style="display:flex;align-items:baseline;gap:12px"><div style="font-size:30px;font-weight:800;color:var(--warm)">'+String(i+1).padStart(2,'0')+'</div><div style="font-size:24px;font-weight:800;color:var(--navy)">'+esc(a.title)+'</div></div>'+
-      '<div style="font-size:14px;font-weight:700;color:var(--muted)">자료에서 확인된 내용</div>'+bullets(a.found)+'</div>');
-    if(a.easy.length) out.push('<div class="card" style="background:#F6F1EA;border-color:#E4DCD2"><div class="ctitle"><span class="dot" style="background:var(--warm)"></span>쉽게 설명하면</div><div style="font-size:var(--fs);line-height:1.7;color:var(--ink2)">'+esc(a.easy.join(' '))+'</div></div>');
-    if(a.manage.length||a.checkup.length) out.push('<div class="card"><div class="two"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:15px;font-weight:800;color:var(--navy)">예방 차원에서 관리할 질환·영역</div>'+chipsOf(a.manage)+'</div><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:15px;font-weight:800;color:var(--navy)">건강검진에서 확인할 항목</div>'+chipsOf(a.checkup,'#E7ECF6')+'</div></div></div>');
-    if(a.life.length) out.push(card('생활관리는 이렇게 하세요',a.life,'#5B8C5A'));
-    if(a.ins.length) out.push(card('보험은 이렇게 준비하세요',a.ins,'var(--blue)','tint-b'));
+    out.push('<div class="card keepnext" style="border-top:4px solid var(--navy);padding:11px 16px;gap:5px"><div class="ctitle" style="display:flex;align-items:baseline;gap:10px"><div style="font-size:22px;font-weight:800;color:var(--warm)">'+String(i+1).padStart(2,'0')+'</div><div style="font-size:19px;font-weight:800;color:var(--navy)">'+esc(a.title)+'</div></div>'+
+      '<div style="font-size:12.5px;font-weight:700;color:var(--muted)">자료에서 확인된 내용</div><div class="bl">'+a.found.map(function(t){return '<div class="bi" style="font-size:13.5px;line-height:1.5"><span class="m"></span><span>'+esc(t)+'</span></div>';}).join('')+'</div>'+
+      (a.easy.length?'<div style="background:#F6F1EA;border-radius:8px;padding:7px 10px;font-size:13.5px;line-height:1.55;color:var(--ink2)"><b style="color:var(--warm2)">쉽게 설명하면 · </b>'+esc(a.easy.join(' '))+'</div>':'')+'</div>');
+    out.push('<div class="card" style="padding:10px 14px"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">'+
+      '<div style="display:flex;flex-direction:column;gap:5px"><div style="font-size:13px;font-weight:800;color:var(--navy)">관리할 질환·영역</div>'+chipsS(a.manage)+'</div>'+
+      '<div style="display:flex;flex-direction:column;gap:5px"><div style="font-size:13px;font-weight:800;color:var(--navy)">건강검진 확인 항목</div>'+chipsS(a.checkup,'#E7ECF6')+'</div>'+
+      '<div style="display:flex;flex-direction:column;gap:5px"><div style="font-size:13px;font-weight:800;color:#3F6E3E">생활관리</div>'+mini(a.life)+'</div></div></div>');
+    if(a.ins.length) out.push('<div class="card tint-b" style="padding:10px 14px;gap:4px"><div style="font-size:14px;font-weight:800;color:var(--blue)">보험은 이렇게 준비하세요</div><div class="bl">'+a.ins.map(function(t){return '<div class="bi" style="font-size:13.5px;line-height:1.5"><span class="m"></span><span>'+esc(t)+'</span></div>';}).join('')+'</div></div>');
   });
   return out;
 }
 function disEndBlocks(c,a){
   var out=[];
-  if(c.steps.length) out.push('<div class="card"><div class="ctitle"><span class="dot" style="background:var(--navy)"></span>고객님께서는 이렇게 준비하세요</div><div style="display:flex;flex-direction:column;gap:12px">'+c.steps.map(function(s,i){return '<div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px"><div style="width:30px;height:30px;border-radius:50%;background:var(--warm);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">'+(i+1)+'</div><div><div style="font-size:17px;font-weight:800;color:var(--ink)">'+esc(s.h)+'</div><div style="font-size:var(--fs);line-height:1.6;color:var(--ink2);margin-top:2px">'+esc(s.b)+'</div></div></div>';}).join('')+'</div></div>');
-  out.push('<div class="card"><div style="font-size:16px;font-weight:800;color:var(--navy)">상담 메모</div><div style="border-bottom:1px solid #C9BFB4;height:26px"></div><div style="border-bottom:1px solid #C9BFB4;height:26px"></div><div style="border-bottom:1px solid #C9BFB4;height:26px"></div></div>');
+  if(c.steps.length) out.push('<div class="card"><div class="ctitle"><span class="dot" style="background:var(--navy)"></span>고객님께서는 이렇게 준비하세요</div><div style="display:flex;flex-direction:column;gap:7px">'+c.steps.map(function(s,i){return '<div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px"><div style="width:30px;height:30px;border-radius:50%;background:var(--warm);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">'+(i+1)+'</div><div><div style="font-size:15px;font-weight:800;color:var(--ink)">'+esc(s.h)+'</div><div style="font-size:13.5px;line-height:1.5;color:var(--ink2);margin-top:2px">'+esc(s.b)+'</div></div></div>';}).join('')+'</div></div>');
+  out.push('<div class="card"><div style="font-size:14px;font-weight:800;color:var(--navy)">상담 메모</div><div style="border-bottom:1px solid #C9BFB4;height:22px"></div><div style="border-bottom:1px solid #C9BFB4;height:22px"></div></div>');
   out.push('<div class="small" style="font-size:13px;line-height:1.7;color:#4A4A55">'+
     (c.important?'· '+esc(c.important)+'<br>':'')+
     '· 본 리포트는 의료기관의 진단이 아니며, 표시된 수치는 해당 검사자료의 자체 기준입니다. 건강 상태는 반드시 의료기관 검사로 확인하시기 바랍니다.<br>'+
@@ -1022,9 +1048,11 @@ function buildDisease(c,host){
     lead:'검사자료에서 나타난 신호를 바탕으로, 건강검진에서 먼저 확인할 영역과 함께 점검할 보장을 정리했습니다. 질병이 있다는 의미가 아니라 미리 확인하고 준비하자는 상담용 자료입니다.',
     sub:esc((c.gender||'')+(c.age?' / '+c.age+'세':'')),meta:[['검사일',c.evalDate],['발행일',today()]]});
   host.appendChild(t.firstChild);
-  fitFlow(host,disHead('01 · 한눈에 보기','검사자료 핵심 요약'),function(){return disSummaryBlocks(c);},a);
-  fitFlow(host,disHead('02 · 영역별 상세','건강영역별 확인과 준비'),function(){return disAreaBlocks(c);},a);
-  fitFlow(host,disHead('03 · 마무리','이렇게 준비하세요'),function(){return disEndBlocks(c,a);},a);
+  chainFlow(host,[
+    {head:disHead('01 · 한눈에 보기','검사자료 핵심 요약'),blocks:function(){return disSummaryBlocks(c);}},
+    {head:disHead('02 · 영역별 상세','건강영역별 확인과 준비'),blocks:function(){return disAreaBlocks(c);}},
+    {head:disHead('03 · 마무리','이렇게 준비하세요'),blocks:function(){return disEndBlocks(c,a);}}
+  ],a);
 }
 function editDisease(c){
   return '<div class="grid2"><label class="f">고객 이름<input data-f="name" value="'+esc(c.name||'')+'"></label><label class="f">검사일<input data-f="evalDate" value="'+esc(c.evalDate||'')+'"></label></div>'+
@@ -1380,49 +1408,52 @@ function covInitSel(c){
   c.trd={}; COV_TRENDS.forEach(function(t){ c.trd[t.k]=true; });
 }
 
+var COV_K=1; function fz(n){return Math.round(n*COV_K*10)/10;} function cw(n){return Math.round(n*(1+(COV_K-1)*0.9));}
 /* ---------- 리포트 화면 ---------- */
 function covHead(k,t){ return function(cont){ return '<div style="display:flex;flex-direction:column;gap:8px"><div class="kicker" style="color:var(--blue)">'+k+(cont?' · 이어서':'')+'</div>'+(cont||!t?'':'<h2 class="h2" style="color:var(--navy)">'+t+'</h2>')+'</div>'; }; }
 var ST_COL={'충분':'#2F7D4A','부족':'#C27C0E','미가입':'#B4472F'};
-function stBadge(s){ return s?'<span style="display:inline-block;min-width:52px;text-align:center;font-size:13px;font-weight:800;padding:3px 8px;border-radius:20px;color:#fff;background:'+ST_COL[s]+'">'+s+'</span>':''; }
+function stBadge(s){ return s?'<span style="display:inline-block;min-width:52px;text-align:center;font-size:'+fz(13)+'px;font-weight:800;padding:3px 8px;border-radius:20px;color:#fff;background:'+ST_COL[s]+'">'+s+'</span>':''; }
 function covSummaryBlocks(c){
   var out=[], cnt={'충분':0,'부족':0,'미가입':0};
   c.rows.forEach(function(r){ if(r.on&&cnt[r.status]!=null) cnt[r.status]++; });
   var tiles=[['계약',(c.contracts!=null?c.contracts+'건':'-')],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'-'],['충분',cnt['충분']+'개'],['부족',cnt['부족']+'개'],['미가입',cnt['미가입']+'개']];
-  out.push('<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">'+tiles.map(function(t,i){var col=i>=2?ST_COL[t[0]]:'var(--navy)';return '<div style="background:#fff;border:1px solid #E4DCD2;border-radius:12px;padding:12px 14px"><div style="font-size:13px;color:var(--muted)">'+t[0]+'</div><div style="font-size:'+(String(t[1]).length>8?17:22)+'px;font-weight:800;color:'+col+';margin-top:2px;white-space:nowrap;letter-spacing:-.02em">'+t[1]+'</div></div>';}).join('')+'</div>');
-  out.push('<div class="card" style="border:2px solid var(--navy);padding:16px 18px;gap:10px"><div class="ctitle" style="font-size:19px"><span style="font-size:12px;font-weight:800;color:#fff;background:var(--navy);border-radius:6px;padding:2px 8px">요즘 대세</span>꼭 확인할 치료비 4가지</div>'+
+  out.push('<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">'+tiles.map(function(t,i){var col=i>=2?ST_COL[t[0]]:'var(--navy)';return '<div style="background:#fff;border:1px solid #E4DCD2;border-radius:10px;padding:8px 12px"><div style="font-size:'+fz(12)+'px;color:var(--muted)">'+t[0]+'</div><div style="font-size:'+(String(t[1]).length>8?16:20)+'px;font-weight:800;color:'+col+';margin-top:2px;white-space:nowrap;letter-spacing:-.02em">'+t[1]+'</div></div>';}).join('')+'</div>');
+  out.push('<div class="card" style="border:2px solid var(--navy);padding:12px 14px;gap:8px"><div class="ctitle" style="font-size:'+fz(19)+'px"><span style="font-size:'+fz(12)+'px;font-weight:800;color:#fff;background:var(--navy);border-radius:6px;padding:2px 8px">요즘 대세</span>꼭 확인할 치료비 4가지</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">'+CORE4.map(function(k){
       var amt=c.rows.filter(function(r){return r.on&&r.cat===k.cat;}).reduce(function(a,r){return a+(r.amt||0);},0);
-      return '<div style="border-radius:10px;padding:12px;background:'+(amt?'#EEF2FA':'#FDE7DF')+'"><div style="font-size:13.5px;font-weight:700;color:var(--ink2);min-height:38px">'+k.title+'</div><div style="font-size:'+(amt&&won(amt).length>7?17:21)+'px;font-weight:800;white-space:nowrap;letter-spacing:-.02em;color:'+(amt?'var(--blue)':'#B4472F')+'">'+(amt?won(amt):'없음')+'</div></div>';
-    }).join('')+'</div><div style="font-size:12.5px;color:var(--muted)">표적항암·중입자 등 이름이 따로 붙은 개별 항암치료비는 이 리포트에서 제외했습니다.</div></div>');
+      return '<div style="border-radius:10px;padding:8px 10px;background:'+(amt?'#EEF2FA':'#FDE7DF')+'"><div style="font-size:'+fz(12.5)+'px;font-weight:700;color:var(--ink2);min-height:34px">'+k.title+'</div><div style="font-size:'+(amt&&won(amt).length>7?17:21)+'px;font-weight:800;white-space:nowrap;letter-spacing:-.02em;color:'+(amt?'var(--blue)':'#B4472F')+'">'+(amt?won(amt):'없음')+'</div></div>';
+    }).join('')+'</div><div style="font-size:'+fz(12.5)+'px;color:var(--muted)">표적항암·중입자 등 이름이 따로 붙은 개별 항암치료비는 이 리포트에서 제외했습니다.</div></div>');
+  var cards=[];
   COV_GROUPS.forEach(function(g){
     var rs=c.rows.filter(function(r){return r.on&&!r.hidden&&COV_GROUP[r.cat]===g;});
     if(!rs.length) return;
-    out.push('<div class="card" style="padding:14px 18px;gap:6px"><div class="ctitle" style="font-size:18px">'+g+'</div><div class="bl" style="gap:0">'+
+    cards.push({n:rs.length,html:'<div class="card" style="padding:10px 12px;gap:2px"><div class="ctitle" style="font-size:'+fz(15.5)+'px">'+g+'</div>'+
+      '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(78)+'px '+cw(64)+'px '+cw(44)+'px;gap:6px;font-size:'+fz(10.5)+'px;color:var(--muted)"><div></div><div style="text-align:right">가입</div><div style="text-align:right">권장</div><div></div></div>'+
       rs.map(function(r){
-        var pct=r.rec?Math.min(100,Math.round((r.amt||0)/r.rec*100)):null;
-        var col=ST_COL[r.status]||'var(--blue)';
-        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) 112px 112px 64px;gap:10px;align-items:center;padding:6px 0;border-top:1px solid #F0EAE3">'+
-          '<div><div style="font-size:15px;font-weight:600">'+esc(r.name)+'</div>'+(pct!=null?'<div style="height:6px;background:#EEE8E1;border-radius:3px;margin-top:5px;overflow:hidden"><div style="height:6px;width:'+pct+'%;background:'+col+'"></div></div>':'')+'</div>'+
-          '<div style="text-align:right"><div style="font-size:11px;color:var(--muted)">가입</div><div style="font-size:16px;font-weight:800">'+won(r.amt)+'</div></div>'+
-          '<div style="text-align:right"><div style="font-size:11px;color:var(--muted)">권장</div><div style="font-size:14px;color:var(--ink2)">'+(r.rec!=null?won(r.rec):'-')+'</div></div>'+
-          '<div style="text-align:right">'+stBadge(r.status)+'</div></div>';
-      }).join('')+'</div></div>');
+        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(78)+'px '+cw(64)+'px '+cw(44)+'px;gap:6px;align-items:center;padding:3px 0;border-top:1px solid #F0EAE3">'+
+          '<div style="font-size:'+fz(13)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+'</div>'+
+          '<div style="text-align:right;font-size:'+fz(13.5)+'px;font-weight:800;white-space:nowrap">'+won(r.amt)+'</div>'+
+          '<div style="text-align:right;font-size:'+fz(12)+'px;color:var(--ink2);white-space:nowrap">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
+          '<div style="text-align:right">'+(r.status?'<span style="display:inline-block;font-size:'+fz(10.5)+'px;font-weight:800;padding:2px 6px;border-radius:12px;color:#fff;background:'+ST_COL[r.status]+'">'+r.status+'</span>':'')+'</div></div>';
+      }).join('')+'</div>'});
   });
+  // 두 칸씩 배치 (긴 묶음끼리, 짧은 묶음끼리 짝지어 빈칸 최소화)
+  for(var i=0;i<cards.length;i+=2){ out.push('<div class="two" style="gap:10px;align-items:start">'+cards[i].html+(cards[i+1]?cards[i+1].html:'<div></div>')+'</div>'); }
   out.push('<div class="small">권장금액과 충분·부족 판정은 원 자료('+esc(c.source||'보장분석')+')의 기준을 그대로 옮긴 것입니다.</div>');
   return out;
 }
 function covScenarioBlocks(c){
   var list=COV_SCN.filter(function(s){return c.scn[s.k];}).map(function(s){return covScenario(c,s);});
   var out=['<p class="lead">지금 가입한 담보로 아래 상황이 생기면 받을 수 있는 금액입니다. 질병코드(KCD)는 일반적인 분류이며, 실제 지급은 각 약관의 정의를 따릅니다.</p>'];
-  for(var i=0;i<list.length;i+=2){
-    out.push('<div class="two" style="align-items:stretch">'+list.slice(i,i+2).map(function(r){
-      return '<div class="card" style="padding:16px 18px;gap:8px;border-top:5px solid '+(r.now?'var(--blue)':'#B4472F')+'">'+
-        '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><div style="font-size:18px;font-weight:800">'+r.sit+'</div><div style="font-size:12px;color:var(--muted);white-space:nowrap">'+r.code+'</div></div>'+
-        '<div><div style="font-size:12px;color:var(--muted)">'+(r.later||r.min?'진단·확정 시':'받을 수 있는 금액')+'</div><div style="font-size:30px;font-weight:800;letter-spacing:-.02em;color:'+(r.now?'var(--blue)':'#B4472F')+'">'+(r.now?won(r.now):'없음')+'</div></div>'+
-        (r.later?'<div style="background:#EEF2FA;border-radius:8px;padding:6px 10px;font-size:14px;color:var(--navy)"><b>+ 최대 '+won(r.later)+'</b> · '+esc(r.laterLbl)+'</div>':(r.laterLbl?'<div style="background:#F6F1EA;border-radius:8px;padding:6px 10px;font-size:13px;color:var(--ink2)">'+esc(r.laterLbl)+'</div>':''))+
-        (r.spec?'<div style="background:#FDF1EC;border-radius:8px;padding:6px 10px;font-size:13.5px;color:var(--warm2)"><b>관련 전용 특약 '+r.spec.n+'건</b> · 병기·유형 등 조건에 맞는 것만 지급 (건당 최대 '+won(r.spec.max)+')</div>':'')+
-        (r.basis.length?'<div style="font-size:12.5px;line-height:1.55;color:var(--ink2)">'+r.basis.slice(0,6).map(esc).join('<br>')+(r.basis.length>6?'<br>외 '+(r.basis.length-6)+'건':'')+'</div>':'')+
-        (r.note?'<div style="font-size:12px;line-height:1.5;color:var(--muted)">'+esc(r.note)+'</div>':'')+'</div>';
+  for(var i=0;i<list.length;i+=3){
+    out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch">'+list.slice(i,i+3).map(function(r){
+      return '<div class="card" style="padding:10px 12px;gap:5px;border-top:4px solid '+(r.now?'var(--blue)':'#B4472F')+'">'+
+        '<div><div style="font-size:'+fz(15)+'px;font-weight:800;line-height:1.3">'+r.sit+'</div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+r.code+'</div></div>'+
+        '<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+(r.later||r.min?'진단·확정 시':'받을 수 있는 금액')+'</div><div style="font-size:'+fz(22)+'px;font-weight:800;letter-spacing:-.02em;color:'+(r.now?'var(--blue)':'#B4472F')+'">'+(r.now?won(r.now):'없음')+'</div></div>'+
+        (r.later?'<div style="background:#EEF2FA;border-radius:7px;padding:4px 8px;font-size:'+fz(12)+'px;line-height:1.4;color:var(--navy)"><b>+ 최대 '+won(r.later)+'</b> · '+esc(r.laterLbl)+'</div>':(r.laterLbl?'<div style="background:#F6F1EA;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;color:var(--ink2)">'+esc(r.laterLbl)+'</div>':''))+
+        (r.spec?'<div style="background:#FDF1EC;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;line-height:1.4;color:var(--warm2)"><b>전용 특약 '+r.spec.n+'건</b> · 조건 해당 시만 (건당 최대 '+won(r.spec.max)+')</div>':'')+
+        (r.basis.length?'<div style="font-size:'+fz(11)+'px;line-height:1.45;color:var(--ink2)">'+r.basis.slice(0,4).map(esc).join('<br>')+(r.basis.length>4?'<br>외 '+(r.basis.length-4)+'건':'')+'</div>':'')+
+        (r.note?'<div style="font-size:'+fz(10.5)+'px;line-height:1.4;color:var(--muted)">'+esc(r.note)+'</div>':'')+'</div>';
     }).join('')+'</div>');
   }
   return out;
@@ -1433,32 +1464,90 @@ function covNeedBlocks(c){
   rs.sort(function(a,b){ var o={'미가입':0,'부족':1}; return (core(a)-core(b))||(o[a.status]-o[b.status])||(((b.rec||0)-b.amt)-((a.rec||0)-a.amt)); });
   var out=['<p class="lead">원 자료의 권장금액 기준으로 비어 있거나 부족한 담보입니다. 실제 보완 여부와 금액은 고객님의 소득·건강상태·기존 계약을 함께 보고 결정합니다.</p>'];
   if(!rs.length){ out.push('<div class="card tint-b"><div class="ctitle">부족·미가입 담보가 없습니다</div></div>'); return out; }
-  out.push('<div style="display:grid;grid-template-columns:minmax(0,1fr) 110px 110px 120px 70px;gap:10px;padding:10px 16px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;border-radius:12px;margin-bottom:-10px"><div>담보</div><div style="text-align:right">현재 가입</div><div style="text-align:right">권장</div><div style="text-align:right">보완 필요</div><div></div></div>');
+  out.push('<div style="display:grid;grid-template-columns:minmax(0,1fr) 104px 100px 112px 66px;gap:10px;padding:7px 14px;background:var(--navy);color:#fff;font-size:'+fz(12.5)+'px;font-weight:700;border-radius:10px;margin-bottom:-10px"><div>담보</div><div style="text-align:right">현재 가입</div><div style="text-align:right">권장</div><div style="text-align:right">보완 필요</div><div></div></div>');
   rs.forEach(function(r){
-    out.push('<div style="display:grid;grid-template-columns:minmax(0,1fr) 110px 110px 120px 70px;gap:10px;padding:10px 16px;background:#fff;border:1px solid #E4DCD2;border-radius:10px;align-items:center;margin-bottom:-12px">'+
-      '<div><div style="font-size:15px;font-weight:700">'+(core(r)===0?'<span style="font-size:11px;color:#fff;background:var(--navy);border-radius:5px;padding:1px 6px;margin-right:6px">대세</span>':'')+esc(r.name)+'</div><div style="font-size:12px;color:var(--muted)">'+COV_GROUP[r.cat]+'</div></div>'+
-      '<div style="text-align:right;font-size:15px">'+won(r.amt)+'</div><div style="text-align:right;font-size:15px;color:var(--ink2)">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
+    out.push('<div style="display:grid;grid-template-columns:minmax(0,1fr) 104px 100px 112px 66px;gap:10px;padding:5px 14px;background:#fff;border:1px solid #E4DCD2;border-radius:8px;align-items:center;margin-bottom:-12px">'+
+      '<div><div style="font-size:'+fz(15)+'px;font-weight:700">'+(core(r)===0?'<span style="font-size:'+fz(11)+'px;color:#fff;background:var(--navy);border-radius:5px;padding:1px 6px;margin-right:6px">대세</span>':'')+esc(r.name)+'</div><div style="font-size:'+fz(12)+'px;color:var(--muted)">'+COV_GROUP[r.cat]+'</div></div>'+
+      '<div style="text-align:right;font-size:'+fz(15)+'px">'+won(r.amt)+'</div><div style="text-align:right;font-size:'+fz(15)+'px;color:var(--ink2)">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
       '<div style="text-align:right;font-size:'+(r.rec!=null?17:14)+'px;font-weight:800;color:'+ST_COL[r.status]+'">'+(r.rec!=null?won(Math.max(0,r.rec-r.amt)):'가입 검토')+'</div><div style="text-align:right">'+stBadge(r.status)+'</div></div>');
   });
   return out;
 }
 function covTrendBlocks(c){
   var out=['<p class="lead">요즘 치료 방식과 보험사들이 새로 내놓는 담보 흐름을 기준으로, 고객님 계약에 해당 보장이 있는지 확인했습니다. <b style="color:#B4472F">없음</b>으로 표시된 항목이 추가 검토 대상입니다.</p>'];
-  COV_TRENDS.filter(function(t){return c.trd[t.k];}).forEach(function(t){
+  var stat=function(r){return r.has?'<span style="font-size:'+fz(13)+'px;font-weight:800;color:#2F7D4A">있음 · '+won(r.amt)+'</span>':'<span style="font-size:'+fz(12.5)+'px;font-weight:800;color:#fff;background:#B4472F;border-radius:20px;padding:3px 10px">없음 · 추가 검토</span>';};
+  var ask=function(t,r,small){return '<div style="background:'+(r.has?'#F1EAE2':'#FDE7DF')+';border-radius:8px;padding:6px 10px;font-size:'+(small?13:14)+'px;font-weight:700;color:var(--ink);line-height:1.45"><span style="font-size:'+fz(11)+'px;font-weight:700;color:var(--warm2)">고객님께 여쭤보세요 · </span>'+esc(t.ask)+'</div>';};
+  var sel=COV_TRENDS.filter(function(t){return c.trd[t.k];});
+  sel.filter(function(t){return t.core;}).forEach(function(t){
     var r=covTrend(c,t);
-    out.push('<div class="card" style="padding:16px 18px;gap:8px;'+(t.core?'border:2px solid var(--navy);':'')+(r.has?'':(t.core?'background:#FFF8F5':'border:2px solid #E7B9AC;background:#FFF8F5'))+'">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="font-size:18px;font-weight:800">'+(t.core?'<span style="font-size:12px;font-weight:800;color:#fff;background:var(--navy);border-radius:6px;padding:2px 8px;margin-right:8px;vertical-align:2px">요즘 대세</span>':'')+t.title+'</div><div style="white-space:nowrap">'+(r.has?'<span style="font-size:14px;font-weight:800;color:#2F7D4A">있음 · '+won(r.amt)+'</span>':'<span style="font-size:14px;font-weight:800;color:#fff;background:#B4472F;border-radius:20px;padding:4px 12px">없음 · 추가 검토</span>')+'</div></div>'+
-      '<div style="font-size:14.5px;line-height:1.6;color:var(--ink2)"><b>무엇을 보장하나요</b> · '+esc(t.cover)+'</div>'+
-      '<div style="font-size:14.5px;line-height:1.6;color:var(--ink2)"><b>왜 지금 점검하나요</b> · '+esc(t.why)+'</div>'+
-      (r.extra?'<div style="font-size:14px;color:var(--blue);font-weight:700">'+esc(r.extra)+'</div>':'')+
-      '<div style="background:'+(r.has?'#F1EAE2':'#FDE7DF')+';border-radius:10px;padding:10px 14px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.5"><div style="font-size:12px;font-weight:700;color:var(--warm2);margin-bottom:2px">고객님께 여쭤보세요</div>'+esc(t.ask)+'</div>'+
-      (TREND_SRC[t.k]?'<div style="font-size:12px;color:var(--muted)">출처: '+TREND_SRC[t.k]+'</div>':'')+'</div>');
+    out.push('<div class="card" style="padding:11px 14px;gap:5px;border:2px solid var(--navy);'+(r.has?'':'background:#FFF8F5')+'">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="font-size:'+fz(16.5)+'px;font-weight:800"><span style="font-size:'+fz(11)+'px;font-weight:800;color:#fff;background:var(--navy);border-radius:5px;padding:2px 7px;margin-right:7px;vertical-align:2px">요즘 대세</span>'+t.title+'</div><div style="white-space:nowrap">'+stat(r)+'</div></div>'+
+      '<div style="font-size:'+fz(13)+'px;line-height:1.5;color:var(--ink2)"><b>무엇을 보장하나요</b> · '+esc(t.cover)+'</div>'+
+      '<div style="font-size:'+fz(13)+'px;line-height:1.5;color:var(--ink2)"><b>왜 지금 점검하나요</b> · '+esc(t.why)+'</div>'+
+      (r.extra?'<div style="font-size:'+fz(12.5)+'px;color:var(--blue);font-weight:700">'+esc(r.extra)+'</div>':'')+ask(t,r)+
+      (TREND_SRC[t.k]?'<div style="font-size:'+fz(11)+'px;color:var(--muted)">출처: '+TREND_SRC[t.k]+'</div>':'')+'</div>');
   });
+  var rest=sel.filter(function(t){return !t.core;});
+  for(var i=0;i<rest.length;i+=2){
+    out.push('<div class="two" style="gap:8px;align-items:stretch">'+rest.slice(i,i+2).map(function(t){
+      var r=covTrend(c,t);
+      return '<div class="card" style="padding:9px 12px;gap:4px;'+(r.has?'':'border:1.5px solid #E7B9AC;background:#FFF8F5')+'"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><div style="font-size:'+fz(14.5)+'px;font-weight:800;line-height:1.3">'+t.title+'</div><div style="white-space:nowrap">'+stat(r)+'</div></div>'+
+        '<div style="font-size:'+fz(12)+'px;line-height:1.45;color:var(--ink2)">'+esc(t.cover)+'</div>'+ask(t,r,true)+'</div>';
+    }).join('')+(rest.length-i<2?'<div></div>':'')+'</div>');
+  }
   return out;
 }
 function covEndBlocks(c,a){
-  return ['<div class="card"><div style="font-size:16px;font-weight:800;color:var(--navy)">상담 메모</div><div style="border-bottom:1px solid #C9BFB4;height:26px"></div><div style="border-bottom:1px solid #C9BFB4;height:26px"></div><div style="border-bottom:1px solid #C9BFB4;height:26px"></div></div>',
-   '<div class="small" style="font-size:13px;line-height:1.7;color:#4A4A55">· 본 리포트는 '+esc(c.source||'보장분석 자료')+'('+esc(c.date||'')+' 기준)를 옮겨 정리한 것으로, 신용정보원 등록 상황에 따라 실제 가입내용과 다를 수 있습니다. 정확한 내용은 각 보험증권과 약관을 확인하시기 바랍니다.<br>· 상황별 금액은 담보명 기준으로 합산한 예상치이며, 실제 보험금은 약관상 질병 정의·진단확정 기준·면책·감액기간·지급 횟수에 따라 달라집니다.<br>· 수술비의 종(1~5종) 분류와 유사암 범위는 보험회사·상품마다 다릅니다.<br>· 실제 보장 제안은 금융소비자보호법에 따라 고객님의 재산·소득 상황과 가입 목적 등을 확인한 뒤 진행합니다.</div>'];
+  var core=function(r){return CORE4.some(function(k){return k.cat===r.cat;});};
+  var keyCats=['cancer','cancer_main','cancer_nonpay','brain_all','ihd','circ_tx','silson','surg_dis','surg_n','care','dementia_mild'];
+  var good=c.rows.filter(function(r){return r.on&&!r.hidden&&r.status==='충분'&&keyCats.indexOf(r.cat)>=0;}).slice(0,5);
+  if(!good.length) good=c.rows.filter(function(r){return r.on&&!r.hidden&&r.amt>0&&(r.status==='충분'||!r.status);}).slice(0,5);
+  var need=c.rows.filter(function(r){return r.on&&!r.hidden&&(r.status==='부족'||r.status==='미가입');});
+  need.sort(function(x,y){ var o={'미가입':0,'부족':1}; return ((core(y)?1:0)-(core(x)?1:0))||(o[x.status]-o[y.status])||(((y.rec||0)-y.amt)-((x.rec||0)-x.amt)); });
+  need=need.slice(0,3);
+  var row=function(r,col,right){ return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:'+fz(7)+'px 0;border-top:1px solid #EEE8E1"><div style="font-size:'+fz(15)+'px;font-weight:700">'+esc(r.name)+'</div><div style="font-size:'+fz(15)+'px;font-weight:800;color:'+col+';white-space:nowrap">'+right+'</div></div>'; };
+  var out=[];
+  out.push('<p class="lead">오늘 리포트에서 확인한 내용을 한 장으로 정리했습니다. 잘 준비된 부분은 유지하고, 비어 있는 부분부터 차례로 검토하시면 됩니다.</p>');
+  out.push('<div class="two" style="gap:12px;align-items:stretch">'+
+    '<div class="card" style="border-top:4px solid #2F7D4A;gap:4px"><div class="ctitle" style="font-size:'+fz(18)+'px;color:#2F7D4A">잘 준비된 보장</div>'+
+      (good.length?good.map(function(r){return row(r,'#2F7D4A',won(r.amt));}).join(''):'<div style="font-size:'+fz(14)+'px;color:var(--muted)">권장 기준을 충족한 핵심 담보가 없습니다.</div>')+'</div>'+
+    '<div class="card" style="border-top:4px solid #B4472F;gap:4px"><div class="ctitle" style="font-size:'+fz(18)+'px;color:#B4472F">먼저 검토할 보장 TOP '+need.length+'</div>'+
+      (need.length?need.map(function(r,i){return row({name:(i+1)+'. '+r.name},ST_COL[r.status],r.rec!=null?'+'+won(Math.max(0,r.rec-r.amt)):'가입 검토');}).join(''):'<div style="font-size:'+fz(14)+'px;color:var(--muted)">부족·미가입 담보가 없습니다.</div>')+'</div>'+
+  '</div>');
+  var steps=[
+    ['보험증권과 약관으로 확인','이 리포트는 신용정보원 조회 자료를 정리한 것입니다. 실제 보장 범위와 금액은 각 보험증권과 약관으로 한 번 더 확인합니다.'],
+    ['건강 상태와 고지사항 점검','최근 건강검진 이상소견, 진료·투약·입원·수술 이력이 있으면 새 보험 가입 시 고지 대상이 될 수 있어 먼저 확인합니다.'],
+    ['유지할 것과 보완할 것 구분','이미 충분한 보장은 중복 가입하지 않고, 비어 있거나 범위가 좁은 담보만 골라 보완 방법과 보험료를 비교합니다.'],
+    ['보험료 부담 확인 후 결정','월 보험료와 납입기간, 갱신 여부를 함께 보고 가계에 무리가 없는 범위에서 결정합니다.']
+  ];
+  out.push('<div class="card" style="gap:8px"><div class="ctitle" style="font-size:'+fz(18)+'px">다음 단계는 이렇게 진행합니다</div>'+steps.map(function(s,i){
+    return '<div style="display:grid;grid-template-columns:'+fz(30)+'px minmax(0,1fr);gap:10px;align-items:start"><div style="width:'+fz(28)+'px;height:'+fz(28)+'px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:'+fz(14)+'px;display:flex;align-items:center;justify-content:center">'+(i+1)+'</div><div><div style="font-size:'+fz(15.5)+'px;font-weight:800">'+s[0]+'</div><div style="font-size:'+fz(13.5)+'px;line-height:1.55;color:var(--ink2)">'+s[1]+'</div></div></div>';
+  }).join('')+'</div>');
+  out.push('<div class="small" style="font-size:'+fz(12)+'px;line-height:1.6;color:#4A4A55">· 본 리포트는 '+esc(c.source||'보장분석 자료')+'('+esc(c.date||'')+' 기준)를 옮겨 정리한 것으로, 신용정보원 등록 상황에 따라 실제 가입내용과 다를 수 있습니다.<br>· 상황별 금액은 담보명 기준으로 합산한 예상치이며, 실제 보험금은 약관상 질병 정의·진단확정 기준·면책·감액기간·지급 횟수에 따라 달라집니다.<br>· 수술비의 종(1~5종) 분류와 유사암 범위는 보험회사·상품마다 다릅니다.<br>· 실제 보장 제안은 금융소비자보호법에 따라 고객님의 재산·소득 상황과 가입 목적 등을 확인한 뒤 진행합니다.</div>');
+  return out;
+}
+/* 번호 섹션마다 새 장에서 시작 · 장수가 늘지 않는 범위에서 글자를 키우고 · 빈 공간은 가운데 정렬 */
+function covSection(host,sec,a){
+  if(!sec.blocks().length) return;
+  var hf=function(cont){return cont?sec.head(true):'';};
+  var bf=function(){ return [{part:0,html:'<div class="sech keepnext">'+sec.head(false)+'</div>'}].concat(sec.blocks()); };
+  COV_K=1; var best=flowPages(host,hf,bf(),a,15), n=best.length;
+  [1.3,1.2,1.1].some(function(k){
+    COV_K=k; var trial=flowPages(host,hf,bf(),a,15+ (k-1)*6);
+    if(trial.length<=n){ best.forEach(function(p){host.removeChild(p);}); best=trial; return true; }
+    trial.forEach(function(p){host.removeChild(p);}); return false;
+  });
+  COV_K=1;
+  if(!sec.noBalance) best.forEach(function(p,i){ if(i===0) balancePage(p); });
+}
+function balancePage(pg){
+  var body=pg.querySelector('.pbody'); var kids=[].slice.call(body.children); if(kids.length<2) return;
+  var last=kids[kids.length-1], used=last.offsetTop+last.offsetHeight-body.offsetTop, free=body.clientHeight-used-8;
+  if(free<30) return;
+  var extra=Math.min(free*0.6/(kids.length-1),20);
+  kids.slice(1).forEach(function(k){ k.style.marginTop=(parseFloat(getComputedStyle(k).marginTop)||0)+extra+'px'; });
+  used=last.offsetTop+last.offsetHeight-body.offsetTop; free=body.clientHeight-used-8;
+  if(free>40) body.style.paddingTop=(parseFloat(getComputedStyle(body).paddingTop)+free/2)+'px';
 }
 function buildCoverage(c,host){
   var a=adv(); host.innerHTML='';
@@ -1468,11 +1557,15 @@ function buildCoverage(c,host){
     sub:esc([c.age?c.age+'세':'',c.gender||''].filter(Boolean).join(' · ')),
     meta:[['분석 기준일',c.date],['정상 계약',c.contracts!=null?c.contracts+'건':''],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'']]});
   host.appendChild(t.firstChild);
-  fitFlow(host,covHead('01 · 통합 보장 현황','내 보험, 한눈에 보기'),function(){return covSummaryBlocks(c);},a);
-  if(COV_SCN.some(function(s){return c.scn[s.k];})) fitFlow(host,covHead('02 · 질병별 보험금','이 병에 걸리면 얼마를 받을까요'),function(){return covScenarioBlocks(c);},a);
-  fitFlow(host,covHead('03 · 필요한 담보','비어 있거나 부족한 보장'),function(){return covNeedBlocks(c);},a);
-  if(COV_TRENDS.some(function(t){return c.trd[t.k];})) fitFlow(host,covHead('04 · 요즘 치료 흐름','추가로 검토할 보장'),function(){return covTrendBlocks(c);},a);
-  fitFlow(host,covHead('05 · 마무리',''),function(){return covEndBlocks(c,a);},a);
+  var secs=[
+    {head:covHead('01 · 통합 보장 현황','내 보험, 한눈에 보기'),blocks:function(){return covSummaryBlocks(c);}},
+    {head:covHead('02 · 질병별 보험금','이 병에 걸리면 얼마를 받을까요'),blocks:function(){return COV_SCN.some(function(s){return c.scn[s.k];})?covScenarioBlocks(c):[];}},
+    {head:covHead('03 · 필요한 담보','비어 있거나 부족한 보장'),noBalance:true,blocks:function(){return covNeedBlocks(c);}},
+    {head:covHead('04 · 요즘 치료 흐름','추가로 검토할 보장'),blocks:function(){return COV_TRENDS.some(function(t){return c.trd[t.k];})?covTrendBlocks(c):[];}},
+    {head:covHead('05 · 정리','오늘 확인한 내용 한눈에'),blocks:function(){return covEndBlocks(c,a);}}
+  ];
+  secs.forEach(function(sec){ covSection(host,sec,a); });
+  COV_K=1;
 }
 function editCoverage(c){
   var opts=function(sel){return COV_CATS.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===sel?' selected':'')+'>'+x[1]+'</option>';}).join('');};
@@ -1512,10 +1605,12 @@ function buildFp(c,host){
   host.innerHTML='';
   var t=document.createElement('div');
   t.innerHTML=coverPage(c,a)+summaryPage(c,a); while(t.firstChild) host.appendChild(t.firstChild);
-  fitFlow(host,function(cont){return typeHead(c,'main',cont);},function(){return typeBlocks(c,'main');},a);
-  fitFlow(host,function(cont){return typeHead(c,'sub',cont);},function(){return typeBlocks(c,'sub');},a);
-  fitFlow(host,bothHead(c),function(){return bothBlocks(c);},a);
-  fitFlow(host,insHead(c),function(){return insBlocks(c,a);},a);
+  chainFlow(host,[
+    {head:function(cont){return typeHead(c,'main',cont);},blocks:function(){return typeBlocks(c,'main');}},
+    {head:function(cont){return typeHead(c,'sub',cont);},blocks:function(){return typeBlocks(c,'sub');}},
+    {head:bothHead(c),blocks:function(){return bothBlocks(c);}},
+    {head:insHead(c),blocks:function(){return insBlocks(c,a);}}
+  ],a);
 }
 function editFp(c){
   return '<div class="grid2"><label class="f">고객 이름<input data-f="name" value="'+esc(c.name||'')+'"></label><label class="f">검사일<input data-f="evalDate" value="'+esc(c.evalDate||'')+'"></label></div>'+
