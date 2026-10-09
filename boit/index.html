@@ -875,7 +875,7 @@ tr.sel td{background:var(--accent-soft)}
           <h2>고객에게 보낼 사고 대응 링크</h2>
           <p class="note" style="margin:0">고객이 휴대폰에 저장해 두었다가 사고가 나면 여는 한 장짜리 안내 화면입니다. 앱 설치가 필요 없습니다.</p>
           <div class="field"><label for="hp-cust">고객</label><input id="hp-cust" list="dl-cust" placeholder="이름 또는 전화번호 뒷자리" autocomplete="off"></div>
-          <div class="field"><label for="hp-ins">자동차보험 보험사</label><input id="hp-ins" list="dl-ins" placeholder="보험사" autocomplete="off"></div>
+          <div class="field"><label for="hp-ins">자동차보험 보험사</label><select id="hp-ins"><option value="">보험사 선택</option></select></div>
           <div class="field"><label for="hp-tel">보험사 사고접수·긴급출동 번호</label><input id="hp-tel" inputmode="tel" placeholder="증권에 적힌 번호"></div>
           <div class="row"><button class="btn primary" type="button" id="hp-copy">안내 문자 복사</button><span class="note" id="hp-msg"></span></div>
           <p class="note" style="margin:0">시범판은 문자 문구만 만듭니다. 실제 서비스에서는 고객별 전용 링크가 생성됩니다.</p>
@@ -1543,6 +1543,10 @@ function send(){
 /* ---- 보험계약: 직접입력 · 증권사진 인식 · 엑셀 불러오기 ---- */
 const INS_ALL=["ABL생명","DB생명","DB손해보험","IM라이프","KB라이프생명","KB손해보험","KDB생명","NH농협손해보험","교보생명","동양생명","라이나생명","라이나손해보험","롯데손해보험","메리츠화재","메트라이프생명","미래에셋생명","삼성생명","삼성화재","수협보험","신한라이프","신협","우체국보험","푸본현대생명","하나생명","하나손해보험","한화생명","한화손해보험","현대해상","흥국생명","흥국화재"];
 $("#dl-ins").innerHTML=INS_ALL.map(n=>`<option value="${n}"></option>`).join("");
+const AUTO_INS=["현대해상","DB손해보험","삼성화재","KB손해보험","메리츠화재","한화손해보험","캐롯손해보험","흥국화재","AXA손해보험","롯데손해보험","하나손해보험"];
+{ const dl=document.createElement("datalist"); dl.id="dl-autoins"; dl.innerHTML=AUTO_INS.map(n=>`<option value="${n}"></option>`).join(""); document.body.appendChild(dl);
+  const hs=$("#hp-ins"); if(hs) hs.innerHTML='<option value="">보험사 선택</option>'+AUTO_INS.map(n=>`<option>${n}</option>`).join(""); }
+document.addEventListener("change",e=>{ if(e.target.id==="ct-kind"){ const ins=$("#ct-ins"); if(ins){ ins.setAttribute("list",e.target.value==="자동차"?"dl-autoins":"dl-ins"); if(e.target.value==="자동차"&&ins.value&&!AUTO_INS.includes(ins.value)) ins.value=""; } } });
 const CONTRACTS=[];
 CUSTOMERS.forEach((c,i)=>{
   if(!c.type) c.type=(i%5===2)?"가망":"관리";
@@ -2114,14 +2118,33 @@ function renderExp(w){
   box.innerHTML=`<div class="row between"><h2>${f.kinds.join("·")} 만기 ${f.win}일 이내</h2><span class="note">계약 등록 시 보종·만기일 기준</span></div>
   <div class="kpis k3" style="margin-top:10px"><div class="kpi"><span>7일 이내</span><b>${n7}<small>건</small></b></div><div class="kpi"><span>30일 이내</span><b>${n30}<small>건</small></b></div><div class="kpi"><span>만기 지남 (14일 내)</span><b>${over}<small>건</small></b></div></div>
   ${selBar(w)}<div class="tbl-wrap" style="margin-top:12px"><table><thead><tr><th style="width:34px"><input type="checkbox" data-selall="${w}" aria-label="모두 선택" ${list.length&&list.every(k=>SEL[w].has(k.ix))?"checked":""}></th><th>D-day</th><th>고객</th><th>보종</th><th>보험사 · 상품</th><th>만기일</th><th></th></tr></thead><tbody>
-  ${list.length?list.map(k=>`<tr class="${SEL[w].has(k.ix)?"sel":""}"><td><input type="checkbox" data-sel="${w}:${k.ix}" ${SEL[w].has(k.ix)?"checked":""} aria-label="선택"></td><td><span class="pill ${k.dd<0?"bad":k.dd<=7?"bad":k.dd<=30?"warn":"ex"}">${k.dd<0?`D+${-k.dd}`:k.dd===0?"D-day":`D-${k.dd}`}</span></td><td><button class="lnk" data-open="${k.cust}">${custName(k.cust)}</button></td><td>${k.kind}</td><td>${esc(k.insurer)} · ${esc(k.product||"")}</td><td class="num">${k.end}</td><td><button class="btn" data-renew="${k.ix}">갱신 안내문</button></td></tr>`).join(""):'<tr><td colspan="7" class="empty">기간 안에 만기인 계약이 없습니다.</td></tr>'}</tbody></table></div>
+  ${list.length?list.map(k=>`<tr class="${SEL[w].has(k.ix)?"sel":""}"><td><input type="checkbox" data-sel="${w}:${k.ix}" ${SEL[w].has(k.ix)?"checked":""} aria-label="선택"></td><td><span class="pill ${k.dd<0?"bad":k.dd<=7?"bad":k.dd<=30?"warn":"ex"}">${k.dd<0?`D+${-k.dd}`:k.dd===0?"D-day":`D-${k.dd}`}</span></td><td><button class="lnk" data-open="${k.cust}">${custName(k.cust)}</button></td><td>${k.kind}</td><td>${esc(k.insurer)} · ${esc(k.product||"")}</td><td class="num">${k.end}</td><td><button class="btn" data-renew="${k.ix}">갱신 안내문</button>${k.renewSent?`<div class="note">${k.renewSent.slice(5)} 발송</div>`:""}</td></tr>`).join(""):'<tr><td colspan="7" class="empty">기간 안에 만기인 계약이 없습니다.</td></tr>'}</tbody></table></div>
   <p class="note" id="rn-${w}" style="margin:10px 0 0"></p>`;
 }
-document.addEventListener("click",e=>{const b=e.target.closest("[data-renew]"); if(!b) return; const k=CONTRACTS[+b.dataset.renew], c=CUSTOMERS.find(x=>x.id===k.cust);
-  const txt=`${c.name}님, ${k.insurer} ${k.kind}보험 만기가 ${k.end.replace(/-/g,".")}입니다. 보장이 끊기지 않도록 갱신을 미리 준비해 드리겠습니다. 바뀐 사항(사업장·차량·운전자 등)이 있으면 알려주세요. - ${ME.name||"담당 설계사"} ${ME.phone||""}`;
-  const w=b.closest("#exp-auto")?"auto":"liab", m=$("#rn-"+w);
-  navigator.clipboard.writeText(txt).then(()=>{m.textContent="안내문을 복사했습니다: "+txt;}).catch(()=>{m.textContent=txt;});
+/* 갱신 안내문: 미리보기 · 수정 · 즉시 발송 */
+function renewText(k,c){ const d=dday(k.end), dd=d<0?`(만기 ${-d}일 지남)`:d===0?"(오늘 만기)":`(D-${d})`, end=k.end.replace(/-/g,"."), sig=`- ${ME.name||"담당 설계사"} ${ME.phone||""}`.trim();
+  if(k.kind==="자동차") return `[자동차보험 갱신 안내]\n${c.name}님, ${k.insurer} 자동차보험 만기가 ${end}${dd}입니다.${k.carNo?`\n■ 차량: ${k.carNo}`:""}\n갱신 전에 아래 내용 중 바뀐 점이 있으면 알려주세요.\n· 차량 교체·명의 변경\n· 운전자 범위·운전자 연령\n· 블랙박스·마일리지 등 특약\n바뀐 내용을 반영해 갱신 보험료를 비교해 안내드리겠습니다.\n${sig}`;
+  return `[${k.kind}보험 갱신 안내]\n${c.name}님, ${k.insurer} ${k.kind}보험 만기가 ${end}${dd}입니다.${k.bizName?`\n■ 사업장: ${k.bizName}`:""}\n보장이 끊기지 않도록 미리 갱신을 준비해 드리겠습니다.\n아래 내용 중 바뀐 점이 있으면 알려주세요.\n· 사업장 주소·업종·면적\n· 시설·기계·재고 등 보험 대상 재산\n· 영업 형태(종업원 수 등)\n${sig}`; }
+let RNW=null;
+function openRenew(ix){ const k=CONTRACTS[ix], c=CUSTOMERS.find(x=>x.id===k.cust)||{name:"고객",phone:""}; RNW={ix};
+  infoDlg(`${k.kind}보험 갱신 안내문`,`<p class="note" style="margin:0">${esc(c.name)} · ${esc(k.insurer)} ${esc(k.product||"")} · 만기 ${k.end}</p>
+  <div class="field"><label for="rn-to">받는 사람 휴대폰</label><input id="rn-to" inputmode="tel" maxlength="13" value="${esc(fmtPhone(c.phone||""))}"></div>
+  <div class="field"><label for="rn-txt">안내문 (직접 고칠 수 있습니다)</label><textarea id="rn-txt" rows="11">${esc(renewText(k,c))}</textarea></div>
+  <div class="smsprev"><span class="note">고객 휴대폰 미리보기</span><div id="rn-prev" style="white-space:pre-wrap"></div></div>
+  <div class="row between"><span class="note" id="rn-bytes"></span><span class="note">충전금 ${(ME.cash||0).toLocaleString()}원</span></div>
+  <div class="row"><button class="btn primary" type="button" id="rn-send">즉시 발송</button><button class="btn" type="button" id="rn-copy">복사</button><button class="btn" type="button" id="rn-reset">처음 문구로</button><span class="note" id="rn-msg"></span></div>`); updRenew(); }
+function updRenew(){ const t=$("#rn-txt").value, by=bytesOf(t); $("#rn-prev").textContent=t; $("#rn-bytes").textContent=`${by}바이트 · ${by<=90?"단문 "+SMS_PRICE.sms:"장문 "+SMS_PRICE.lms}원${by>2000?" · 2,000바이트 초과":""}`; }
+document.addEventListener("click",e=>{const b=e.target.closest("[data-renew]"); if(b){ openRenew(+b.dataset.renew); return; }
+  if(!RNW) return;
+  if(e.target.closest("#rn-reset")){ const k=CONTRACTS[RNW.ix]; $("#rn-txt").value=renewText(k,CUSTOMERS.find(x=>x.id===k.cust)||{name:"고객"}); updRenew(); return; }
+  if(e.target.closest("#rn-copy")){ const t=$("#rn-txt").value; (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{$("#rn-msg").textContent="복사했습니다.";}).catch(()=>{ $("#rn-txt").select(); $("#rn-msg").textContent="글자를 선택해 두었습니다. Ctrl+C로 복사하세요."; }); return; }
+  if(e.target.closest("#rn-send")){ const k=CONTRACTS[RNW.ix], t=$("#rn-txt").value.trim(), ph=$("#rn-to").value, by=bytesOf(t), cost=by<=90?SMS_PRICE.sms:SMS_PRICE.lms;
+    if(!t){ $("#rn-msg").textContent="내용을 입력하세요."; return; } if(by>2000){ $("#rn-msg").textContent="2,000바이트를 넘었습니다."; return; } if(!phoneOk(ph)){ $("#rn-msg").textContent="휴대폰번호를 확인하세요."; return; }
+    if(!ME.demo){ if((ME.cash||0)<cost){ $("#rn-msg").innerHTML=`충전금이 부족합니다. <a href="#" data-go-cash>충전하기</a>`; return; } cashLog(`${k.kind} 갱신 안내 (${custName(k.cust)})`,-cost); }
+    k.renewSent=today(); ACTS.push({cust:k.cust,date:today(),type:"문자",memo:`${k.kind}보험 갱신 안내 (만기 ${k.end})`});
+    $("#rn-msg").textContent=`보냈습니다${ME.demo?"":` · ${cost}원 차감`} (시범: 실제 발송 없음). 활동관리에 기록했습니다.`; renderExp(k.kind==="자동차"?"auto":"liab"); return; }
 });
+document.addEventListener("input",e=>{ if(e.target.id==="rn-txt") updRenew(); if(e.target.id==="rn-to") e.target.value=fmtPhone(e.target.value); });
 
 /* ===== 자동차: 사고 현장 도우미 ===== */
 const HP={cust:null,ins:"",tel:""};
@@ -2143,7 +2166,8 @@ function renderAuto(){ renderExp("auto"); renderHelp(); renderDriverList(); rend
 document.addEventListener("change",e=>{
   if(e.target.id==="hp-cust"){ HP.cust=resolveCust(e.target.value); const k=CONTRACTS.find(x=>x.cust===HP.cust&&x.kind==="자동차"); if(k){ HP.ins=k.insurer; $("#hp-ins").value=k.insurer; const i=INSURERS.find(x=>x.name===k.insurer); if(i){HP.tel=i.cs; $("#hp-tel").value=i.cs;} } renderHelp(); }
 });
-document.addEventListener("input",e=>{ if(e.target.id==="hp-ins"){HP.ins=e.target.value; renderHelp();} if(e.target.id==="hp-tel"){HP.tel=fmtPhone(e.target.value)||e.target.value; renderHelp();} });
+document.addEventListener("change",e=>{ if(e.target.id==="hp-ins"){HP.ins=e.target.value; renderHelp();} });
+document.addEventListener("input",e=>{ if(e.target.id==="hp-tel"){HP.tel=fmtPhone(e.target.value)||e.target.value; renderHelp();} });
 document.addEventListener("click",e=>{ if(e.target.id!=="hp-copy") return; const t=hpText(); navigator.clipboard.writeText(t).then(()=>{$("#hp-msg").textContent="복사했습니다. 고객 문자에 붙여넣으세요.";}).catch(()=>{$("#hp-msg").textContent=t;}); });
 
 /* ===== 자동차: 운전자보험 연결 제안 ===== */
