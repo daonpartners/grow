@@ -162,6 +162,16 @@ form.panel{margin:0}
 .cattabs button:last-child{border-right:0}
 .cattabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-fg)}
 .cattabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.fsec{padding:16px 0;border-bottom:1px solid var(--line)}.fsec:first-child{padding-top:0}.fsec:last-child{border-bottom:0;padding-bottom:0}
+.fsec h3{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.fsec h3 i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--accent,#0f7a5c);color:#fff;font-size:12px;display:grid;place-items:center}.fsec h3 .note{font-weight:400}
+.fsec .insgrid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;margin-top:8px}.fsec .insgrid .insb{padding:8px 10px;min-height:58px}
+details.more{margin-top:8px}details.more summary{cursor:pointer;font-size:13px;font-weight:600}details.more .seg .btn{padding:4px 10px}
+.dropz{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 12px;border:2px dashed var(--line);border-radius:10px;background:var(--bg);cursor:pointer;text-align:center}.dropz b{font-size:15px}.dropz span{font-size:12.5px;color:var(--muted)}
+#stepbody.dragging .dropz,.dropz:hover{border-color:var(--ok);background:var(--accent-soft)}#stepbody.dragging{outline:3px dashed var(--ok);outline-offset:4px}
+.reqchk{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.rq{font-size:12.5px;padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}.rq.ok{border-color:var(--ok);color:var(--ok);background:var(--accent-soft)}
+.flist{margin-top:10px;border:1px solid var(--line);border-radius:8px;overflow:hidden}.frow{display:grid;grid-template-columns:minmax(0,1fr) 200px auto;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);border-left:4px solid var(--ok)}.frow:last-child{border-bottom:0}.frow.un{border-left-color:var(--warn)}.frow .fn{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.frow select{font-size:12.5px;padding:4px 6px}
+.sendbar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 -4px 14px rgba(0,0,0,.06)}.sendbar #sendmiss{flex:1;font-size:13px}.sendbar .err{color:var(--bad)}
+@media(max-width:600px){.frow{grid-template-columns:minmax(0,1fr) auto}.frow select{grid-column:1/-1;grid-row:2}}
 .insgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:12px}
 .insb{all:unset;cursor:pointer;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface)}
 .insb[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
@@ -588,16 +598,17 @@ tr.sel td{background:var(--accent-soft)}
     <!-- CLAIM -->
     <section data-view="claim" hidden>
       <div class="row between">
-        <div><h1>보험금 청구하기</h1><p class="sub">고객 선택부터 팩스 발송까지 한 화면에서</p></div>
+        <div><h1>보험금 청구하기</h1><p class="sub">한 페이지에서 작성 → 서류 한 번에 끌어놓기 → 서명 → 동시 발송</p></div>
         <div class="row"><button class="btn" type="button" id="cl-link">고객 청구 링크 보내기</button><button class="btn" type="button" id="cl-guide">이용 방법</button><button class="btn" type="button" id="cl-forms">청구 서식·필요서류</button><b id="clock" hidden>00:00</b></div>
       </div>
       <ol class="steps" id="steps" style="margin-top:14px">
         <li><i>1</i>보험사</li><li><i>2</i>고객정보</li><li><i>3</i>사고정보</li><li><i>4</i>필요서류</li><li><i>5</i>팩스번호</li><li><i>6</i>발송</li>
       </ol>
       <div class="panel" style="margin-top:14px" id="stepbody"></div>
-      <div class="row between" style="margin-top:14px">
-        <button class="btn" id="prev">이전</button>
-        <button class="btn primary" id="next">다음</button>
+      <div class="sendbar">
+        <button class="btn" id="prev" hidden>이전</button>
+        <span class="note" id="sendmiss"></span>
+        <button class="btn primary" id="next">동시 발송</button>
       </div>
     </section>
 
@@ -1286,15 +1297,7 @@ document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGui
 function startClock(){ if(S.t0) return; S.t0=Date.now(); S.tick=setInterval(()=>{$("#clock").textContent=mmss(Math.floor((Date.now()-S.t0)/1000))},500); }
 function stopClock(){ clearInterval(S.tick); }
 function resetClaim(){ stopClock(); Object.assign(S,{step:0,cat:S.cat||"son",cl:{name:"",rrn:"",phone:"",save:true,idType:"none",idDate:"",pet:"",petNo:"",victim:"",same:true,holder:"",holderRel:"",guide:"fc"},acc:{date:"",type:"",items:{},memo:"",acct:"paid",group:false,support:false,bank:"",acctNo:"",acctName:""},sign:{mode:"face",done:false,req:false},docs:{},ins:[],vfax:{},t0:null,sending:false,sent:false}); Object.values(S.docs||{}).flat().forEach(f=>f.url&&URL.revokeObjectURL(f.url)); S.docs={}; $("#clock").textContent="00:00"; }
-const LAST=5;
-function canNext(){
-  if(S.step===0) return S.ins.length>0;
-  if(S.step===1) return clErrors().length===0&&(S.cat==="pet"||S.cl.same||!!S.cl.holder.trim());
-  if(S.step===2) return !!S.acc.date&&!!S.acc.type&&Object.values(S.acc.items).some(Boolean)&&(S.acc.acct!=="new"||(!!S.acc.bank&&digits(S.acc.acctNo).length>=8&&!!S.acc.acctName.trim()));
-  if(S.step===3) return allFiles().length>0;
-  if(S.step===4) return S.ins.every(id=>faxNeed(id)==="fixed"||/^0\d{1,3}-?\d{3,4}-?\d{4}$/.test((S.vfax[id]||"").trim()));
-  return false;
-}
+const LAST=0;
 /* 보험 구분 · 보험사 */
 const CATS={son:"손해보험",life:"생명보험",pet:"펫보험",liab:"일반배상"};
 /* 사고유형 · 청구항목 */
@@ -1370,105 +1373,110 @@ function custTable(list,mode){
   <tbody>${shown.length?shown.map(c=>`<tr class="${mode==="pick"&&S.cust===c.id?"sel":""}${mode==="open"&&SEL.cust.has(c.id)?"sel":""}">${mode==="open"?`<td><input type="checkbox" data-sel="cust:${c.id}" ${SEL.cust.has(c.id)?"checked":""} aria-label="${c.name} 선택"></td>`:""}<td>${mode==="pick"?`<b>${c.name}</b>`:`<button class="lnk" data-open="${c.id}">${c.name}</button>`}</td><td><span class="pill ${c.type==="가망"?"warn":"ok"}">${c.type||"관리"}</span></td><td class="num">${c.birth||"–"}</td><td class="num">${c.phone}</td><td>${insOf(c.id).length?insOf(c.id).join(", "):'<span class="note">미등록</span>'}</td>${mode==="pick"?`<td><button class="btn" data-cust="${c.id}">선택</button></td>`:""}</tr>`).join(""):`<tr><td colspan="6" class="empty">검색 결과가 없습니다.</td></tr>`}</tbody></table></div>`;
 }
 function drawPick(){ const el=$("#cs-list"); if(el) el.innerHTML=custTable(matchCust(S.q),"pick"); }
+/* ===== 한 페이지 청구서 ===== */
+function formMissing(){ const m=[];
+  if(!S.ins.length) m.push("보험사");
+  const er=clErrors(); if(er.includes("name")) m.push("이름"); if(er.includes("rrn")) m.push("주민등록번호"); if(er.includes("phone")) m.push("휴대폰번호");
+  if(S.cat!=="pet"&&!S.cl.same&&!S.cl.holder.trim()) m.push("계약자 이름");
+  if(!S.acc.date) m.push("사고일자"); if(!S.acc.type) m.push("사고유형"); else if(!Object.values(S.acc.items).some(Boolean)) m.push("청구항목");
+  if(S.acc.acct==="new"&&!(S.acc.bank&&digits(S.acc.acctNo).length>=8&&S.acc.acctName.trim())) m.push("새 계좌 정보");
+  if(!allFiles().length) m.push("서류");
+  if(!S.ins.every(id=>faxNeed(id)==="fixed"||/^0\d{1,3}-?\d{3,4}-?\d{4}$/.test((S.vfax[id]||"").trim()))) m.push("팩스번호");
+  return m; }
+function canNext(){ return formMissing().length===0; }
+const PET_MAP={dx:"petdx",adm:"petdx",bill:"petbill",detail:"petbill",xray:"petx",dentrec:"petrec"};
+const DOC_RULES=[[/후유|장해/,"disabdx"],[/사망진단|검안/,"deathc"],[/기본증명/,"basic"],[/가족관계|상속/,"heir"],[/조직|병리/,"biopsy"],[/(^|[^a-z])(ct|mri)([^a-z]|$)|판독/i,"ctmri"],[/심전도|조영술|효소/,"heartt"],[/표적/,"target"],
+  [/x-?ray|엑스레이|방사선/i,"xray"],[/수술/,"surgdoc"],[/입퇴원|입·퇴원|입원확인|퇴원/,"adm"],[/세부|내역서/,"detail"],[/약제|약국|처방/,"pharm"],[/통원/,"outdx"],[/영수증|계산서/,"bill"],[/진단서|소견서/,"dx"],
+  [/치아|치과/,"tooth"],[/진료기록/,"dentrec"],[/신분증|주민등록증|운전면허|면허증/,"idcopy"],[/통장|계좌/,"bank"],[/동물등록|등록증/,"petid"],[/폐사|화장증명/,"petdeath"],[/경위/,"story"],[/누수|소견/,"leaktech"],[/견적/,"est"],
+  [/공사대금|수리비/,"recp"],[/등기/,"reg"],[/등본/,"famreg"],[/임대차/,"lease"],[/합의/,"agree"],[/명세/,"lossl"],[/교통사고|사고사실/,"accproof"],[/사진|photo/i,"photo"]];
+const DOC_ALIAS={outdx:["dx","pharm"]};
+function guessDoc(name){ const n=(name||"").replace(/\.[a-z0-9]+$/i,""); for(const [re,k] of DOC_RULES){ if(re.test(n)) return S.cat==="pet"&&PET_MAP[k]?PET_MAP[k]:k; } return "etc"; }
+function addAllFiles(list){ [...list].filter(f=>/^image\/|pdf$/.test(f.type)||/\.(pdf|jpe?g|png|heic|gif|bmp|tiff?)$/i.test(f.name)).forEach(f=>{ const k=guessDoc(f.name); (S.docs[k]=S.docs[k]||[]).push({name:f.name,url:f.type.startsWith("image/")?URL.createObjectURL(f):null}); }); startClock(); renderStep(); }
+const docLabel=k=>k==="etc"?"분류 안 됨 (그대로 첨부)":(CDOC[k]||[k])[0];
+function secIns(){ const list=INSURERS.filter(i=>i.cats.includes(S.cat)), pm=S.cat==="pet"||S.cat==="liab", msg=S.insMsg; setTimeout(()=>{S.insMsg="";},0);
+  const need=S.ins.filter(id=>faxNeed(id)!=="fixed");
+  return `<section class="fsec"><h3><i>1</i>보험사 <span class="note">손보 3곳 + 생보 3곳까지 동시 청구 · <b style="color:var(--bad)">★</b>가상팩스 <b style="color:#2563eb">★</b>단체실손</span></h3>
+  <div class="cattabs" role="tablist">${Object.entries(CATS).map(([k,v])=>`<button role="tab" aria-selected="${S.cat===k}" data-cat="${k}">${v}</button>`).join("")}</div>
+  <div class="insgrid">${list.map(i=>{const on=S.ins.includes(i.id);
+    return `<button class="insb" data-ins="${i.id}" aria-pressed="${on}"><b class="insname">${insName(i)}${i.virtual?' <span style="color:var(--bad)">★</span>':""}${i.group&&!pm?' <span style="color:#2563eb">★</span>':""}</b><span>${i.virtual?'<span class="pill warn">가상팩스번호</span>':i.manual||pm?'<span class="pill ex">번호 입력</span>':`<span class="fax">${i.fax}</span>`}</span></button>`;}).join("")}</div>
+  ${S.ins.length?`<div class="selbar"><b>선택 ${S.ins.length}곳</b> ${S.ins.map(id=>`<span class="chip">${insBy(id).name}<button data-ins="${id}" aria-label="선택 해제">✕</button></span>`).join("")}${msg?`<span class="note err">${msg}</span>`:""}</div>`:msg?`<p class="note err">${msg}</p>`:""}
+  ${need.map(id=>{const i=insBy(id), nd=faxNeed(id), hint=i.fax&&nd==="manual"?`장기보험 청구팩스 ${i.fax} — ${CATS[S.cat]} 접수번호가 같은지 확인`:i.note||"";
+    return `<div class="ins-line"><b>${i.name}</b><div class="field"><label for="vf-${id}">${nd==="virtual"?"고객이 받은 가상 팩스번호":"보험사 접수 팩스번호"}</label><input id="vf-${id}" data-vf="${id}" inputmode="tel" placeholder="예: 0505-123-4567" value="${esc(S.vfax[id]||"")}">${hint?`<span class="note">${esc(hint)}</span>`:""}</div>${i.cs?`<button class="btn sm" data-ask="${id}">고객에게 번호 요청 문자</button>`:""}</div>`;}).join("")}<p class="note" id="asknote" style="margin:6px 0 0"></p>
+  ${S.ins.filter(id=>insBy(id).note&&faxNeed(id)==="fixed").map(id=>`<p class="note err" style="margin:4px 0 0">${insBy(id).name}: ${esc(insBy(id).note)}</p>`).join("")}
+  ${S.cat==="son"||S.cat==="life"?`<div class="row" style="gap:18px;margin-top:10px"><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="group" ${S.acc.group?"checked":""}> 단체실손도 함께 청구</label><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="support" ${S.acc.support?"checked":""}> 상해·질병 치료지원금 청구</label></div>`:""}</section>`; }
+function secCl(){ const extra=S.cat==="pet"?`<div class="field"><label for="cl-pet">반려동물 이름</label><input id="cl-pet" value="${esc(S.cl.pet)}" autocomplete="off"></div><div class="field"><label for="cl-petno">동물등록번호</label><input id="cl-petno" value="${esc(S.cl.petNo)}" inputmode="numeric" autocomplete="off"></div>`
+    :S.cat==="liab"?`<div class="field"><label for="cl-victim">피해자 이름 (선택)</label><input id="cl-victim" value="${esc(S.cl.victim)}" autocomplete="off"></div>`:"";
+  const sum=[S.cl.idType==="none"?"신분증 사본 첨부":"신분증 "+(S.cl.idType==="rrc"?"주민등록증":"운전면허증"), S.cat==="pet"?"":S.cl.same?"계약자=피보험자":"계약자 "+(S.cl.holder||"입력 필요"), "보상안내: "+(S.cl.guide==="fc"?"설계사":"고객")].filter(Boolean).join(" · ");
+  return `<section class="fsec"><h3><i>2</i>${S.cat==="pet"?"보호자·반려동물":"청구 고객"} <span class="note">고객관리에 있는 고객은 이름만 고르면 휴대폰번호가 채워집니다</span></h3>
+  <div class="fgrid">
+    <div class="field"><label for="cl-name">${S.cat==="pet"?"보호자 이름":"이름"}</label><input id="cl-name" list="dl-cust" autocomplete="off" value="${esc(S.cl.name)}" placeholder="홍길동"><datalist id="dl-cust">${CUSTOMERS.slice(0,500).map(c=>`<option value="${esc(c.name)}">${esc(c.phone)}</option>`).join("")}</datalist><span class="note err" id="er-name"></span></div>
+    <div class="field"><label for="cl-rrn">주민등록번호</label><input id="cl-rrn" inputmode="numeric" autocomplete="off" maxlength="14" value="${esc(fmtRrn(S.cl.rrn))}" placeholder="000000-0000000"><span class="note err" id="er-rrn"></span></div>
+    <div class="field"><label for="cl-phone">휴대폰번호</label><input id="cl-phone" inputmode="tel" autocomplete="off" maxlength="13" value="${esc(fmtPhone(S.cl.phone))}" placeholder="010-0000-0000"><span class="note err" id="er-phone"></span></div>
+    ${extra}</div>
+  <details class="more" ${S.cl.open?"open":""}><summary>추가 정보 <span class="note">${sum}</span></summary>
+    <div class="row" style="gap:6px;margin-top:8px"><span class="note" style="width:84px">신분증</span><div class="seg">${[["none","미입력(사본 첨부)"],["rrc","주민등록증"],["dl","운전면허증"]].map(([k,v])=>`<button class="btn sm" type="button" data-idt="${k}" aria-pressed="${S.cl.idType===k}">${v}</button>`).join("")}</div>${S.cl.idType==="none"?"":`<input id="cl-iddate" type="date" value="${S.cl.idDate}" aria-label="발급일자" style="width:auto">`}</div>
+    ${S.cat==="pet"?"":`<div class="row" style="gap:6px;margin-top:8px"><span class="note" style="width:84px">계약자</span><div class="seg"><button class="btn sm" type="button" data-same="1" aria-pressed="${S.cl.same}">피보험자와 같음</button><button class="btn sm" type="button" data-same="0" aria-pressed="${!S.cl.same}">다름</button></div>
+    ${S.cl.same?"":`<input id="cl-holder" value="${esc(S.cl.holder)}" placeholder="계약자 이름" autocomplete="off" style="width:140px"><select id="cl-holderrel" style="width:auto">${["","부모","배우자","자녀","본인 사업장(법인)","기타"].map(v=>`<option ${S.cl.holderRel===v?"selected":""} value="${v}">${v||"관계 선택"}</option>`).join("")}</select>`}</div>`}
+    <div class="row" style="gap:6px;margin-top:8px"><span class="note" style="width:84px">보상 안내</span><div class="seg"><button class="btn sm" type="button" data-guide="fc" aria-pressed="${S.cl.guide==="fc"}">설계사</button><button class="btn sm" type="button" data-guide="cust" aria-pressed="${S.cl.guide==="cust"}">고객</button></div></div>
+    <label class="row note" style="margin-top:8px;gap:8px"><input type="checkbox" id="cl-save" ${S.cl.save?"checked":""}> 고객관리에 이름·휴대폰번호 저장 (주민등록번호는 저장 안 함)</label>
+  </details>
+  <p class="note" style="margin:6px 0 0">주민등록번호는 청구서 작성·발송에만 쓰고 서류와 함께 암호화해 보관기간(기본 1년) 후 자동 파기합니다.</p></section>`; }
+function secAcc(){ const types=ACC_TYPES[S.cat];
+  return `<section class="fsec"><h3><i>3</i>사고·청구 항목</h3>
+  <div class="row" style="gap:10px;align-items:flex-end;flex-wrap:wrap">
+    <div class="field" style="width:180px"><label for="acc-date">사고일자 (진단·치료 시작일)</label><input id="acc-date" type="date" value="${S.acc.date}" max="${today()}"></div>
+    <div class="field"><label>사고 유형</label><div class="seg">${types.map(t=>`<button class="btn" type="button" data-acct="${t}" aria-pressed="${S.acc.type===t}">${t}</button>`).join("")}</div></div>
+    <div class="field"><label>보험금 받을 계좌</label><div class="seg"><button class="btn" type="button" data-acctype="paid" aria-pressed="${S.acc.acct==="paid"}">기지급 계좌</button><button class="btn" type="button" data-acctype="new" aria-pressed="${S.acc.acct==="new"}">새 계좌</button></div></div></div>
+  ${S.acc.acct==="new"?`<div class="fgrid" style="margin-top:8px"><div class="field"><label for="ac-bank">은행</label><select id="ac-bank">${["","KB국민","신한","우리","하나","NH농협","IBK기업","SC제일","카카오뱅크","토스뱅크","케이뱅크","새마을금고","신협","우체국","수협","부산","대구","경남","광주","전북","제주","기타"].map(v=>`<option ${S.acc.bank===v?"selected":""} value="${v}">${v||"선택"}</option>`).join("")}</select></div><div class="field"><label for="ac-no">계좌번호</label><input id="ac-no" inputmode="numeric" autocomplete="off" value="${esc(S.acc.acctNo)}" placeholder="숫자만"></div><div class="field"><label for="ac-name">예금주</label><input id="ac-name" autocomplete="off" value="${esc(S.acc.acctName)}"></div></div>`:""}
+  ${S.acc.type?`<div class="itemgrid">${itemsFor().map(([k,v])=>`<label class="itemc"><input type="checkbox" data-item="${k}" ${S.acc.items[k]?"checked":""}> ${v}</label>`).join("")}</div>`:`<p class="note" style="margin:8px 0 0">사고 유형을 고르면 청구 항목이 나옵니다.</p>`}
+  <div class="field" style="margin-top:10px"><label for="acc-memo">사고 상세내용 (선택)</label><input id="acc-memo" value="${esc(S.acc.memo)}" placeholder="예: 건강검진 중 대장용종 발견, 내시경으로 제거"></div></section>`; }
+function secDocs(){ const keys=reqDocs(), have=k=>[k].concat(DOC_ALIAS[k]||[]).some(x=>(S.docs[x]||[]).length>0), files=Object.entries(S.docs).flatMap(([k,fs])=>fs.map((f,i)=>({k,i,f})));
+  const opts=[...new Set(keys.concat(Object.keys(S.docs)).concat(["etc"]))];
+  return `<section class="fsec"><h3><i>4</i>서류 <span class="note">자동 작성: 청구서·개인(신용)정보처리동의서 (서명만)</span></h3>
+  <label class="dropz" for="df-all" id="dropz"><b>여기에 서류 파일을 한 번에 끌어다 놓으세요</b><span>또는 눌러서 여러 개 한꺼번에 선택 · 사진·PDF · 파일 이름으로 서류 종류를 자동 분류</span></label><input type="file" id="df-all" accept="image/*,application/pdf" multiple hidden>
+  ${keys.length?`<div class="reqchk">${keys.map(k=>`<span class="rq ${have(k)?"ok":""}">${have(k)?"✔":"○"} ${CDOC[k][0]}</span>`).join("")}</div>`:""}
+  ${files.length?`<div class="flist">${files.map(({k,i,f})=>`<div class="frow ${k==="etc"?"un":""}"><span class="fn">${esc(f.name)}</span><select data-dmv="${k}:${i}" aria-label="서류 종류">${opts.map(o=>`<option value="${o}" ${o===k?"selected":""}>${docLabel(o)}</option>`).join("")}</select><button class="btn sm" data-drm="${k}:${i}" aria-label="삭제">✕</button></div>`).join("")}</div>`:""}
+  <p class="note" style="margin:8px 0 0">첨부 ${allFiles().length}장 + 자동 작성 2장 = 보험사당 약 ${allFiles().length+2}장. ${keys.filter(k=>!have(k)).length?`○ 표시 서류가 빠지면 보험사 보완 요청이 올 수 있습니다(발송은 가능).`:""} 분류가 틀리면 오른쪽에서 고치면 됩니다. 분류와 관계없이 올린 파일은 모두 보험사에 보냅니다.</p></section>`; }
 function renderStep(){
   if(!S.cl||!S.acc){ resetClaim(); }
-  document.querySelectorAll("#steps li").forEach((li,i)=>{li.classList.toggle("on",i===S.step);li.classList.toggle("done",i<S.step)});
-  const B=$("#stepbody");
-  if(S.step===0){
-    const list=INSURERS.filter(i=>i.cats.includes(S.cat)); const msg=S.insMsg; setTimeout(()=>{S.insMsg="";},0);
-    B.innerHTML=`<h2>보험 구분과 보험사</h2><p class="note" style="margin:4px 0 12px">손해보험 3곳 + 생명보험 3곳까지 한 번에 동시 청구합니다(탭을 옮겨도 선택이 유지됩니다). 펫보험·일반배상은 따로 청구합니다.</p>
-    <div class="cattabs" role="tablist">${Object.entries(CATS).map(([k,v])=>`<button role="tab" aria-selected="${S.cat===k}" data-cat="${k}">${v}</button>`).join("")}</div>
-    <div class="row note" style="gap:14px;margin-bottom:8px"><span><b style="color:var(--bad)">★</b> 가상팩스번호 (고객이 콜센터에서 받음)</span><span><b style="color:#2563eb">★</b> 단체실손 가능</span><span>번호 입력 = 팩스번호 미확인, 보험사 확인 후 입력</span></div>
-    <div class="insgrid">${list.map(i=>{const on=S.ins.includes(i.id), pm=S.cat==="pet"||S.cat==="liab";
-      return `<button class="insb" data-ins="${i.id}" aria-pressed="${on}"><b class="insname">${insName(i)}${i.virtual?' <span style="color:var(--bad)">★</span>':""}${i.group&&!pm?' <span style="color:#2563eb">★</span>':""}</b><span>${i.virtual?'<span class="pill warn">가상팩스번호</span>':i.manual||pm?'<span class="pill ex">번호 입력</span>':`<span class="fax">${i.fax}</span>`}</span></button>`;}).join("")}</div>
-    <div class="selbar">${S.ins.length?`<b>선택 ${S.ins.length}곳</b> ${S.ins.map(id=>`<span class="chip">${insBy(id).name}<button data-ins="${id}" aria-label="선택 해제">✕</button></span>`).join("")}`:'<span class="note">보험사를 고르세요</span>'}${S.insMsg?`<span class="note err">${S.insMsg}</span>`:""}</div>
-    ${S.cat==="son"||S.cat==="life"?`<div class="row" style="gap:18px;margin-top:12px"><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="group" ${S.acc.group?"checked":""}> 단체실손보험도 함께 청구</label><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="support" ${S.acc.support?"checked":""}> 상해·질병 치료지원금 청구</label></div><p class="note" style="margin:4px 0 0">체크하면 자동 작성 청구서의 해당 칸에 표시됩니다. 단체실손은 가입 보험사(회사 단체보험)가 맞는지 고객에게 확인하세요.</p>`:""}
-    <p class="note" style="margin:12px 0 0">팩스번호 출처: ${INS_SRC}. ${S.cat==="pet"||S.cat==="liab"?"펫보험·배상책임은 장기보험과 접수 팩스번호가 다를 수 있어 보험사에서 받은 번호를 입력합니다.":""}</p>`;
-  }
-  if(S.step===1){
-    const extra=S.cat==="pet"?`<div class="field"><label for="cl-pet">반려동물 이름</label><input id="cl-pet" value="${esc(S.cl.pet)}" autocomplete="off"></div><div class="field"><label for="cl-petno">동물등록번호 (있으면)</label><input id="cl-petno" value="${esc(S.cl.petNo)}" inputmode="numeric" autocomplete="off"></div>`
-      :S.cat==="liab"?`<div class="field"><label for="cl-victim">피해자 이름 (선택)</label><input id="cl-victim" value="${esc(S.cl.victim)}" autocomplete="off"></div>`:"";
-    B.innerHTML=`<h2>${S.cat==="pet"?"보호자·반려동물 정보":S.cat==="liab"?"피보험자 정보":"청구 고객 정보"}</h2>
-    <div class="fgrid">
-      <div class="field"><label for="cl-name">${S.cat==="pet"?"보호자 이름":"이름"}</label><input id="cl-name" autocomplete="off" value="${esc(S.cl.name)}" placeholder="홍길동"><span class="note err" id="er-name"></span></div>
-      <div class="field"><label for="cl-rrn">주민등록번호</label><input id="cl-rrn" inputmode="numeric" autocomplete="off" maxlength="14" value="${esc(fmtRrn(S.cl.rrn))}" placeholder="000000-0000000"><span class="note err" id="er-rrn"></span></div>
-      <div class="field"><label for="cl-phone">휴대폰번호</label><input id="cl-phone" inputmode="tel" autocomplete="off" maxlength="13" value="${esc(fmtPhone(S.cl.phone))}" placeholder="010-0000-0000"><span class="note err" id="er-phone"></span></div>
-      ${extra}
-    </div>
-    <div style="margin-top:14px"><b style="font-size:14px">신분증 정보</b></div>
-    <div class="seg" style="margin-top:6px">${[["none","미입력"],["rrc","주민등록증"],["dl","운전면허증"]].map(([k,v])=>`<button class="btn" type="button" data-idt="${k}" aria-pressed="${S.cl.idType===k}">${v}</button>`).join("")}</div>
-    ${S.cl.idType==="none"?'<p class="note err" style="margin:6px 0 0">신분증 정보를 입력하지 않으면 신분증 사본을 첨부해야 합니다. 없으면 보험사 보완 요청이 올 수 있습니다.</p>':`<div class="field" style="margin-top:8px;max-width:260px"><label for="cl-iddate">발급일자</label><input id="cl-iddate" type="date" value="${S.cl.idDate}"></div>`}
-    ${S.cat==="pet"?"":`<div style="margin-top:14px"><b style="font-size:14px">계약자와 피보험자가 같은 사람인가요?</b></div>
-    <div class="seg" style="margin-top:6px"><button class="btn" type="button" data-same="1" aria-pressed="${S.cl.same}">예, 같습니다</button><button class="btn" type="button" data-same="0" aria-pressed="${!S.cl.same}">아니요 (계약자 따로)</button></div>
-    ${S.cl.same?"":`<div class="fgrid" style="margin-top:8px"><div class="field"><label for="cl-holder">계약자 이름</label><input id="cl-holder" value="${esc(S.cl.holder)}" autocomplete="off"></div><div class="field"><label for="cl-holderrel">피보험자와의 관계</label><select id="cl-holderrel">${["","부모","배우자","자녀","본인 사업장(법인)","기타"].map(v=>`<option ${S.cl.holderRel===v?"selected":""} value="${v}">${v||"선택"}</option>`).join("")}</select></div></div>`}`}
-    <div style="margin-top:14px"><b style="font-size:14px">보상 안내 받으실 분</b> <span class="note">보험사 보상담당자가 연락할 사람</span></div>
-    <div class="seg" style="margin-top:6px"><button class="btn" type="button" data-guide="fc" aria-pressed="${S.cl.guide==="fc"}">설계사 (내 연락처)</button><button class="btn" type="button" data-guide="cust" aria-pressed="${S.cl.guide==="cust"}">청구인 (고객 연락처)</button></div>
-    <label class="row note" style="margin-top:14px;gap:8px"><input type="checkbox" id="cl-save" ${S.cl.save?"checked":""}> 고객관리에 이름·휴대폰번호 저장 (주민등록번호는 저장하지 않음)</label>
-    <div class="banner" style="margin-top:14px;background:var(--accent-soft);border-color:transparent"><b style="color:var(--ok)">보안</b><span>주민등록번호는 청구서 작성과 발송에만 쓰고, 화면에는 뒷자리를 가려 표시합니다. 청구 서류와 함께 암호화해 재청구용으로 보관기간(기본 1년) 동안만 보관하고 자동 파기합니다. 청구내역에는 가린 번호만 보입니다.</span></div>`;
-    const upd=()=>{const er=clErrors(); const show=(k,msg)=>{const el=$("#er-"+k); const v=$("#cl-"+k).value; el.textContent=(v&&er.includes(k))?msg:"";};
-      show("rrn","13자리와 생년월일이 맞는지 확인하세요"); show("phone","휴대폰번호 형식을 확인하세요"); $("#next").disabled=er.length>0;};
-    $("#cl-name").oninput=e=>{S.cl.name=e.target.value; startClock(); upd();};
-    $("#cl-rrn").oninput=e=>{const f=fmtRrn(e.target.value); e.target.value=f; S.cl.rrn=f; startClock(); upd();};
-    $("#cl-phone").oninput=e=>{const f=fmtPhone(e.target.value); e.target.value=f; S.cl.phone=f; startClock(); upd();};
-    $("#cl-save").onchange=e=>{S.cl.save=e.target.checked;};
-    [["cl-pet","pet"],["cl-petno","petNo"],["cl-victim","victim"],["cl-iddate","idDate"],["cl-holder","holder"],["cl-holderrel","holderRel"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{S.cl[k]=e.target.value; $("#next").disabled=!canNext();}; el.onchange=el.oninput; }});
-  }
-  if(S.step===2){
-    const types=ACC_TYPES[S.cat];
-    B.innerHTML=`<h2>사고 정보</h2>
-    <div class="fgrid" style="margin-top:10px"><div class="field"><label for="acc-date">사고일자 (진단·치료 시작일)</label><input id="acc-date" type="date" value="${S.acc.date}"></div></div>
-    <div style="margin-top:14px"><b style="font-size:14px">사고 유형</b></div>
-    <div class="seg" style="margin-top:6px">${types.map(t=>`<button class="btn" type="button" data-acct="${t}" aria-pressed="${S.acc.type===t}">${t}</button>`).join("")}</div>
-    ${S.acc.type?`<div style="margin-top:14px"><b style="font-size:14px">청구 항목</b> <span class="note">해당하는 것을 모두 고르세요. 고른 항목에 맞춰 필요서류가 정해집니다.</span></div>
-      <div class="itemgrid">${itemsFor().map(([k,v])=>`<label class="itemc"><input type="checkbox" data-item="${k}" ${S.acc.items[k]?"checked":""}> ${v}</label>`).join("")}</div>`:""}
-    <div class="field" style="margin-top:14px"><label for="acc-memo">사고 상세내용 (선택)</label><textarea id="acc-memo" rows="3" placeholder="예: 건강검진 중 대장용종 발견, 내시경으로 제거">${esc(S.acc.memo)}</textarea></div>
-    <div style="margin-top:14px"><b style="font-size:14px">보험금 받을 계좌</b></div>
-    <div class="seg" style="margin-top:6px"><button class="btn" type="button" data-acctype="paid" aria-pressed="${S.acc.acct==="paid"}">기지급 계좌</button><button class="btn" type="button" data-acctype="new" aria-pressed="${S.acc.acct==="new"}">새 계좌</button></div>
-    ${S.acc.acct==="new"?`<div class="fgrid" style="margin-top:8px"><div class="field"><label for="ac-bank">은행</label><select id="ac-bank">${["","KB국민","신한","우리","하나","NH농협","IBK기업","SC제일","카카오뱅크","토스뱅크","케이뱅크","새마을금고","신협","우체국","수협","부산","대구","경남","광주","전북","제주","기타"].map(v=>`<option ${S.acc.bank===v?"selected":""} value="${v}">${v||"선택"}</option>`).join("")}</select></div><div class="field"><label for="ac-no">계좌번호</label><input id="ac-no" inputmode="numeric" autocomplete="off" value="${esc(S.acc.acctNo)}" placeholder="숫자만"></div><div class="field"><label for="ac-name">예금주</label><input id="ac-name" autocomplete="off" value="${esc(S.acc.acctName)}"></div></div><p class="note" style="margin:4px 0 0">예금주는 보통 피보험자 본인이어야 합니다. 계좌번호는 청구서 작성에만 쓰고 주민번호와 같이 발송 후 파기합니다. 통장 사본은 필요서류 단계에서 올릴 수 있습니다.</p>`:""}`;
-    $("#acc-date").oninput=e=>{S.acc.date=e.target.value; $("#next").disabled=!canNext();};
-    $("#acc-memo").oninput=e=>{S.acc.memo=e.target.value;};
-    [["ac-bank","bank"],["ac-no","acctNo"],["ac-name","acctName"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{ if(k==="acctNo") e.target.value=e.target.value.replace(/[^\d-]/g,""); S.acc[k]=e.target.value; $("#next").disabled=!canNext();}; el.onchange=el.oninput; }});
-  }
-  if(S.step===3){
-    const keys=reqDocs(), miss=keys.filter(k=>!(S.docs[k]||[]).length);
-    const src=[...new Set(keys.map(k=>CDOC[k][2]))];
-    B.innerHTML=`<h2>필요서류 올리기</h2>
-    <p class="note" style="margin:4px 0 8px">${catLabel()} · ${esc(S.acc.type)} · ${itemsFor().filter(([k])=>S.acc.items[k]).map(([,v])=>v).join(", ")}</p>
-    <div class="autodoc"><span class="pill ok">자동 작성</span> 보험금 청구서 · 개인(신용)정보처리동의서 — 입력한 정보로 보험사별 양식을 채웁니다. 고객 서명 필요</div>
-    <div class="doclist">${keys.map(k=>{const d=CDOC[k], fs=S.docs[k]||[];
-      return `<div class="docrow ${fs.length?"ok":""}"><div class="dn"><b>${d[0]}</b><span>${d[1]}</span></div>
-        <div class="dfiles">${fs.map((f,i)=>`<span class="chip">${esc(f.name.length>18?f.name.slice(0,16)+"…":f.name)}<button data-drm="${k}:${i}" aria-label="삭제">✕</button></span>`).join("")}</div>
-        <label class="btn" for="df-${k}">${fs.length?"추가":"올리기"}</label><input type="file" id="df-${k}" data-doc="${k}" accept="image/*,application/pdf" multiple hidden></div>`;}).join("")}
-      <div class="docrow ${(S.docs.etc||[]).length?"ok":""}"><div class="dn"><b>기타 서류</b><span>보험사가 추가로 요청한 서류 등</span></div><div class="dfiles">${(S.docs.etc||[]).map((f,i)=>`<span class="chip">${esc(f.name.slice(0,18))}<button data-drm="etc:${i}" aria-label="삭제">✕</button></span>`).join("")}</div><label class="btn" for="df-etc">올리기</label><input type="file" id="df-etc" data-doc="etc" accept="image/*,application/pdf" multiple hidden></div>
-    </div>
-    <p class="note ${miss.length?"err":""}" style="margin:10px 0 0">${miss.length?`아직 안 올린 서류 ${miss.length}개 — 빠지면 보험사 보완 요청이 올 수 있습니다.`:"필요서류를 모두 올렸습니다."} 첨부 ${allFiles().length}장 + 자동 작성 2장 = 보험사당 약 ${allFiles().length+2}장</p>
-    <p class="note" style="margin:6px 0 0">서류 목록 기준: ${src.map(x=>x==="L"?"교보라이프플래닛 「사고유형별 구비서류 안내」":"DB손해보험 「보험금청구서류 안내」").join(" · ")}. 보험사·상품·청구금액에 따라 생략되거나 추가될 수 있습니다.</p>`;
-  }
-  if(S.step===4){
-    B.innerHTML=`<h2>팩스번호 확인</h2><p class="note" style="margin:4px 0 6px">확인된 번호는 그대로 쓰고, 가상번호·미확인 보험사는 번호를 입력합니다. 출처: ${INS_SRC}</p>
-    ${S.ins.map(id=>{const i=insBy(id), nd=faxNeed(id);
-      if(nd==="fixed") return `<div class="ins-line"><b>${i.name}</b><span class="fax">${i.fax}</span><span class="pill ok">확인된 번호</span>${i.note?`<span class="note err">${esc(i.note)}</span>`:""}</div>`;
-      const lab=nd==="virtual"?"고객이 받은 가상 팩스번호":"보험사 접수 팩스번호 (확인 후 입력)", hint=i.fax&&nd==="manual"?`장기보험 청구팩스 ${i.fax} — ${CATS[S.cat]} 접수번호가 같은지 확인`:i.note||"";
-      return `<div class="ins-line"><b>${i.name}</b><div class="field"><label for="vf-${id}">${lab}</label><input id="vf-${id}" data-vf="${id}" inputmode="tel" placeholder="예: 0505-123-4567" value="${esc(S.vfax[id]||"")}">${hint?`<span class="note">${esc(hint)}</span>`:""}</div>${i.cs?`<button class="btn" data-ask="${id}">고객에게 번호 요청 문자</button>`:""}</div>`;}).join("")}
-    <p class="note" id="asknote" style="margin:10px 0 0"></p>`;
-  }
-  if(S.step===5){
-    const pages=allFiles().length+2;
-    B.innerHTML=`<h2>${S.sent?"발송 결과":"마지막 확인 후 발송"}</h2>
+  const B=$("#stepbody"), st=$("#steps"); if(st) st.hidden=true; $("#prev").hidden=true;
+  const nx=$("#next");
+  if(S.sending||S.sent){ const pages=allFiles().length+2;
+    B.innerHTML=`<h2>${S.sent?"발송 결과":"보내는 중"}</h2>
     <p class="note" style="margin:4px 0 6px">${esc(S.cl.name)} · <span class="num">${S.sent?esc(S.rrnMasked||"")+` (보관 ${KEEP_DAYS===365?"1년":KEEP_DAYS+"일"} 후 파기)`:maskRrn(S.cl.rrn)} · ${esc(S.cl.phone)}</span> · ${catLabel()} ${esc(S.acc.type)} · 보험사당 <span class="num">${pages}</span>장</p>
     ${S.ins.map(id=>{const i=insBy(id);return `<div class="sendrow"><b>${i.name}</b><div><div class="fax">${esc(faxOf(id))}</div><div class="bar" style="margin-top:6px"><i id="bar-${id}"></i></div></div><span id="st-${id}">${S.sent?'<span class="pill ok">접수완료</span>':'<span class="pill ex">대기</span>'}</span></div>`}).join("")}
-    ${!S.sent&&S.ins.some(id=>insBy(id).note)?`<p class="note err" style="margin:8px 0 0">${S.ins.filter(id=>insBy(id).note).map(id=>`${insBy(id).name}: ${esc(insBy(id).note)}`).join("<br>")}${S.ins.includes("mg")&&(()=>{const n=new Date(),m=n.getHours()*60+n.getMinutes();return m<570||m>930;})()?"<br>지금은 새마을금고공제 청구 가능 시간(09:30~15:30)이 아닙니다. 시간 안에 보내거나, 실패하면 청구내역에서 재청구하세요.":""}</p>`:""}
-    ${S.sent?"":signBlock()}
-    <p class="note" id="donenote" style="margin:12px 0 0">${S.sent?doneText():S.sign.done?"발송을 누르면 선택한 보험사에 동시에 보냅니다. (시범 화면: 실제 발송 없음)":"고객 서명을 받으면 발송할 수 있습니다."}</p>
+    <p class="note" id="donenote" style="margin:12px 0 0">${S.sent?doneText():""}</p>
     ${S.sent?`<div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="cl-alim">청구접수 알림톡 & 보상카드</button><button class="btn" type="button" id="cl-more">같은 고객으로 계속 청구 (다른 보험사)</button><button class="btn" type="button" data-go="history">청구내역 보기</button></div>`:""}`;
-    if(!S.sent) initSign();
     if(S.sent) S.ins.forEach(id=>{const b=$("#bar-"+id); if(b) b.style.width="100%"});
-  }
-  $("#prev").hidden=S.step===0||S.sent;
-  const nx=$("#next");
-  nx.textContent=S.step===LAST?(S.sent?"새 청구하기":"동시 발송"):"다음";
-  nx.disabled=S.step===LAST?(S.sending||(!S.sent&&!S.sign.done)):!canNext();
+    nx.textContent="새 청구하기"; nx.disabled=S.sending; $("#sendmiss")&&($("#sendmiss").textContent=""); return; }
+  B.innerHTML=secIns()+secCl()+secAcc()+secDocs()+`<section class="fsec"><h3><i>5</i>고객 서명</h3>${signBlock()}</section>`;
+  initSign(); bindForm(); updSend();
 }
+function updSend(){ const nx=$("#next"); if(!nx||S.sent||S.sending) return; const m=formMissing(); S.sign.done=signAllDone()||S.sign.done&&S.sign.mode==="remote";
+  nx.textContent="동시 발송"+(S.ins.length?` (${S.ins.length}곳)`:"");
+  nx.disabled=m.length>0||!S.sign.done;
+  const sm=$("#sendmiss"); if(sm) sm.innerHTML=m.length?`<span class="err">남은 항목: ${m.join(" · ")}</span>`:!S.sign.done?`<span class="err">고객 서명이 필요합니다</span>`:`준비 완료 · 발송을 누르면 ${S.ins.length}곳에 동시에 보냅니다 (시범: 실제 발송 없음)`; }
+function bindForm(){
+  const upd=()=>{const er=clErrors(); const show=(k,msg)=>{const el=$("#er-"+k), inp=$("#cl-"+k); if(el&&inp) el.textContent=(inp.value&&er.includes(k))?msg:"";};
+    show("rrn","13자리와 생년월일이 맞는지 확인하세요"); show("phone","휴대폰번호 형식을 확인하세요"); updSend();};
+  $("#cl-name").oninput=e=>{S.cl.name=e.target.value; const c=CUSTOMERS.find(c=>c.name===e.target.value.trim()); if(c&&!digits(S.cl.phone)){ S.cl.phone=fmtPhone(c.phone); $("#cl-phone").value=S.cl.phone; } startClock(); upd();};
+  $("#cl-rrn").oninput=e=>{const f=fmtRrn(e.target.value); e.target.value=f; S.cl.rrn=f; startClock(); upd();};
+  $("#cl-phone").oninput=e=>{const f=fmtPhone(e.target.value); e.target.value=f; S.cl.phone=f; startClock(); upd();};
+  const sv=$("#cl-save"); if(sv) sv.onchange=e=>{S.cl.save=e.target.checked;};
+  const mo=document.querySelector(".fsec details.more"); if(mo) mo.ontoggle=()=>{S.cl.open=mo.open;};
+  [["cl-pet","pet"],["cl-petno","petNo"],["cl-victim","victim"],["cl-iddate","idDate"],["cl-holder","holder"],["cl-holderrel","holderRel"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{S.cl[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
+  $("#acc-date").oninput=e=>{S.acc.date=e.target.value; updSend();};
+  $("#acc-memo").oninput=e=>{S.acc.memo=e.target.value;};
+  [["ac-bank","bank"],["ac-no","acctNo"],["ac-name","acctName"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{ if(k==="acctNo") e.target.value=e.target.value.replace(/[^\d-]/g,""); S.acc[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
+  $("#df-all").onchange=e=>{ addAllFiles(e.target.files); };
+}
+(()=>{ const B=$("#stepbody"); let n=0;
+  B.addEventListener("dragenter",e=>{ if(!S.sent&&e.dataTransfer&&[...e.dataTransfer.types].includes("Files")){ n++; B.classList.add("dragging"); } });
+  B.addEventListener("dragleave",()=>{ if(--n<=0){ n=0; B.classList.remove("dragging"); } });
+  B.addEventListener("dragover",e=>{ if(!S.sent) e.preventDefault(); });
+  B.addEventListener("drop",e=>{ e.preventDefault(); n=0; B.classList.remove("dragging"); if(!S.sent&&e.dataTransfer&&e.dataTransfer.files.length) addAllFiles(e.dataTransfer.files); });
+  document.addEventListener("paste",e=>{ if($("#stepbody").offsetParent&&!S.sent&&e.clipboardData&&e.clipboardData.files.length){ addAllFiles(e.clipboardData.files); } });
+})();
 function signers(){ return [{k:"ins",label:"피보험자(청구인)",name:S.cl.name}].concat(S.cat!=="pet"&&!S.cl.same?[{k:"hold",label:"계약자",name:S.cl.holder}]:[]); }
 function signAllDone(){ return signers().every(x=>S.sign.sig&&S.sign.sig[x.k]); }
 function signBlock(){ const sg=S.sign; sg.sig=sg.sig||{}; if(sg.mode==="face") sg.done=signAllDone();
@@ -1482,7 +1490,7 @@ function signBlock(){ const sg=S.sign; sg.sig=sg.sig||{}; if(sg.mode==="face") s
   :`<div class="banner" style="margin-top:8px"><span>${sg.req?`${esc(S.cl.name)}님(${esc(S.cl.phone)})에게 서명 요청 문자를 보냈습니다. 고객이 링크에서 서명하면 발송할 수 있습니다.${sg.done?" <b>서명 완료</b>":""}`:"고객 휴대폰으로 서명 링크를 보냅니다. 문자비는 충전금에서 차감됩니다."}</span></div>
   <div class="row" style="margin-top:6px">${sg.req?(sg.done?"":`<button class="btn primary" type="button" id="sign-wait">서명 대기로 저장 (서명하면 자동 발송)</button><button class="btn" type="button" id="sign-sim">(시범) 고객 서명 완료 처리</button>`):`<button class="btn primary" type="button" id="sign-req">서명 요청 문자 보내기</button>`}</div>`}`; }
 function updSignUI(){ signers().forEach(x=>{ const r=$("#sr-"+x.k); if(!r) return; const ok=!!S.sign.sig[x.k]; r.classList.toggle("ok",ok); r.querySelector(".sst").textContent=ok?"✔ 서명 완료":"서명 필요"; });
-  S.sign.done=signAllDone(); const nx=$("#next"); if(nx&&S.step===LAST&&!S.sent) nx.disabled=S.sending||!S.sign.done; const dn=$("#donenote"); if(dn&&!S.sent) dn.textContent=S.sign.done?"발송을 누르면 선택한 보험사에 동시에 보냅니다. (시범 화면: 실제 발송 없음)":"고객 서명을 받으면 발송할 수 있습니다."; }
+  S.sign.done=signAllDone(); updSend(); }
 function initSign(){ S.sign.sig=S.sign.sig||{};
   document.querySelectorAll("canvas[data-sigk]").forEach(cv=>{ const k=cv.dataset.sigk; let ctx=null; try{ctx=cv.getContext&&cv.getContext("2d");}catch(e){} if(!ctx) return;
     ctx.lineWidth=2.6; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#111"; if(S.sign.sig[k]){ const im=new Image(); im.onload=()=>ctx.drawImage(im,0,0); im.src=S.sign.sig[k]; }
@@ -1497,7 +1505,8 @@ function addDocFiles(k,list){ S.docs[k]=(S.docs[k]||[]).concat([...list].map(f=>
 $("#stepbody").addEventListener("change",e=>{
   const af=e.target.closest("[data-accflag]"); if(af){ S.acc[af.dataset.accflag]=af.checked; return; }
   const d=e.target.closest("[data-doc]"); if(d){ addDocFiles(d.dataset.doc,d.files); return; }
-  const it=e.target.closest("[data-item]"); if(it){ S.acc.items[it.dataset.item]=it.checked; $("#next").disabled=!canNext(); }
+  const it=e.target.closest("[data-item]"); if(it){ S.acc.items[it.dataset.item]=it.checked; renderStep(); return; }
+  const mv=e.target.closest("[data-dmv]"); if(mv){ const [k,ix]=mv.dataset.dmv.split(":"), to=mv.value; const f=S.docs[k].splice(+ix,1)[0]; if(!S.docs[k].length) delete S.docs[k]; (S.docs[to]=S.docs[to]||[]).push(f); renderStep(); return; }
 });
 $("#stepbody").addEventListener("click",e=>{
   const c=e.target.closest("[data-cat]"); if(c){ const nc=c.dataset.cat, health=x=>x==="son"||x==="life";
@@ -1520,15 +1529,15 @@ $("#stepbody").addEventListener("click",e=>{
     resetClaim(); HTAB="wait"; go("history"); return; }
   if(e.target.closest("#cl-more")){ const v=VAULT[S.lastGid]; const keep={cl:{...v.cl,rrn:v.rrn},acc:{...v.acc},cat:v.cat,docs:JSON.parse(JSON.stringify(v.docs)),done:v.ins}; resetClaim(); S.cl=keep.cl; S.acc=keep.acc; S.cat=keep.cat; S.docs=keep.docs; S.step=0; S.insMsg=`같은 고객 정보와 서류로 계속 청구합니다. 이미 보낸 보험사: ${keep.done.map(id=>insBy(id).name).join(", ")}`; renderStep(); return; }
   if(e.target.closest("#cl-alim")){ openAlim(S.lastGid); return; }
-  const r=e.target.closest("[data-drm]"); if(r){ const [k,ix]=r.dataset.drm.split(":"); const f=S.docs[k].splice(+ix,1)[0]; f&&f.url&&URL.revokeObjectURL(f.url); renderStep(); return; }
+  const r=e.target.closest("[data-drm]"); if(r){ const [k,ix]=r.dataset.drm.split(":"); const f=S.docs[k].splice(+ix,1)[0]; if(!S.docs[k].length) delete S.docs[k]; f&&f.url&&URL.revokeObjectURL(f.url); renderStep(); return; }
   const a=e.target.closest("[data-ask]"); if(a){const ins=insBy(a.dataset.ask);
     $("#asknote").innerHTML=`문자 미리보기 (시범: 실제 발송 없음) — “${esc(S.cl.name)}님, ${ins.name} 고객센터 ${ins.cs}에 전화해 보험금 청구용 팩스번호를 받으신 뒤 아래 링크에 입력해 주세요.”`;}
 });
-$("#stepbody").addEventListener("input",e=>{const v=e.target.dataset&&e.target.dataset.vf; if(v){S.vfax[v]=e.target.value; $("#next").disabled=!canNext();}});
+$("#stepbody").addEventListener("input",e=>{const v=e.target.dataset&&e.target.dataset.vf; if(v){S.vfax[v]=e.target.value; updSend();}});
 $("#prev").onclick=()=>{if(S.step>0){S.step--;renderStep();}};
 $("#next").onclick=()=>{
-  if(S.step<LAST){ if(canNext()){S.step++;renderStep();} return; }
-  if(S.sent){ resetClaim(); renderStep(); return; }
+  if(S.sent){ resetClaim(); renderStep(); window.scrollTo(0,0); return; }
+  if(!canNext()||!S.sign.done) return; window.scrollTo(0,0);
   send();
 };
 function send(){
