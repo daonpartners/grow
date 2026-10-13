@@ -65,10 +65,10 @@ label.f input{font:inherit;font-size:15px;color:var(--ink);padding:9px 11px;bord
 #pages{display:flex;flex-direction:column;gap:20px}
 
 /* ---------- 리포트 페이지 (A4 794x1123) ---------- */
-.page{width:794px;height:1123px;background:var(--paper);position:relative;overflow:hidden;font-family:var(--sans);color:var(--ink);box-shadow:0 2px 12px rgba(0,0,0,.12);display:flex;flex-direction:column}
-.pbody{flex:1;min-height:0;padding:38px 42px 0 42px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.page{word-break:keep-all;overflow-wrap:anywhere;width:794px;height:1123px;background:var(--paper);position:relative;overflow:hidden;font-family:var(--sans);color:var(--ink);box-shadow:0 2px 12px rgba(0,0,0,.12);display:flex;flex-direction:column}
+.pbody{flex:1;min-height:0;padding:44px 50px 0 50px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
 .sech{margin-top:6px}
-.pfoot{height:46px;margin:0 42px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#6B625A;gap:12px}
+.pfoot{height:46px;margin:0 50px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#6B625A;gap:12px}
 .pfoot .l{display:flex;align-items:center;gap:10px}
 .pfoot img{height:22px}
 .kicker{font-size:14px;font-weight:700;letter-spacing:.02em}
@@ -1452,9 +1452,9 @@ function covSummaryBlocks(c){
     var rs=c.rows.filter(function(r){return r.on&&!r.hidden&&COV_GROUP[r.cat]===g;});
     if(!rs.length) return;
     cards.push({n:rs.length,html:'<div class="card" style="padding:10px 12px;gap:2px"><div class="ctitle" style="font-size:'+fz(15.5)+'px">'+g+'</div>'+
-      '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(78)+'px '+cw(64)+'px '+cw(44)+'px;gap:6px;font-size:'+fz(10.5)+'px;color:var(--muted)"><div></div><div style="text-align:right">가입</div><div style="text-align:right">권장</div><div></div></div>'+
+      '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(88)+'px '+cw(60)+'px '+cw(40)+'px;gap:6px;font-size:'+fz(10.5)+'px;color:var(--muted)"><div></div><div style="text-align:right">가입</div><div style="text-align:right">권장</div><div></div></div>'+
       rs.map(function(r){
-        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(78)+'px '+cw(64)+'px '+cw(44)+'px;gap:6px;align-items:center;padding:3px 0;border-top:1px solid #F0EAE3">'+
+        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(88)+'px '+cw(60)+'px '+cw(40)+'px;gap:5px;align-items:center;padding:3px 0;border-top:1px solid #F0EAE3">'+
           '<div style="font-size:'+fz(13)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+'</div>'+
           '<div style="text-align:right;font-size:'+fz(13.5)+'px;font-weight:800;white-space:nowrap">'+won(r.amt)+'</div>'+
           '<div style="text-align:right;font-size:'+fz(12)+'px;color:var(--ink2);white-space:nowrap">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
@@ -1556,7 +1556,7 @@ function covSection(host,sec,a){
   var hf=function(cont){return cont?sec.head(true):'';};
   var bf=function(){ return [{part:0,html:'<div class="sech keepnext">'+sec.head(false)+'</div>'}].concat(sec.blocks()); };
   COV_K=1; var best=flowPages(host,hf,bf(),a,15), n=best.length;
-  [1.3,1.2,1.1].some(function(k){
+  (sec.maxK?[sec.maxK]:[1.15,1.08]).some(function(k){
     COV_K=k; var trial=flowPages(host,hf,bf(),a,15+ (k-1)*6);
     if(trial.length<=n){ best.forEach(function(p){host.removeChild(p);}); best=trial; return true; }
     trial.forEach(function(p){host.removeChild(p);}); return false;
@@ -1582,7 +1582,7 @@ function buildCoverage(c,host){
     meta:[['분석 기준일',c.date],['정상 계약',c.contracts!=null?c.contracts+'건':''],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'']]});
   host.appendChild(t.firstChild);
   var secs=[
-    {head:covHead('01 · 통합 보장 현황','내 보험, 한눈에 보기'),blocks:function(){return covSummaryBlocks(c);}},
+    {head:covHead('01 · 통합 보장 현황','내 보험, 한눈에 보기'),maxK:1.05,blocks:function(){return covSummaryBlocks(c);}},
     {head:covHead('02 · 질병별 보험금','이 병에 걸리면 얼마를 받을까요'),blocks:function(){return COV_SCN.some(function(s){return c.scn[s.k];})?covScenarioBlocks(c):[];}},
     {head:covHead('03 · 필요한 담보','비어 있거나 부족한 보장'),noBalance:true,blocks:function(){return covNeedBlocks(c);}},
     {head:covHead('04 · 요즘 치료 흐름','추가로 검토할 보장'),blocks:function(){return COV_TRENDS.some(function(t){return c.trd[t.k];})?covTrendBlocks(c):[];}},
@@ -1785,7 +1785,10 @@ async function savePdfInner(c){
     setStatus('PDF 만드는 중… '+(i+1)+'/'+pages.length+'쪽');
     var cv=await html2canvas(pages[i],{scale:2,backgroundColor:'#FBF8F4',useCORS:true,logging:false,width:794,height:1123,windowWidth:1400});
     if(i>0) pdf.addPage('a4','portrait');
-    pdf.addImage(cv.toDataURL('image/jpeg',0.9),'JPEG',0,0,210,297,undefined,'FAST');
+    // A4 용지 안쪽에 여백(좌우 9mm)을 두고 배치 — PC 화면·인쇄 모두 답답하지 않게
+    var mw=192, mh=mw*297/210, mx=(210-mw)/2, my=(297-mh)/2;
+    pdf.addImage(cv.toDataURL('image/jpeg',0.9),'JPEG',mx,my,mw,mh,undefined,'FAST');
+    pdf.setDrawColor(225,220,212); pdf.setLineWidth(0.2); pdf.rect(mx,my,mw,mh);
   }
   pdf.save(fileName(c));
 }
