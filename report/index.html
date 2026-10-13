@@ -1213,12 +1213,71 @@ function covStatusRow(line){
   return {name:name,rec:best.rec,amt:best.amt,status:sm[1]};
 }
 
+/* ---------- 회사별(계약별) 가입 내역: 좌표로 열을 나눠 읽음 (메리츠 별첨 · 신정원 상품별 가입담보상세) ---------- */
+function covRowsByY(items){
+  var rows=[]; items.slice().sort(function(a,b){return b.y-a.y||a.x-b.x;}).forEach(function(it){
+    var r=rows.length?rows[rows.length-1]:null;
+    if(r&&Math.abs(r.y-it.y)<=3) r.items.push(it); else rows.push({y:it.y,items:[it]});
+  });
+  rows.forEach(function(r){ r.items.sort(function(a,b){return a.x-b.x;}); r.text=r.items.map(function(i){return i.s;}).join(' ').replace(/\s+/g,' ').trim(); });
+  return rows;
+}
+var CTR_AMT=/^((?:\d[\d,]*억)?\s?(?:\d[\d,]*만)?(?:\d[\d,]*천)?|\d[\d,]*원?)$/;
+function ctrClean(n){
+  return String(n||'').replace(/\((?:[^()]*\([^()]*\))*[^()]*\)/g,function(g){ return /\d+\.\d|해약환급|무배당|갱신|세만기|간편가입|의미|\d{2}\.\d{2}|^\(\d+\/\d+\)$/.test(g)?'':g; })
+    .replace(/\[[^\]]*(해약환급|갱신|기본계약)[^\]]*\]/g,'').replace(/\([^()]*$/,'').replace(/\[[^\]]*$/,'').replace(/무배당|\(무\)/g,'').replace(/\s+/g,' ').trim();
+}
+function covContracts(pages){
+  var list=[], cur=null, key={};
+  function start(o){ var k=o.co+'|'+o.prod.replace(/\s*\(\d+\/\d+\)\s*$/,'')+'|'+(o.from||'')+'|'+(o.prem||''); if(key[k]){ cur=key[k]; return; } o.prod=o.prod.replace(/\s*\(\d+\/\d+\)\s*$/,''); o.items=[]; key[k]=o; list.push(o); cur=o; }
+  pages.forEach(function(items){
+    var rows=covRowsByY(items), txt=rows.map(function(r){return r.text;}).join('\n');
+    var isM=/상품별\s*보험가입현황/.test(txt), isO=/상품별\s*가입담보상세/.test(txt);
+    if(!isM&&!isO){ cur=null; return; }
+    for(var i=0;i<rows.length;i++){
+      var t=rows[i].text, m;
+      if(isO&&(m=t.match(/^(\S.*?)\s*\|\s*가입일자\s*:\s*([\d-]+)/))){
+        var o={co:m[1].trim(),prod:(rows[i+1]||{}).text||'',from:m[2]};
+        var r2=(rows[i+2]||{}).text||'', r3=(rows[i+3]||{}).text||'';
+        if((m=r2.match(/(\S+납\/[^\s]+)/))) o.pay=m[1];
+        if((m=r3.match(/(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/))){ o.from=o.from||m[1]; o.to=m[2]; }
+        if((m=r3.match(/([\d,]+)\s*원/))) o.prem=+m[1].replace(/,/g,'');
+        start(o); i+=3; continue;
+      }
+      if(isM&&/^계약자\/피보험자/.test(t)&&i>=2){
+        var o2={co:rows[i-2].text,prod:rows[i-1].text};
+        if((m=t.match(/만기\s+(\S+\/\S+\/.+)$/))) o2.pay=m[1];
+        var r4=(rows[i+1]||{}).text||'';
+        if((m=r4.match(/(\d{4}\.\d{2}\.\d{2})\s*~\s*(\d{4}\.\d{2}\.\d{2})/))){ o2.from=m[1]; o2.to=m[2]; }
+        if((m=r4.match(/월\s*보험료\s*([\d,]+)\s*원/))) o2.prem=+m[1].replace(/,/g,'');
+        start(o2); i+=1; continue;
+      }
+      if(!cur) continue;
+      var its=rows[i].items; if(its.length<3) continue;
+      if(!/^\d+$/.test(its[0].s.trim())||!/^(정액|실손|비례)$/.test(its[1].s.trim())) continue;
+      var rest=its.slice(2), last=rest[rest.length-1], amt=null;
+      if(last&&last.x>=480&&CTR_AMT.test(last.s.replace(/\s/g,''))){ amt=compactWon(last.s.replace(/\s/g,'')); rest=rest.slice(0,-1); }
+      if(!amt) continue;
+      var nm=rest.filter(function(x){return x.x<320;}).map(function(x){return x.s;}).join('').trim();
+      var cat=rest.filter(function(x){return x.x>=320;}).map(function(x){return x.s;}).join(' ').trim();
+      if(!cat&&(m=nm.match(/^(.*\))([가-힣][가-힣0-9·%~()]{1,14})$/))){ nm=m[1]; cat=m[2]; }
+      cat=cat.replace(/^\[[^\]]*?\s+/,'').replace(/\.\.\.$/,'').trim();
+      if(cat&&nm&&cat.indexOf(nm)===0){ nm=cat; cat=''; }
+      var shown=ctrClean(nm), base=ctrClean(cur.prod), sq=function(x){return x.replace(/\s/g,'');};
+      if(!shown||sq(shown)===sq(base)||(base&&sq(base).indexOf(sq(shown))===0)||(base&&sq(shown).indexOf(sq(base))===0&&sq(shown).length<=sq(base).length+2)) shown=ctrClean(cat)||shown;
+      cur.items.push({kind:its[1].s.trim(),name:shown,cat:cat&&cat!==shown?cat:'',amt:amt});
+    }
+  });
+  return list.filter(function(c){return c.items.length;});
+}
 async function parseCoverage(file){
   await ensureWorker();
   var buf=new Uint8Array(await file.arrayBuffer());
   var doc=await pdfjsLib.getDocument({data:buf,cMapUrl:CMAP_URL,cMapPacked:true}).promise;
   var all=[];
-  for(var n=1;n<=doc.numPages;n++){ var pg=await doc.getPage(n); var tc=await pg.getTextContent(); all=all.concat(pageLines(tc)); }
+  var pitems=[];
+  for(var n=1;n<=doc.numPages;n++){ var pg=await doc.getPage(n); var tc=await pg.getTextContent(); all=all.concat(pageLines(tc));
+    pitems.push(tc.items.filter(function(it){return it.str&&it.str.trim();}).map(function(it){return {x:it.transform[4],y:it.transform[5],s:it.str};})); }
   var text=all.join('\n'), m;
   var c={mode:'coverage',warns:[],fileName:file.name,rows:[],lines:[]};
   if((m=text.match(/([가-힣*]{2,5})\s*(?:\([^)]*\)\s*)?님의\s*전체\s*보장현황/))||(m=text.match(/([가-힣*]{2,5})\s*고객님/))) c.name=m[1];
@@ -1243,6 +1302,7 @@ async function parseCoverage(file){
     if(!mm) return; var v=compactWon(mm[3]); if(v==null||!v) return;
     c.lines.push({name:mm[2],amt:v});
   });
+  try{ c.ctrs=covContracts(pitems); }catch(e){ console.error(e); c.ctrs=[]; }
   if(!c.rows.length){
     covGenericRows(all,c);
     if(c.rows.length) c.warns.push('권장금액·과부족 표를 찾지 못해 담보와 금액만 읽었습니다. 아래 표에서 확인해 주세요.');
@@ -1781,10 +1841,11 @@ function buildDiseaseCov(c,host){
   [
     {head:covHead('03 · 보완 제안','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return dcMatchBlocks(c).concat(dcProposalBlocks(c));}},
     {head:covHead('04 · 통합 보장 현황','내 보험, 한눈에 보기'),maxK:1.05,blocks:function(){return covSummaryBlocks(c.cov);}},
-    {head:covHead('05 · 이럴 때 받는 금액','이 병에 걸리면 얼마를 받을까요'),fitOne:true,blocks:function(){return dcScenarioBlocks(c);}},
-    {head:covHead('06 · 요즘 치료 흐름','추가로 검토할 보장'),blocks:function(){return covTrendBlocks(c.cov);}}
+    {head:covHead('05 · 회사별 가입 내역','어느 회사에 무엇을 얼마나'),noBalance:true,blocks:function(){return ctrBlocks(c.cov);}},
+    {head:covHead('06 · 이럴 때 받는 금액','이 병에 걸리면 얼마를 받을까요'),fitOne:true,blocks:function(){return dcScenarioBlocks(c);}},
+    {head:covHead('07 · 요즘 치료 흐름','추가로 검토할 보장'),blocks:function(){return covTrendBlocks(c.cov);}}
   ].forEach(function(sec){ covSection(host,sec,a); });
-  covSection(host,{head:covHead('07 · 마무리','보험, 지금 준비해야 하는 이유'),blocks:function(){return dcEndBlocks(c,a);},fitOne:true},a);
+  covSection(host,{head:covHead('08 · 마무리','보험, 지금 준비해야 하는 이유'),blocks:function(){return dcEndBlocks(c,a);},fitOne:true},a);
 }
 function dcNameMatch(a,b){
   a=String(a||'').replace(/\s/g,''); b=String(b||'').replace(/\s/g,'');
@@ -1856,6 +1917,30 @@ function endCtaBlocks(a,o){
       return '<div style="display:grid;grid-template-columns:'+fz(24)+'px minmax(0,1fr);gap:8px;align-items:start;font-size:'+fz(15)+'px;line-height:1.55"><span style="width:'+fz(20)+'px;height:'+fz(20)+'px;border:2px solid var(--warm);border-radius:5px;margin-top:2px"></span><span>'+t+'</span></div>';}).join('')+
     (a.name?'<div style="margin-top:4px;padding-top:10px;border-top:1px dashed #E2C7B0;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px"><div style="font-size:'+fz(14)+'px;color:var(--ink2)">담당 설계사 <b style="font-size:'+fz(17)+'px;color:var(--navy)">'+esc(a.name)+(a.title?' '+esc(a.title):'')+'</b></div>'+(a.phone?'<div style="font-size:'+fz(21)+'px;font-weight:800;color:var(--warm2)">'+esc(a.phone)+'</div>':'')+'</div>':'')+'</div>');
   out.push('<div class="small" style="font-size:'+fz(11.5)+'px;line-height:1.6;color:#4A4A55">· 통계: 보건복지부·중앙암등록본부, 2023년 국가암등록통계(2026년 1월 발표).<br>· '+o.note+'<br>· 보험 가입 시 계약 전 알릴 의무는 사실대로 작성해야 하며, 실제 제안은 금융소비자보호법에 따라 재산·소득 상황과 가입 목적을 확인한 뒤 진행합니다. 가입 전 상품설명서와 약관을 확인하시기 바랍니다.</div>');
+  return out;
+}
+/* 회사별 가입 내역 (계약별 상품·보험료·담보·가입금액) */
+function ctrBlocks(cov){
+  var L=cov.ctrs||[], out=[];
+  if(!L.length) return out;
+  var sum=L.reduce(function(a,c){return a+(c.prem||0);},0);
+  out.push('<p class="lead">가입하신 보험을 회사·상품별로 정리했습니다. 담보명과 가입금액은 '+esc(cov.source||'보장분석 자료')+'('+esc(cov.date||'')+' 기준)에 등록된 내용 그대로이며, 실제 보장 내용은 각 보험증권과 약관으로 확인합니다.</p>');
+  out.push('<div class="card" style="padding:10px 14px;gap:0">'+
+    '<div style="display:grid;grid-template-columns:'+cw(84)+'px minmax(0,1fr) '+cw(96)+'px '+cw(92)+'px;gap:8px;font-size:12px;font-weight:700;color:var(--muted);padding-bottom:5px;border-bottom:1px solid var(--line)"><div>회사</div><div>상품</div><div style="text-align:right">월 보험료</div><div style="text-align:right">보장 만기</div></div>'+
+    L.map(function(c){ return '<div style="display:grid;grid-template-columns:'+cw(84)+'px minmax(0,1fr) '+cw(96)+'px '+cw(92)+'px;gap:8px;font-size:'+fz(13)+'px;padding:5px 0;border-bottom:1px solid #F0EAE3;align-items:center"><div style="font-weight:800;color:var(--navy)">'+esc(c.co)+'</div><div style="line-height:1.35">'+esc(ctrClean(c.prod)||c.prod)+'</div><div style="text-align:right;font-weight:700">'+(c.prem?c.prem.toLocaleString()+'원':'<span style="color:var(--muted);font-weight:400">미표시</span>')+'</div><div style="text-align:right;color:var(--ink2)">'+esc((c.to||'').replace(/^9999.*/,'종신'))+'</div></div>'; }).join('')+
+    '<div style="display:flex;justify-content:space-between;padding-top:7px;font-size:'+fz(14)+'px;font-weight:800"><span>'+L.length+'건</span><span>월 '+sum.toLocaleString()+'원</span></div></div>');
+  var CH=24;
+  L.forEach(function(c){
+    for(var i=0;i<c.items.length;i+=CH){
+      var part=c.items.slice(i,i+CH), half=Math.ceil(part.length/2);
+      var row=function(it){ return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:2px 0;border-bottom:1px dotted #E7DFD6;align-items:baseline"><div style="font-size:'+fz(12)+'px;line-height:1.3;color:var(--ink)">'+esc(it.name)+'</div><div style="font-size:'+fz(12.5)+'px;font-weight:800;white-space:nowrap;color:var(--navy)">'+won(it.amt)+'</div></div>'; };
+      out.push('<div class="card" style="padding:10px 14px;gap:6px">'+
+        '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-size:'+fz(15.5)+'px;font-weight:800;color:var(--navy)">'+esc(c.co)+' <span style="font-weight:700;color:var(--ink)">'+esc(ctrClean(c.prod)||c.prod)+'</span>'+(i?' <span style="font-size:12px;color:var(--muted)">(이어서)</span>':'')+'</div>'+
+        '<div style="font-size:'+fz(12.5)+'px;color:var(--ink2);white-space:nowrap">'+(c.prem?'월 <b>'+c.prem.toLocaleString()+'원</b>':'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+'~'+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
+        '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px"><div>'+part.slice(0,half).map(row).join('')+'</div><div>'+part.slice(half).map(row).join('')+'</div></div></div>');
+    }
+  });
+  if(cov.contracts&&cov.contracts>L.length) out.push('<div class="small" style="font-size:12px;color:#4A4A55">· 보장분석 자료의 정상계약은 '+cov.contracts+'건이며, 담보 상세가 표시된 '+L.length+'건을 정리했습니다. 나머지 계약은 보험증권으로 확인합니다.</div>');
   return out;
 }
 
