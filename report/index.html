@@ -71,6 +71,13 @@ label.f input{font:inherit;font-size:15px;color:var(--ink);padding:9px 11px;bord
 .pfoot{height:46px;margin:0 50px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#6B625A;gap:12px}
 .pfoot .l{display:flex;align-items:center;gap:10px}
 .pfoot img{height:22px}
+/* 지문성향 리포트: 여백을 넓히고 글자를 한 단계 작게 (PC·출력용) */
+.page.fp .pbody{padding:60px 70px 0 70px;gap:10px}
+.page.fp .pfoot{margin:0 70px}
+.page.fp .card{padding:11px 16px;gap:6px}
+.page.fp .ctitle{font-size:16px}
+.page.fp .h2{font-size:24px}
+.page.fp .kicker{font-size:12.5px}
 .kicker{font-size:14px;font-weight:700;letter-spacing:.02em}
 .h2{margin:0;font-family:var(--sans);font-size:28px;font-weight:800;line-height:1.3;letter-spacing:-.01em}
 .lead{margin:0;font-size:var(--fs);line-height:1.6;color:var(--ink2)}
@@ -644,6 +651,7 @@ function flowPages(host,headFn,blocks,a,fs){
   function newPage(cont){
     var pg=document.createElement('div'); pg.className='page'; made.push(pg);
     if(fs) pg.style.setProperty('--fs',fs+'px');
+    if(window.PAGE_CLS) pg.classList.add(window.PAGE_CLS);
     pg.innerHTML='<div class="pbody">'+(cont?headFn(true,part):'')+'</div>'+foot(a);
     host.appendChild(pg); return pg.querySelector('.pbody');
   }
@@ -694,12 +702,13 @@ function chainFlow(host,parts,a){
 function fitFlow(host,headFn,blocksFn,a){
   var hf=headFn.length>=2?headFn:function(cont){return cont?headFn(true):headFn(false);};
   var bf=headFn.length>=2?blocksFn:function(){ return [{part:0,html:'<div class="sech keepnext">'+headFn(false)+'</div>'}].concat(blocksFn()); };
-  var base=flowPages(host,hf,bf(),a,15);
+  var F=window.FLOW_FS||15;
+  var base=flowPages(host,hf,bf(),a,F);
   if(base.length<2) return;
   var last=base[base.length-1].querySelector('.pbody');
   var used=0; [].forEach.call(last.children,function(ch){used=Math.max(used,ch.offsetTop+ch.offsetHeight);});
   if(used>last.clientHeight*0.45) return;
-  var sizes=[14.5,14,13.5];
+  var sizes=[F-.5,F-1,F-1.5];
   for(var k=0;k<sizes.length;k++){
     var trial=flowPages(host,hf,bf(),a,sizes[k]);
     if(trial.length<base.length){ base.forEach(function(p){host.removeChild(p);}); return; }
@@ -1858,12 +1867,14 @@ function buildFp(c,host){
   host.innerHTML='';
   var t=document.createElement('div');
   t.innerHTML=coverPage(c,a)+summaryPage(c,a); while(t.firstChild) host.appendChild(t.firstChild);
-  chainFlow(host,[
+  var sp=host.lastElementChild; if(sp){ sp.classList.add('fp'); sp.style.setProperty('--fs','13.5px'); }
+  window.PAGE_CLS='fp'; window.FLOW_FS=13.5;
+  try{ chainFlow(host,[
     {head:function(cont){return typeHead(c,'main',cont);},blocks:function(){return typeBlocks(c,'main');}},
     {head:function(cont){return typeHead(c,'sub',cont);},blocks:function(){return typeBlocks(c,'sub');}},
     {head:bothHead(c),blocks:function(){return bothBlocks(c);}},
     {head:insHead(c),blocks:function(){return insBlocks(c,a);}}
-  ],a);
+  ],a); } finally { window.PAGE_CLS=''; window.FLOW_FS=0; }
 }
 function editFp(c){
   return '<div class="grid2"><label class="f">고객 이름<input data-f="name" value="'+esc(c.name||'')+'"></label><label class="f">검사일<input data-f="evalDate" value="'+esc(c.evalDate||'')+'"></label></div>'+
