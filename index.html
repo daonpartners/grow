@@ -1586,7 +1586,16 @@ body.growon{ background:var(--g-navy); }
 
           <!-- DB관리 (행사 동의 DB 리스트·설계사 배분) -->
           <div class="edu-panel" id="admin-eventdb">
-            <div class="disease-notice">📂 행사 현장에서 고객이 동의한 DB입니다. 지사장은 본인 지사 건만, 최상위 관리자는 전체가 보입니다. 설계사를 지정해 배분하면 해당 설계사 텔레그램으로 알림이 가고, 설계사는 <b>내 DB 조회</b>에서 확인합니다.</div>
+            <div id="edbGate">
+              <div class="disease-notice">🔒 DB관리는 지사별로 분리되어 있습니다. 본인 지사의 <b>DB관리 코드</b>를 입력하세요. (관리자 로그인 코드와는 별개이며, 아래에서 직접 변경할 수 있습니다.)</div>
+              <div style="display:flex; gap:8px; max-width:360px; margin:10px 0;">
+                <input type="password" id="edbCode" placeholder="DB관리 코드" autocomplete="off" style="flex:1; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                <button type="button" class="qna-new-btn" id="edbGateBtn" style="margin:0;">확인</button>
+              </div>
+              <div class="cm-msg" id="edbGateMsg"></div>
+            </div>
+            <div id="edbMain" style="display:none;">
+            <div class="disease-notice">📂 행사 현장에서 고객이 동의한 DB입니다. 지사장은 <b id="edbBranch"></b> 지사 건만 보입니다. 다른 지사(대표님 포함)의 DB는 볼 수 없습니다. 설계사를 지정해 배분하면 해당 설계사 텔레그램으로 알림이 가고, 설계사는 <b>내 DB 조회</b>에서 확인합니다.</div>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; margin:10px 0; align-items:end;">
               <select id="edbEvent" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;"><option value="">전체 행사</option></select>
               <input type="date" id="edbFrom" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
@@ -1607,6 +1616,11 @@ body.growon{ background:var(--g-navy); }
               <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
               <tbody id="edbRows"></tbody>
             </table></div>
+            <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="qna-new-btn" id="edbChange" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">🔑 DB관리 코드 변경</button>
+              <button type="button" class="qna-new-btn" id="edbLogout" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">잠그기</button>
+            </div>
+            </div>
           </div>
 
           <!-- DB신청 -->
@@ -9711,9 +9725,11 @@ const limitCompareData = {};
     const API = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
     const $ = id => document.getElementById(id);
     let ROWS = [];
-    function code(){ try{ return sessionStorage.getItem('growAdminCode') || ''; }catch(e){ return ''; } }
+    function code(){ try{ return sessionStorage.getItem('growDbCode') || ''; }catch(e){ return ''; } }
+    function setCode(c){ try{ if(c) sessionStorage.setItem('growDbCode', c); else sessionStorage.removeItem('growDbCode'); }catch(e){} }
+    function showGate(on){ $('edbGate').style.display = on ? '' : 'none'; $('edbMain').style.display = on ? 'none' : ''; }
     function call(body){
-      return fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({adminCode: code()}, body))}).then(r => r.json());
+      return fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({dbCode: code()}, body))}).then(r => r.json());
     }
     function msg(t, bad){ const m = $('edbMsg'); if(!m) return; m.textContent = t || ''; m.style.color = bad ? 'red' : ''; }
     function draw(r){
@@ -9727,10 +9743,11 @@ const limitCompareData = {};
       $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td><input type="checkbox" class="edbChk" value="' + x.id + '"></td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td style="white-space:normal; min-width:200px; font-size:11.5px;">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="11" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
     window.edbLoad = function(){
+      if(!code()){ showGate(true); return; }
       msg('불러오는 중…');
       call({action:'list', eventName:$('edbEvent').value, from:$('edbFrom').value, to:$('edbTo').value}).then(r => {
-        if(!r.ok){ msg(r.error || '불러오지 못했습니다.', true); return; }
-        msg(''); draw(r);
+        if(!r.ok){ msg(r.error || '불러오지 못했습니다.', true); if(/코드/.test(r.error||'')){ setCode(''); showGate(true); } return; }
+        msg(''); showGate(false); $('edbBranch').textContent = r.branch; draw(r);
       }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
     };
     function picked(){ return Array.from(document.querySelectorAll('.edbChk:checked')).map(c => Number(c.value)); }
@@ -9748,6 +9765,25 @@ const limitCompareData = {};
     }
     const on = (id, fn) => { const e = $(id); if(e) e.addEventListener('click', fn); };
     on('edbLoad', () => window.edbLoad());
+    on('edbGateBtn', () => {
+      const c = $('edbCode').value.trim(), gm = $('edbGateMsg');
+      if(!c){ gm.textContent = '코드를 입력해 주세요.'; gm.style.color = 'red'; return; }
+      gm.textContent = '확인 중…'; gm.style.color = '';
+      setCode(c);
+      call({action:'list'}).then(r => {
+        if(!r.ok){ setCode(''); gm.textContent = r.error || '확인하지 못했습니다.'; gm.style.color = 'red'; return; }
+        gm.textContent = ''; $('edbCode').value = ''; showGate(false); $('edbBranch').textContent = r.branch; draw(r);
+      }).catch(() => { setCode(''); gm.textContent = '네트워크 오류가 발생했습니다.'; gm.style.color = 'red'; });
+    });
+    on('edbLogout', () => { setCode(''); showGate(true); });
+    on('edbChange', () => {
+      const nw = prompt('새 DB관리 코드를 입력하세요 (영문·숫자 6~20자)');
+      if(!nw) return;
+      fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-code', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dbCode: code(), newCode: nw.trim()})}).then(r => r.json()).then(r => {
+        if(!r.ok){ msg(r.error || '변경하지 못했습니다.', true); return; }
+        setCode(nw.trim()); msg('DB관리 코드를 변경했습니다. 다음부터 새 코드로 들어오세요.');
+      }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
+    });
     on('edbAssign', () => assign(null));
     on('edbUnassign', () => assign(''));
     const all = $('edbAll'); if(all) all.addEventListener('change', () => document.querySelectorAll('.edbChk').forEach(c => c.checked = all.checked));
@@ -9758,11 +9794,11 @@ const limitCompareData = {};
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'}));
       a.download = '행사DB_' + new Date().toISOString().slice(0,10) + '.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
     });
-    /* 탭은 최상위 관리자·지사장 로그인에서만 표시 */
+    /* 탭은 관리자·지사장 로그인에서만 표시(교육본부장·지점장 제외) */
     window.edbShowTab = function(){
       const b = $('eventdbTabBtn'); if(!b) return;
       const role = sessionStorage.getItem('growRole');
-      b.style.display = (sessionStorage.getItem('growAdmin') === '1' && (role === 'admin' || role === 'manager') && code()) ? '' : 'none';
+      b.style.display = (sessionStorage.getItem('growAdmin') === '1' && (role === 'admin' || role === 'manager')) ? '' : 'none';
     };
   })();
 
