@@ -1603,8 +1603,8 @@ body.growon{ background:var(--g-navy); }
               <button type="button" class="qna-new-btn" id="edbUnassign" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">배분 취소</button>
               <button type="button" class="qna-new-btn" id="edbCsv" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">CSV 저장</button>
             </div>
-            <div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; font-size:12.5px; min-width:640px;">
-              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>담당 설계사</th></tr></thead>
+            <div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; font-size:12.5px; min-width:900px;">
+              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
               <tbody id="edbRows"></tbody>
             </table></div>
           </div>
@@ -9724,7 +9724,7 @@ const limitCompareData = {};
       $('edbFcList').innerHTML = (r.fcs||[]).map(n => '<option value="' + escapeHtml(n) + '">').join('');
       $('edbSummary').innerHTML = '<b>총 ' + r.total + '건</b>' + ((r.summary||[]).length ? '<div style="margin-top:6px; font-size:12.5px; line-height:1.8;">' + r.summary.map(x => escapeHtml(x.date) + ' · ' + escapeHtml(x.eventName) + ' · ' + escapeHtml(x.kind) + ' — <b>' + x.count + '건</b>').join('<br>') + '</div>' : '');
       $('edbAll').checked = false;
-      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td><input type="checkbox" class="edbChk" value="' + x.id + '"></td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="9" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
+      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td><input type="checkbox" class="edbChk" value="' + x.id + '"></td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td style="white-space:normal; min-width:200px; font-size:11.5px;">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="11" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
     window.edbLoad = function(){
       msg('불러오는 중…');
@@ -9754,7 +9754,7 @@ const limitCompareData = {};
     on('edbCsv', () => {
       if(!ROWS.length) return;
       const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-      const lines = [['날짜','행사','체험','지사','성명','생년월일','자녀','자녀생년월일','담당설계사'].map(q).join(',')].concat(ROWS.map(x => [x.eventDate,x.eventName,x.kind,x.branch,x.personName,x.personBirth,x.childName,x.childBirth,x.assignedFc].map(q).join(',')));
+      const lines = [['날짜','행사','체험','지사','성명','생년월일','자녀','자녀생년월일','연락처','반려동물정보','담당설계사'].map(q).join(',')].concat(ROWS.map(x => [x.eventDate,x.eventName,x.kind,x.branch,x.personName,x.personBirth,x.childName,x.childBirth,x.phone,x.petInfo,x.assignedFc].map(q).join(',')));
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'}));
       a.download = '행사DB_' + new Date().toISOString().slice(0,10) + '.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
     });
