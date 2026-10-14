@@ -1453,11 +1453,11 @@ body.growon{ background:var(--g-navy); }
       <div class="gview" id="view-fclookup">
 <section class="panel" id="fclookup">
         <div class="panel-head">
-          <div><div class="panel-eyebrow">FC Only</div><h2 class="panel-title">내 고객 조회</h2></div>
+          <div><div class="panel-eyebrow">FC Only</div><h2 class="panel-title">내 DB 조회</h2></div>
         </div>
 
         <div id="fcGate">
-          <div class="qna-notice">👤 소속 지사장에게 받은 <b>조회 코드</b>와 본인 이름을 입력하면, 본인에게 배정된 고객만 확인할 수 있습니다.<br>다른 FC의 정보는 볼 수 없습니다.</div>
+          <div class="qna-notice">👤 소속 지사장에게 받은 <b>조회 코드</b>와 본인 이름을 입력하면, 본인에게 배정된 DB(고객)만 확인할 수 있습니다.<br>다른 FC의 정보는 볼 수 없습니다.</div>
           <div class="qna-form open" style="max-width:360px;">
             <select id="fcBranch">
               <option value="">지사 선택</option>
@@ -1521,6 +1521,7 @@ body.growon{ background:var(--g-navy); }
             <button class="edu-tab active" data-atab="meeting">📁 회의자료</button>
             <button class="edu-tab" data-atab="event">📋 행사신청</button>
             <button class="edu-tab" data-atab="db">🗂️ DB신청</button>
+            <button class="edu-tab" data-atab="eventdb" id="eventdbTabBtn" style="display:none;">📂 DB관리</button>
             <button class="edu-tab" data-atab="onlinesite">🌐 온라인사이트관리</button>
             <!-- 앨범은 항상 마지막 탭으로 유지. 새 폴더는 이 줄 위에 추가할 것. -->
             <button class="edu-tab" data-atab="album">🖼️ 앨범</button>
@@ -1580,6 +1581,31 @@ body.growon{ background:var(--g-navy); }
               <button class="filter-pill" data-ecat="기타행사">기타행사</button>
             </div>
             <div id="eventList"></div>
+          </div>
+
+          <!-- DB관리 (행사 동의 DB 리스트·설계사 배분) -->
+          <div class="edu-panel" id="admin-eventdb">
+            <div class="disease-notice">📂 행사 현장에서 고객이 동의한 DB입니다. 지사장은 본인 지사 건만, 최상위 관리자는 전체가 보입니다. 설계사를 지정해 배분하면 해당 설계사 텔레그램으로 알림이 가고, 설계사는 <b>내 DB 조회</b>에서 확인합니다.</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; margin:10px 0; align-items:end;">
+              <select id="edbEvent" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;"><option value="">전체 행사</option></select>
+              <input type="date" id="edbFrom" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+              <input type="date" id="edbTo" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+              <button type="button" class="qna-new-btn" id="edbLoad" style="margin:0;">조회</button>
+            </div>
+            <div class="cm-msg" id="edbMsg"></div>
+            <div id="edbSummary" style="margin:8px 0;"></div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0;">
+              <label style="font-size:12.5px;"><input type="checkbox" id="edbAll"> 전체 선택</label>
+              <input type="text" id="edbFc" list="edbFcList" placeholder="배분할 설계사 이름" autocomplete="off" style="flex:1; min-width:160px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+              <datalist id="edbFcList"></datalist>
+              <button type="button" class="qna-new-btn" id="edbAssign" style="margin:0;">선택 건 배분</button>
+              <button type="button" class="qna-new-btn" id="edbUnassign" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">배분 취소</button>
+              <button type="button" class="qna-new-btn" id="edbCsv" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">CSV 저장</button>
+            </div>
+            <div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; font-size:12.5px; min-width:640px;">
+              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>담당 설계사</th></tr></thead>
+              <tbody id="edbRows"></tbody>
+            </table></div>
           </div>
 
           <!-- DB신청 -->
@@ -1890,7 +1916,7 @@ body.growon{ background:var(--g-navy); }
               <button type="button" id="crmEditJumpBtn" class="qna-new-btn sc-inline-edit-btn" style="display:none;" onclick="document.getElementById('crmMgrInline').classList.toggle('active'); crmMgrLoad();">✏️ 관리자 편집(링크)</button>
             </div>
             <div class="edu-panel" id="crmMgrInline" style="margin-bottom:16px; border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--canvas);">
-              <div class="disease-notice">👥 영업센터 &gt; 고객관리 탭의 바로가기 카드를 직접 추가·수정·삭제·순서변경합니다. ("내 고객 조회"는 고정 항목이라 여기서 관리하지 않습니다)</div>
+              <div class="disease-notice">👥 영업센터 &gt; 고객관리 탭의 바로가기 카드를 직접 추가·수정·삭제·순서변경합니다. ("내 DB 조회"는 고정 항목이라 여기서 관리하지 않습니다)</div>
 
               <div id="crmMgrList"></div>
               <button type="button" class="qna-new-btn" id="crmMgrSaveBtn" style="background:var(--navy-2); color:#fff; border:none;">💾 수정사항 저장</button>
@@ -2410,7 +2436,7 @@ body.growon{ background:var(--g-navy); }
   <div class="gcol" id="colRight">
     <div class="rail-t">그로우설계사공간</div>
     <a class="gbtn" href="/report/" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">📑 그로우사업부 리포트생성<small>지문성향 · 질병예측 · 보장분석</small></a>
-    <button class="gbtn" data-view="fclookup">👤 내 고객 조회<small>FC 전용</small></button>
+    <button class="gbtn" data-view="fclookup">👤 내 DB 조회<small>FC 전용</small></button>
     <button class="gbtn" data-view="materials">🎓 교육센터</button>
     <button class="gbtn" data-view="salescenter">🧾 영업센터</button>
     <button class="gbtn" data-view="datacenter">🗂️ 자료센터</button>
@@ -8657,6 +8683,7 @@ const limitCompareData = {};
   }
 
   function unlockAdmin(){
+    if(window.edbShowTab) window.edbShowTab();
     document.getElementById('adminGate').style.display = 'none';
     document.getElementById('adminBody').style.display = 'block';
     applyAdminRole();
@@ -8740,6 +8767,7 @@ const limitCompareData = {};
     const code = document.getElementById('adminCode').value.trim();
     const msg = document.getElementById('adminGateMsg');
     const acct = ADMIN_ACCOUNTS[code];
+    if(acct){ try{ sessionStorage.setItem('growAdminCode', code); }catch(e){} }
     if(!acct){
       msg.textContent = '인증번호가 올바르지 않습니다.'; msg.style.color = 'var(--orange-deep)';
       return;
@@ -8763,7 +8791,7 @@ const limitCompareData = {};
 
   const _ao = document.getElementById('admOut');
   if(_ao) _ao.addEventListener('click', () => {
-    ['growAdmin','growRole','growBranch','growName','growLabel','growCanManageEdu'].forEach(k => sessionStorage.removeItem(k));
+    ['growAdmin','growRole','growBranch','growName','growLabel','growCanManageEdu','growAdminCode'].forEach(k => sessionStorage.removeItem(k));
     location.reload();
   });
 
@@ -8784,7 +8812,7 @@ const limitCompareData = {};
     setTimeout(() => { _asb.disabled = false; _asb.textContent = '🔄 지금 반영'; }, 4000);
   });
 
-  /* ===== FC 내 고객 조회 ===== */
+  /* ===== FC 내 DB 조회 ===== */
   const FC_LOOKUP = 'https://daonpartners.app.n8n.cloud/webhook/daon-fc-lookup';
 
   function fcStatusColor(s){
@@ -8797,7 +8825,7 @@ const limitCompareData = {};
   function fcRenderList(customers){
     const box = document.getElementById('fcList');
     if(!customers.length){
-      box.innerHTML = '<div class="fc-empty">아직 배정된 고객이 없습니다.<br>고객이 배정되면 텔레그램으로도 알려드립니다.</div>';
+      box.innerHTML = '<div class="fc-empty">아직 배정된 DB가 없습니다.<br>DB가 배정되면 텔레그램으로도 알려드립니다.</div>';
       return;
     }
     box.innerHTML = customers.map(c => `
@@ -8828,22 +8856,23 @@ const limitCompareData = {};
     _fcgb.disabled = true; _fcgb.textContent = '조회 중…';
     msg.textContent = ''; msg.style.color = '';
     try{
-      const res = await fetch(FC_LOOKUP, {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ branch, name, code })
-      });
-      const data = await res.json();
-      if(data.success){
+      const reqBody = { branch, name, code };
+      const p1 = fetch(FC_LOOKUP, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(reqBody) }).then(r => r.json()).catch(() => null);
+      const p2 = fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'fcview'}, reqBody)) }).then(r => r.json()).catch(() => null);
+      const [d1, d2] = await Promise.all([p1, p2]);
+      const ok1 = d1 && d1.success, ok2 = d2 && d2.success;
+      if(ok1 || ok2){
+        const list = (ok1 ? d1.customers : []).concat(ok2 ? d2.customers : []);
         sessionStorage.setItem('fcBranch', branch);
         sessionStorage.setItem('fcName', name);
         sessionStorage.setItem('fcCode', code);
         document.getElementById('fcGate').style.display = 'none';
         document.getElementById('fcBody').style.display = 'block';
         document.getElementById('fcWho').textContent = branch + '지사 · ' + name + '님';
-        document.getElementById('fcCount').textContent = '· 배정 ' + data.count + '건';
-        fcRenderList(data.customers);
+        document.getElementById('fcCount').textContent = '· 배정 ' + list.length + '건';
+        fcRenderList(list);
       } else {
-        msg.textContent = data.message || '조회에 실패했습니다.'; msg.style.color = 'red';
+        msg.textContent = (d1 && d1.message) || (d2 && d2.message) || '조회에 실패했습니다.'; msg.style.color = 'red';
       }
     } catch(e){
       msg.textContent = '네트워크 오류가 발생했습니다.'; msg.style.color = 'red';
@@ -9672,7 +9701,69 @@ const limitCompareData = {};
     document.getElementById('admin-' + btn.dataset.atab).classList.add('active');
     if(btn.dataset.atab === 'db') dbbLoad(false);
     if(btn.dataset.atab === 'album') albLoad();
+    if(btn.dataset.atab === 'eventdb' && window.edbLoad) window.edbLoad();
   });
+
+
+  /* ===== 관리자센터 DB관리 (행사 동의 DB 리스트·설계사 배분) ===== */
+  (function(){
+    const API = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
+    const $ = id => document.getElementById(id);
+    let ROWS = [];
+    function code(){ try{ return sessionStorage.getItem('growAdminCode') || ''; }catch(e){ return ''; } }
+    function call(body){
+      return fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({adminCode: code()}, body))}).then(r => r.json());
+    }
+    function msg(t, bad){ const m = $('edbMsg'); if(!m) return; m.textContent = t || ''; m.style.color = bad ? 'red' : ''; }
+    function draw(r){
+      ROWS = r.rows || [];
+      const sel = $('edbEvent'), cur = sel.value;
+      sel.innerHTML = '<option value="">전체 행사</option>' + (r.events||[]).map(e => '<option>' + escapeHtml(e) + '</option>').join('');
+      sel.value = cur;
+      $('edbFcList').innerHTML = (r.fcs||[]).map(n => '<option value="' + escapeHtml(n) + '">').join('');
+      $('edbSummary').innerHTML = '<b>총 ' + r.total + '건</b>' + ((r.summary||[]).length ? '<div style="margin-top:6px; font-size:12.5px; line-height:1.8;">' + r.summary.map(x => escapeHtml(x.date) + ' · ' + escapeHtml(x.eventName) + ' · ' + escapeHtml(x.kind) + ' — <b>' + x.count + '건</b>').join('<br>') + '</div>' : '');
+      $('edbAll').checked = false;
+      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td><input type="checkbox" class="edbChk" value="' + x.id + '"></td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="9" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
+    }
+    window.edbLoad = function(){
+      msg('불러오는 중…');
+      call({action:'list', eventName:$('edbEvent').value, from:$('edbFrom').value, to:$('edbTo').value}).then(r => {
+        if(!r.ok){ msg(r.error || '불러오지 못했습니다.', true); return; }
+        msg(''); draw(r);
+      }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
+    };
+    function picked(){ return Array.from(document.querySelectorAll('.edbChk:checked')).map(c => Number(c.value)); }
+    function assign(fc){
+      const ids = picked();
+      if(!ids.length){ msg('배분할 건을 선택해 주세요.', true); return; }
+      if(fc === null){ fc = $('edbFc').value.trim(); if(!fc){ msg('설계사 이름을 입력해 주세요.', true); return; } }
+      if(!confirm(fc ? ids.length + '건을 ' + fc + ' 설계사에게 배분할까요?' : ids.length + '건의 배분을 취소할까요?')) return;
+      msg('처리 중…');
+      call({action:'assign', ids, fc}).then(r => {
+        if(!r.ok){ msg(r.error || '처리하지 못했습니다.', true); return; }
+        msg(fc ? r.count + '건 배분 완료' + (r.alarmSent ? ' · 설계사에게 텔레그램 알림을 보냈습니다.' : '') : r.count + '건 배분 취소');
+        window.edbLoad();
+      }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
+    }
+    const on = (id, fn) => { const e = $(id); if(e) e.addEventListener('click', fn); };
+    on('edbLoad', () => window.edbLoad());
+    on('edbAssign', () => assign(null));
+    on('edbUnassign', () => assign(''));
+    const all = $('edbAll'); if(all) all.addEventListener('change', () => document.querySelectorAll('.edbChk').forEach(c => c.checked = all.checked));
+    on('edbCsv', () => {
+      if(!ROWS.length) return;
+      const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+      const lines = [['날짜','행사','체험','지사','성명','생년월일','자녀','자녀생년월일','담당설계사'].map(q).join(',')].concat(ROWS.map(x => [x.eventDate,x.eventName,x.kind,x.branch,x.personName,x.personBirth,x.childName,x.childBirth,x.assignedFc].map(q).join(',')));
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'}));
+      a.download = '행사DB_' + new Date().toISOString().slice(0,10) + '.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    });
+    /* 탭은 최상위 관리자·지사장 로그인에서만 표시 */
+    window.edbShowTab = function(){
+      const b = $('eventdbTabBtn'); if(!b) return;
+      const role = sessionStorage.getItem('growRole');
+      b.style.display = (sessionStorage.getItem('growAdmin') === '1' && (role === 'admin' || role === 'manager') && code()) ? '' : 'none';
+    };
+  })();
 
   /* ===== 데일리뉴스 웹 발행 (관리자 전용) ===== */
   const DAILYNEWS_PUBLISH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/grow-dailynews-publish';
