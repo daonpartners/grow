@@ -1469,7 +1469,7 @@ document.addEventListener("input",e=>{ if(e.target.id==="lk-name") updLink(); if
 function showGuide(){ infoDlg("보잇 보험금 청구 이용 방법",GUIDE.map(([q,a],i)=>`<div class="panel" style="padding:12px"><b>${String(i+1).padStart(2,"0")} ${q}</b><p class="note" style="margin:6px 0 0;line-height:1.6">${a}</p></div>`).join("")); }
 function showForms(){
   const typ=Object.keys(ITEMS);
-  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사별 양식</p></div>
+  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원: DB손해보험 · 한화손해보험 · 현대해상 · 신한라이프 (나머지 보험사는 준비 중, 청구 화면에 「자동작성」 표시)</p></div>
   <div><b>병원·고객이 따로 작성하는 서식</b><p class="note" style="margin:4px 0 0">치과치료 확인서 · 간병인 사용 확인서 · 배상책임 보험금 청구서 · 표적항암약물허가치료 확인서 — 양식은 보험사마다 달라 각 보험사 공식 홈페이지의 서식 자료실에서 받습니다.</p>
   <div class="row" style="margin-top:6px">${[["DB손해보험","https://www.idbins.com"],["KB손해보험","https://www.kbinsure.co.kr"],["신한라이프","https://www.shinhanlife.co.kr"]].map(([n,u])=>`<a class="btn sm" href="${u}" target="_blank" rel="noopener">${n} 홈페이지 ↗</a>`).join("")}</div>
   <p class="note" style="margin:4px 0 0">보험사 홈페이지 → 고객센터(또는 보상) → 보험금 청구 → 청구서류·서식 메뉴. 서식 원본 파일을 주시면 보잇 안에서 바로 내려받게 붙입니다.</p></div>
@@ -3058,23 +3058,31 @@ const FORMS={data:null,busy:false};
 async function formsLoad(){ if(FORMS.data) return FORMS.data; try{ const r=await fetch("forms/forms.json?t="+Date.now(),{cache:"no-store"}); FORMS.data=r.ok?await r.json():{insurers:{}}; }catch(e){ FORMS.data={insurers:{}}; } if(!FORMS.data.insurers) FORMS.data.insurers={}; return FORMS.data; }
 function loadPdfLib(){ if(window.PDFLib) return Promise.resolve(); return new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"; sc.onload=res; sc.onerror=()=>rej(new Error("pdf-lib")); document.head.appendChild(sc); }); }
 function claimData(){ return {cl:{...S.cl},acc:{...S.acc,items:{...S.acc.items}},sig:{...(S.sign&&S.sign.sig||{})},cat:S.cat}; }
-function fVal(k,D){ const dg=v=>String(v||"").replace(/\D/g,""), r=dg(D.cl.rrn), d=String(D.acc.date||""), t=today();
+function fVal(k,D){ const dg=v=>String(v||"").replace(/\D/g,""), r=dg(D.cl.rrn), d=String(D.acc.date||""), t=today(), ph=String(D.cl.phone||"").split("-");
   const M={name:D.cl.name,rrn:D.cl.rrn,rrn6:r.slice(0,6),rrn7:r.slice(6),phone:D.cl.phone,holder:D.cl.same?D.cl.name:D.cl.holder,holderRel:D.cl.same?"본인":D.cl.holderRel,
-    accDate:d,accY:d.slice(0,4),accM:d.slice(5,7),accD:d.slice(8,10),accType:D.acc.type,memo:D.acc.memo,
+    accDate:d,accY:d.slice(0,4),accYY:d.slice(2,4),accM:d.slice(5,7),accD:d.slice(8,10),accD8:dg(d),accType:D.acc.type,memo:D.acc.memo,
+    rrnD:r,phoneD:dg(D.cl.phone),phone1:ph[0]||"",phone2:ph[1]||"",phone3:ph[2]||"",acctD:D.acc.acct==="paid"?"":dg(D.acc.acctNo),todayYY:t.slice(2,4),
     bank:D.acc.acct==="paid"?"":D.acc.bank,acctNo:D.acc.acct==="paid"?"":D.acc.acctNo,acctName:D.acc.acct==="paid"?"":D.acc.acctName,
     today:t,todayY:t.slice(0,4),todayM:t.slice(5,7),todayD:t.slice(8,10),agent:ME.name||"",agentPhone:ME.phone||""};
   return M[k]==null?"":String(M[k]); }
-function fWhen(w,D){ if(!w) return true; const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; return false; }
+function fWhen(w,D){ if(!w) return true; if(w.includes("|")) return w.split("|").some(x=>fWhen(x,D)); if(w==="acctself") return D.acc.acct!=="paid"&&String(D.acc.acctName||"").trim()===String(D.cl.name||"").trim(); const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; return false; }
 function textPng(t,pt,bold){ const sc=4, c=document.createElement("canvas"), x=c.getContext("2d"), font=`${bold?"700 ":""}${pt*sc}px "Malgun Gothic","Apple SD Gothic Neo","IBM Plex Sans KR",sans-serif`;
-  x.font=font; const w=Math.ceil(x.measureText(t).width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="middle"; y.fillText(t,1,c.height/2);
+  x.font=font; const m=x.measureText(t), asc=m.actualBoundingBoxAscent||pt*sc*0.8, desc=m.actualBoundingBoxDescent||pt*sc*0.1; const w=Math.ceil(m.width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="alphabetic"; y.fillText(t,1,c.height/2+(asc-desc)/2);
   return {url:c.toDataURL("image/png"),w:w/sc,h:c.height/sc}; }
 async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[insId]; if(!F) return null; await loadPdfLib();
-  const bytes=await (await fetch("forms/"+encodeURI(F.file))).arrayBuffer(); const pdf=await PDFLib.PDFDocument.load(bytes,{ignoreEncryption:true}); const pages=pdf.getPages();
+  const bytes=await (await fetch("forms/"+encodeURI(F.file))).arrayBuffer(); const src=await PDFLib.PDFDocument.load(bytes,{ignoreEncryption:true});
+  /* 원본 페이지를 그림으로 넣고 그 위에 씀 — 원본의 잘라내기(클립) 설정이 우리 글씨를 가리는 문제 방지 */
+  const pdf=await PDFLib.PDFDocument.create(), n=src.getPageCount(), keep=(Array.isArray(F.keep)&&F.keep.length?F.keep:[...Array(n).keys()].map(i=>i+1)).filter(i=>i>=1&&i<=n);
+  const emb=await pdf.embedPdf(src,keep.map(i=>i-1)), pages=[];
+  for(let i=1;i<=n;i++){ const j=keep.indexOf(i); if(j<0){ pages.push(null); continue; } const e=emb[j], pg=pdf.addPage([e.width,e.height]); pg.drawPage(e,{x:0,y:0}); pages.push(pg); }
   for(const f of F.fields||[]){ const pg=pages[(f.p||1)-1]; if(!pg||!fWhen(f.when,D)) continue; const H=pg.getHeight();
+    if(f.clear&&f.k&&f.k.startsWith("sign:")) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)});
     if(f.k&&f.k.startsWith("sign:")){ const sg=D.sig[f.k.slice(5)]; if(!sg||!/^data:image\/png/.test(sg)) continue; const im=await pdf.embedPng(sg); const w=f.w||70,h=f.h||28, r=Math.min(w/im.width,h/im.height); pg.drawImage(im,{x:f.x,y:H-f.y-im.height*r,width:im.width*r,height:im.height*r}); continue; }
+    if(f.clear) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)});
+    if(f.k&&f.k.startsWith("sign:")) continue;
     const v=f.k==="check"?"V":(f.text!=null?f.text:fVal(f.k,D)); if(!v) continue;
-    const im=textPng(v,f.s||9,f.k==="check"), img=await pdf.embedPng(im.url); pg.drawImage(img,{x:f.x,y:H-f.y-im.h/2,width:im.w,height:im.h}); }
-  if(Array.isArray(F.keep)&&F.keep.length){ for(let i=pages.length;i>=1;i--) if(!F.keep.includes(i)) pdf.removePage(i-1); }
+    if(Array.isArray(f.xs)){ for(let i=0;i<Math.min(v.length,f.xs.length);i++){ const im=textPng(v[i],f.s||10,false), img=await pdf.embedPng(im.url); pg.drawImage(img,{x:f.xs[i]+(f.cw?(f.cw-im.w)/2:0),y:H-f.y-im.h/2,width:im.w,height:im.h}); } continue; }
+    const im=textPng(v,f.s||9,f.k==="check"), img=await pdf.embedPng(im.url), k=f.maxw&&im.w>f.maxw?f.maxw/im.w:1; pg.drawImage(img,{x:f.x,y:H-f.y-im.h*k/2,width:im.w*k,height:im.h*k}); }
   return {blob:new Blob([await pdf.save()],{type:"application/pdf"}),pages:pdf.getPageCount(),name:F.name||insId,ver:F.version||""}; }
 SCR.buildClaimPdf=buildClaimPdf; SCR.claimData=claimData;
 async function previewClaims(){ const box=$("#cf-msg"); if(!S.ins.length){ flash(box,"보험사를 먼저 고르세요."); return; } flash(box,"청구서를 만드는 중…");
