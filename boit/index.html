@@ -1504,9 +1504,11 @@ function showGuide(){ infoDlg("보잇 보험금 청구 이용 방법",GUIDE.map(
 /* 보험사별 서식 내려받기 (대표 제공 원본, 2026-10-15) — 서류 종류별로 필요서류 항목 아래에 표시 */
 const DLDOC={
   tooth:{t:"치과치료확인서 (치과에서 작성)",f:[["KB손해보험","dental_kb.pdf"],["메리츠화재","dental_meritz.pdf"],["DB손해보험","dental_db.pdf"],["삼성화재","dental_samsung.pdf"],["현대해상","dental_hyundai.pdf"],["롯데손해보험","dental_lotte.pdf"],["NH농협손해보험","dental_nh.pdf"],["흥국화재","dental_heungkuk.pdf"],["라이나손해보험","dental_lina.pdf"]]},
-  care:{t:"간병인 사용 확인서 · 간병일지 (간병인 쓴 경우)",f:[["KB손해보험 간병인 사용 확인서","care_kb.pdf"],["삼성화재 간병사실확인서","care_samsung.pdf"],["삼성화재 간병일지","carelog_samsung.pdf"]]},
-  leak:{t:"누수사고 청구서류 묶음 (청구서·경위서·기술소견서)",f:[["DB손해보험 배상책임 누수사고 전용","leak_db.pdf"]]}};
-const DL_AT={tooth:"tooth",hosp:"care",leak:"leak"};
+  care:{t:"간병인 사용 확인서 · 간병일지 (간병인 쓴 경우)",f:[["KB손해보험 간병인 사용 확인서","care_kb.pdf"],["삼성화재 간병사실확인서","care_samsung.pdf"],["삼성화재 간병일지","carelog_samsung.pdf"],["DB손해보험 간병인 서비스 신청서","care_db.pdf"]]},
+  leak:{t:"누수사고 청구서류 묶음 (청구서·경위서·기술소견서)",f:[["DB손해보험 배상책임 누수사고 전용","leak_db.pdf"]]},
+  silson:{t:"실손 여러 곳 가입 · 단체보험",f:[["KB손해보험 실손 청구서류 접수대행 신청서","silson_relay_kb.pdf"],["삼성화재 단체보험 청구서 (임직원)","group_samsung.pdf"]]},
+  story:{t:"사고경위서",f:[["삼성화재 사고경위서","story_samsung.pdf"]]}};
+const DL_AT={tooth:"tooth",hosp:"care",leak:["leak","story"],silin:"silson",silout:"silson",prop:"story",bodily:"story"};
 function dlChips(key){ const g=DLDOC[key]; if(!g) return ""; return `<div style="margin:6px 0 2px"><span class="note"><b>${g.t}</b> 내려받기</span><div class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div></div>`; }
 const SF_TABS=[["son","손해보험",["질병","상해","치아"]],["life","생명보험",["질병","재해","치아"]],["pet","펫보험",["pet"]],["liab","일반배상",["대물(누수 포함)","대인"]]];
 function sfDocs(k){ const ds=(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<span class="sf-doc" title="${esc(CDOC[d][1]||"")}">${esc(CDOC[d][0])}</span>`);
@@ -1516,7 +1518,7 @@ function sfDl(key,tab){ const g=DLDOC[key]; if(!g||(tab!=="son"&&tab!=="liab")) 
 function showForms(tab){ tab=tab||(S.cat&&SF_TABS.some(t=>t[0]===S.cat)?S.cat:"son"); const T=SF_TABS.find(t=>t[0]===tab);
   infoDlg("사고유형 · 청구항목별 필요서류",`<div class="seg" style="display:flex">${SF_TABS.map(([k,n])=>`<button class="btn" type="button" data-sft="${k}" aria-pressed="${k===tab}" style="flex:1">${n}</button>`).join("")}</div>
   ${T[2].map(t=>`<details class="sf-type" ${T[2].length<=2||t===T[2][0]?"open":""}><summary>${t==="pet"?"펫보험":t}</summary><div class="sf-grid">
-    ${(ITEMS[t]||ITEMS["상해"]).map(([k,v])=>`<div class="sf-card"><h4>${v}</h4>${sfDocs(k)}${DL_AT[k]?sfDl(DL_AT[k],tab):""}</div>`).join("")}</div></details>`).join("")}
+    ${(ITEMS[t]||ITEMS["상해"]).map(([k,v])=>`<div class="sf-card"><h4>${v}</h4>${sfDocs(k)}${[].concat(DL_AT[k]||[]).map(g=>sfDl(g,tab)).join("")}</div>`).join("")}</div></details>`).join("")}
   <p class="note" style="margin:10px 0 0;font-size:12px">보험사·상품·청구금액에 따라 달라질 수 있습니다. <span style="background:var(--warn-soft);padding:0 4px">⬇ 노란 칸</span>은 서식 내려받기.</p>`); }
 document.addEventListener("click",e=>{ const t=e.target.closest("[data-sft]"); if(t) showForms(t.dataset.sft); });
 document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGuide(); if(e.target.closest("#cl-forms")) showForms(); });
