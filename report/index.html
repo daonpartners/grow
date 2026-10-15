@@ -1286,7 +1286,9 @@ async function parseCoverage(file){
     pitems.push(tc.items.filter(function(it){return it.str&&it.str.trim();}).map(function(it){return {x:it.transform[4],y:it.transform[5],s:it.str};})); }
   var text=all.join('\n'), m;
   var c={mode:'coverage',warns:[],fileName:file.name,rows:[],lines:[]};
-  if((m=text.match(/([가-힣*]{2,5})\s*(?:\([^)]*\)\s*)?님의\s*전체\s*보장현황/))||(m=text.match(/([가-힣*]{2,5})\s*고객님/))) c.name=m[1];
+  var NM='[가-힣][가-힣*＊○●◯OＯoxX]{1,4}';
+  if((m=text.match(new RegExp('('+NM+')\\s*(?:\\([^)]*\\)\\s*)?님의\\s*(?:전체\\s*보장현황|상품별)')))||(m=text.match(new RegExp('('+NM+')\\s*고객님')))||(m=text.match(new RegExp('계약자/피보험자\\s*(?:'+NM+'\\s*/\\s*)?('+NM+')')))) c.name=m[1];
+  if(!c.name&&(m=String(file.name||'').replace(/\.pdf$/i,'').match(new RegExp('('+NM+')\\s*님')))) c.name=m[1];
   if((m=text.match(/고객님\s*[남여]\s*(\d{1,3})\s*세/))||(m=text.match(/\(\s*(\d{1,3})\s*세\s*,?\s*(?:남자|여자)\s*\)/))||(m=text.match(/(\d{2,3})\s*세/))) c.age=m[1];
   if((m=text.match(/(남자|여자)/))) c.gender=m[1]==='남자'?'남':'여'; else if((m=text.match(/고객님\s*(남|여)\s*\d/))) c.gender=m[1];
   if((m=text.match(/정상계약\s*(\d+)\s*건/))) c.contracts=+m[1];
