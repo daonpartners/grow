@@ -1043,7 +1043,7 @@ tr.sel td{background:var(--accent-soft)}
     <!-- DISCLOSE (고지의무 조회) -->
     <section data-view="disclose" hidden>
       <div class="row between"><div><h1>고지의무 확인</h1><p class="sub">고객이 직접 조회한 심평원·건강보험 진료내역을 올리면, 청약서 질문 기간(3개월·1년·5년)별로 알릴 사항 후보를 나눠 보여줍니다.</p></div></div>
-      <div class="banner" style="margin-top:14px"><b>저장하지 않음</b><span>올린 진료내역은 이 화면 안에서만 계산하고 서버에 저장하지 않습니다. 화면을 닫으면 사라집니다. 고객 동의를 받은 자료만 올리세요.</span></div>
+      <div class="banner" style="margin-top:14px"><b>기본은 저장 안 함</b><span>진료내역은 이 화면에서만 계산하고, 화면을 나가면 사라집니다. 다음 상담에 다시 쓰려면 3번 아래 [고객 상담기록으로 저장]을 누르세요 — 고객의 건강정보 저장 동의를 받은 경우에만, 암호화해서 정한 기간 동안만 보관합니다.</span></div>
       <div class="grid3" style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))">
         <div class="panel"><h2>1. 고객에게 조회 안내 보내기</h2>
           <div class="field" style="margin-top:8px"><label for="ds-cust">고객</label><input id="ds-cust" list="dl-cust" placeholder="이름 또는 전화번호 뒷자리" autocomplete="off"></div>
@@ -1070,7 +1070,7 @@ tr.sel td{background:var(--accent-soft)}
           <div id="ds-list" style="margin-top:10px"></div>
         </div>
       </div>
-      <div class="panel" style="margin-top:14px"><div class="row between"><h2>3. 기간별 알릴 사항 후보</h2><button class="btn" type="button" id="ds-reset">모두 지우기</button></div><div id="ds-res" style="margin-top:10px"></div></div>
+      <div class="panel" style="margin-top:14px"><div class="row between"><h2>3. 기간별 알릴 사항 후보</h2><div class="row" style="gap:6px"><button class="btn primary" type="button" id="dsv-open">고객 상담기록으로 저장</button><button class="btn" type="button" id="ds-reset">모두 지우기</button></div></div><div id="dsv-box" hidden style="margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:12px"></div><div id="dsv-load" style="margin-top:8px"></div><div id="ds-res" style="margin-top:10px"></div></div>
       <div class="panel" style="margin-top:14px"><h2>근거와 주의사항</h2>
         <ul class="note" style="margin:8px 0 0;padding-left:18px;line-height:1.7">
           <li>최종 판단 기준은 가입하려는 상품의 <b>청약서 질문표 문구</b>입니다. 일반심사·간편심사(3·N·5 등) 상품마다 질문 기간과 항목이 다르므로, 이 화면의 분류는 확인용 후보입니다.</li>
@@ -1236,8 +1236,8 @@ const custLabel=c=>`${c.name} · ${c.phone.slice(-4)}`;
 function fillSelects(){const dl=$("#dl-cust"); if(!dl.children.length) dl.innerHTML=CUSTOMERS.map(c=>`<option value="${custLabel(c)}"></option>`).join("");}
 function resolveCust(v){v=(v||"").trim(); const c=CUSTOMERS.find(c=>custLabel(c)===v)||(matchCust(v).length===1?matchCust(v)[0]:null); return c?c.id:null;}
 function renderConsult(){
-  fillSelects(); if(!$("#c-date").value) $("#c-date").value=today();
-  $("#consultlist").innerHTML=[...CONSULTS].sort((a,b)=>a.date<b.date?1:-1).map(x=>`<div class="tl"><span class="num note">${x.date}</span><span class="k 상담">${x.stage}</span><span><button class="lnk" data-open="${x.cust}">${custName(x.cust)}</button> ${esc(x.memo)}</span></div>`).join("");
+  if(window.hxPurge) window.hxPurge(); fillSelects(); if(!$("#c-date").value) $("#c-date").value=today();
+  $("#consultlist").innerHTML=[...CONSULTS].sort((a,b)=>a.date<b.date?1:-1).map(x=>`<div class="tl"><span class="num note">${x.date}</span><span class="k 상담">${x.stage}</span><span><button class="lnk" data-open="${x.cust}">${custName(x.cust)}</button> ${esc(x.memo)}${x.hx?` <button class="lnk" type="button" data-hxopen="${CONSULTS.indexOf(x)}">진료내역 열기</button>`:""}</span></div>`).join("");
 }
 function renderActivity(){
   fillSelects(); if(!$("#a-date").value) $("#a-date").value=today();
@@ -3017,7 +3017,7 @@ function dsMsg(c){ const nm=c?c.name:"고객"; return `${nm}님, 보험 가입 �
 
 내려받은 파일이나 화면 캡처를 보내 주시면 청약서 질문 기간에 맞춰 정리해 드리겠습니다.
 ${ME.name||""} ${ME.phone||""}`; }
-function renderDisclose(){ if(!DS.base) DS.base=today(); $("#ds-base").value=DS.base;
+function renderDisclose(){ if(!DS.base) DS.base=today(); $("#ds-base").value=DS.base; if(typeof dsvLoadBar==="function") setTimeout(dsvLoadBar,0);
   if(!$("#ds-text").value) $("#ds-text").value=dsMsg(null); dsResult(); }
 function pDate(v){ if(v==null||v==="") return ""; if(typeof v==="number"&&v>20000&&v<80000){ const d=new Date(Math.round((v-25569)*864e5)); return ymd(new Date(d.getTime()+d.getTimezoneOffset()*6e4)); }
   const s=String(v).trim(); let m=s.match(/^(\d{4})[-./]?\s?(\d{1,2})[-./]?\s?(\d{1,2})/); if(m) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`; return ""; }
@@ -3049,7 +3049,7 @@ function hlRender(){ const b=$("#hl-box"); if(!b) return; const v=id=>esc(HL[id]
     <div class="field"><label for="hl-app">인증 앱</label><select id="hl-app">${HL_APPS.map(([k,n])=>`<option value="${k}" ${HL.app===k?"selected":""}>${n}</option>`).join("")}</select></div>
     <div class="field"><label for="hl-src">자료</label><select id="hl-src"><option value="hira" ${HL.src!=="nhis"?"selected":""}>심평원 내 진료정보 (상병명 포함)</option><option value="nhis" ${HL.src==="nhis"?"selected":""}>건강보험공단 진료·투약내역</option></select></div>
     <div class="field"><label for="hl-years">조회 기간</label><select id="hl-years"><option value="5">최근 5년</option><option value="1">최근 1년</option></select></div></div>
-    <label class="row note" style="gap:6px;margin-top:8px;align-items:flex-start"><input type="checkbox" id="hl-agree" ${HL.agree?"checked":""}> 고객에게 건강정보(민감정보) 조회·이용에 대해 별도 동의를 받았습니다 (개인정보보호법 제23조). 조회 결과는 저장하지 않습니다.</label>
+    <label class="note" style="display:flex;gap:8px;margin-top:8px;align-items:flex-start"><input type="checkbox" id="hl-agree" style="flex:none;margin-top:3px" ${HL.agree?"checked":""}> 고객에게 건강정보(민감정보) 조회·이용에 대해 별도 동의를 받았습니다 (개인정보보호법 제23조). 조회 결과는 저장하지 않습니다.</label>
     <div class="row" style="margin-top:8px"><button class="btn primary" type="button" id="hl-start">고객 휴대폰으로 인증 요청</button><button class="btn" type="button" id="hl-close">닫기</button></div><p class="note err" style="margin:6px 0 0">${esc(HL.msg)}</p>`;
   else if(HL.step===1) b.innerHTML=`<b style="font-size:13px">② 고객 승인 대기</b>
     <p class="note" style="margin:6px 0 0">${esc(HL.name)}님 휴대폰의 <b>${esc((HL_APPS.find(x=>x[0]===HL.app)||["",""])[1])}</b> 앱으로 인증 요청이 갑니다. 고객이 앱에서 승인한 뒤 아래 버튼을 누르세요.</p>
@@ -3065,7 +3065,7 @@ function hlDemoRows(base){ const t=new Date(base||today()), d=m=>{ const x=new D
     {d:d(20),h:"(예시)OO병원",c:"K35",n:"급성 충수염",t:"입원",k:"4",r:"7"},{d:d(40),h:"(예시)OO안과",c:"H52",n:"굴절 및 조절의 장애",t:"외래",k:"1",r:""}].map(x=>({...x,s:true})); }
 document.addEventListener("click",async e=>{
   const g=id=>{ const el=$(id); return el?el.value.trim():""; };
-  if(e.target.closest("#hl-open")){ const b=$("#hl-box"); b.hidden=!b.hidden; if(!b.hidden){ const c=CUSTOMERS.find(c=>c.name===g("#ds-cust")); if(c&&!HL.name){ HL.name=c.name; HL.phone=c.phone; HL.birth=(c.birth||"").replace(/-/g,""); } HL.step=0; HL.msg=""; hlRender(); } return; }
+  if(e.target.closest("#hl-open")){ const b=$("#hl-box"); b.hidden=!b.hidden; if(!b.hidden){ const ci=resolveCust(g("#ds-cust")), c=CUSTOMERS.find(x=>x.id===ci); if(c&&HL.name!==c.name){ HL.name=c.name; HL.phone=c.phone; HL.birth=(c.birth||"").replace(/-/g,""); } HL.step=0; HL.msg=""; hlRender(); } return; }
   if(e.target.closest("#hl-close")){ $("#hl-box").hidden=true; return; }
   if(e.target.closest("#hl-again")){ Object.assign(HL,{step:0,msg:"",name:"",phone:"",birth:"",agree:false}); hlRender(); return; }
   if(e.target.closest("#hl-cancel")){ HL.step=0; HL.msg=""; hlRender(); return; }
@@ -3080,6 +3080,39 @@ document.addEventListener("click",async e=>{
     else { HL.msg="불러오는 중…"; hlRender(); const r=await hlCall("finish",{job:HL.job}); if(!r||r.error){ HL.msg=r&&r.error==="not_approved"?"아직 고객이 승인하지 않았습니다. 승인 후 다시 누르세요.":"불러오지 못했습니다: "+((r&&(r.message||r.error))||"서버 응답 없음"); hlRender(); return; } rows=(r.rows||[]).map(x=>({...x,s:true})); }
     DS.rows.push(...rows); dsResult(); HL.step=2; HL.msg=`${HL.name}님 진료내역 ${rows.length}건을 아래 표에 넣었습니다.${HL.demo?" (시범 예시 데이터 — 실제 고객 자료 아님)":""} 내용을 확인한 뒤 고지 대상을 판단하세요.`; hlRender(); return; }
 });
+/* ===== 진료내역을 고객 상담기록으로 저장 (2026-10-15) =====
+   건강정보 = 민감정보(개인정보보호법 제23조) → 고객 별도 동의 + 암호화 + 보관기한 지나면 자동 삭제.
+   상담 메모에는 병명 없이 건수만 남기고, 진료내역(병원·상병코드·상병명)은 암호화해서 hx에 보관 */
+const DSV_KEEP=[[3,"3개월"],[6,"6개월"],[12,"1년"]];
+function addMonths(d,m){ const x=new Date(d); x.setMonth(x.getMonth()+m); return x.toISOString().slice(0,10); }
+function dsSummary(rows,base){ const ms=rows.map(r=>monthsBetween(r.d,base)).filter(m=>m>=0); return `진료내역 ${rows.length}건 (3개월 내 ${ms.filter(m=>m<3).length} · 1년 내 ${ms.filter(m=>m<12).length} · 5년 내 입원 ${rows.filter(r=>r.t==="입원"&&monthsBetween(r.d,base)<60).length})`; }
+function hxPurge(){ const t=today(); let n=0; CONSULTS.forEach(c=>{ if(c.hx&&c.hxUntil&&c.hxUntil<t){ delete c.hx; c.memo=(c.memo||"")+" · 보관기한 만료로 진료내역 삭제됨"; n++; } }); return n; }
+window.hxPurge=hxPurge;
+function dsCustId(){ return resolveCust(($("#ds-cust")||{}).value||""); }
+function dsvRender(){ const b=$("#dsv-box"); if(!b) return; const cid=dsCustId();
+  b.innerHTML=`<b style="font-size:13px">고객 상담기록으로 저장</b>
+  <p class="note" style="margin:6px 0 0">고객: <b>${cid?esc(custName(cid)):"1번 칸에서 고객을 먼저 고르세요"}</b> · 진료내역 ${DS.rows.length}건 · 기준일 ${esc(DS.base||today())}</p>
+  <div class="row" style="gap:8px;margin-top:8px;align-items:center"><span class="note">보관 기간</span><div class="seg">${DSV_KEEP.map(([m,l])=>`<button class="btn sm" type="button" data-dsvk="${m}" aria-pressed="${(DS.keep||6)===m}">${l}</button>`).join("")}</div><span class="note">→ ${addMonths(today(),DS.keep||6)}까지, 지나면 자동 삭제</span></div>
+  <label class="note" style="display:flex;gap:8px;margin-top:8px;align-items:flex-start"><input type="checkbox" id="dsv-agree" style="flex:none;margin-top:3px"> 고객에게 「보험 가입 상담을 위해 진료내역을 위 기간 동안 보관」하는 것에 대해 별도 동의를 받았습니다 (개인정보보호법 제23조 민감정보). 고객이 삭제를 요청하면 바로 지웁니다.</label>
+  <div class="row" style="margin-top:8px"><button class="btn primary" type="button" id="dsv-save">저장</button><button class="btn" type="button" id="dsv-close">닫기</button></div><p class="note err" id="dsv-msg" style="margin:6px 0 0"></p>`; }
+function dsvLoadBar(){ const el=$("#dsv-load"); if(!el) return; hxPurge(); const cid=dsCustId(); const list=cid?CONSULTS.map((c,i)=>({c,i})).filter(x=>x.c.cust===cid&&x.c.hx):[];
+  el.innerHTML=list.length?`<div class="banner" style="display:block"><b>${esc(custName(cid))}님 저장된 진료내역</b> ${list.map(x=>`<span style="margin-left:8px"><button class="lnk" type="button" data-dsvl="${x.i}">${esc(x.c.date)} 저장분 불러오기</button> <span class="note">(${esc(x.c.hxUntil)}까지 보관)</span> · <button class="lnk" type="button" data-dsvd="${x.i}">삭제</button></span>`).join("")}</div>`:""; }
+async function dsvLoad(i){ const c=CONSULTS[i]; if(!c||!c.hx) return; try{ const d=JSON.parse(await acctOpen(c.hx)); DS.rows=d.rows||[]; if(d.base) DS.base=d.base; const bi=$("#ds-base"); if(bi&&d.base) bi.value=d.base; DS.edit=null; dsResult(); flash($("#ds-fmsg"),`${c.date}에 저장한 진료내역 ${DS.rows.length}건을 불러왔습니다.`); }catch(e){ flash($("#ds-fmsg"),"저장된 진료내역을 열지 못했습니다 (다른 계정에서 저장한 자료일 수 있습니다)."); } }
+document.addEventListener("click",async e=>{
+  if(e.target.closest("#dsv-open")){ const b=$("#dsv-box"); if(!DS.rows.length){ flash($("#ds-fmsg"),"저장할 진료내역이 없습니다."); return; } b.hidden=!b.hidden; if(!b.hidden) dsvRender(); return; }
+  if(e.target.closest("#dsv-close")){ $("#dsv-box").hidden=true; return; }
+  const k=e.target.closest("[data-dsvk]"); if(k){ DS.keep=+k.dataset.dsvk; dsvRender(); return; }
+  if(e.target.closest("#dsv-save")){ const m=$("#dsv-msg"), cid=dsCustId(); if(!cid){ m.textContent="1번 칸에서 고객관리에 있는 고객을 고르세요."; return; } if(!$("#dsv-agree").checked){ m.textContent="고객의 별도 동의를 받았는지 확인해 주세요."; return; }
+    const base=DS.base||today(), keep=DS.keep||6, rows=DS.rows.map(({d,h,c,n,t,k,r,s})=>({d,h,c,n,t,k,r,s}));
+    const hx=await acctSeal(JSON.stringify({base,rows})); const rec={cust:cid,date:today(),stage:"고지의무 확인",memo:`${dsSummary(rows,base)} · 청약 기준일 ${base} · 진료내역 암호화 보관(${addMonths(today(),keep)}까지, 고객 동의 ${today()})`,hx,hxUntil:addMonths(today(),keep),hxAgree:today()};
+    CONSULTS.push(rec); if(typeof cloudSave==="function") try{ cloudSave(true); }catch(_){}
+    $("#dsv-box").hidden=true; dsvLoadBar(); flash($("#ds-fmsg"),`${custName(cid)}님 상담기록에 저장했습니다. 다음에 고객을 고르면 [저장분 불러오기]가 나옵니다.`); return; }
+  const l=e.target.closest("[data-dsvl]"); if(l){ dsvLoad(+l.dataset.dsvl); return; }
+  const d=e.target.closest("[data-dsvd]"); if(d){ const c=CONSULTS[+d.dataset.dsvd]; if(!c||!confirm(`${c.date}에 저장한 진료내역을 삭제할까요? (상담기록 메모는 남습니다)`)) return; delete c.hx; c.memo+=` · 진료내역 삭제 ${today()}`; if(typeof cloudSave==="function") try{ cloudSave(true); }catch(_){} dsvLoadBar(); return; }
+  const o=e.target.closest("[data-hxopen]"); if(o){ const i=+o.dataset.hxopen; go("disclose"); setTimeout(()=>{ const c=CONSULTS[i]; const ci=$("#ds-cust"); if(ci&&c){ const cu=CUSTOMERS.find(x=>x.id===c.cust); if(cu) ci.value=custLabel(cu); } dsvLoadBar(); dsvLoad(i); },50); return; }
+});
+document.addEventListener("input",e=>{ if(e.target&&e.target.id==="ds-cust"){ dsvLoadBar(); const b=$("#dsv-box"); if(b&&!b.hidden) dsvRender(); } });
+document.addEventListener("change",e=>{ if(e.target&&e.target.id==="ds-cust") dsvLoadBar(); });
 function dsResult(){ dsList(); const el=$("#ds-res"); if(!el) return; const base=DS.base||today();
   if(!DS.rows.length){ el.innerHTML='<p class="note">진료내역을 올리면 여기에 기간별로 정리됩니다.</p>'; return; }
   const rs=DS.rows.map((x,i)=>({...x,i,m:monthsBetween(x.d,base)})).filter(x=>x.m>=0).sort((a,b)=>a.d<b.d?1:-1);
