@@ -1045,7 +1045,7 @@ tr.sel td{background:var(--accent-soft)}
           <div class="row" style="margin-top:8px"><label class="btn" for="ds-file" style="margin:0">엑셀 올리기</label><input id="ds-file" type="file" accept=".xlsx,.xls,.csv" hidden>
             <div class="field" style="width:170px"><label for="ds-base">청약 예정일 (기준일)</label><input id="ds-base" type="date"></div></div>
           <p class="note err" id="ds-fmsg" style="margin:6px 0 0"></p>
-          <details style="margin-top:6px"><summary class="note" style="cursor:pointer">직접 입력</summary>
+          <details open style="margin-top:6px" id="dsn-box"><summary class="note" style="cursor:pointer">직접 입력</summary>
             <div class="row" style="margin-top:8px;gap:6px">
               <input id="dsn-d" type="date" aria-label="진료일" style="border:1px solid var(--line);border-radius:6px;padding:6px">
               <input id="dsn-h" placeholder="병원" style="width:110px;border:1px solid var(--line);border-radius:6px;padding:6px">
@@ -1054,7 +1054,8 @@ tr.sel td{background:var(--accent-soft)}
               <select id="dsn-t" style="border:1px solid var(--line);border-radius:6px;padding:6px"><option>외래</option><option>입원</option></select>
               <input id="dsn-k" inputmode="numeric" placeholder="입원·내원일수" style="width:96px;border:1px solid var(--line);border-radius:6px;padding:6px">
               <input id="dsn-r" inputmode="numeric" placeholder="투약일수" style="width:80px;border:1px solid var(--line);border-radius:6px;padding:6px">
-              <button class="btn" type="button" id="dsn-add">추가</button></div></details>
+              <button class="btn" type="button" id="dsn-add">추가</button><button class="btn" type="button" id="dsn-cancel" hidden>취소</button></div></details>
+          <div id="ds-list" style="margin-top:10px"></div>
         </div>
       </div>
       <div class="panel" style="margin-top:14px"><div class="row between"><h2>3. 기간별 알릴 사항 후보</h2><button class="btn" type="button" id="ds-reset">모두 지우기</button></div><div id="ds-res" style="margin-top:10px"></div></div>
@@ -2988,7 +2989,12 @@ function dsParse(rows){ let hi=-1, map={};
   if(hi<0) return null;
   return rows.slice(hi+1).map(r=>({d:pDate(r[map.d]),h:String(map.h!=null?r[map.h]:"").trim(),c:String(map.c!=null?r[map.c]:"").trim().toUpperCase(),n:String(map.n!=null?r[map.n]:"").trim(),t:/입원/.test(String(map.t!=null?r[map.t]:""))?"입원":"외래",k:+(map.k!=null?r[map.k]:0)||0,r:+(map.r!=null?r[map.r]:0)||0,s:false})).filter(x=>x.d); }
 const DS_DIS=[["백혈병",/^C9[1-5]/],["암",/^C[0-8]\d|^C9[0-7]/],["고혈압",/^I1[0-5]/],["협심증",/^I20/],["심근경색",/^I2[12]/],["심장판막증",/^I0[5-8]|^I3[4-9]/],["뇌졸중(뇌출혈·뇌경색)",/^I6[0-4]/],["간경화",/^K74/],["당뇨병",/^E1[0-4]/],["HIV",/^B2[0-4]/]];
-function dsResult(){ const el=$("#ds-res"); if(!el) return; const base=DS.base||today();
+function dsList(){ const el=$("#ds-list"); if(!el) return; const rs=DS.rows.map((x,i)=>({...x,i})).sort((a,b)=>a.d<b.d?1:-1);
+  el.innerHTML=rs.length?`<div class="row between"><b style="font-size:14px">입력한 진료내역 ${rs.length}건</b><span class="note">진료일 최근 순</span></div><div class="tbl-wrap" style="margin-top:6px"><table class="ds-t"><thead><tr><th></th><th>진료일</th><th>병원</th><th>상병</th><th>구분</th><th>일수</th><th>투약</th></tr></thead><tbody>
+  ${rs.map(x=>`<tr${DS.edit===x.i?' style="background:var(--accent-soft)"':""}><td style="white-space:nowrap"><button class="lnk" type="button" data-dse="${x.i}">수정</button> · <button class="lnk" type="button" data-dsd="${x.i}">삭제</button></td><td class="num">${x.d}</td><td>${esc(x.h)}</td><td>${esc(x.c)} ${esc(x.n)}</td><td>${x.t}</td><td class="num">${x.k||""}</td><td class="num">${x.r||""}</td></tr>`).join("")}</tbody></table></div>`:'<p class="note" style="margin:0">아직 입력한 진료내역이 없습니다.</p>'; }
+function dsForm(x){ const set=(id,v)=>{ const e=$(id); if(e) e.value=v==null?"":v; }; x=x||{}; set("#dsn-d",x.d||""); set("#dsn-h",x.h); set("#dsn-c",x.c); set("#dsn-n",x.n); set("#dsn-t",x.t||"외래"); set("#dsn-k",x.k||""); set("#dsn-r",x.r||"");
+  const ed=DS.edit!=null; $("#dsn-add").textContent=ed?"수정 저장":"추가"; $("#dsn-cancel").hidden=!ed; }
+function dsResult(){ dsList(); const el=$("#ds-res"); if(!el) return; const base=DS.base||today();
   if(!DS.rows.length){ el.innerHTML='<p class="note">진료내역을 올리면 여기에 기간별로 정리됩니다.</p>'; return; }
   const rs=DS.rows.map((x,i)=>({...x,i,m:monthsBetween(x.d,base)})).filter(x=>x.m>=0).sort((a,b)=>a.d<b.d?1:-1);
   const in3=rs.filter(x=>x.m<3), in12=rs.filter(x=>x.m<12), in60=rs.filter(x=>x.m<60);
@@ -3019,10 +3025,14 @@ document.addEventListener("change",async e=>{
     catch(err){ m.textContent="파일을 읽지 못했습니다."; } e.target.value=""; }
 });
 document.addEventListener("click",async e=>{
-  const d=e.target.closest("[data-dsd]"); if(d){ DS.rows.splice(+d.dataset.dsd,1); dsResult(); return; }
-  if(e.target.closest("#ds-reset")){ DS.rows=[]; dsResult(); flash($("#ds-fmsg"),""); return; }
+  const d=e.target.closest("[data-dsd]"); if(d){ const i=+d.dataset.dsd, r=DS.rows[i]; if(!r||!confirm(`${r.d} ${r.c} ${r.n} 기록을 삭제할까요?`)) return; DS.rows.splice(i,1); if(DS.edit===i){ DS.edit=null; dsForm(); } else if(DS.edit!=null&&DS.edit>i) DS.edit--; dsResult(); return; }
+  const ed=e.target.closest("[data-dse]"); if(ed){ DS.edit=+ed.dataset.dse; const bx=$("#dsn-box"); if(bx) bx.open=true; dsForm(DS.rows[DS.edit]); dsList(); $("#dsn-d").focus(); return; }
+  if(e.target.closest("#dsn-cancel")){ DS.edit=null; dsForm(); dsList(); flash($("#ds-fmsg"),""); return; }
+  if(e.target.closest("#ds-reset")){ if(DS.rows.length&&!confirm("입력·업로드한 진료내역을 모두 지울까요?")) return; DS.rows=[]; DS.edit=null; dsForm(); dsResult(); flash($("#ds-fmsg"),""); return; }
   if(e.target.closest("#dsn-add")){ const v=id=>$(id).value.trim(); const dd=v("#dsn-d"); if(!dd||!(v("#dsn-c")||v("#dsn-n"))){ flash($("#ds-fmsg"),"진료일과 상병코드 또는 상병명을 넣어 주세요."); return; }
-    DS.rows.push({d:dd,h:v("#dsn-h"),c:v("#dsn-c").toUpperCase(),n:v("#dsn-n"),t:$("#dsn-t").value,k:+v("#dsn-k")||0,r:+v("#dsn-r")||0,s:false}); ["#dsn-h","#dsn-c","#dsn-n","#dsn-k","#dsn-r"].forEach(i=>$(i).value=""); flash($("#ds-fmsg"),""); dsResult(); return; }
+    const row={d:dd,h:v("#dsn-h"),c:v("#dsn-c").toUpperCase(),n:v("#dsn-n"),t:$("#dsn-t").value,k:+v("#dsn-k")||0,r:+v("#dsn-r")||0,s:false};
+    if(DS.edit!=null&&DS.rows[DS.edit]){ row.s=DS.rows[DS.edit].s; DS.rows[DS.edit]=row; flash($("#ds-fmsg"),"수정했습니다."); } else { DS.rows.push(row); flash($("#ds-fmsg"),"추가했습니다."); }
+    DS.edit=null; dsForm(); $("#dsn-d").value=dd; dsResult(); return; }
   if(e.target.closest("#ds-copy")){ copyText($("#ds-text").value,$("#ds-smsg")); return; }
   if(e.target.closest("#ds-share")){ try{ await navigator.share({text:$("#ds-text").value}); }catch(err){ if(!(err&&err.name==="AbortError")) copyText($("#ds-text").value,$("#ds-smsg")); } return; }
   if(e.target.closest("#ds-sms")){ const id=resolveCust($("#ds-cust").value); const c=CUSTOMERS.find(x=>x.id===id); const tel=c?String(c.phone||"").replace(/[^\d]/g,""):"";
@@ -3030,6 +3040,8 @@ document.addEventListener("click",async e=>{
 });
 
 /* ================= 화면 연결 ================= */
+const INIT_VIEW={morning:()=>renderMorning(),quote:()=>renderQuote(),homepage:()=>renderHomepage(),disclose:()=>renderDisclose()};
+if(typeof S!=="undefined"&&INIT_VIEW[S.view]) setTimeout(()=>INIT_VIEW[S.view](),0);
 if(typeof go==="function"){ const _go=go; go=function(v){ _go(v); const w=S.view;
   if(w==="morning") renderMorning(); if(w==="quote") renderQuote(); if(w==="homepage") renderHomepage(); if(w==="disclose") renderDisclose(); if(w==="proposal") renderCG(); }; }
 if(typeof cloudSnap==="function"){ const _s=cloudSnap; cloudSnap=function(){ const o=_s(); o.me.page=ME.page||null; o.quoteRates=QT.rates; return o; }; }
