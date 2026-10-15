@@ -1511,7 +1511,7 @@ function showForms(){
 document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGuide(); if(e.target.closest("#cl-forms")) showForms(); });
 function startClock(){ if(S.t0) return; S.t0=Date.now(); S.tick=setInterval(()=>{$("#clock").textContent=mmss(Math.floor((Date.now()-S.t0)/1000))},500); }
 function stopClock(){ clearInterval(S.tick); }
-function resetClaim(){ stopClock(); Object.assign(S,{step:0,cat:S.cat||"son",cl:{name:"",rrn:"",phone:"",save:true,idType:"none",idDate:"",pet:"",petNo:"",petBreed:"",petSex:"",petBirth:"",petColor:"",victim:"",victimPhone:"",same:true,holder:"",holderRel:"",holderRrn:"",holderPhone:"",repName:"",repRel:"",repPhone:"",guide:"fc"},acc:{date:"",type:"",items:{},memo:"",place:"",damage:"",acct:"paid",group:false,support:false,bank:"",acctNo:"",acctName:""},sign:{mode:"face",done:false,req:false},docs:{},ins:[],vfax:{},t0:null,sending:false,sent:false}); Object.values(S.docs||{}).flat().forEach(f=>f.url&&URL.revokeObjectURL(f.url)); S.docs={}; $("#clock").textContent="00:00"; }
+function resetClaim(){ stopClock(); Object.assign(S,{step:0,cat:S.cat||"son",cl:{name:"",rrn:"",phone:"",save:true,idType:"none",idDate:"",pet:"",petNo:"",petBreed:"",petSex:"",petBirth:"",petColor:"",victim:"",victimPhone:"",same:true,holder:"",holderRel:"",holderRrn:"",holderPhone:"",repName:"",repRel:"",repPhone:"",guide:"fc"},acc:{date:"",type:"",items:{},memo:"",place:"",damage:"",acct:"paid",group:false,groupIns:"",groupCo:"",groupAdded:false,bank:"",acctNo:"",acctName:""},sign:{mode:"face",done:false,req:false},docs:{},ins:[],vfax:{},t0:null,sending:false,sent:false}); Object.values(S.docs||{}).flat().forEach(f=>f.url&&URL.revokeObjectURL(f.url)); S.docs={}; $("#clock").textContent="00:00"; }
 const LAST=0;
 /* 보험 구분 · 보험사 */
 const CATS={son:"손해보험",life:"생명보험",pet:"펫보험",liab:"일반배상"};
@@ -1622,7 +1622,10 @@ function secIns(){ const list=INSURERS.filter(i=>i.cats.includes(S.cat)), pm=S.c
   ${need.map(id=>{const i=insBy(id), nd=faxNeed(id), hint=i.fax&&nd==="manual"?`장기보험 청구팩스 ${i.fax} — ${CATS[S.cat]} 접수번호가 같은지 확인`:i.note||"";
     return `<div class="ins-line"><b>${i.name}</b><div class="field"><label for="vf-${id}">${nd==="virtual"?"고객이 받은 가상 팩스번호":"보험사 접수 팩스번호"}</label><input id="vf-${id}" data-vf="${id}" inputmode="tel" placeholder="예: 0505-123-4567" value="${esc(S.vfax[id]||"")}">${hint?`<span class="note">${esc(hint)}</span>`:""}</div>${i.cs?`<button class="btn sm" data-ask="${id}">고객에게 번호 요청 문자</button>`:""}</div>`;}).join("")}<p class="note" id="asknote" style="margin:6px 0 0"></p>
   ${S.ins.filter(id=>insBy(id).note&&faxNeed(id)==="fixed").map(id=>`<p class="note err" style="margin:4px 0 0">${insBy(id).name}: ${esc(insBy(id).note)}</p>`).join("")}
-  ${S.cat==="son"||S.cat==="life"?`<div class="row" style="gap:18px;margin-top:10px"><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="group" ${S.acc.group?"checked":""}> 단체실손도 함께 청구</label><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="support" ${S.acc.support?"checked":""}> 상해·질병 치료지원금 청구</label></div>`:""}</section>`; }
+  ${S.cat==="son"||S.cat==="life"?`<div style="margin-top:10px"><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="group" ${S.acc.group?"checked":""}> 단체실손도 함께 청구 <span class="note">(회사·단체가 가입한 단체보험)</span></label>
+    ${S.acc.group?`<div class="fgrid" style="margin-top:6px"><div class="field"><label for="grp-ins">단체보험 보험사</label><select id="grp-ins"><option value="">선택</option>${INSURERS.filter(i=>i.k==="son"||i.k==="life").map(i=>`<option value="${i.id}" ${S.acc.groupIns===i.id?"selected":""}>${esc(i.name)}</option>`).join("")}</select></div>
+      <div class="field"><label for="grp-co">가입 회사·단체명 (선택)</label><input id="grp-co" value="${esc(S.acc.groupCo||"")}" placeholder="예: 다온파트너스" autocomplete="off"></div></div>
+      <p class="note" style="margin:4px 0 0">단체보험 보험사를 고르면 그 보험사도 청구 대상에 자동으로 추가되고(같은 서류로 동시 발송), 다른 보험사 청구서의 「다른 보험 가입사항 · 단체보험」 칸에 표시됩니다. 실손은 여러 계약이 있으면 비례보상됩니다.</p>`:""}</div>`:""}</section>`; }
 /* ===== 계약자≠피보험자 · 미성년자 청구 (2026-10-15) =====
    미성년자: 민법 제4조(만19세 성년) · 제5조(법률행위는 법정대리인 동의) · 제911조(친권자가 법정대리인) → 법정대리인이 청구·서명
    개인정보 동의: 만14세 미만은 법정대리인 동의 필요 (개인정보보호법 제22조의2) */
@@ -1723,6 +1726,9 @@ function bindForm(){
   [["cl-pet","pet"],["cl-petno","petNo"],["cl-petbreed","petBreed"],["cl-petsex","petSex"],["cl-petbirth","petBirth"],["cl-petcolor","petColor"],["cl-victim","victim"],["cl-victimphone","victimPhone"],["cl-iddate","idDate"],["cl-holder","holder"],["cl-holderrel","holderRel"],["cl-repname","repName"],["cl-reprel","repRel"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{S.cl[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
   $("#acc-date").oninput=e=>{S.acc.date=e.target.value; updSend();};
   $("#acc-memo").oninput=e=>{S.acc.memo=e.target.value;};
+  { const gi=$("#grp-ins"); if(gi) gi.onchange=e=>{ const v=e.target.value; if(S.acc.groupIns&&S.acc.groupAdded) S.ins=S.ins.filter(x=>x!==S.acc.groupIns); S.acc.groupIns=v; S.acc.groupAdded=false;
+      if(v&&!S.ins.includes(v)){ if(S.ins.filter(x=>ID_CAT[x]===ID_CAT[v]).length<3){ S.ins.push(v); S.acc.groupAdded=true; } else S.insMsg="같은 구분에서는 3곳까지라 단체보험 보험사를 자동으로 넣지 못했습니다. 위에서 직접 고르세요."; } renderStep(); };
+    const gc=$("#grp-co"); if(gc) gc.oninput=e=>{ S.acc.groupCo=e.target.value; }; }
   [["acc-place","place"],["acc-damage","damage"]].forEach(([id,k])=>{const el=$("#"+id); if(el) el.oninput=e=>{S.acc[k]=e.target.value;};});
   [["ac-bank","bank"],["ac-no","acctNo"],["ac-name","acctName"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{ if(k==="acctNo") e.target.value=e.target.value.replace(/[^\d-]/g,""); S.acc[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
   $("#df-all").onchange=e=>{ addAllFiles(e.target.files); };
@@ -1762,7 +1768,7 @@ function initSign(){ S.sign.sig=S.sign.sig||{};
 function doneText(){return `발송 완료. 주민번호·서류는 보관하지 않고 파기합니다 (전송취소 가능 시간 5분 후). 다시 보내야 하면 서류를 새로 올려 주세요.`}
 function addDocFiles(k,list){ S.docs[k]=(S.docs[k]||[]).concat([...list].map(f=>({name:f.name,url:f.type.startsWith("image/")?URL.createObjectURL(f):null}))); renderStep(); }
 $("#stepbody").addEventListener("change",e=>{
-  const af=e.target.closest("[data-accflag]"); if(af){ S.acc[af.dataset.accflag]=af.checked; return; }
+  const af=e.target.closest("[data-accflag]"); if(af){ S.acc[af.dataset.accflag]=af.checked; if(af.dataset.accflag==="group"){ if(!af.checked){ if(S.acc.groupIns&&S.acc.groupAdded) S.ins=S.ins.filter(x=>x!==S.acc.groupIns); S.acc.groupIns=""; S.acc.groupAdded=false; } renderStep(); } return; }
   const d=e.target.closest("[data-doc]"); if(d){ addDocFiles(d.dataset.doc,d.files); return; }
   const it=e.target.closest("[data-item]"); if(it){ S.acc.items[it.dataset.item]=it.checked; renderStep(); return; }
   const mv=e.target.closest("[data-dmv]"); if(mv){ const [k,ix]=mv.dataset.dmv.split(":"), to=mv.value; const f=S.docs[k].splice(+ix,1)[0]; if(!S.docs[k].length) delete S.docs[k]; (S.docs[to]=S.docs[to]||[]).push(f); renderStep(); return; }
@@ -3204,12 +3210,12 @@ function fVal(k,D){ const dg=v=>String(v||"").replace(/\D/g,""), r=dg(D.cl.rrn),
     petName:D.cl.pet,petNo:D.cl.petNo,petBreed:D.cl.petBreed,petSex:D.cl.petSex,petBirth:D.cl.petBirth,petBY:String(D.cl.petBirth||"").slice(0,4),petBM:String(D.cl.petBirth||"").slice(5,7),petBD:String(D.cl.petBirth||"").slice(8,10),petColor:D.cl.petColor,petAge:petAge(D.cl.petBirth,t),
     victim:D.cl.victim,victimPhone:D.cl.victimPhone,accPlace:D.acc.place,damage:D.acc.damage,
     holderRrn:D.cl.same?D.cl.rrn:fmtRrn(D.cl.holderRrn||""),holderRrnD:dg(D.cl.same?D.cl.rrn:D.cl.holderRrn),holderRrn6:dg(D.cl.same?D.cl.rrn:D.cl.holderRrn).slice(0,6),holderRrn7:dg(D.cl.same?D.cl.rrn:D.cl.holderRrn).slice(6),
-    holderPhone:D.cl.same?D.cl.phone:D.cl.holderPhone,holderPhoneD:dg(D.cl.same?D.cl.phone:D.cl.holderPhone),
+    holderPhone:D.cl.same?D.cl.phone:D.cl.holderPhone,otherIns:D.acc.group&&D.acc.groupIns?(insBy(D.acc.groupIns).name+"(단체"+(D.acc.groupCo?" "+D.acc.groupCo:"")+")"):"",holderPhoneD:dg(D.cl.same?D.cl.phone:D.cl.holderPhone),
     repName:D.minor?D.cl.repName:"",repRel:D.minor?D.cl.repRel:"",repPhone:D.minor?D.cl.repPhone:"",
     signerName:D.minor?D.cl.repName:D.cl.name,authName:D.minor?`${D.cl.name}(대리인 ${D.cl.repName})`:D.cl.name,authRel:D.minor?`${D.cl.repRel||"법정대리인"} ${D.cl.repName}`:"본인"};
   return M[k]==null?"":String(M[k]); }
 function petAge(b,t){ if(!/^\d{4}-\d{2}-\d{2}$/.test(b||"")) return ""; let y=+t.slice(0,4)-+b.slice(0,4); if(t.slice(5)<b.slice(5)) y--; if(y>=1) return y+"세"; const m=(+t.slice(0,4)-+b.slice(0,4))*12+(+t.slice(5,7)-+b.slice(5,7))-(+t.slice(8,10)<+b.slice(8,10)?1:0); return Math.max(m,0)+"개월"; }
-function fWhen(w,D){ if(!w) return true; if(w[0]==="!"&&!w.includes("|")) return !fWhen(w.slice(1),D); if(w==="minor") return !!D.minor; if(w==="!minor") return !D.minor; if(w.includes("|")) return w.split("|").some(x=>fWhen(x,D)); if(w==="acctself") return D.acc.acct!=="paid"&&String(D.acc.acctName||"").trim()===String(D.cl.name||"").trim(); const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; if(a==="pet.sex") return String(D.cl.petSex||"").includes(b); return false; }
+function fWhen(w,D){ if(!w) return true; if(w[0]==="!"&&!w.includes("|")) return !fWhen(w.slice(1),D); if(w==="minor") return !!D.minor; if(w==="group") return !!(D.acc.group&&D.acc.groupIns); if(w==="nogroup") return !(D.acc.group&&D.acc.groupIns); if(w==="!minor") return !D.minor; if(w.includes("|")) return w.split("|").some(x=>fWhen(x,D)); if(w==="acctself") return D.acc.acct!=="paid"&&String(D.acc.acctName||"").trim()===String(D.cl.name||"").trim(); const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; if(a==="pet.sex") return String(D.cl.petSex||"").includes(b); return false; }
 function textPng(t,pt,bold){ const sc=4, c=document.createElement("canvas"), x=c.getContext("2d"), font=`${bold?"700 ":""}${pt*sc}px "Malgun Gothic","Apple SD Gothic Neo","IBM Plex Sans KR",sans-serif`;
   x.font=font; const m=x.measureText(t), asc=m.actualBoundingBoxAscent||pt*sc*0.8, desc=m.actualBoundingBoxDescent||pt*sc*0.1; const w=Math.ceil(m.width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="alphabetic"; y.fillText(t,1,c.height/2+(asc-desc)/2);
   return {url:c.toDataURL("image/png"),w:w/sc,h:c.height/sc}; }
