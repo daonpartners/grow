@@ -1499,15 +1499,17 @@ const DLDOC={
   leak:{t:"누수사고 청구서류 묶음 (청구서·경위서·기술소견서)",f:[["DB손해보험 배상책임 누수사고 전용","leak_db.pdf"]]}};
 const DL_AT={tooth:"tooth",hosp:"care",leak:"leak"};
 function dlChips(key){ const g=DLDOC[key]; if(!g) return ""; return `<div style="margin:6px 0 2px"><span class="note"><b>${g.t}</b> 내려받기</span><div class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div></div>`; }
-function showForms(){
-  const typ=Object.keys(ITEMS).filter(t=>t!=="재해"&&t!=="상해(재해)");
-  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 흥국 · 하나 · 라이나손보 · 신한EZ · 수협공제 · 교직원공제 · AIG · AXA · 예별 · 우체국 · 신한라이프 / 펫: DB · KB · 삼성화재 · 현대 · 메리츠 · NH농협 · 한화 · 라이나손보 · 신한EZ / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 · 흥국 · 라이나손보 · 하나 · 한화 · 롯데 · AIG · AXA · 예별 (나머지는 준비 중 — [보험사별 청구서 미리보기]에서 확인)</p></div>
-  <div><b>병원·고객이 따로 작성하는 서식</b><p class="note" style="margin:4px 0 0">치과치료 확인서 · 간병인 사용 확인서 · 배상책임 보험금 청구서 · 표적항암약물허가치료 확인서 — 양식은 보험사마다 달라 각 보험사 공식 홈페이지의 서식 자료실에서 받습니다.</p>
-  ${dlChips("tooth")}${dlChips("care")}${dlChips("leak")}
-  <p class="note" style="margin:4px 0 0">목록에 없는 보험사는 보험사 홈페이지 → 고객센터(또는 보상) → 보험금 청구 → 청구서류·서식 메뉴에서 받습니다. 원본 파일을 주시면 여기에 추가합니다.</p></div>
-  <div><b>사고유형 · 청구항목별 필요서류</b></div>
-  ${typ.map(t=>`<details class="panel" style="padding:10px 12px"><summary><b>${t==="pet"?"펫보험":t}</b></summary>${ITEMS[t].map(([k,v])=>`<div style="margin-top:8px"><b style="font-size:13px">${v}</b><ul class="note" style="margin:4px 0 0;padding-left:18px">${(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<li>${CDOC[d][0]}${CDOC[d][1]?" — "+CDOC[d][1]:""}</li>`).join("")||"<li>보험사 확인</li>"}${k==="hosp"?"<li>간병인을 쓴 경우: 간병인 사용 확인서·간병일지 (간병인 일당 담보)</li>":""}</ul>${DL_AT[k]?dlChips(DL_AT[k]):""}</div>`).join("")}</details>`).join("")}
-  <p class="note" style="margin:0">기준: 교보라이프플래닛 「사고유형별 구비서류 안내」, DB손해보험 「보험금청구서류 안내」. 보험사·상품·청구금액에 따라 생략·추가될 수 있습니다.</p>`); }
+const SF_TABS=[["son","손해보험",["질병","상해","치아"]],["life","생명보험",["질병","재해","치아"]],["pet","펫보험",["pet"]],["liab","일반배상",["대물(누수 포함)","대인"]]];
+function sfDocs(k){ const ds=(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<span class="pill" title="${esc(CDOC[d][1]||"")}" style="font-size:12px;font-weight:500">${esc(CDOC[d][0])}</span>`);
+  if(k==="hosp") ds.push(`<span class="pill" title="간병인 일당 담보" style="font-size:12px;font-weight:500">간병인 사용 확인서 (간병인 쓴 경우)</span>`);
+  return ds.join(" ")||'<span class="note">보험사 확인</span>'; }
+function sfDl(key,tab){ const g=DLDOC[key]; if(!g||(tab!=="son"&&tab!=="liab")) return ""; return `<div class="row" style="gap:5px;margin-top:6px;flex-wrap:wrap"><span class="note" style="font-size:12px">서식 받기</span>${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div>`; }
+function showForms(tab){ tab=tab||(S.cat&&SF_TABS.some(t=>t[0]===S.cat)?S.cat:"son"); const T=SF_TABS.find(t=>t[0]===tab);
+  infoDlg("사고유형 · 청구항목별 필요서류",`<div class="seg" style="display:flex">${SF_TABS.map(([k,n])=>`<button class="btn" type="button" data-sft="${k}" aria-pressed="${k===tab}" style="flex:1">${n}</button>`).join("")}</div>
+  ${T[2].map(t=>`<details class="panel" style="padding:10px 12px" ${T[2].length<=2||t===T[2][0]?"open":""}><summary><b>${t==="pet"?"펫보험":t}</b></summary>
+    ${(ITEMS[t]||ITEMS["상해"]).map(([k,v])=>`<div style="margin-top:10px"><b style="font-size:13px">${v}</b><div class="row" style="gap:5px;margin-top:4px;flex-wrap:wrap">${sfDocs(k)}</div>${DL_AT[k]?sfDl(DL_AT[k],tab):""}</div>`).join("")}</details>`).join("")}
+  <p class="note" style="margin:0;font-size:12px">서류 이름에 마우스를 올리면 발급처가 보입니다. 보험사·상품·청구금액에 따라 달라질 수 있습니다.</p>`); }
+document.addEventListener("click",e=>{ const t=e.target.closest("[data-sft]"); if(t) showForms(t.dataset.sft); });
 document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGuide(); if(e.target.closest("#cl-forms")) showForms(); });
 function startClock(){ if(S.t0) return; S.t0=Date.now(); S.tick=setInterval(()=>{$("#clock").textContent=mmss(Math.floor((Date.now()-S.t0)/1000))},500); }
 function stopClock(){ clearInterval(S.tick); }
