@@ -1501,7 +1501,7 @@ const DL_AT={tooth:"tooth",hosp:"care",leak:"leak"};
 function dlChips(key){ const g=DLDOC[key]; if(!g) return ""; return `<div style="margin:6px 0 2px"><span class="note"><b>${g.t}</b> 내려받기</span><div class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div></div>`; }
 function showForms(){
   const typ=Object.keys(ITEMS).filter(t=>t!=="재해"&&t!=="상해(재해)");
-  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 흥국 · 하나 · 라이나손보 · 신한EZ · 수협공제 · 교직원공제 · 신한라이프 / 펫: DB · KB · 메리츠 · NH농협 · 한화 · 라이나손보 · 신한EZ / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 · 흥국 · 라이나손보 (나머지는 준비 중 — [보험사별 청구서 미리보기]에서 확인)</p></div>
+  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 흥국 · 하나 · 라이나손보 · 신한EZ · 수협공제 · 교직원공제 · AIG · AXA · 예별 · 신한라이프 / 펫: DB · KB · 메리츠 · NH농협 · 한화 · 라이나손보 · 신한EZ / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 · 흥국 · 라이나손보 (나머지는 준비 중 — [보험사별 청구서 미리보기]에서 확인)</p></div>
   <div><b>병원·고객이 따로 작성하는 서식</b><p class="note" style="margin:4px 0 0">치과치료 확인서 · 간병인 사용 확인서 · 배상책임 보험금 청구서 · 표적항암약물허가치료 확인서 — 양식은 보험사마다 달라 각 보험사 공식 홈페이지의 서식 자료실에서 받습니다.</p>
   ${dlChips("tooth")}${dlChips("care")}${dlChips("leak")}
   <p class="note" style="margin:4px 0 0">목록에 없는 보험사는 보험사 홈페이지 → 고객센터(또는 보상) → 보험금 청구 → 청구서류·서식 메뉴에서 받습니다. 원본 파일을 주시면 여기에 추가합니다.</p></div>
