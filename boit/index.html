@@ -1113,7 +1113,7 @@ const INS_RAW=[
  ["lt","롯데손해보험","son","1588-3344","0507-333-9999","","https://www.lotteins.co.kr/web/C/D/C/cdc_claim_0502.jsp",""],
  ["hn","하나손해보험","son","1566-3000","0504-3764-0765","","https://www.hanainsure.co.kr",""],
  ["aig","AIG손해보험","son","","02-2011-4607","","",""],
- ["axa","AXA손해보험","son","","V","","",""],
+ ["axa","AXA손해보험","son","1566-2266","V","","",""],
  ["mg","새마을금고공제","son","","02-3016-7674","","","300만원 이하 청구만 가능 · 청구 가능 시간 09:30~15:30"],
  ["shez","신한EZ손해보험","son","","0505-987-8282","","",""],
  ["yb","예별손해보험","son","","0505-088-1646","","","팩스 0505-088-1646~1649 (4회선)"],
@@ -1134,7 +1134,7 @@ const INS_RAW=[
  ["abl","ABL생명","life","1588-6500","02-3299-5544","","https://www.abllife.co.kr",""],
  ["hkl","흥국생명","life","1588-2288","V","","https://www.heungkuklife.co.kr",""],
  ["dbl","DB생명","life","1588-3131","0505-129-3134","","https://www.idblife.com/support/guide/acbf_clm",""],
- ["im","iM라이프","life","","V","","",""],
+ ["im","iM라이프","life","1588-4770","V","","",""],
  ["hnl","하나생명","life","1577-1112","V","","",""],
  ["kbl","KB라이프생명","life","1588-9922","02-390-4629","","https://www.kblife.co.kr",""],
  ["fb","푸본현대생명","life","1577-3311","0505-106-0311","","",""],
@@ -1142,14 +1142,13 @@ const INS_RAW=[
  ["cdf","카디프생명","life","1688-1118","V","","",""],
  ["nhl","NH농협생명","life","","02-6971-6040","","",""],
  ["lp","교보라이프플래닛생명","life","1588-1810","V","","",""],
- ["orl","오렌지라이프","life","","V","","",""],
- ["chb","처브라이프","life","","02-3480-7801","","",""],
+ ["chb","처브라이프","life","1599-4600","02-3480-7801","","",""],
 ];
 /* 보험사 로고: 각 보험사 공식 홈페이지 아이콘(파비콘)을 불러오고, 실패하면 머리글자로 표시 (GROW ON과 같은 방식) */
 const INS_LOGO={kb:["kbinsure.co.kr","#FFB81C"],ss:["samsungfire.com","#1428A0"],hd:["hi.co.kr","#004EA2"],db:["idbins.com","#F58220"],mz:["meritzfire.com","#E4032E"],hw:["hwgeneralins.com","#FF4800"],hk:["heungkukfire.co.kr","#F7941D"],nh:["nhfire.co.kr","#00A366"],ln:["chubb.com","#003D6E"],lt:["lotteins.co.kr","#ED1C24"],hn:["hanainsure.co.kr","#009490"],
  aig:["aig.co.kr","#001871"],axa:["axa.co.kr","#00008F"],mg:["kfcc.co.kr","#0055A5"],shez:["shinhanez.co.kr","#0046FF"],yb:["","#5B6B8C"],crt:["carrotins.com","#FF6B00"],post:["epostbank.go.kr","#E8380D"],sh_s:["suhyup-bank.com","#0B4DA2"],cu:["cu.co.kr","#E5B200"],ktcu:["ktcu.or.kr","#E4007F"],
  mr:["life.miraeasset.com","#0068B7"],sl:["samsunglife.com","#1428A0"],kyobo:["kyobo.com","#0066B3"],hwl:["hanwhalife.com","#FF4800"],kdb:["kdblife.co.kr","#004EA2"],sh:["shinhanlife.co.kr","#0046FF"],lnl:["lina.co.kr","#003D6E"],met:["metlife.co.kr","#00A9E0"],dy:["myangel.co.kr","#FF6600"],abl:["abllife.co.kr","#002856"],hkl:["heungkuklife.co.kr","#F7941D"],dbl:["idblife.com","#F58220"],im:["imlifeins.co.kr","#00AEEF"],hnl:["hanalife.co.kr","#009490"],kbl:["kblife.co.kr","#FFB81C"],fb:["fubonhyundai.com","#005BAC"],
- aia:["aia.co.kr","#D31145"],cdf:["cardif.co.kr","#00965E"],nhl:["nhlife.co.kr","#00A366"],lp:["lifeplanet.co.kr","#00B2A9"],orl:["","#F28C00"],chb:["","#003D6E"]};
+ aia:["aia.co.kr","#D31145"],cdf:["cardif.co.kr","#00965E"],nhl:["nhlife.co.kr","#00A366"],lp:["lifeplanet.co.kr","#00B2A9"],chb:["","#003D6E"]};
 function insLogo(i){ const [d,col]=INS_LOGO[i.id]||["","#6B7280"], ini=esc((m=>m?m[0].slice(0,2):i.name.slice(0,1))(i.name.match(/^[A-Za-z]+/)));
   if(!d) return `<span class="ilg-fb" style="background:${col}">${ini}</span>`;
   return `<img class="ilg" src="https://icons.duckduckgo.com/ip3/${encodeURIComponent(d)}.ico" alt="" loading="lazy" data-ini="${ini}" data-col="${col}" data-fallback="https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=64" onerror="insLogoFail(this)">`; }
@@ -1397,7 +1396,23 @@ Step 1. 청구 서류 작성 및 준비
 Step 2. 팩스번호 확인
 - 보험컨택센터 1577-3993 전화
 - 청구용 팩스번호 확인 후 서류 발송`,tel:"1577-3993"}};
-function vfGuide(id){ const g=VF_GUIDE[id]; if(!g) return; infoDlg(g.t,`<pre id="vfg-text" style="white-space:pre-wrap;font:inherit;font-size:14px;line-height:1.7;margin:0;background:var(--accent-soft);padding:12px;border-radius:8px">${esc(g.text)}</pre><div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="vfg-copy">안내문 복사</button><a class="btn" href="tel:${g.tel.replace(/-/g,"")}">${g.tel} 전화</a><span class="note" id="vfg-msg"></span></div>`); }
+/* 보험사 서식에 적힌 전화 메뉴·방법 (출처: 각 사 청구서) */
+const VF_TIP={hkl:"전화 후 9번 → 3번 → 2번 (흥국생명 청구서 기재)",hnl:"전화 후 4번 사고보험금 (하나생명 청구서 기재)",axa:"사고 접수 후 문자로 받은 가상 FAX번호 사용 (AXA손해보험 청구서 기재)"};
+function smsLink(id){ const ph=String((S.cl&&S.cl.phone)||"").replace(/\D/g,""); const body=encodeURIComponent(vfSms(id));
+  return ph.length>=10?`<a class="btn" href="sms:${ph}?&body=${body}">고객에게 문자 보내기</a>`:`<span class="note">고객 휴대폰번호를 넣으면 문자 보내기 버튼이 생깁니다</span>`; }
+function vfInfo(id){ if(VF_GUIDE[id]) return VF_GUIDE[id]; const i=insBy(id); if(!i||!i.cs) return null;
+  return {t:i.name+" 청구 방법",tel:i.cs,text:`[${i.name} 보험금 청구 방법]
+
+Step 1. 청구 서류 준비
+- 보험금 청구서·개인(신용)정보 동의서 (설계사가 작성)
+- 진단서·영수증 등 병원 서류
+
+Step 2. 청구용 팩스번호 받기
+- ${i.name} 고객센터 ${i.cs} 전화${VF_TIP[id]?"\n- "+VF_TIP[id]:""}
+- 「보험금 청구 서류를 팩스로 보내려 한다」고 말씀하시고 청구용(가상) 팩스번호를 받으세요`}; }
+function vfSms(id){ const g=vfInfo(id); if(!g) return ""; const me=(typeof ME!=="undefined"&&ME.name)?`담당 설계사 ${ME.name}${ME.phone?" ("+ME.phone+")":""}`:"담당 설계사";
+  return `${S.cl&&S.cl.name?S.cl.name+"님, ":""}보험금 청구를 위해 ${insBy(id).name} 청구용 팩스번호가 필요합니다.\n\n${g.text}\n\nStep 3. 받으신 팩스번호를 ${me}에게 문자로 알려주시면 서류를 대신 보내드립니다.`; }
+function vfGuide(id){ const g=vfInfo(id); if(!g) return; infoDlg(g.t,`<pre id="vfg-text" style="white-space:pre-wrap;font:inherit;font-size:14px;line-height:1.7;margin:0;background:var(--accent-soft);padding:12px;border-radius:8px">${esc(vfSms(id))}</pre><div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="vfg-copy">안내문 복사</button>${smsLink(id)}<a class="btn" href="tel:${g.tel.replace(/-/g,"")}">${g.tel} 전화</a><span class="note" id="vfg-msg"></span></div>`); }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-vfg]"); if(b){ e.preventDefault(); e.stopPropagation(); vfGuide(b.dataset.vfg); return; }
   if(e.target.closest("#vfg-copy")){ const t=$("#vfg-text").textContent; (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{$("#vfg-msg").textContent="복사했습니다. 고객 문자·카톡에 붙여넣으세요.";}).catch(()=>{ const r=document.createRange(); r.selectNodeContents($("#vfg-text")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); $("#vfg-msg").textContent="글자가 선택됐습니다. Ctrl+C로 복사하세요."; }); } },true);
 function infoDlg(t,html){ $("#info-t").textContent=t; $("#info-body").innerHTML=html; $("#info-dlg").hidden=false; }
@@ -1504,6 +1519,7 @@ function showGuide(){ infoDlg("보잇 보험금 청구 이용 방법",GUIDE.map(
 /* 보험사별 서식 내려받기 (대표 제공 원본, 2026-10-15) — 서류 종류별로 필요서류 항목 아래에 표시 */
 const DLDOC={
   tooth:{t:"치과치료확인서 (치과에서 작성)",f:[["KB손해보험","dental_kb.pdf"],["메리츠화재","dental_meritz.pdf"],["DB손해보험","dental_db.pdf"],["삼성화재","dental_samsung.pdf"],["현대해상","dental_hyundai.pdf"],["롯데손해보험","dental_lotte.pdf"],["NH농협손해보험","dental_nh.pdf"],["흥국화재","dental_heungkuk.pdf"],["라이나손해보험","dental_lina.pdf"]]},
+  toothL:{t:"치과치료확인서 (치과에서 작성)",f:[["삼성생명","dental_samsunglife.pdf"],["한화생명","dental_hanwhalife.pdf"],["신한라이프","dental_shinhanlife.pdf"],["미래에셋생명","dental_miraelife.pdf"],["라이나생명","dental_linalife.pdf"],["동양생명","dental_dylife.pdf"],["DB생명","dental_dblife.pdf"],["ABL생명","dental_abllife.pdf"]]},
   care:{t:"간병인 사용 확인서 · 간병일지 (간병인 쓴 경우)",f:[["KB손해보험 간병인 사용 확인서","care_kb.pdf"],["삼성화재 간병사실확인서","care_samsung.pdf"],["삼성화재 간병일지","carelog_samsung.pdf"],["DB손해보험 간병인 서비스 신청서","care_db.pdf"]]},
   leak:{t:"누수사고 청구서류 묶음 (청구서·경위서·기술소견서)",f:[["DB손해보험 배상책임 누수사고 전용","leak_db.pdf"]]},
   silson:{t:"실손 여러 곳 가입 · 단체보험",f:[["KB손해보험 실손 청구서류 접수대행 신청서","silson_relay_kb.pdf"],["삼성화재 단체보험 청구서 (임직원)","group_samsung.pdf"]]},
@@ -1514,7 +1530,7 @@ const SF_TABS=[["son","손해보험",["질병","상해","치아"]],["life","생�
 function sfDocs(k){ const ds=(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<span class="sf-doc" title="${esc(CDOC[d][1]||"")}">${esc(CDOC[d][0])}</span>`);
   if(k==="hosp") ds.push(`<span class="sf-doc">간병인 사용 확인서 (간병인 쓴 경우)</span>`);
   return ds.join("")||'<span class="note">보험사 확인</span>'; }
-function sfDl(key,tab){ const g=DLDOC[key]; if(!g||(tab!=="son"&&tab!=="liab")) return ""; return g.f.map(([n,f])=>`<a class="sf-dl" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">⬇ ${esc(n)}</a>`).join(""); }
+function sfDl(key,tab){ if(tab==="life"&&DLDOC[key+"L"]) key+="L"; else if(tab!=="son"&&tab!=="liab") return ""; const g=DLDOC[key]; if(!g) return ""; return g.f.map(([n,f])=>`<a class="sf-dl" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">⬇ ${esc(n)}</a>`).join(""); }
 function showForms(tab){ tab=tab||(S.cat&&SF_TABS.some(t=>t[0]===S.cat)?S.cat:"son"); const T=SF_TABS.find(t=>t[0]===tab);
   infoDlg("사고유형 · 청구항목별 필요서류",`<div class="seg" style="display:flex">${SF_TABS.map(([k,n])=>`<button class="btn" type="button" data-sft="${k}" aria-pressed="${k===tab}" style="flex:1">${n}</button>`).join("")}</div>
   ${T[2].map(t=>`<details class="sf-type" ${T[2].length<=2||t===T[2][0]?"open":""}><summary>${t==="pet"?"펫보험":t}</summary><div class="sf-grid">
@@ -1630,10 +1646,10 @@ function secIns(){ const list=INSURERS.filter(i=>i.cats.includes(S.cat)), pm=S.c
   return `<section class="fsec"><h3><i>1</i>보험사</h3>
   <div class="cattabs" role="tablist">${Object.entries(CATS).map(([k,v])=>`<button role="tab" aria-selected="${S.cat===k}" data-cat="${k}">${v}</button>`).join("")}</div>
   <div class="insgrid">${list.map(i=>{const on=S.ins.includes(i.id);
-    return `<button class="insb" data-ins="${i.id}" aria-pressed="${on}"><b class="insname">${insNameFlat(i)}</b><span>${i.virtual?(VF_GUIDE[i.id]?`<span class="pill warn" role="button" tabindex="0" data-vfg="${i.id}" title="청구 방법 안내 보기" style="cursor:pointer;text-decoration:underline">가상팩스번호 안내</span>`:'<span class="pill warn">가상팩스번호</span>'):i.manual||pm?'<span class="pill ex">번호 입력</span>':`<span class="fax">${i.fax}</span>`}</span></button>`;}).join("")}</div>
+    return `<button class="insb" data-ins="${i.id}" aria-pressed="${on}"><b class="insname">${insNameFlat(i)}</b><span>${i.virtual?(vfInfo(i.id)?`<span class="pill warn" role="button" tabindex="0" data-vfg="${i.id}" title="청구 방법 안내 보기" style="cursor:pointer;text-decoration:underline">가상팩스번호 안내</span>`:'<span class="pill warn">가상팩스번호</span>'):i.manual||pm?'<span class="pill ex">번호 입력</span>':`<span class="fax">${i.fax}</span>`}</span></button>`;}).join("")}</div>
   ${S.ins.length?`<div class="selbar"><b>선택 ${S.ins.length}곳</b> ${S.ins.map(id=>`<span class="chip">${insBy(id).name}<button data-ins="${id}" aria-label="선택 해제">✕</button></span>`).join("")}${msg?`<span class="note err">${msg}</span>`:""}</div>`:msg?`<p class="note err">${msg}</p>`:""}
   ${need.map(id=>{const i=insBy(id), nd=faxNeed(id), hint=i.fax&&nd==="manual"?`장기보험 청구팩스 ${i.fax} — ${CATS[S.cat]} 접수번호가 같은지 확인`:i.note||"";
-    return `<div class="ins-line"><b>${i.name}</b><div class="field"><label for="vf-${id}">${nd==="virtual"?"고객이 받은 가상 팩스번호":"보험사 접수 팩스번호"}</label><input id="vf-${id}" data-vf="${id}" inputmode="tel" placeholder="예: 0505-123-4567" value="${esc(S.vfax[id]||"")}">${hint?`<span class="note">${esc(hint)}</span>`:""}</div>${i.cs?`<button class="btn sm" data-ask="${id}">고객에게 번호 요청 문자</button>`:""}</div>`;}).join("")}<p class="note" id="asknote" style="margin:6px 0 0"></p>
+    return `<div class="ins-line"><b>${i.name}</b><div class="field"><label for="vf-${id}">${nd==="virtual"?"고객이 받은 가상 팩스번호":"보험사 접수 팩스번호"}</label><input id="vf-${id}" data-vf="${id}" inputmode="tel" placeholder="예: 0505-123-4567" value="${esc(S.vfax[id]||"")}">${hint?`<span class="note">${esc(hint)}</span>`:""}</div>${nd==="virtual"&&i.cs?`<button class="btn sm" data-vfg="${id}">고객센터 안내 문자</button>`:""}</div>`;}).join("")}<p class="note" id="asknote" style="margin:6px 0 0"></p>
   ${S.ins.filter(id=>insBy(id).note&&faxNeed(id)==="fixed").map(id=>`<p class="note err" style="margin:4px 0 0">${insBy(id).name}: ${esc(insBy(id).note)}</p>`).join("")}
   ${S.cat==="son"||S.cat==="life"?`<div style="margin-top:10px"><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="group" ${S.acc.group?"checked":""}> 단체보험도 함께 청구</label>
     ${S.acc.group?`<div class="fgrid" style="margin-top:6px"><div class="field"><label for="grp-ins">단체보험 보험사</label><select id="grp-ins"><option value="">선택</option>${INSURERS.filter(i=>i.k==="son"||i.k==="life").map(i=>`<option value="${i.id}" ${S.acc.groupIns===i.id?"selected":""}>${esc(i.name)}</option>`).join("")}</select></div>
