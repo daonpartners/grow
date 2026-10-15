@@ -989,7 +989,7 @@ tr.sel td{background:var(--accent-soft)}
             <div class="row" style="margin-top:8px"><button class="btn primary" id="mn-share" type="button">공유하기 (카카오톡 등)</button><button class="btn" id="mn-png" type="button">이미지 저장</button><button class="btn" id="mn-copy" type="button">텍스트 복사</button></div>
             <p class="note" id="mn-msg" style="margin:8px 0 0"></p>
             <p class="note" style="margin:8px 0 0">휴대폰에서 [공유하기]를 누르면 카카오톡을 골라 고객에게 바로 보낼 수 있습니다. PC에서는 이미지를 저장한 뒤 카카오톡 PC에 끌어다 놓으면 됩니다.</p></div>
-          <div class="panel"><h2>자료 출처</h2><p class="note" style="margin:6px 0 0">지수·환율·뉴스 목록은 매일 아침 운영자가 갱신하는 다온 데일리뉴스 자료를 씁니다. 뉴스는 제목만 싣고 원문 링크를 붙입니다.</p></div>
+          <div class="panel"><h2>자료 출처</h2><p class="note" style="margin:6px 0 0">매일 오전 6시 20분에 자동으로 갱신됩니다. 지수·환율은 야후 파이낸스, 날씨는 Open-Meteo, 뉴스는 구글 뉴스(보험·경제, 최근 1일)의 제목과 언론사·원문 링크만 싣습니다. 요약을 만들지 않아 내용을 지어내지 않습니다.</p></div>
         </div>
       </div>
     </section>
@@ -2696,8 +2696,8 @@ const MN={data:null,theme:"paper",err:""};
 const MN_THEMES=[["paper","신문",""],["t-blue","블루",""],["t-green","그린",""],["t-dark","다크",""]];
 async function mnLoad(){
   if(MN.data||MN.err) return;
-  try{ const r=await fetch("../dailynews/latest.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok) throw 0; MN.data=await r.json(); }
-  catch(e){ MN.err="뉴스 자료를 불러오지 못했습니다. (grow.ai.kr/boit 주소에서 열어야 불러옵니다)"; }
+  for(const u of ["morning.json","../dailynews/latest.json"]){ try{ const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"}); if(!r.ok) continue; const j=await r.json(); if(!MN.data||(j.date||"")>(MN.data.date||"")) MN.data=j; }catch(e){} }
+  if(!MN.data) MN.err="뉴스 자료를 불러오지 못했습니다. (grow.ai.kr/boit 주소에서 열어야 불러옵니다)";
 }
 function mnText(){ const d=MN.data; if(!d) return ""; const L=[];
   L.push(`[모닝뉴스] ${d.dateLabel||d.date}`);
@@ -2718,7 +2718,7 @@ function mnCard(){ const d=MN.data;
   return `<div class="mnc ${MN.theme==="paper"?"":MN.theme}" id="mn-node">
     <div class="mh"><b>MORNING NEWS</b><span>${esc(d.dateLabel||d.date||"")}</span></div>
     <div class="mb"><div>
-      ${mk?`<h4>주요 지수</h4>${mk}`:""}
+      ${mk?`<h4>주요 지수${d.updatedAt?` <span style="font-size:11px;font-weight:400">${(()=>{const t=new Date(d.updatedAt);return isNaN(t)?"":pad2(t.getHours())+":"+pad2(t.getMinutes())+" 기준";})()}</span>`:""}</h4>${mk}`:""}
       ${wx?`<h4 style="margin-top:12px">오늘 날씨</h4><div class="wx">${wx}</div>`:""}
       ${d.quote&&d.quote.text?`<h4 style="margin-top:12px">오늘의 한마디</h4><p class="q">“${esc(d.quote.text)}”<br>— ${esc(d.quote.author||"")}</p>`:""}
     </div><div>${news||"<p>오늘 뉴스가 아직 없습니다.</p>"}</div></div>
@@ -2832,15 +2832,17 @@ async function qtPdf(){ const m=$("#qt-msg"); const res=$("#qt-res table"); if(!
   catch(err){ flash(m,"PDF를 만들지 못했습니다."); } finally{ sh.hidden=true; sh.innerHTML=""; } }
 
 /* ================= 보장표 (현재 · 제안) — 제안서 앞장 ================= */
-const CG={on:true};
+const CG={on:true,w:{}}; /* 보장표 작업값: 고객 계약에 저장하지 않고 이 화면에서만 씀 */
+function cgW(c){ if(!CG.w[c.id]) CG.w[c.id]={v:{},prop:{name:"",prem:0,cov:{}}}; return CG.w[c.id]; }
 const LONG=k=>!["자동차","화재","배상책임"].includes(k.kind);
 function cgContracts(c){ return CONTRACTS.filter(k=>k.cust===c.id&&LONG(k)); }
-function cgVal(k,key){ return (k.cov||[]).filter(x=>rowOf(x.name)===key).reduce((a,x)=>a+toMan(x.amount),0); }
-function cgSet(k,key,v){ k.cov=(k.cov||[]).filter(x=>rowOf(x.name)!==key); if(v>0) k.cov.push({name:CRK[key][2],amount:v+"만원"}); }
-function cgProp(c){ if(!c.prop) c.prop={name:"",prem:0,cov:{}}; return c.prop; }
+function cgBase(k,key){ return (k.cov||[]).filter(x=>rowOf(x.name)===key).reduce((a,x)=>a+toMan(x.amount),0); }
+function cgVal(k,key){ const w=cgW(CUSTOMERS.find(c=>c.id===k.cust)||{id:k.cust}).v, id=CONTRACTS.indexOf(k)+"|"+key; return id in w?w[id]:cgBase(k,key); }
+function cgSet(k,key,v){ cgW(CUSTOMERS.find(c=>c.id===k.cust)||{id:k.cust}).v[CONTRACTS.indexOf(k)+"|"+key]=v; }
+function cgProp(c){ return cgW(c).prop; }
 function renderCG(){ const box=$("#cg-edit"); if(!box) return; const c=docCust("proposal"); const ks=cgContracts(c).slice(0,6), pr=cgProp(c);
   let g=""; box.innerHTML=`<div class="row between"><h2>보장표 <span class="note" style="font-weight:400">현재 가입 담보 → 제안 상품 (만원)</span></h2><label class="row note" style="gap:6px"><input type="checkbox" id="cg-on" ${CG.on?"checked":""}> 제안서 첫 장에 넣기</label></div>
-  <p class="note" style="margin:4px 0 0">계약별 담보 금액은 고객관리의 계약 담보와 같은 자료입니다. 여기서 고치면 계약 정보에도 저장됩니다. ${ks.length?"":"<b>이 고객은 장기·건강 계약이 없습니다. 고객관리에서 계약을 먼저 등록하세요.</b>"}</p>
+  <p class="note" style="margin:4px 0 0">계약 담보를 불러와 보여줍니다. 여기서 고친 금액은 <b>이 제안서에만 쓰이고 고객 계약에는 저장되지 않습니다</b> (화면을 닫으면 사라짐). ${ks.length?"":"<b>이 고객은 장기·건강 계약이 없습니다. 고객관리에서 계약을 먼저 등록하세요.</b>"}</p>
   <div class="row" style="margin-top:8px;gap:8px"><input id="cg-pname" placeholder="제안 상품명" value="${esc(pr.name)}" style="flex:1;min-width:180px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--surface)"><input id="cg-pprem" inputmode="numeric" placeholder="제안 월보험료(원)" value="${pr.prem||""}" style="width:160px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--surface)"></div>
   <div class="tbl-wrap" style="margin-top:8px"><table class="cg-t"><thead><tr><th>담보</th>${ks.map((k,j)=>`<th style="text-align:right">${esc(k.insurer)}<br><span class="note" style="font-weight:400">${esc((k.product||"").slice(0,14))}</span></th>`).join("")}<th style="text-align:right">현재 합계</th><th style="text-align:right;color:var(--accent)">제안</th></tr></thead><tbody>
   ${CR.map(r=>{ const head=r[0]!==g?`<tr><td class="g" colspan="${ks.length+3}">${r[0]}</td></tr>`:""; g=r[0]; const sum=ks.reduce((a,k)=>a+cgVal(k,r[1]),0);
