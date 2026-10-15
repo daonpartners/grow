@@ -1479,7 +1479,7 @@ function showForms(){
 document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGuide(); if(e.target.closest("#cl-forms")) showForms(); });
 function startClock(){ if(S.t0) return; S.t0=Date.now(); S.tick=setInterval(()=>{$("#clock").textContent=mmss(Math.floor((Date.now()-S.t0)/1000))},500); }
 function stopClock(){ clearInterval(S.tick); }
-function resetClaim(){ stopClock(); Object.assign(S,{step:0,cat:S.cat||"son",cl:{name:"",rrn:"",phone:"",save:true,idType:"none",idDate:"",pet:"",petNo:"",petBreed:"",petSex:"",petBirth:"",petColor:"",victim:"",victimPhone:"",same:true,holder:"",holderRel:"",guide:"fc"},acc:{date:"",type:"",items:{},memo:"",place:"",damage:"",acct:"paid",group:false,support:false,bank:"",acctNo:"",acctName:""},sign:{mode:"face",done:false,req:false},docs:{},ins:[],vfax:{},t0:null,sending:false,sent:false}); Object.values(S.docs||{}).flat().forEach(f=>f.url&&URL.revokeObjectURL(f.url)); S.docs={}; $("#clock").textContent="00:00"; }
+function resetClaim(){ stopClock(); Object.assign(S,{step:0,cat:S.cat||"son",cl:{name:"",rrn:"",phone:"",save:true,idType:"none",idDate:"",pet:"",petNo:"",petBreed:"",petSex:"",petBirth:"",petColor:"",victim:"",victimPhone:"",same:true,holder:"",holderRel:"",holderRrn:"",holderPhone:"",repName:"",repRel:"",repPhone:"",guide:"fc"},acc:{date:"",type:"",items:{},memo:"",place:"",damage:"",acct:"paid",group:false,support:false,bank:"",acctNo:"",acctName:""},sign:{mode:"face",done:false,req:false},docs:{},ins:[],vfax:{},t0:null,sending:false,sent:false}); Object.values(S.docs||{}).flat().forEach(f=>f.url&&URL.revokeObjectURL(f.url)); S.docs={}; $("#clock").textContent="00:00"; }
 const LAST=0;
 /* 보험 구분 · 보험사 */
 const CATS={son:"손해보험",life:"생명보험",pet:"펫보험",liab:"일반배상"};
@@ -1529,10 +1529,12 @@ function reqDocs(){
   itemsFor().filter(([k])=>S.acc.items[k]).forEach(([k])=>(ITEM_DOCS[k]||[]).forEach(add));
   if(S.ins.some(id=>ID_CAT[id]==="life")&&S.acc.type==="상해(재해)") add("accproof");
   if(S.cl.idType==="none") keys.unshift("idcopy");
+  if(isMinor()) keys.push("famcert");
   if(S.acc.acct==="new") keys.push("bank");
   return keys;
 }
 CDOC.idcopy=["신분증 사본","신분증 정보를 입력하지 않으면 필요","L"];
+CDOC.famcert=["가족관계증명서 + 법정대리인 신분증 사본","미성년자 청구 · 친권자 확인 (법원 후견인은 판결문)","L"];
 CDOC.bank=["통장 사본","새 계좌로 받을 때 · 수익자 명의","L"];
 const allFiles=()=>Object.values(S.docs).flat();
 const digits=v=>(v||"").replace(/\D/g,"");
@@ -1560,7 +1562,8 @@ function drawPick(){ const el=$("#cs-list"); if(el) el.innerHTML=custTable(match
 function formMissing(){ const m=[];
   if(!S.ins.length) m.push("보험사");
   const er=clErrors(); if(er.includes("name")) m.push("이름"); if(er.includes("rrn")) m.push("주민등록번호"); if(er.includes("phone")) m.push("휴대폰번호");
-  if(S.cat!=="pet"&&!S.cl.same&&!S.cl.holder.trim()) m.push("계약자 이름");
+  if(S.cat!=="pet"&&!S.cl.same){ if(!S.cl.holder.trim()) m.push("계약자 이름"); if(digits(S.cl.holderRrn).length<10) m.push("계약자 주민(사업자)번호"); }
+  if(isMinor()){ if(!(S.cl.repName||"").trim()) m.push("법정대리인 이름"); if(!S.cl.repRel) m.push("법정대리인 관계"); if(!phoneOk(S.cl.repPhone)) m.push("법정대리인 휴대폰"); }
   if(!S.acc.date) m.push("사고일자"); if(!S.acc.type) m.push("사고유형"); else if(!Object.values(S.acc.items).some(Boolean)) m.push("청구항목");
   if(S.acc.acct==="new"&&!(S.acc.bank&&digits(S.acc.acctNo).length>=8&&S.acc.acctName.trim())) m.push("새 계좌 정보");
   if(S.acc.acct==="saved"&&!(savedAcct()&&digits(S.acc.acctNo).length>=8)) m.push("기존 계좌 (이름·휴대폰이 고객정보와 같아야 함)");
@@ -1588,19 +1591,38 @@ function secIns(){ const list=INSURERS.filter(i=>i.cats.includes(S.cat)), pm=S.c
     return `<div class="ins-line"><b>${i.name}</b><div class="field"><label for="vf-${id}">${nd==="virtual"?"고객이 받은 가상 팩스번호":"보험사 접수 팩스번호"}</label><input id="vf-${id}" data-vf="${id}" inputmode="tel" placeholder="예: 0505-123-4567" value="${esc(S.vfax[id]||"")}">${hint?`<span class="note">${esc(hint)}</span>`:""}</div>${i.cs?`<button class="btn sm" data-ask="${id}">고객에게 번호 요청 문자</button>`:""}</div>`;}).join("")}<p class="note" id="asknote" style="margin:6px 0 0"></p>
   ${S.ins.filter(id=>insBy(id).note&&faxNeed(id)==="fixed").map(id=>`<p class="note err" style="margin:4px 0 0">${insBy(id).name}: ${esc(insBy(id).note)}</p>`).join("")}
   ${S.cat==="son"||S.cat==="life"?`<div class="row" style="gap:18px;margin-top:10px"><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="group" ${S.acc.group?"checked":""}> 단체실손도 함께 청구</label><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="support" ${S.acc.support?"checked":""}> 상해·질병 치료지원금 청구</label></div>`:""}</section>`; }
+/* ===== 계약자≠피보험자 · 미성년자 청구 (2026-10-15) =====
+   미성년자: 민법 제4조(만19세 성년) · 제5조(법률행위는 법정대리인 동의) · 제911조(친권자가 법정대리인) → 법정대리인이 청구·서명
+   개인정보 동의: 만14세 미만은 법정대리인 동의 필요 (개인정보보호법 제22조의2) */
+function rrnBirth(v){ const d=digits(v); if(d.length<7) return null; const g=+d[6], cen=(g===1||g===2||g===5||g===6)?1900:(g===3||g===4||g===7||g===8)?2000:(g===9||g===0)?1800:null; if(!cen) return null; return [cen+ +d.slice(0,2),+d.slice(2,4),+d.slice(4,6)]; }
+function rrnAge(v){ const b=rrnBirth(v); if(!b) return null; const t=today().split("-").map(Number); let a=t[0]-b[0]; if(t[1]<b[1]||(t[1]===b[1]&&t[2]<b[2])) a--; return a; }
+function isMinor(){ const a=rrnOk(S.cl.rrn)?rrnAge(S.cl.rrn):null; return a!=null&&a<19; }
+function holderBlock(){ if(S.cat==="pet") return "";
+  return `<div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center"><b style="font-size:13px;width:84px">계약자</b><div class="seg"><button class="btn sm" type="button" data-same="1" aria-pressed="${S.cl.same}">피보험자와 같음</button><button class="btn sm" type="button" data-same="0" aria-pressed="${!S.cl.same}">다름</button></div></div>
+  ${S.cl.same?"":`<div class="fgrid" style="margin-top:6px"><div class="field"><label for="cl-holder">계약자 이름</label><input id="cl-holder" value="${esc(S.cl.holder)}" autocomplete="off" placeholder="계약자 이름 (법인은 상호)"></div>
+    <div class="field"><label for="cl-holderrel">피보험자와의 관계</label><select id="cl-holderrel">${["","부모","배우자","자녀","형제자매","본인 사업장(법인)","기타"].map(v=>`<option ${S.cl.holderRel===v?"selected":""} value="${v}">${v||"관계 선택"}</option>`).join("")}</select></div>
+    <div class="field"><label for="cl-holderrrn">계약자 주민등록번호</label><input id="cl-holderrrn" inputmode="numeric" maxlength="14" autocomplete="off" value="${esc(fmtRrn(S.cl.holderRrn||""))}" placeholder="000000-0000000 (법인은 사업자번호)"></div>
+    <div class="field"><label for="cl-holderphone">계약자 휴대폰번호</label><input id="cl-holderphone" inputmode="tel" maxlength="13" autocomplete="off" value="${esc(fmtPhone(S.cl.holderPhone||""))}" placeholder="010-0000-0000"></div></div>
+    <p class="note" style="margin:4px 0 0">계약자 서명도 함께 받습니다. 계약자 주민등록번호도 청구서 작성에만 쓰고 발송 후 파기합니다.</p>`}`; }
+function minorBlock(){ if(!isMinor()) return ""; const a=rrnAge(S.cl.rrn);
+  return `<div class="banner" style="margin-top:12px;display:block"><b>미성년자 청구 (만 ${a}세)</b> — 법정대리인(친권자)이 대신 청구하고 서명합니다 (민법 제5조·제911조).${a<14?" 만 14세 미만이라 개인정보 동의도 법정대리인이 합니다 (개인정보보호법 제22조의2).":""} 가족관계증명서가 필요서류에 추가됩니다.</div>
+  ${!S.cl.same&&S.cl.holder&&S.cat!=="pet"?`<button class="btn sm" type="button" id="rep-from-holder" style="margin-top:6px">계약자(${esc(S.cl.holder)}) 정보로 채우기</button>`:""}
+  <div class="fgrid" style="margin-top:6px"><div class="field"><label for="cl-repname">법정대리인 이름</label><input id="cl-repname" value="${esc(S.cl.repName||"")}" autocomplete="off" placeholder="부모 이름"></div>
+    <div class="field"><label for="cl-reprel">관계</label><select id="cl-reprel">${["","부","모","후견인"].map(v=>`<option ${S.cl.repRel===v?"selected":""} value="${v}">${v||"관계 선택"}</option>`).join("")}</select></div>
+    <div class="field"><label for="cl-repphone">법정대리인 휴대폰번호</label><input id="cl-repphone" inputmode="tel" maxlength="13" autocomplete="off" value="${esc(fmtPhone(S.cl.repPhone||""))}" placeholder="010-0000-0000"></div></div>
+  <p class="note" style="margin:4px 0 0">부모가 공동친권자면 한 분이 서명해도 됩니다(다른 한 분의 의사에 반하지 않는 경우). 보험사가 공동 서명을 요구하면 다른 한 분 서명을 따로 받습니다.</p>`; }
 function secCl(){ const extra=S.cat==="pet"?`<div class="field"><label for="cl-pet">반려동물 이름</label><input id="cl-pet" value="${esc(S.cl.pet)}" autocomplete="off"></div><div class="field"><label for="cl-petno">동물등록번호</label><input id="cl-petno" value="${esc(S.cl.petNo)}" inputmode="numeric" autocomplete="off"></div><div class="field"><label for="cl-petbreed">품종</label><input id="cl-petbreed" value="${esc(S.cl.petBreed||"")}" placeholder="예: 말티즈" autocomplete="off"></div><div class="field"><label for="cl-petsex">성별</label><select id="cl-petsex">${["","수컷","암컷","중성화 수컷","중성화 암컷"].map(v=>`<option value="${v}" ${(S.cl.petSex||"")===v?"selected":""}>${v||"선택"}</option>`).join("")}</select></div><div class="field"><label for="cl-petbirth">반려동물 생년월일</label><input id="cl-petbirth" type="date" value="${esc(S.cl.petBirth||"")}" max="${today()}"></div><div class="field"><label for="cl-petcolor">털색(모색)</label><input id="cl-petcolor" value="${esc(S.cl.petColor||"")}" placeholder="예: 흰색" autocomplete="off"></div>`
     :S.cat==="liab"?`<div class="field"><label for="cl-victim">피해자 이름 (선택)</label><input id="cl-victim" value="${esc(S.cl.victim)}" autocomplete="off"></div><div class="field"><label for="cl-victimphone">피해자 연락처 (선택)</label><input id="cl-victimphone" value="${esc(S.cl.victimPhone||"")}" inputmode="tel" placeholder="피해자 동의를 받은 경우만" autocomplete="off"></div>`:"";
-  const sum=[S.cl.idType==="none"?"신분증 사본 첨부":"신분증 "+(S.cl.idType==="rrc"?"주민등록증":"운전면허증"), S.cat==="pet"?"":S.cl.same?"계약자=피보험자":"계약자 "+(S.cl.holder||"입력 필요"), "보상안내: "+(S.cl.guide==="fc"?"설계사":"고객")].filter(Boolean).join(" · ");
+  const sum=[S.cl.idType==="none"?"신분증 사본 첨부":"신분증 "+(S.cl.idType==="rrc"?"주민등록증":"운전면허증"), "보상안내: "+(S.cl.guide==="fc"?"설계사":"고객")].filter(Boolean).join(" · ");
   return `<section class="fsec"><h3><i>2</i>${S.cat==="pet"?"보호자·반려동물":"청구 고객"} <span class="note">고객관리에 있는 고객은 이름만 고르면 휴대폰번호가 채워집니다</span></h3>
   <div class="fgrid">
     <div class="field"><label for="cl-name">${S.cat==="pet"?"보호자 이름":"이름"}</label><input id="cl-name" list="dl-cust" autocomplete="off" value="${esc(S.cl.name)}" placeholder="홍길동"><datalist id="dl-cust">${CUSTOMERS.slice(0,500).map(c=>`<option value="${esc(c.name)}">${esc(c.phone)}</option>`).join("")}</datalist><span class="note err" id="er-name"></span></div>
     <div class="field"><label for="cl-rrn">주민등록번호</label><input id="cl-rrn" inputmode="numeric" autocomplete="off" maxlength="14" value="${esc(fmtRrn(S.cl.rrn))}" placeholder="000000-0000000"><span class="note err" id="er-rrn"></span></div>
     <div class="field"><label for="cl-phone">휴대폰번호</label><input id="cl-phone" inputmode="tel" autocomplete="off" maxlength="13" value="${esc(fmtPhone(S.cl.phone))}" placeholder="010-0000-0000"><span class="note err" id="er-phone"></span></div>
     ${extra}</div>
+  ${holderBlock()}${minorBlock()}
   <details class="more" ${S.cl.open?"open":""}><summary>추가 정보 <span class="note">${sum}</span></summary>
     <div class="row" style="gap:6px;margin-top:8px"><span class="note" style="width:84px">신분증</span><div class="seg">${[["none","미입력(사본 첨부)"],["rrc","주민등록증"],["dl","운전면허증"]].map(([k,v])=>`<button class="btn sm" type="button" data-idt="${k}" aria-pressed="${S.cl.idType===k}">${v}</button>`).join("")}</div>${S.cl.idType==="none"?"":`<input id="cl-iddate" type="date" value="${S.cl.idDate}" aria-label="발급일자" style="width:auto">`}</div>
-    ${S.cat==="pet"?"":`<div class="row" style="gap:6px;margin-top:8px"><span class="note" style="width:84px">계약자</span><div class="seg"><button class="btn sm" type="button" data-same="1" aria-pressed="${S.cl.same}">피보험자와 같음</button><button class="btn sm" type="button" data-same="0" aria-pressed="${!S.cl.same}">다름</button></div>
-    ${S.cl.same?"":`<input id="cl-holder" value="${esc(S.cl.holder)}" placeholder="계약자 이름" autocomplete="off" style="width:140px"><select id="cl-holderrel" style="width:auto">${["","부모","배우자","자녀","본인 사업장(법인)","기타"].map(v=>`<option ${S.cl.holderRel===v?"selected":""} value="${v}">${v||"관계 선택"}</option>`).join("")}</select>`}</div>`}
     <div class="row" style="gap:6px;margin-top:8px"><span class="note" style="width:84px">보상 안내</span><div class="seg"><button class="btn sm" type="button" data-guide="fc" aria-pressed="${S.cl.guide==="fc"}">설계사</button><button class="btn sm" type="button" data-guide="cust" aria-pressed="${S.cl.guide==="cust"}">고객</button></div></div>
     <label class="row note" style="margin-top:8px;gap:8px"><input type="checkbox" id="cl-save" ${S.cl.save?"checked":""}> 고객관리에 이름·휴대폰번호 저장 (주민등록번호는 저장 안 함)</label>
   </details>
@@ -1662,9 +1684,11 @@ function bindForm(){
   $("#cl-name").oninput=e=>{S.cl.name=e.target.value; const c=CUSTOMERS.find(c=>c.name===e.target.value.trim()); if(c&&!digits(S.cl.phone)){ S.cl.phone=fmtPhone(c.phone); $("#cl-phone").value=S.cl.phone; } startClock(); upd();};
   $("#cl-rrn").oninput=e=>{const f=fmtRrn(e.target.value); e.target.value=f; S.cl.rrn=f; startClock(); upd();};
   $("#cl-phone").oninput=e=>{const f=fmtPhone(e.target.value); e.target.value=f; S.cl.phone=f; startClock(); upd();};
+  [["cl-holderrrn","holderRrn",fmtRrn],["cl-holderphone","holderPhone",fmtPhone],["cl-repphone","repPhone",fmtPhone]].forEach(([id,k,fm])=>{const el=$("#"+id); if(el) el.oninput=e=>{const f=fm(e.target.value); e.target.value=f; S.cl[k]=f; updSend();};});
+  { const r=$("#cl-rrn"); if(r) r.addEventListener("change",()=>{ const m=isMinor(); if(m!==!!S.cl.wasMinor){ S.cl.wasMinor=m; renderStep(); } }); }
   const sv=$("#cl-save"); if(sv) sv.onchange=e=>{S.cl.save=e.target.checked;};
   const mo=document.querySelector(".fsec details.more"); if(mo) mo.ontoggle=()=>{S.cl.open=mo.open;};
-  [["cl-pet","pet"],["cl-petno","petNo"],["cl-petbreed","petBreed"],["cl-petsex","petSex"],["cl-petbirth","petBirth"],["cl-petcolor","petColor"],["cl-victim","victim"],["cl-victimphone","victimPhone"],["cl-iddate","idDate"],["cl-holder","holder"],["cl-holderrel","holderRel"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{S.cl[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
+  [["cl-pet","pet"],["cl-petno","petNo"],["cl-petbreed","petBreed"],["cl-petsex","petSex"],["cl-petbirth","petBirth"],["cl-petcolor","petColor"],["cl-victim","victim"],["cl-victimphone","victimPhone"],["cl-iddate","idDate"],["cl-holder","holder"],["cl-holderrel","holderRel"],["cl-repname","repName"],["cl-reprel","repRel"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{S.cl[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
   $("#acc-date").oninput=e=>{S.acc.date=e.target.value; updSend();};
   $("#acc-memo").oninput=e=>{S.acc.memo=e.target.value;};
   [["acc-place","place"],["acc-damage","damage"]].forEach(([id,k])=>{const el=$("#"+id); if(el) el.oninput=e=>{S.acc[k]=e.target.value;};});
@@ -1680,7 +1704,7 @@ function bindForm(){
   B.addEventListener("drop",e=>{ e.preventDefault(); n=0; B.classList.remove("dragging"); if(!S.sent&&e.dataTransfer&&e.dataTransfer.files.length) addAllFiles(e.dataTransfer.files); });
   document.addEventListener("paste",e=>{ if($("#stepbody").offsetParent&&!S.sent&&e.clipboardData&&e.clipboardData.files.length){ addAllFiles(e.clipboardData.files); } });
 })();
-function signers(){ return [{k:"ins",label:"피보험자(청구인)",name:S.cl.name}].concat(S.cat!=="pet"&&!S.cl.same?[{k:"hold",label:"계약자",name:S.cl.holder}]:[]); }
+function signers(){ return (isMinor()?[{k:"rep",label:`법정대리인(${S.cl.repRel||"친권자"}) · ${S.cl.name} 대리`,name:S.cl.repName}]:[{k:"ins",label:"피보험자(청구인)",name:S.cl.name}]).concat(S.cat!=="pet"&&!S.cl.same?[{k:"hold",label:"계약자",name:S.cl.holder}]:[]); }
 function signAllDone(){ return signers().every(x=>S.sign.sig&&S.sign.sig[x.k]); }
 function signBlock(){ const sg=S.sign; sg.sig=sg.sig||{}; if(sg.mode==="face") sg.done=signAllDone();
   return `<div style="margin-top:14px"><b style="font-size:14px">고객 서명</b> <span class="note">청구서·개인(신용)정보처리동의서 서명란에 들어갑니다</span></div>
@@ -1690,7 +1714,7 @@ function signBlock(){ const sg=S.sign; sg.sig=sg.sig||{}; if(sg.mode==="face") s
       <div class="signpad"><canvas data-sigk="${x.k}" width="560" height="160" aria-label="${x.label} 서명란"></canvas><span class="ph">여기에 서명하세요 ✍</span><span class="base">(서명)</span></div>
       <div class="sa"><button class="btn sm" type="button" data-sigfull="${x.k}">크게 서명</button><button class="btn sm" type="button" data-sigclr="${x.k}">다시 쓰기</button></div></div>`).join("")}
     <ol class="note ss-guide"><li>휴대폰·태블릿 화면을 고객에게 돌려 주세요.</li><li><b>[크게 서명]</b>을 누르면 화면 전체가 서명판이 됩니다.</li><li>점선 칸 안에 손가락으로 평소 쓰는 서명을 하면 됩니다.</li>${signers().length>1?"<li>계약자와 피보험자가 다르면 두 분 모두 각자 칸에 서명합니다.</li>":""}</ol></div>`
-  :`<div class="banner" style="margin-top:8px"><span>${sg.req?`${esc(S.cl.name)}님(${esc(S.cl.phone)})에게 서명 요청 문자를 보냈습니다. 고객이 링크에서 서명하면 발송할 수 있습니다.${sg.done?" <b>서명 완료</b>":""}`:"고객 휴대폰으로 서명 링크를 보냅니다. 문자비는 충전금에서 차감됩니다."}</span></div>
+  :`<div class="banner" style="margin-top:8px"><span>${sg.req?`${esc(isMinor()?S.cl.repName:S.cl.name)}님(${esc(isMinor()?S.cl.repPhone:S.cl.phone)})${!S.cl.same&&S.cat!=="pet"?`과 계약자 ${esc(S.cl.holder)}님(${esc(S.cl.holderPhone||"번호 미입력")})`:""}에게 서명 요청 문자를 보냈습니다. 고객이 링크에서 서명하면 발송할 수 있습니다.${sg.done?" <b>서명 완료</b>":""}`:"고객 휴대폰으로 서명 링크를 보냅니다. 문자비는 충전금에서 차감됩니다."}</span></div>
   <div class="row" style="margin-top:6px">${sg.req?(sg.done?"":`<button class="btn primary" type="button" id="sign-wait">서명 대기로 저장 (서명하면 자동 발송)</button><button class="btn" type="button" id="sign-sim">(시범) 고객 서명 완료 처리</button>`):`<button class="btn primary" type="button" id="sign-req">서명 요청 문자 보내기</button>`}</div>`}`; }
 function updSignUI(){ signers().forEach(x=>{ const r=$("#sr-"+x.k); if(!r) return; const ok=!!S.sign.sig[x.k]; r.classList.toggle("ok",ok); r.querySelector(".sst").textContent=ok?"✔ 서명 완료":"서명 필요"; });
   S.sign.done=signAllDone(); updSend(); }
@@ -1729,6 +1753,7 @@ $("#stepbody").addEventListener("click",e=>{
   const sf=e.target.closest("[data-sigfull]"); if(sf){ const r=$("#sr-"+sf.dataset.sigfull), on=!r.classList.contains("full"); r.classList.toggle("full",on); sf.textContent=on?"서명 완료 · 닫기":"크게 서명"; document.body.style.overflow=on?"hidden":""; return; }
   if(e.target.closest("#sign-req")){ const cost=SMS_PRICE.lms; if(!ME.demo){ if((ME.cash||0)<cost){ $("#donenote").innerHTML=`충전금이 부족합니다. <a href="#" data-go-cash>충전하러 가기</a>`; return; } cashLog(`서명 요청 문자 (${S.cl.name})`,-cost); }
     ACTS.push({cust:(CUSTOMERS.find(c=>c.name===S.cl.name.trim())||{}).id,date:today(),type:"문자",memo:"보험금 청구서 서명 요청"}); S.sign.req=true; renderStep(); return; }
+  if(e.target.closest("#rep-from-holder")){ S.cl.repName=S.cl.holder; S.cl.repPhone=S.cl.holderPhone||S.cl.repPhone; renderStep(); return; }
   if(e.target.closest("#sign-sim")){ S.sign.done=true; renderStep(); return; }
   if(e.target.closest("#sign-wait")){ const n=new Date(), at=`${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")} ${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}`, ts=Date.now(), gid="w"+ts, pages=allFiles().length+2;
     VAULT[gid]={rrn:S.cl.rrn,rrnMasked:maskRrn(S.cl.rrn),docs:JSON.parse(JSON.stringify(S.docs)),cl:{...S.cl},acc:{...S.acc},cat:S.cat,ins:[...S.ins],at};
@@ -3059,7 +3084,7 @@ document.addEventListener("click",async e=>{
 const FORMS={data:null,busy:false};
 async function formsLoad(){ if(FORMS.data) return FORMS.data; try{ const r=await fetch("forms/forms.json?t="+Date.now(),{cache:"no-store"}); FORMS.data=r.ok?await r.json():{insurers:{}}; }catch(e){ FORMS.data={insurers:{}}; } if(!FORMS.data.insurers) FORMS.data.insurers={}; return FORMS.data; }
 function loadPdfLib(){ if(window.PDFLib) return Promise.resolve(); return new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"; sc.onload=res; sc.onerror=()=>rej(new Error("pdf-lib")); document.head.appendChild(sc); }); }
-function claimData(){ return {cl:{...S.cl},acc:{...S.acc,items:{...S.acc.items}},sig:{...(S.sign&&S.sign.sig||{})},cat:S.cat}; }
+function claimData(){ return {minor:isMinor(),cl:{...S.cl},acc:{...S.acc,items:{...S.acc.items}},sig:{...(S.sign&&S.sign.sig||{})},cat:S.cat}; }
 function fVal(k,D){ const dg=v=>String(v||"").replace(/\D/g,""), r=dg(D.cl.rrn), d=String(D.acc.date||""), t=today(), ph=String(D.cl.phone||"").split("-");
   const M={name:D.cl.name,rrn:D.cl.rrn,rrn6:r.slice(0,6),rrn7:r.slice(6),phone:D.cl.phone,holder:D.cl.same?D.cl.name:D.cl.holder,holderRel:D.cl.same?"본인":D.cl.holderRel,
     accDate:d,accY:d.slice(0,4),accYY:d.slice(2,4),accM:d.slice(5,7),accD:d.slice(8,10),accD8:dg(d),accType:D.acc.type,memo:D.acc.memo,
@@ -3067,10 +3092,14 @@ function fVal(k,D){ const dg=v=>String(v||"").replace(/\D/g,""), r=dg(D.cl.rrn),
     bank:D.acc.acct==="paid"?"":D.acc.bank,acctNo:D.acc.acct==="paid"?"":D.acc.acctNo,acctName:D.acc.acct==="paid"?"":D.acc.acctName,
     today:t,todayY:t.slice(0,4),todayM:t.slice(5,7),todayD:t.slice(8,10),agent:ME.name||"",agentPhone:ME.phone||"",
     petName:D.cl.pet,petNo:D.cl.petNo,petBreed:D.cl.petBreed,petSex:D.cl.petSex,petBirth:D.cl.petBirth,petBY:String(D.cl.petBirth||"").slice(0,4),petBM:String(D.cl.petBirth||"").slice(5,7),petBD:String(D.cl.petBirth||"").slice(8,10),petColor:D.cl.petColor,petAge:petAge(D.cl.petBirth,t),
-    victim:D.cl.victim,victimPhone:D.cl.victimPhone,accPlace:D.acc.place,damage:D.acc.damage};
+    victim:D.cl.victim,victimPhone:D.cl.victimPhone,accPlace:D.acc.place,damage:D.acc.damage,
+    holderRrn:D.cl.same?D.cl.rrn:fmtRrn(D.cl.holderRrn||""),holderRrnD:dg(D.cl.same?D.cl.rrn:D.cl.holderRrn),holderRrn6:dg(D.cl.same?D.cl.rrn:D.cl.holderRrn).slice(0,6),holderRrn7:dg(D.cl.same?D.cl.rrn:D.cl.holderRrn).slice(6),
+    holderPhone:D.cl.same?D.cl.phone:D.cl.holderPhone,holderPhoneD:dg(D.cl.same?D.cl.phone:D.cl.holderPhone),
+    repName:D.minor?D.cl.repName:"",repRel:D.minor?D.cl.repRel:"",repPhone:D.minor?D.cl.repPhone:"",
+    signerName:D.minor?D.cl.repName:D.cl.name,authName:D.minor?`${D.cl.name}(대리인 ${D.cl.repName})`:D.cl.name,authRel:D.minor?`${D.cl.repRel||"법정대리인"} ${D.cl.repName}`:"본인"};
   return M[k]==null?"":String(M[k]); }
 function petAge(b,t){ if(!/^\d{4}-\d{2}-\d{2}$/.test(b||"")) return ""; let y=+t.slice(0,4)-+b.slice(0,4); if(t.slice(5)<b.slice(5)) y--; if(y>=1) return y+"세"; const m=(+t.slice(0,4)-+b.slice(0,4))*12+(+t.slice(5,7)-+b.slice(5,7))-(+t.slice(8,10)<+b.slice(8,10)?1:0); return Math.max(m,0)+"개월"; }
-function fWhen(w,D){ if(!w) return true; if(w.includes("|")) return w.split("|").some(x=>fWhen(x,D)); if(w==="acctself") return D.acc.acct!=="paid"&&String(D.acc.acctName||"").trim()===String(D.cl.name||"").trim(); const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; if(a==="pet.sex") return String(D.cl.petSex||"").includes(b); return false; }
+function fWhen(w,D){ if(!w) return true; if(w==="minor") return !!D.minor; if(w==="!minor") return !D.minor; if(w.includes("|")) return w.split("|").some(x=>fWhen(x,D)); if(w==="acctself") return D.acc.acct!=="paid"&&String(D.acc.acctName||"").trim()===String(D.cl.name||"").trim(); const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; if(a==="pet.sex") return String(D.cl.petSex||"").includes(b); return false; }
 function textPng(t,pt,bold){ const sc=4, c=document.createElement("canvas"), x=c.getContext("2d"), font=`${bold?"700 ":""}${pt*sc}px "Malgun Gothic","Apple SD Gothic Neo","IBM Plex Sans KR",sans-serif`;
   x.font=font; const m=x.measureText(t), asc=m.actualBoundingBoxAscent||pt*sc*0.8, desc=m.actualBoundingBoxDescent||pt*sc*0.1; const w=Math.ceil(m.width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="alphabetic"; y.fillText(t,1,c.height/2+(asc-desc)/2);
   return {url:c.toDataURL("image/png"),w:w/sc,h:c.height/sc}; }
@@ -3082,7 +3111,7 @@ async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[form
   const emb=await pdf.embedPdf(src,keep.map(i=>i-1)), pages=[];
   for(let i=1;i<=n;i++){ const j=keep.indexOf(i); if(j<0){ pages.push(null); continue; } const e=emb[j], pg=pdf.addPage([e.width,e.height]); pg.drawPage(e,{x:0,y:0}); pages.push(pg); }
   for(const f of F.fields||[]){ const pg=pages[(f.p||1)-1]; if(!pg||!fWhen(f.when,D)) continue; const H=pg.getHeight();
-    if(f.k&&f.k.startsWith("sign:")){ const sg=D.sig[f.k.slice(5)]; if(!sg||!/^data:image\/png/.test(sg)) continue; if(f.clear) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)}); const im=await pdf.embedPng(sg); const w=f.w||70,h=f.h||28, r=Math.min(w/im.width,h/im.height); pg.drawImage(im,{x:f.x,y:H-f.y-im.height*r,width:im.width*r,height:im.height*r}); continue; }
+    if(f.k&&f.k.startsWith("sign:")){ const who=f.k.slice(5); let sg=D.sig[who]; if(!sg&&who==="ins"&&D.minor&&!f.noRep) sg=D.sig.rep;  /* 미성년자: 따로 법정대리인 칸이 없는 서식은 청구자 칸에 법정대리인 서명 */ if(!sg||!/^data:image\/png/.test(sg)) continue; if(f.clear) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)}); const im=await pdf.embedPng(sg); const w=f.w||70,h=f.h||28, r=Math.min(w/im.width,h/im.height); pg.drawImage(im,{x:f.x,y:H-f.y-im.height*r,width:im.width*r,height:im.height*r}); continue; }
     const v=f.k==="check"?"V":(f.text!=null?f.text:fVal(f.k,D)); if(!v) continue;  /* 값이 없으면 원본 안내문구(회색 글씨)를 지우지 않음 */
     if(f.clear) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)});
     if(Array.isArray(f.xs)){ for(let i=0;i<Math.min(v.length,f.xs.length);i++){ const im=textPng(v[i],f.s||10,false), img=await pdf.embedPng(im.url); pg.drawImage(img,{x:f.xs[i]+(f.cw?(f.cw-im.w)/2:0),y:H-f.y-im.h/2,width:im.w,height:im.h}); } continue; }
