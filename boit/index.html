@@ -175,6 +175,15 @@ form.panel{margin:0}
 .fsec{padding:16px 0;border-bottom:1px solid var(--line)}.fsec:first-child{padding-top:0}.fsec:last-child{border-bottom:0;padding-bottom:0}
 .fsec h3{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.fsec h3 i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--accent,#0f7a5c);color:#fff;font-size:12px;display:grid;place-items:center}.fsec h3 .note{font-weight:400}
 .fsec .insgrid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;margin-top:8px}.fsec .insgrid .insb{padding:8px 10px;min-height:58px}
+.sf-type{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.sf-type>summary{list-style:none;cursor:pointer;background:var(--accent);color:var(--accent-fg);padding:10px 14px;font-weight:700;font-size:15px;display:flex;justify-content:space-between}
+.sf-type>summary::-webkit-details-marker{display:none}.sf-type>summary::after{content:"펼치기 ▾";font-size:12px;font-weight:500;opacity:.85}.sf-type[open]>summary::after{content:"접기 ▴"}
+.sf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;padding:12px;background:var(--bg)}
+.sf-card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px}
+.sf-card h4{margin:0 0 8px;font-size:14px;color:var(--accent)}
+.sf-doc{display:inline-block;margin:0 4px 5px 0;padding:3px 9px;border-radius:999px;background:var(--accent-soft);font-size:12.5px}
+.sf-dl{display:block;margin-top:6px;padding:6px 9px;border:1px dashed var(--warn);background:var(--warn-soft);border-radius:8px;font-size:12.5px;color:var(--ink);text-decoration:none}
+.sf-dl:hover{text-decoration:underline}
 details.more{margin-top:8px}details.more summary{cursor:pointer;font-size:13px;font-weight:600}details.more .seg .btn{padding:4px 10px}
 .dropz{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 12px;border:2px dashed var(--line);border-radius:10px;background:var(--bg);cursor:pointer;text-align:center}.dropz b{font-size:15px}.dropz span{font-size:12.5px;color:var(--muted)}
 #stepbody.dragging .dropz,.dropz:hover{border-color:var(--ok);background:var(--accent-soft)}#stepbody.dragging{outline:3px dashed var(--ok);outline-offset:4px}
@@ -1500,15 +1509,15 @@ const DLDOC={
 const DL_AT={tooth:"tooth",hosp:"care",leak:"leak"};
 function dlChips(key){ const g=DLDOC[key]; if(!g) return ""; return `<div style="margin:6px 0 2px"><span class="note"><b>${g.t}</b> 내려받기</span><div class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div></div>`; }
 const SF_TABS=[["son","손해보험",["질병","상해","치아"]],["life","생명보험",["질병","재해","치아"]],["pet","펫보험",["pet"]],["liab","일반배상",["대물(누수 포함)","대인"]]];
-function sfDocs(k){ const ds=(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<span class="pill" title="${esc(CDOC[d][1]||"")}" style="font-size:12px;font-weight:500">${esc(CDOC[d][0])}</span>`);
-  if(k==="hosp") ds.push(`<span class="pill" title="간병인 일당 담보" style="font-size:12px;font-weight:500">간병인 사용 확인서 (간병인 쓴 경우)</span>`);
-  return ds.join(" ")||'<span class="note">보험사 확인</span>'; }
-function sfDl(key,tab){ const g=DLDOC[key]; if(!g||(tab!=="son"&&tab!=="liab")) return ""; return `<div class="row" style="gap:5px;margin-top:6px;flex-wrap:wrap"><span class="note" style="font-size:12px">서식 받기</span>${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div>`; }
+function sfDocs(k){ const ds=(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<span class="sf-doc" title="${esc(CDOC[d][1]||"")}">${esc(CDOC[d][0])}</span>`);
+  if(k==="hosp") ds.push(`<span class="sf-doc">간병인 사용 확인서 (간병인 쓴 경우)</span>`);
+  return ds.join("")||'<span class="note">보험사 확인</span>'; }
+function sfDl(key,tab){ const g=DLDOC[key]; if(!g||(tab!=="son"&&tab!=="liab")) return ""; return g.f.map(([n,f])=>`<a class="sf-dl" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">⬇ ${esc(n)}</a>`).join(""); }
 function showForms(tab){ tab=tab||(S.cat&&SF_TABS.some(t=>t[0]===S.cat)?S.cat:"son"); const T=SF_TABS.find(t=>t[0]===tab);
   infoDlg("사고유형 · 청구항목별 필요서류",`<div class="seg" style="display:flex">${SF_TABS.map(([k,n])=>`<button class="btn" type="button" data-sft="${k}" aria-pressed="${k===tab}" style="flex:1">${n}</button>`).join("")}</div>
-  ${T[2].map(t=>`<details class="panel" style="padding:10px 12px" ${T[2].length<=2||t===T[2][0]?"open":""}><summary><b>${t==="pet"?"펫보험":t}</b></summary>
-    ${(ITEMS[t]||ITEMS["상해"]).map(([k,v])=>`<div style="margin-top:10px"><b style="font-size:13px">${v}</b><div class="row" style="gap:5px;margin-top:4px;flex-wrap:wrap">${sfDocs(k)}</div>${DL_AT[k]?sfDl(DL_AT[k],tab):""}</div>`).join("")}</details>`).join("")}
-  <p class="note" style="margin:0;font-size:12px">서류 이름에 마우스를 올리면 발급처가 보입니다. 보험사·상품·청구금액에 따라 달라질 수 있습니다.</p>`); }
+  ${T[2].map(t=>`<details class="sf-type" ${T[2].length<=2||t===T[2][0]?"open":""}><summary>${t==="pet"?"펫보험":t}</summary><div class="sf-grid">
+    ${(ITEMS[t]||ITEMS["상해"]).map(([k,v])=>`<div class="sf-card"><h4>${v}</h4>${sfDocs(k)}${DL_AT[k]?sfDl(DL_AT[k],tab):""}</div>`).join("")}</div></details>`).join("")}
+  <p class="note" style="margin:10px 0 0;font-size:12px">보험사·상품·청구금액에 따라 달라질 수 있습니다. <span style="background:var(--warn-soft);padding:0 4px">⬇ 노란 칸</span>은 서식 내려받기.</p>`); }
 document.addEventListener("click",e=>{ const t=e.target.closest("[data-sft]"); if(t) showForms(t.dataset.sft); });
 document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGuide(); if(e.target.closest("#cl-forms")) showForms(); });
 function startClock(){ if(S.t0) return; S.t0=Date.now(); S.tick=setInterval(()=>{$("#clock").textContent=mmss(Math.floor((Date.now()-S.t0)/1000))},500); }
