@@ -1147,7 +1147,7 @@ function insNameFlat(i){ return `${insBadge(i)}<span title="${esc(i.name)}">${es
 function insName(i){ return INS_WM[i.id]?`<img class="ilw${INS_WM_SQ.includes(i.id)?" sq":""}" src="${INS_WM[i.id]}" alt="${esc(i.name)}" title="${esc(i.name)}">`:`${insLogo(i)}<span>${i.name}</span>`; }
 function insLogoFail(img){ if(img.dataset.fallback){ const fb=img.dataset.fallback; img.removeAttribute("data-fallback"); img.src=fb; return; }
   const s=document.createElement("span"); s.className="ilg-fb"; s.style.background=img.dataset.col||"#6B7280"; s.textContent=img.dataset.ini||""; img.replaceWith(s); }
-const PET_IDS=["db","kb","nh","lt","mz","ss","hd"], LIAB_IDS=["aig","axa","db","kb","nh","lt","mz","ss","yb","hn","hw","hd","hk"], GROUP_IDS=["db","kb","nh","lt","mz","ss","hd","hk"];
+const PET_IDS=["db","kb","nh","lt","mz","ss","hd","hw"], LIAB_IDS=["aig","axa","db","kb","nh","lt","mz","ss","yb","hn","hw","hd","hk"], GROUP_IDS=["db","kb","nh","lt","mz","ss","hd","hk"];
 const INSURERS=INS_RAW.map(([id,name,k,cs,fax,dental,link,note])=>({id,name,kind:k==="son"?"손해보험":"생명보험",k,cs,fax:fax&&fax!=="V"?fax:null,virtual:fax==="V",manual:!fax,dental,link,note,group:GROUP_IDS.includes(id),
   cats:[k,...(PET_IDS.includes(id)?["pet"]:[]),...(LIAB_IDS.includes(id)?["liab"]:[])]}));
 const CUSTOMERS=[
@@ -1469,7 +1469,7 @@ document.addEventListener("input",e=>{ if(e.target.id==="lk-name") updLink(); if
 function showGuide(){ infoDlg("보잇 보험금 청구 이용 방법",GUIDE.map(([q,a],i)=>`<div class="panel" style="padding:12px"><b>${String(i+1).padStart(2,"0")} ${q}</b><p class="note" style="margin:6px 0 0;line-height:1.6">${a}</p></div>`).join("")); }
 function showForms(){
   const typ=Object.keys(ITEMS);
-  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원: DB손해보험 · 한화손해보험 · 현대해상 · 신한라이프 (나머지 보험사는 준비 중, 청구 화면에 「자동작성」 표시)</p></div>
+  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 신한라이프 / 펫: DB · KB · 메리츠 · NH농협 · 한화 / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 (나머지는 준비 중, 청구 화면에 「자동작성」 표시)</p></div>
   <div><b>병원·고객이 따로 작성하는 서식</b><p class="note" style="margin:4px 0 0">치과치료 확인서 · 간병인 사용 확인서 · 배상책임 보험금 청구서 · 표적항암약물허가치료 확인서 — 양식은 보험사마다 달라 각 보험사 공식 홈페이지의 서식 자료실에서 받습니다.</p>
   <div class="row" style="margin-top:6px">${[["DB손해보험","https://www.idbins.com"],["KB손해보험","https://www.kbinsure.co.kr"],["신한라이프","https://www.shinhanlife.co.kr"]].map(([n,u])=>`<a class="btn sm" href="${u}" target="_blank" rel="noopener">${n} 홈페이지 ↗</a>`).join("")}</div>
   <p class="note" style="margin:4px 0 0">보험사 홈페이지 → 고객센터(또는 보상) → 보험금 청구 → 청구서류·서식 메뉴. 서식 원본 파일을 주시면 보잇 안에서 바로 내려받게 붙입니다.</p></div>
@@ -1479,7 +1479,7 @@ function showForms(){
 document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGuide(); if(e.target.closest("#cl-forms")) showForms(); });
 function startClock(){ if(S.t0) return; S.t0=Date.now(); S.tick=setInterval(()=>{$("#clock").textContent=mmss(Math.floor((Date.now()-S.t0)/1000))},500); }
 function stopClock(){ clearInterval(S.tick); }
-function resetClaim(){ stopClock(); Object.assign(S,{step:0,cat:S.cat||"son",cl:{name:"",rrn:"",phone:"",save:true,idType:"none",idDate:"",pet:"",petNo:"",victim:"",same:true,holder:"",holderRel:"",guide:"fc"},acc:{date:"",type:"",items:{},memo:"",acct:"paid",group:false,support:false,bank:"",acctNo:"",acctName:""},sign:{mode:"face",done:false,req:false},docs:{},ins:[],vfax:{},t0:null,sending:false,sent:false}); Object.values(S.docs||{}).flat().forEach(f=>f.url&&URL.revokeObjectURL(f.url)); S.docs={}; $("#clock").textContent="00:00"; }
+function resetClaim(){ stopClock(); Object.assign(S,{step:0,cat:S.cat||"son",cl:{name:"",rrn:"",phone:"",save:true,idType:"none",idDate:"",pet:"",petNo:"",petBreed:"",petSex:"",petBirth:"",petColor:"",victim:"",victimPhone:"",same:true,holder:"",holderRel:"",guide:"fc"},acc:{date:"",type:"",items:{},memo:"",place:"",damage:"",acct:"paid",group:false,support:false,bank:"",acctNo:"",acctName:""},sign:{mode:"face",done:false,req:false},docs:{},ins:[],vfax:{},t0:null,sending:false,sent:false}); Object.values(S.docs||{}).flat().forEach(f=>f.url&&URL.revokeObjectURL(f.url)); S.docs={}; $("#clock").textContent="00:00"; }
 const LAST=0;
 /* 보험 구분 · 보험사 */
 const CATS={son:"손해보험",life:"생명보험",pet:"펫보험",liab:"일반배상"};
@@ -1588,8 +1588,8 @@ function secIns(){ const list=INSURERS.filter(i=>i.cats.includes(S.cat)), pm=S.c
     return `<div class="ins-line"><b>${i.name}</b><div class="field"><label for="vf-${id}">${nd==="virtual"?"고객이 받은 가상 팩스번호":"보험사 접수 팩스번호"}</label><input id="vf-${id}" data-vf="${id}" inputmode="tel" placeholder="예: 0505-123-4567" value="${esc(S.vfax[id]||"")}">${hint?`<span class="note">${esc(hint)}</span>`:""}</div>${i.cs?`<button class="btn sm" data-ask="${id}">고객에게 번호 요청 문자</button>`:""}</div>`;}).join("")}<p class="note" id="asknote" style="margin:6px 0 0"></p>
   ${S.ins.filter(id=>insBy(id).note&&faxNeed(id)==="fixed").map(id=>`<p class="note err" style="margin:4px 0 0">${insBy(id).name}: ${esc(insBy(id).note)}</p>`).join("")}
   ${S.cat==="son"||S.cat==="life"?`<div class="row" style="gap:18px;margin-top:10px"><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="group" ${S.acc.group?"checked":""}> 단체실손도 함께 청구</label><label class="row note" style="gap:6px"><input type="checkbox" data-accflag="support" ${S.acc.support?"checked":""}> 상해·질병 치료지원금 청구</label></div>`:""}</section>`; }
-function secCl(){ const extra=S.cat==="pet"?`<div class="field"><label for="cl-pet">반려동물 이름</label><input id="cl-pet" value="${esc(S.cl.pet)}" autocomplete="off"></div><div class="field"><label for="cl-petno">동물등록번호</label><input id="cl-petno" value="${esc(S.cl.petNo)}" inputmode="numeric" autocomplete="off"></div>`
-    :S.cat==="liab"?`<div class="field"><label for="cl-victim">피해자 이름 (선택)</label><input id="cl-victim" value="${esc(S.cl.victim)}" autocomplete="off"></div>`:"";
+function secCl(){ const extra=S.cat==="pet"?`<div class="field"><label for="cl-pet">반려동물 이름</label><input id="cl-pet" value="${esc(S.cl.pet)}" autocomplete="off"></div><div class="field"><label for="cl-petno">동물등록번호</label><input id="cl-petno" value="${esc(S.cl.petNo)}" inputmode="numeric" autocomplete="off"></div><div class="field"><label for="cl-petbreed">품종</label><input id="cl-petbreed" value="${esc(S.cl.petBreed||"")}" placeholder="예: 말티즈" autocomplete="off"></div><div class="field"><label for="cl-petsex">성별</label><select id="cl-petsex">${["","수컷","암컷","중성화 수컷","중성화 암컷"].map(v=>`<option value="${v}" ${(S.cl.petSex||"")===v?"selected":""}>${v||"선택"}</option>`).join("")}</select></div><div class="field"><label for="cl-petbirth">반려동물 생년월일</label><input id="cl-petbirth" type="date" value="${esc(S.cl.petBirth||"")}" max="${today()}"></div><div class="field"><label for="cl-petcolor">털색(모색)</label><input id="cl-petcolor" value="${esc(S.cl.petColor||"")}" placeholder="예: 흰색" autocomplete="off"></div>`
+    :S.cat==="liab"?`<div class="field"><label for="cl-victim">피해자 이름 (선택)</label><input id="cl-victim" value="${esc(S.cl.victim)}" autocomplete="off"></div><div class="field"><label for="cl-victimphone">피해자 연락처 (선택)</label><input id="cl-victimphone" value="${esc(S.cl.victimPhone||"")}" inputmode="tel" placeholder="피해자 동의를 받은 경우만" autocomplete="off"></div>`:"";
   const sum=[S.cl.idType==="none"?"신분증 사본 첨부":"신분증 "+(S.cl.idType==="rrc"?"주민등록증":"운전면허증"), S.cat==="pet"?"":S.cl.same?"계약자=피보험자":"계약자 "+(S.cl.holder||"입력 필요"), "보상안내: "+(S.cl.guide==="fc"?"설계사":"고객")].filter(Boolean).join(" · ");
   return `<section class="fsec"><h3><i>2</i>${S.cat==="pet"?"보호자·반려동물":"청구 고객"} <span class="note">고객관리에 있는 고객은 이름만 고르면 휴대폰번호가 채워집니다</span></h3>
   <div class="fgrid">
@@ -1628,7 +1628,8 @@ function secAcc(){ const types=ACC_TYPES[S.cat];
   ${S.acc.acct==="saved"&&savedAcct()?`<p class="note" style="margin:8px 0 0">고객정보에 저장된 계좌 <b>${esc(acctLabel(savedAcct()))}</b>로 청구서를 작성합니다 (${esc(savedAcct().at)} 저장). 이 보험사에 처음 등록하는 계좌면 보험사가 통장 사본을 요구할 수 있습니다.</p>`:""}
   ${S.acc.acct==="new"?`<div class="fgrid" style="margin-top:8px"><div class="field"><label for="ac-bank">은행</label><select id="ac-bank">${["","KB국민","신한","우리","하나","NH농협","IBK기업","SC제일","카카오뱅크","토스뱅크","케이뱅크","새마을금고","신협","우체국","수협","부산","대구","경남","광주","전북","제주","기타"].map(v=>`<option ${S.acc.bank===v?"selected":""} value="${v}">${v||"선택"}</option>`).join("")}</select></div><div class="field"><label for="ac-no">계좌번호</label><input id="ac-no" inputmode="numeric" autocomplete="off" value="${esc(S.acc.acctNo)}" placeholder="숫자만"></div><div class="field"><label for="ac-name">예금주</label><input id="ac-name" autocomplete="off" value="${esc(S.acc.acctName)}"></div></div>`:""}${S.acc.acct==="new"?`<label class="row note" style="gap:6px;margin-top:6px"><input type="checkbox" id="ac-save" ${S.acc.saveAcct?"checked":""}> ${savedAcct()?"저장된 계좌를 이 계좌로 바꿔 저장":"다음 청구를 위해 이 계좌를 고객정보에 저장"} (고객 동의 받음 · 암호화 저장)</label>`:""}
   ${S.acc.type?`<div class="itemgrid">${itemsFor().map(([k,v])=>`<label class="itemc"><input type="checkbox" data-item="${k}" ${S.acc.items[k]?"checked":""}> ${v}</label>`).join("")}</div>`:`<p class="note" style="margin:8px 0 0">사고 유형을 고르면 청구 항목이 나옵니다.</p>`}
-  <div class="field" style="margin-top:10px"><label for="acc-memo">사고 상세내용 (선택)</label><input id="acc-memo" value="${esc(S.acc.memo)}" placeholder="예: 건강검진 중 대장용종 발견, 내시경으로 제거"></div></section>`; }
+  <div class="field" style="margin-top:10px"><label for="acc-memo">사고 상세내용 (선택)</label><input id="acc-memo" value="${esc(S.acc.memo)}" placeholder="예: 건강검진 중 대장용종 발견, 내시경으로 제거"></div>
+  <div class="fgrid" style="margin-top:8px"><div class="field"><label for="acc-place">사고장소 (선택 · 질병은 비움)</label><input id="acc-place" value="${esc(S.acc.place||"")}" placeholder="예: 서울 강남구 자택 욕실" autocomplete="off"></div>${S.cat==="liab"?`<div class="field"><label for="acc-damage">손해내역 (예상 금액)</label><input id="acc-damage" value="${esc(S.acc.damage||"")}" placeholder="예: 아래층 천장 누수 · 견적 150만원" autocomplete="off"></div>`:""}</div></section>`; }
 function secDocs(){ const keys=reqDocs(), have=k=>[k].concat(DOC_ALIAS[k]||[]).some(x=>(S.docs[x]||[]).length>0), files=Object.entries(S.docs).flatMap(([k,fs])=>fs.map((f,i)=>({k,i,f})));
   const opts=[...new Set(keys.concat(Object.keys(S.docs)).concat(["etc"]))];
   return `<section class="fsec"><h3><i>4</i>서류 <span class="note">자동 작성: 청구서·개인(신용)정보처리동의서 (서명만)</span></h3>
@@ -1663,9 +1664,10 @@ function bindForm(){
   $("#cl-phone").oninput=e=>{const f=fmtPhone(e.target.value); e.target.value=f; S.cl.phone=f; startClock(); upd();};
   const sv=$("#cl-save"); if(sv) sv.onchange=e=>{S.cl.save=e.target.checked;};
   const mo=document.querySelector(".fsec details.more"); if(mo) mo.ontoggle=()=>{S.cl.open=mo.open;};
-  [["cl-pet","pet"],["cl-petno","petNo"],["cl-victim","victim"],["cl-iddate","idDate"],["cl-holder","holder"],["cl-holderrel","holderRel"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{S.cl[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
+  [["cl-pet","pet"],["cl-petno","petNo"],["cl-petbreed","petBreed"],["cl-petsex","petSex"],["cl-petbirth","petBirth"],["cl-petcolor","petColor"],["cl-victim","victim"],["cl-victimphone","victimPhone"],["cl-iddate","idDate"],["cl-holder","holder"],["cl-holderrel","holderRel"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{S.cl[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
   $("#acc-date").oninput=e=>{S.acc.date=e.target.value; updSend();};
   $("#acc-memo").oninput=e=>{S.acc.memo=e.target.value;};
+  [["acc-place","place"],["acc-damage","damage"]].forEach(([id,k])=>{const el=$("#"+id); if(el) el.oninput=e=>{S.acc[k]=e.target.value;};});
   [["ac-bank","bank"],["ac-no","acctNo"],["ac-name","acctName"]].forEach(([id,k])=>{const el=$("#"+id); if(el){ el.oninput=e=>{ if(k==="acctNo") e.target.value=e.target.value.replace(/[^\d-]/g,""); S.acc[k]=e.target.value; updSend();}; el.onchange=el.oninput; }});
   $("#df-all").onchange=e=>{ addAllFiles(e.target.files); };
   const acs=$("#ac-save"); if(acs) acs.onchange=e=>{ S.acc.saveAcct=e.target.checked; };
@@ -3063,9 +3065,12 @@ function fVal(k,D){ const dg=v=>String(v||"").replace(/\D/g,""), r=dg(D.cl.rrn),
     accDate:d,accY:d.slice(0,4),accYY:d.slice(2,4),accM:d.slice(5,7),accD:d.slice(8,10),accD8:dg(d),accType:D.acc.type,memo:D.acc.memo,
     rrnD:r,phoneD:dg(D.cl.phone),phone1:ph[0]||"",phone2:ph[1]||"",phone3:ph[2]||"",acctD:D.acc.acct==="paid"?"":dg(D.acc.acctNo),todayYY:t.slice(2,4),
     bank:D.acc.acct==="paid"?"":D.acc.bank,acctNo:D.acc.acct==="paid"?"":D.acc.acctNo,acctName:D.acc.acct==="paid"?"":D.acc.acctName,
-    today:t,todayY:t.slice(0,4),todayM:t.slice(5,7),todayD:t.slice(8,10),agent:ME.name||"",agentPhone:ME.phone||""};
+    today:t,todayY:t.slice(0,4),todayM:t.slice(5,7),todayD:t.slice(8,10),agent:ME.name||"",agentPhone:ME.phone||"",
+    petName:D.cl.pet,petNo:D.cl.petNo,petBreed:D.cl.petBreed,petSex:D.cl.petSex,petBirth:D.cl.petBirth,petBY:String(D.cl.petBirth||"").slice(0,4),petBM:String(D.cl.petBirth||"").slice(5,7),petBD:String(D.cl.petBirth||"").slice(8,10),petColor:D.cl.petColor,petAge:petAge(D.cl.petBirth,t),
+    victim:D.cl.victim,victimPhone:D.cl.victimPhone,accPlace:D.acc.place,damage:D.acc.damage};
   return M[k]==null?"":String(M[k]); }
-function fWhen(w,D){ if(!w) return true; if(w.includes("|")) return w.split("|").some(x=>fWhen(x,D)); if(w==="acctself") return D.acc.acct!=="paid"&&String(D.acc.acctName||"").trim()===String(D.cl.name||"").trim(); const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; return false; }
+function petAge(b,t){ if(!/^\d{4}-\d{2}-\d{2}$/.test(b||"")) return ""; let y=+t.slice(0,4)-+b.slice(0,4); if(t.slice(5)<b.slice(5)) y--; if(y>=1) return y+"세"; const m=(+t.slice(0,4)-+b.slice(0,4))*12+(+t.slice(5,7)-+b.slice(5,7))-(+t.slice(8,10)<+b.slice(8,10)?1:0); return Math.max(m,0)+"개월"; }
+function fWhen(w,D){ if(!w) return true; if(w.includes("|")) return w.split("|").some(x=>fWhen(x,D)); if(w==="acctself") return D.acc.acct!=="paid"&&String(D.acc.acctName||"").trim()===String(D.cl.name||"").trim(); const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; if(a==="pet.sex") return String(D.cl.petSex||"").includes(b); return false; }
 function textPng(t,pt,bold){ const sc=4, c=document.createElement("canvas"), x=c.getContext("2d"), font=`${bold?"700 ":""}${pt*sc}px "Malgun Gothic","Apple SD Gothic Neo","IBM Plex Sans KR",sans-serif`;
   x.font=font; const m=x.measureText(t), asc=m.actualBoundingBoxAscent||pt*sc*0.8, desc=m.actualBoundingBoxDescent||pt*sc*0.1; const w=Math.ceil(m.width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="alphabetic"; y.fillText(t,1,c.height/2+(asc-desc)/2);
   return {url:c.toDataURL("image/png"),w:w/sc,h:c.height/sc}; }
@@ -3077,11 +3082,9 @@ async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[form
   const emb=await pdf.embedPdf(src,keep.map(i=>i-1)), pages=[];
   for(let i=1;i<=n;i++){ const j=keep.indexOf(i); if(j<0){ pages.push(null); continue; } const e=emb[j], pg=pdf.addPage([e.width,e.height]); pg.drawPage(e,{x:0,y:0}); pages.push(pg); }
   for(const f of F.fields||[]){ const pg=pages[(f.p||1)-1]; if(!pg||!fWhen(f.when,D)) continue; const H=pg.getHeight();
-    if(f.clear&&f.k&&f.k.startsWith("sign:")) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)});
-    if(f.k&&f.k.startsWith("sign:")){ const sg=D.sig[f.k.slice(5)]; if(!sg||!/^data:image\/png/.test(sg)) continue; const im=await pdf.embedPng(sg); const w=f.w||70,h=f.h||28, r=Math.min(w/im.width,h/im.height); pg.drawImage(im,{x:f.x,y:H-f.y-im.height*r,width:im.width*r,height:im.height*r}); continue; }
+    if(f.k&&f.k.startsWith("sign:")){ const sg=D.sig[f.k.slice(5)]; if(!sg||!/^data:image\/png/.test(sg)) continue; if(f.clear) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)}); const im=await pdf.embedPng(sg); const w=f.w||70,h=f.h||28, r=Math.min(w/im.width,h/im.height); pg.drawImage(im,{x:f.x,y:H-f.y-im.height*r,width:im.width*r,height:im.height*r}); continue; }
+    const v=f.k==="check"?"V":(f.text!=null?f.text:fVal(f.k,D)); if(!v) continue;  /* 값이 없으면 원본 안내문구(회색 글씨)를 지우지 않음 */
     if(f.clear) pg.drawRectangle({x:f.clear[0],y:H-f.clear[1]-f.clear[3],width:f.clear[2],height:f.clear[3],color:PDFLib.rgb(1,1,1)});
-    if(f.k&&f.k.startsWith("sign:")) continue;
-    const v=f.k==="check"?"V":(f.text!=null?f.text:fVal(f.k,D)); if(!v) continue;
     if(Array.isArray(f.xs)){ for(let i=0;i<Math.min(v.length,f.xs.length);i++){ const im=textPng(v[i],f.s||10,false), img=await pdf.embedPng(im.url); pg.drawImage(img,{x:f.xs[i]+(f.cw?(f.cw-im.w)/2:0),y:H-f.y-im.h/2,width:im.w,height:im.h}); } continue; }
     const im=textPng(v,f.s||9,f.k==="check"), img=await pdf.embedPng(im.url), k=f.maxw&&im.w>f.maxw?f.maxw/im.w:1; pg.drawImage(img,{x:f.x,y:H-f.y-im.h*k/2,width:im.w*k,height:im.h*k}); }
   return {blob:new Blob([await pdf.save()],{type:"application/pdf"}),pages:pdf.getPageCount(),name:F.name||insId,ver:F.version||""}; }
