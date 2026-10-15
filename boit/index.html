@@ -1492,14 +1492,21 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("input",e=>{ if(e.target.id==="lk-name") updLink(); if(e.target.id==="lk-phone"||e.target.id==="cc-phone") e.target.value=fmtPhone(e.target.value); if(e.target.id==="cc-rrn") e.target.value=fmtRrn(e.target.value); });
 function showGuide(){ infoDlg("보잇 보험금 청구 이용 방법",GUIDE.map(([q,a],i)=>`<div class="panel" style="padding:12px"><b>${String(i+1).padStart(2,"0")} ${q}</b><p class="note" style="margin:6px 0 0;line-height:1.6">${a}</p></div>`).join("")); }
+/* 보험사별 서식 내려받기 (대표 제공 원본, 2026-10-15) — 서류 종류별로 필요서류 항목 아래에 표시 */
+const DLDOC={
+  tooth:{t:"치과치료확인서 (치과에서 작성)",f:[["KB손해보험","dental_kb.pdf"],["DB손해보험","dental_db.pdf"],["삼성화재","dental_samsung.pdf"],["현대해상","dental_hyundai.pdf"],["롯데손해보험","dental_lotte.pdf"],["NH농협손해보험","dental_nh.pdf"],["흥국화재","dental_heungkuk.pdf"],["라이나손해보험","dental_lina.pdf"]]},
+  care:{t:"간병인 사용 확인서 · 간병일지 (간병인 쓴 경우)",f:[["KB손해보험 간병인 사용 확인서","care_kb.pdf"],["삼성화재 간병사실확인서","care_samsung.pdf"],["삼성화재 간병일지","carelog_samsung.pdf"]]},
+  leak:{t:"누수사고 청구서류 묶음 (청구서·경위서·기술소견서)",f:[["DB손해보험 배상책임 누수사고 전용","leak_db.pdf"]]}};
+const DL_AT={tooth:"tooth",hosp:"care",leak:"leak"};
+function dlChips(key){ const g=DLDOC[key]; if(!g) return ""; return `<div style="margin:6px 0 2px"><span class="note"><b>${g.t}</b> 내려받기</span><div class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div></div>`; }
 function showForms(){
-  const typ=Object.keys(ITEMS);
-  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 신한라이프 / 펫: DB · KB · 메리츠 · NH농협 · 한화 / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 (나머지는 준비 중, 청구 화면에 「자동작성」 표시)</p></div>
+  const typ=Object.keys(ITEMS).filter(t=>t!=="재해"&&t!=="상해(재해)");
+  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 흥국 · 하나 · 라이나손보 · 신한EZ · 수협공제 · 교직원공제 · 신한라이프 / 펫: DB · KB · 메리츠 · NH농협 · 한화 · 라이나손보 · 신한EZ / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 · 흥국 · 라이나손보 (나머지는 준비 중 — [보험사별 청구서 미리보기]에서 확인)</p></div>
   <div><b>병원·고객이 따로 작성하는 서식</b><p class="note" style="margin:4px 0 0">치과치료 확인서 · 간병인 사용 확인서 · 배상책임 보험금 청구서 · 표적항암약물허가치료 확인서 — 양식은 보험사마다 달라 각 보험사 공식 홈페이지의 서식 자료실에서 받습니다.</p>
-  <div class="row" style="margin-top:6px">${[["DB손해보험","https://www.idbins.com"],["KB손해보험","https://www.kbinsure.co.kr"],["신한라이프","https://www.shinhanlife.co.kr"]].map(([n,u])=>`<a class="btn sm" href="${u}" target="_blank" rel="noopener">${n} 홈페이지 ↗</a>`).join("")}</div>
-  <p class="note" style="margin:4px 0 0">보험사 홈페이지 → 고객센터(또는 보상) → 보험금 청구 → 청구서류·서식 메뉴. 서식 원본 파일을 주시면 보잇 안에서 바로 내려받게 붙입니다.</p></div>
+  ${dlChips("tooth")}${dlChips("care")}${dlChips("leak")}
+  <p class="note" style="margin:4px 0 0">목록에 없는 보험사는 보험사 홈페이지 → 고객센터(또는 보상) → 보험금 청구 → 청구서류·서식 메뉴에서 받습니다. 원본 파일을 주시면 여기에 추가합니다.</p></div>
   <div><b>사고유형 · 청구항목별 필요서류</b></div>
-  ${typ.map(t=>`<details class="panel" style="padding:10px 12px"><summary><b>${t}</b></summary>${ITEMS[t].map(([k,v])=>`<div style="margin-top:8px"><b style="font-size:13px">${v}</b><ul class="note" style="margin:4px 0 0;padding-left:18px">${(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<li>${CDOC[d][0]}${CDOC[d][1]?" — "+CDOC[d][1]:""}</li>`).join("")||"<li>보험사 확인</li>"}</ul></div>`).join("")}</details>`).join("")}
+  ${typ.map(t=>`<details class="panel" style="padding:10px 12px"><summary><b>${t==="pet"?"펫보험":t}</b></summary>${ITEMS[t].map(([k,v])=>`<div style="margin-top:8px"><b style="font-size:13px">${v}</b><ul class="note" style="margin:4px 0 0;padding-left:18px">${(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<li>${CDOC[d][0]}${CDOC[d][1]?" — "+CDOC[d][1]:""}</li>`).join("")||"<li>보험사 확인</li>"}${k==="hosp"?"<li>간병인을 쓴 경우: 간병인 사용 확인서·간병일지 (간병인 일당 담보)</li>":""}</ul>${DL_AT[k]?dlChips(DL_AT[k]):""}</div>`).join("")}</details>`).join("")}
   <p class="note" style="margin:0">기준: 교보라이프플래닛 「사고유형별 구비서류 안내」, DB손해보험 「보험금청구서류 안내」. 보험사·상품·청구금액에 따라 생략·추가될 수 있습니다.</p>`); }
 document.addEventListener("click",e=>{ if(e.target.closest("#cl-guide")) showGuide(); if(e.target.closest("#cl-forms")) showForms(); });
 function startClock(){ if(S.t0) return; S.t0=Date.now(); S.tick=setInterval(()=>{$("#clock").textContent=mmss(Math.floor((Date.now()-S.t0)/1000))},500); }
