@@ -367,6 +367,73 @@ tr.sel td{background:var(--accent-soft)}
   .ins-line,.sendrow{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+/* ===== 2026-10-15 추가: 모닝뉴스·가설계·개인페이지·고지의무 ===== */
+.mn-wrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+.qt-grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:14px;align-items:start}
+.hp2{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;align-items:start}
+@media (max-width:980px){.mn-wrap,.qt-grid,.hp2{grid-template-columns:minmax(0,1fr)}}
+.mn-themes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.mn-themes button{cursor:pointer;border:2px solid var(--line);border-radius:8px;padding:0;height:58px;overflow:hidden;font-size:11px;font-weight:600}
+.mn-themes button[aria-pressed="true"]{border-color:var(--accent)}
+/* 카드: 고정 색 (이미지로 저장되므로 다크모드와 무관) */
+.mnc{width:720px;max-width:none;font-family:var(--f-ui);color:#151515;background:#F4F1EA;padding:30px 32px 22px;box-sizing:border-box}
+.mnc .mh{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid currentColor;padding-bottom:8px}
+.mnc .mh b{font-family:Georgia,"Times New Roman",serif;font-size:56px;line-height:1;letter-spacing:-.02em;font-weight:900}
+.mnc .mh span{font-size:15px;font-weight:600}
+.mnc .mb{display:grid;grid-template-columns:230px 1fr;gap:20px;margin-top:16px}
+.mnc h4{margin:0 0 8px;font-size:17px;font-weight:700;border-bottom:1px solid rgba(0,0,0,.25);padding-bottom:4px}
+.mnc .kv{display:flex;justify-content:space-between;font-size:13.5px;padding:3px 0}
+.mnc .kv i{font-style:normal;font-size:11.5px;margin-left:4px}
+.mnc .up{color:#C62828}.mnc .down{color:#1565C0}
+.mnc .wx{display:grid;grid-template-columns:repeat(2,1fr);gap:2px 10px;font-size:12.5px}
+.mnc ol{margin:0;padding-left:18px;font-size:14px;line-height:1.55}
+.mnc ol li{margin-bottom:5px}
+.mnc .q{font-size:13.5px;line-height:1.6;margin:0}
+.mnc .mf{margin-top:16px;border-top:1px solid rgba(0,0,0,.3);padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px}
+.mnc .mf b{font-size:16px}
+.mnc .av{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#ccc}
+.mnc.t-blue{background:#EAF2FF;color:#0D2A5C}.mnc.t-blue .mh{border-color:#1E5BD8}.mnc.t-blue h4{color:#1E5BD8;border-color:#9DB8EC}
+.mnc.t-green{background:#EEF6EA;color:#173A1E}.mnc.t-green .mh{border-color:#2E7D32}.mnc.t-green h4{color:#2E7D32;border-color:#A9CFA4}
+.mnc.t-dark{background:#14201C;color:#EDF3F0}.mnc.t-dark .mh{border-color:#3BBE97}.mnc.t-dark h4{color:#3BBE97;border-color:#2C4A40}.mnc.t-dark .up{color:#FF8A80}.mnc.t-dark .down{color:#82B1FF}
+/* 가설계 */
+.qt-cov{display:grid;grid-template-columns:auto 1fr 74px;gap:4px 8px;align-items:center;font-size:13px}
+.qt-cov .g{grid-column:1/-1;margin-top:8px;font-weight:700;color:var(--muted);font-size:12px}
+.qt-cov input[type=text]{border:1px solid var(--line);border-radius:6px;padding:4px 6px;width:100%;text-align:right;background:var(--surface)}
+.qt-t td.best{background:var(--accent-soft);font-weight:700}
+.qt-t td.na{color:var(--muted);font-size:12px}
+.qt-t tfoot td{font-weight:700;border-top:2px solid var(--line)}
+/* 보장표 편집 */
+.cg-t input{width:64px;border:1px solid var(--line);border-radius:5px;padding:3px 5px;text-align:right;background:var(--surface)}
+.cg-t th{font-size:12px;white-space:nowrap}
+.cg-t td.g{font-weight:700;font-size:12px;color:var(--muted)}
+.a4 table.cgp{font-size:11px;width:100%;border-collapse:collapse}
+.a4 table.cgp th,.a4 table.cgp td{padding:3.5px 5px;border-bottom:1px solid var(--pline);text-align:right}
+.a4 table.cgp th:first-child,.a4 table.cgp td:first-child,.a4 table.cgp td.cl{text-align:left}
+.a4 table.cgp td.gp{background:var(--pacc-soft);color:var(--pacc);font-weight:700;text-align:left}
+.a4 table.cgp .sumc{background:#F2F4F3;font-weight:700}
+.a4 table.cgp .prc{background:var(--pacc-soft);color:var(--pacc);font-weight:700}
+/* 개인페이지 미리보기 공통 (p.html과 같은 모양) */
+.hpv{font-family:var(--f-ui);color:#18221F;background:#F6F7F6;font-size:14px}
+.hpv .ban{height:120px;background:linear-gradient(135deg,var(--hpc,#0E7A5F),#0B4F40)}
+.hpv .pf{padding:0 16px 14px;margin-top:-44px;display:flex;flex-direction:column;gap:6px}
+.hpv .ph{width:88px;height:88px;border-radius:50%;border:4px solid #fff;object-fit:cover;background:#DDE3DF}
+.hpv .org{display:inline-block;align-self:flex-start;font-size:11.5px;padding:2px 8px;border-radius:99px;background:#E2F1EB;color:#0E7A5F;font-weight:600}
+.hpv h3{margin:0;font-size:20px;line-height:1.35}.hpv h3 em{font-style:normal;color:var(--hpc,#0E7A5F)}
+.hpv .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 12px}
+.hpv .acts a{display:flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:1px solid #E1E6E3;border-radius:10px;padding:9px 2px;font-size:11.5px;color:#18221F;text-decoration:none;font-weight:600}
+.hpv .acts a span{font-size:18px;line-height:1}
+.hpv .blk{background:#fff;margin:10px 12px 0;border-radius:12px;padding:12px 14px;border:1px solid #E7EBE9}
+.hpv .blk h4{margin:0 0 6px;font-size:14px}
+.hpv .blk p{margin:0;font-size:13px;color:#4A5753;line-height:1.6}
+.hpv .tags{display:flex;flex-wrap:wrap;gap:5px}.hpv .tags span{font-size:12px;background:#F0F3F1;border-radius:99px;padding:2px 9px}
+.hpv .cta{display:block;text-align:center;margin-top:8px;background:var(--hpc,#0E7A5F);color:#fff;border-radius:9px;padding:10px;font-weight:700;text-decoration:none;font-size:13.5px}
+.hpv .nw{font-size:12.5px;line-height:1.5;padding:5px 0;border-bottom:1px solid #EEF1EF}.hpv .nw a{color:#18221F;text-decoration:none}
+.hpv .ft{padding:14px 16px 18px;font-size:11px;color:#7A8682;line-height:1.6}
+/* 고지의무 */
+.ds-q{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.ds-q h3{margin:0 0 6px;font-size:15px}
+.ds-q.hit{border-color:var(--warn);background:var(--warn-soft)}
+.ds-t{font-size:12.5px}
 </style>
 
 <datalist id="dl-cust"></datalist>
@@ -477,9 +544,13 @@ tr.sel td{background:var(--accent-soft)}
       <button data-go="customers"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 15c2 .6 3.3 2.3 3.8 5"/></svg><span>고객관리</span></button>
       <button data-go="consult"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><span>상담관리</span></button>
       <button data-go="activity"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>활동관리</span></button>
+      <button data-go="disclose"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 12l2 2 4-4"/></svg><span>고지의무 확인</span></button>
       <div class="grp">영업</div>
       <button data-go="report"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg><span>보장분석리포트</span></button>
       <button data-go="proposal"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>제안서</span></button>
+      <button data-go="quote"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M8 18h8"/></svg><span>가설계</span></button>
+      <button data-go="morning"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h13v14H6a2 2 0 01-2-2z"/><path d="M17 9h3v8a2 2 0 01-2 2"/><path d="M7 9h7M7 12h7M7 15h4"/></svg><span>모닝뉴스</span></button>
+      <button data-go="homepage"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><circle cx="12" cy="9" r="2.2"/><path d="M8.5 15c.8-1.6 2-2.3 3.5-2.3s2.7.7 3.5 2.3"/></svg><span>개인페이지</span></button>
       <button data-go="materials"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg><span>영업자료</span><span class="tag">준비중</span></button>
       <button data-go="sms"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>문자발송</span><span class="tag">준비중</span></button>
       <div class="grp">사후관리</div>
@@ -490,7 +561,7 @@ tr.sel td{background:var(--accent-soft)}
       <button data-go="auto"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/><circle cx="7.5" cy="13" r=".8"/><circle cx="16.5" cy="13" r=".8"/></svg><span>자동차</span></button>
       <button data-go="liab"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg><span>일반배상</span></button>
     </nav>
-    <div class="foot">다온파트너스<br>시범판 v0.1 · 2026-10-09</div>
+    <div class="foot">다온파트너스<br>시범판 v0.2 · 2026-10-15</div>
   </aside>
 
   <main id="main">
@@ -811,6 +882,7 @@ tr.sel td{background:var(--accent-soft)}
         <span class="note" id="pdfmsg-proposal" style="flex-basis:100%"></span>
       </div>
       <div class="panel" id="pp-edit" style="margin-top:14px"></div>
+      <div class="panel" id="cg-edit" style="margin-top:14px"></div>
       <div class="sheets" id="sheets-proposal"></div>
     </section>
 
@@ -903,6 +975,96 @@ tr.sel td{background:var(--accent-soft)}
         <div class="panel" id="dv-edit"></div>
         <div class="sheets" id="sheets-driver"></div>
       </div>
+    </section>
+
+    <!-- MORNING NEWS -->
+    <section data-view="morning" hidden>
+      <div class="row between"><div><h1>모닝뉴스</h1><p class="sub">오늘의 지수·보험뉴스·경제뉴스를 내 이름이 들어간 카드로 만들어 고객에게 보냅니다.</p></div><span class="note" id="mn-date"></span></div>
+      <div class="mn-wrap" style="margin-top:14px">
+        <div class="panel" style="padding:12px;overflow:auto"><div id="mn-card"></div></div>
+        <div class="col" style="display:flex;flex-direction:column;gap:12px">
+          <div class="panel"><h2>배경 선택</h2><div class="mn-themes" id="mn-themes"></div>
+            <label class="row note" style="gap:6px;margin-top:10px"><input type="checkbox" id="mn-link" checked> 카드 아래에 내 개인페이지 주소 넣기</label></div>
+          <div class="panel"><h2>보내기</h2>
+            <div class="row" style="margin-top:8px"><button class="btn primary" id="mn-share" type="button">공유하기 (카카오톡 등)</button><button class="btn" id="mn-png" type="button">이미지 저장</button><button class="btn" id="mn-copy" type="button">텍스트 복사</button></div>
+            <p class="note" id="mn-msg" style="margin:8px 0 0"></p>
+            <p class="note" style="margin:8px 0 0">휴대폰에서 [공유하기]를 누르면 카카오톡을 골라 고객에게 바로 보낼 수 있습니다. PC에서는 이미지를 저장한 뒤 카카오톡 PC에 끌어다 놓으면 됩니다.</p></div>
+          <div class="panel"><h2>자료 출처</h2><p class="note" style="margin:6px 0 0">지수·환율·뉴스 목록은 매일 아침 운영자가 갱신하는 다온 데일리뉴스 자료를 씁니다. 뉴스는 제목만 싣고 원문 링크를 붙입니다.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUOTE (가설계) -->
+    <section data-view="quote" hidden>
+      <div class="row between"><div><h1>가설계 · 보험료 비교</h1><p class="sub">나이·성별·직업급수를 넣고 담보를 고르면 보험사별 예상 보험료를 나란히 비교합니다.</p></div><span class="pill ex" id="qt-ex" hidden>예시 보험료</span></div>
+      <div class="qt-grid" style="margin-top:14px">
+        <div class="panel">
+          <h2>1. 기본 정보</h2>
+          <div class="field" style="margin-top:8px"><label for="qt-birth">생년월일 (보험나이 자동 계산)</label><input id="qt-birth" type="date"></div>
+          <div class="row" style="margin-top:8px;gap:8px"><div class="field" style="flex:1"><label for="qt-age">보험나이</label><input id="qt-age" inputmode="numeric" value="40"></div>
+            <div class="field" style="flex:1"><label>성별</label><div class="seg" id="qt-sex"><button class="btn" type="button" data-v="M" aria-pressed="true">남</button><button class="btn" type="button" data-v="F">여</button></div></div></div>
+          <div class="field" style="margin-top:8px"><label>직업급수 (상해위험등급)</label><div class="seg" id="qt-grade"><button class="btn" type="button" data-v="1" aria-pressed="true">1급</button><button class="btn" type="button" data-v="2">2급</button><button class="btn" type="button" data-v="3">3급</button></div></div>
+          <p class="note" id="qt-agenote" style="margin:6px 0 0"></p>
+          <h2 style="margin-top:16px">2. 담보 선택 · 가입금액(만원)</h2>
+          <div id="qt-covs" style="margin-top:8px"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+          <div class="panel"><div class="row between"><h2>3. 보험사별 비교</h2><span class="row"><button class="btn" type="button" id="qt-pdf">PDF 다운로드</button></span></div>
+            <div id="qt-prods" class="row" style="margin-top:8px;gap:10px"></div>
+            <div id="qt-res" style="margin-top:10px"></div><p class="note" id="qt-msg" style="margin:6px 0 0"></p></div>
+          <div class="panel"><div class="row between"><h2>보험료 기준표</h2><span class="note" id="qt-n"></span></div>
+            <p class="note" style="margin:6px 0 0">보험사 가설계(설계 프로그램) 결과를 기준표로 넣어 둡니다. 보험료는 기준표의 가입금액에 비례해 환산하므로 실제 청약 보험료와 다를 수 있으며, 청약 전 반드시 보험사 설계로 확인합니다.</p>
+            <div class="row" style="margin-top:10px"><button class="btn" type="button" id="qt-tpl">엑셀 양식 받기</button><label class="btn" for="qt-file" style="margin:0">엑셀 올리기</label><input id="qt-file" type="file" accept=".xlsx,.xls,.csv" hidden><button class="btn" type="button" id="qt-clear">내 기준표 비우기</button></div>
+            <p class="note err" id="qt-imsg" style="margin:6px 0 0"></p></div>
+        </div>
+      </div>
+      <div class="sheets" id="sheets-quote" hidden></div>
+    </section>
+
+    <!-- HOMEPAGE (개인페이지) -->
+    <section data-view="homepage" hidden>
+      <div class="row between"><div><h1>개인페이지</h1><p class="sub">고객에게 보내는 내 모바일 명함·홈페이지입니다. 전화·문자·카카오톡·연락처 저장·보험금 청구 안내·오늘의 뉴스를 한 페이지에 담습니다.</p></div><span class="pill" id="hp2-st"></span></div>
+      <div class="hp2" style="margin-top:14px">
+        <div class="panel" id="hp2-form"></div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:center"><div class="phone" style="width:340px"><div class="phone-in" id="hp2-prev" style="padding:0;gap:0;max-height:680px;overflow:auto"></div></div></div>
+      </div>
+    </section>
+
+    <!-- DISCLOSE (고지의무 조회) -->
+    <section data-view="disclose" hidden>
+      <div class="row between"><div><h1>고지의무 확인</h1><p class="sub">고객이 직접 조회한 심평원·건강보험 진료내역을 올리면, 청약서 질문 기간(3개월·1년·5년)별로 알릴 사항 후보를 나눠 보여줍니다.</p></div></div>
+      <div class="banner" style="margin-top:14px"><b>저장하지 않음</b><span>올린 진료내역은 이 화면 안에서만 계산하고 서버에 저장하지 않습니다. 화면을 닫으면 사라집니다. 고객 동의를 받은 자료만 올리세요.</span></div>
+      <div class="grid3" style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="panel"><h2>1. 고객에게 조회 안내 보내기</h2>
+          <div class="field" style="margin-top:8px"><label for="ds-cust">고객</label><input id="ds-cust" list="dl-cust" placeholder="이름 또는 전화번호 뒷자리" autocomplete="off"></div>
+          <textarea id="ds-text" rows="9" style="margin-top:8px;width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;font-size:13px"></textarea>
+          <div class="row" style="margin-top:8px"><button class="btn primary" type="button" id="ds-sms">문자 앱으로 보내기</button><button class="btn" type="button" id="ds-share">공유하기</button><button class="btn" type="button" id="ds-copy">복사</button></div>
+          <p class="note" id="ds-smsg" style="margin:6px 0 0"></p></div>
+        <div class="panel"><h2>2. 진료내역 올리기</h2>
+          <p class="note" style="margin:6px 0 0">심평원 '내 진료정보 열람'에서 내려받은 엑셀을 올리거나, 아래에서 한 줄씩 직접 입력합니다.</p>
+          <div class="row" style="margin-top:8px"><label class="btn" for="ds-file" style="margin:0">엑셀 올리기</label><input id="ds-file" type="file" accept=".xlsx,.xls,.csv" hidden>
+            <div class="field" style="width:170px"><label for="ds-base">청약 예정일 (기준일)</label><input id="ds-base" type="date"></div></div>
+          <p class="note err" id="ds-fmsg" style="margin:6px 0 0"></p>
+          <details style="margin-top:6px"><summary class="note" style="cursor:pointer">직접 입력</summary>
+            <div class="row" style="margin-top:8px;gap:6px">
+              <input id="dsn-d" type="date" aria-label="진료일" style="border:1px solid var(--line);border-radius:6px;padding:6px">
+              <input id="dsn-h" placeholder="병원" style="width:110px;border:1px solid var(--line);border-radius:6px;padding:6px">
+              <input id="dsn-c" placeholder="상병코드 (예: K21)" style="width:110px;border:1px solid var(--line);border-radius:6px;padding:6px">
+              <input id="dsn-n" placeholder="상병명" style="width:120px;border:1px solid var(--line);border-radius:6px;padding:6px">
+              <select id="dsn-t" style="border:1px solid var(--line);border-radius:6px;padding:6px"><option>외래</option><option>입원</option></select>
+              <input id="dsn-k" inputmode="numeric" placeholder="입원·내원일수" style="width:96px;border:1px solid var(--line);border-radius:6px;padding:6px">
+              <input id="dsn-r" inputmode="numeric" placeholder="투약일수" style="width:80px;border:1px solid var(--line);border-radius:6px;padding:6px">
+              <button class="btn" type="button" id="dsn-add">추가</button></div></details>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:14px"><div class="row between"><h2>3. 기간별 알릴 사항 후보</h2><button class="btn" type="button" id="ds-reset">모두 지우기</button></div><div id="ds-res" style="margin-top:10px"></div></div>
+      <div class="panel" style="margin-top:14px"><h2>근거와 주의사항</h2>
+        <ul class="note" style="margin:8px 0 0;padding-left:18px;line-height:1.7">
+          <li>최종 판단 기준은 가입하려는 상품의 <b>청약서 질문표 문구</b>입니다. 일반심사·간편심사(3·N·5 등) 상품마다 질문 기간과 항목이 다르므로, 이 화면의 분류는 확인용 후보입니다.</li>
+          <li>일반심사 청약서의 대표 질문 예: 최근 3개월 이내 진찰·검사로 진단·치료·입원·수술·투약, 최근 3개월 이내 약물 상시 복용, 최근 5년 이내 입원·수술·정밀검사·계속하여 7일 이상 치료·30일 이상 투약, 최근 5년 이내 지정 질병 (금융감독원 분쟁조정사례 「고지의무의 범위」, 방재와 보험 2012).</li>
+          <li>고의 또는 중대한 과실로 알리지 않거나 사실과 다르게 알린 경우, 보험사는 그 사실을 안 날부터 1개월, 계약 체결일부터 3년 안에 계약을 해지할 수 있습니다 (상법 제651조).</li>
+          <li>심평원 진료정보에는 비급여 진료, 일부 정신건강 진료, 진단서 상세 내용이 빠질 수 있고, 최근 진료는 2~3주 늦게 반영될 수 있습니다. 수술 여부는 진료내역만으로 알 수 없어 고객에게 확인합니다.</li>
+        </ul></div>
     </section>
   </main>
 </div>
@@ -2465,4 +2627,380 @@ document.addEventListener("click",async e=>{ if(!CLOUD.on||!CLOUD.sb) return;
 },true);
 if(CLOUD.on){ const sc=document.createElement("script"); sc.src="supabase.js"; sc.onload=()=>{ cloudInit().catch(()=>cloudBadge("서버에 연결하지 못했습니다",true)); }; sc.onerror=()=>cloudBadge("서버 도구를 불러오지 못했습니다",true); document.head.appendChild(sc); }
 
+</script>
+<script>
+/* ===== 2026-10-15 추가 기능: 모닝뉴스 · 가설계 · 보장표 · 개인페이지 · 고지의무 확인 ===== */
+(function(){
+"use strict";
+const SCR=window; // 전역 헬퍼($, esc, ME, CUSTOMERS, CONTRACTS, page, man, today, DL, cloudSave)는 앞 스크립트에서 정의됨
+const pad2=n=>String(n).padStart(2,"0");
+const ymd=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const flash=(el,t)=>{ if(el) el.textContent=t; };
+async function saveBlob(blob,name){ if(!DL){ return "unavailable"; } try{ await DL.save({filename:name,data:blob}); return "ok"; }catch(e){ return "error"; } }
+async function shareOrSave(blob,name,text,msgEl){
+  try{ const f=new File([blob],name,{type:blob.type});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],text}); flash(msgEl,"공유 창을 열었습니다."); return; } }catch(e){ if(e&&e.name==="AbortError"){ flash(msgEl,""); return; } }
+  const r=await saveBlob(blob,name); flash(msgEl,r==="ok"?"이 기기는 바로 공유를 지원하지 않아 이미지를 저장했습니다. 카카오톡에서 저장한 이미지를 보내세요.":"이미지를 저장하지 못했습니다.");
+}
+async function copyText(t,msgEl){ try{ await navigator.clipboard.writeText(t); flash(msgEl,"복사했습니다. 카카오톡·문자에 붙여넣으세요."); }catch(e){ flash(msgEl,"복사하지 못했습니다. 길게 눌러 직접 복사하세요."); } }
+
+/* ---------- 담보 표준 목록 (보장표·가설계 공용) ---------- */
+const CR=[
+ ["사망·장해","adth","상해사망",/상해.*사망|재해.*사망/],
+ ["사망·장해","adis","상해후유장해(3%이상)",/상해.*장해|재해.*장해/],
+ ["사망·장해","ddth","질병사망",/질병.*사망|일반사망|^사망|종신/],
+ ["사망·장해","ddis","질병후유장해(3%이상)",/질병.*장해/],
+ ["암","cgen","일반암 진단비",/암.*진단|암진단|^일반암|^암$/],
+ ["암","csim","유사암·소액암 진단비",/유사암|소액암|갑상선암|제자리암|경계성/],
+ ["암","chigh","고액암 진단비",/고액암/],
+ ["암","c2","재진단·이차암 진단비",/재진단|이차암|2차암/],
+ ["암","ctx","암 주요치료비",/암.*치료|항암|표적/],
+ ["뇌·심장","bcv","뇌혈관질환 진단비",/뇌혈관/],
+ ["뇌·심장","bstr","뇌졸중 진단비",/뇌졸중|뇌경색/],
+ ["뇌·심장","bhem","뇌출혈 진단비",/뇌출혈/],
+ ["뇌·심장","hisc","허혈성심장질환 진단비",/허혈성|심혈관|심장질환/],
+ ["뇌·심장","hami","급성심근경색 진단비",/급성심근경색|심근경색/],
+ ["뇌·심장","cvtx","뇌·심장 주요치료비",/순환계|(뇌|심장).*치료비/],
+ ["수술·입원","asurg","상해수술비",/상해.*수술|재해.*수술/],
+ ["수술·입원","dsurg","질병수술비",/질병.*수술|^수술비/],
+ ["수술·입원","nsurg","질병 1~5종 수술비",/[1-5]\s*[~-]\s*[1-5]\s*종|종\s*수술/],
+ ["수술·입원","csurg","암수술비",/암.*수술/],
+ ["수술·입원","bsurg","뇌·심장 수술비",/(뇌|심장|심혈관|허혈).*수술/],
+ ["수술·입원","ahosp","상해입원일당",/상해.*입원|재해.*입원/],
+ ["수술·입원","dhosp","질병입원일당",/질병.*입원|입원일당/],
+ ["수술·입원","chosp","암직접입원일당",/암.*입원/],
+ ["기타","frac","골절진단비",/골절/],
+ ["기타","burn","화상진단비",/화상/],
+ ["기타","dem","치매 진단비",/치매/],
+ ["기타","car","자동차사고부상치료비",/자동차.*부상|부상.*치료/],
+ ["기타","dfine","벌금 (운전자)",/벌금/],
+ ["기타","dlaw","변호사선임비용",/변호사/],
+ ["기타","dsettle","교통사고처리지원금",/합의|교통사고처리/],
+ ["기타","liab","일상생활배상책임",/배상/]];
+const CRK=Object.fromEntries(CR.map(r=>[r[1],r]));
+const MATCH_ORDER=["csurg","bsurg","asurg","nsurg","dsurg","chosp","ahosp","dhosp","ctx","cvtx","csim","chigh","c2","cgen","bhem","bstr","bcv","hami","hisc","adth","adis","ddth","ddis","frac","burn","dem","car","dfine","dlaw","dsettle","liab"];
+function rowOf(name){ const n=String(name||"").replace(/\s/g,""); if(!n) return null; if(CRK[n]) return n;
+  const exact=CR.find(r=>r[2].replace(/\s/g,"")===n); if(exact) return exact[1];
+  for(const k of MATCH_ORDER){ if(CRK[k][3].test(n)) return k; } return null; }
+function toMan(s){ s=String(s==null?"":s).replace(/,|\s/g,""); if(!s) return 0; let m;
+  if((m=s.match(/([\d.]+)억(?:([\d.]+)천만)?(?:([\d.]+)만)?/))) return Math.round(+m[1]*10000+(+m[2]||0)*1000+(+m[3]||0));
+  if((m=s.match(/([\d.]+)천만/))) return Math.round(+m[1]*1000);
+  if((m=s.match(/([\d.]+)백만/))) return Math.round(+m[1]*100);
+  if((m=s.match(/([\d.]+)만/))) return Math.round(+m[1]);
+  if((m=s.match(/([\d.]+)원/))) return Math.round(+m[1]/10000);
+  m=s.match(/[\d.]+/); return m?Math.round(+m[0]):0; }
+const manS=v=>v?man(v):"–";
+
+/* ================= 모닝뉴스 ================= */
+const MN={data:null,theme:"paper",err:""};
+const MN_THEMES=[["paper","신문",""],["t-blue","블루",""],["t-green","그린",""],["t-dark","다크",""]];
+async function mnLoad(){
+  if(MN.data||MN.err) return;
+  try{ const r=await fetch("../dailynews/latest.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok) throw 0; MN.data=await r.json(); }
+  catch(e){ MN.err="뉴스 자료를 불러오지 못했습니다. (grow.ai.kr/boit 주소에서 열어야 불러옵니다)"; }
+}
+function mnText(){ const d=MN.data; if(!d) return ""; const L=[];
+  L.push(`[모닝뉴스] ${d.dateLabel||d.date}`);
+  if((d.market||[]).length){ L.push("","■ 주요 지수"); d.market.forEach(m=>L.push(`${m.label} ${m.value} (${m.dir==="up"?"▲":m.dir==="down"?"▼":""}${String(m.diff||"").replace(/^[+-]/,"")})`)); }
+  const cats=[...new Set((d.news||[]).map(n=>n.cat||"뉴스"))];
+  cats.forEach(c=>{ L.push("",`■ ${c} 뉴스`); d.news.filter(n=>(n.cat||"뉴스")===c).forEach(n=>L.push(`· ${n.title}${n.url?"\n  "+n.url:""}`)); });
+  if(d.quote&&d.quote.text) L.push("",`■ 오늘의 한마디\n"${d.quote.text}" - ${d.quote.author||""}`);
+  L.push("",`좋은 하루 보내세요. ${ME.name||""}${ME.phone?" "+ME.phone:""}`);
+  if($("#mn-link")&&$("#mn-link").checked&&hpUrl()) L.push(hpUrl());
+  return L.join("\n"); }
+function mnCard(){ const d=MN.data;
+  const mk=(d.market||[]).map(m=>`<div class="kv"><span>${esc(m.label)}</span><span><b>${esc(m.value)}</b><i class="${m.dir==="up"?"up":m.dir==="down"?"down":""}">${m.dir==="up"?"▲":m.dir==="down"?"▼":""}${esc(String(m.diff||"").replace(/^[+-]/,""))}</i></span></div>`).join("");
+  const wx=(d.weather||[]).slice(0,8).map(w=>`<div class="kv"><span>${esc(w.city)}</span><span>${w.min}° / ${w.max}°</span></div>`).join("");
+  const cats=[...new Set((d.news||[]).map(n=>n.cat||"뉴스"))];
+  const news=cats.map(c=>`<h4 style="margin-top:4px">${esc(c)} 뉴스</h4><ol>${d.news.filter(n=>(n.cat||"뉴스")===c).map(n=>`<li>${esc(n.title)}</li>`).join("")}</ol>`).join("");
+  const ph=ME.photo?`<img class="av" src="${esc(ME.photo)}" alt="">`:"";
+  const link=$("#mn-link")&&$("#mn-link").checked&&hpUrl()?`<div style="font-size:11.5px;margin-top:2px">${esc(hpUrl().replace(/^https?:\/\//,""))}</div>`:"";
+  return `<div class="mnc ${MN.theme==="paper"?"":MN.theme}" id="mn-node">
+    <div class="mh"><b>MORNING NEWS</b><span>${esc(d.dateLabel||d.date||"")}</span></div>
+    <div class="mb"><div>
+      ${mk?`<h4>주요 지수</h4>${mk}`:""}
+      ${wx?`<h4 style="margin-top:12px">오늘 날씨</h4><div class="wx">${wx}</div>`:""}
+      ${d.quote&&d.quote.text?`<h4 style="margin-top:12px">오늘의 한마디</h4><p class="q">“${esc(d.quote.text)}”<br>— ${esc(d.quote.author||"")}</p>`:""}
+    </div><div>${news||"<p>오늘 뉴스가 아직 없습니다.</p>"}</div></div>
+    <div class="mf"><div style="display:flex;gap:10px;align-items:center">${ph}<div><b>${esc(ME.name||"담당 설계사")}</b> <span>${esc([ME.company,ME.branch].filter(Boolean).join(" "))}</span><div>${esc(ME.phone||"")}</div>${link}</div></div><span style="font-size:12px;opacity:.75">오늘도 좋은 하루 되세요</span></div>
+  </div>`; }
+async function renderMorning(){
+  $("#mn-themes").innerHTML=MN_THEMES.map(([k,l])=>`<button type="button" data-mnt="${k}" aria-pressed="${MN.theme===k}" style="background:${k==="paper"?"#F4F1EA":k==="t-blue"?"#EAF2FF":k==="t-green"?"#EEF6EA":"#14201C"};color:${k==="t-dark"?"#EDF3F0":"#151515"}">${l}</button>`).join("");
+  $("#mn-card").innerHTML='<p class="note">불러오는 중…</p>'; await mnLoad();
+  if(!MN.data){ $("#mn-card").innerHTML=`<p class="note err">${esc(MN.err)}</p>`; return; }
+  $("#mn-card").innerHTML=mnCard();
+  const stale=MN.data.date!==today();
+  $("#mn-date").innerHTML=stale?`<span class="pill warn">기준일 ${esc(MN.data.date)} · 오늘 자 자료가 아직 없습니다</span>`:`<span class="pill ok">오늘 자 · ${esc(MN.data.date)}</span>`;
+}
+async function mnBlob(){ const n=$("#mn-node"); if(!n||!window.html2canvas) return null; if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+  const cv=await html2canvas(n,{scale:1.5,useCORS:true,backgroundColor:null}); return await new Promise(r=>cv.toBlob(r,"image/png")); }
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-mnt]"); if(t){ MN.theme=t.dataset.mnt; renderMorning(); return; }
+  if(e.target.closest("#mn-copy")){ copyText(mnText(),$("#mn-msg")); return; }
+  if(e.target.closest("#mn-png")||e.target.closest("#mn-share")){ const msg=$("#mn-msg"); flash(msg,"이미지를 만드는 중…"); const b=await mnBlob(); if(!b){ flash(msg,"이미지를 만들지 못했습니다."); return; }
+    const name=`모닝뉴스_${(MN.data&&MN.data.date)||today()}.png`;
+    if(e.target.closest("#mn-share")) await shareOrSave(b,name,mnText(),msg); else { const r=await saveBlob(b,name); flash(msg,r==="ok"?"이미지를 저장했습니다.":"이 화면에서는 저장을 지원하지 않습니다."); } }
+});
+document.addEventListener("change",e=>{ if(e.target.id==="mn-link"&&MN.data) $("#mn-card").innerHTML=mnCard(); });
+
+/* ================= 가설계 · 보험료 비교 ================= */
+const QT={age:40,sex:"M",grade:"1",birth:"",checks:{cgen:3000,csim:600,bcv:1000,hisc:1000,dsurg:30,ctx:1000},rates:[],shared:[],pick:null,sharedTried:false};
+const QT_DEMO=(()=>{ const R=[]; const base={cgen:[3000,[9800,8600]],csim:[600,[1500,1300]],chigh:[3000,[2200,1900]],ctx:[1000,[11800,10200]],bcv:[1000,[9200,6100]],bhem:[1000,[2100,1400]],hisc:[1000,[7600,3900]],hami:[1000,[1500,800]],cvtx:[1000,[8400,6000]],dsurg:[30,[3300,4100]],nsurg:[100,[4200,5000]],csurg:[500,[1600,1400]],dhosp:[3,[2600,3100]],adth:[10000,[2200,1100]],ddth:[1000,[6900,4300]],asurg:[30,[700,600]],frac:[30,[900,800]],dem:[1000,[2400,3300]]};
+  [["예시A손해보험","예시 건강보험 A형",1],["예시B손해보험","예시 건강보험 B형",1.08],["예시C생명","예시 건강종신 C형",1.2]].forEach(([ins,prod,f],pi)=>{
+    Object.entries(base).forEach(([k,[amt,[m,w]]])=>[["M",m],["F",w]].forEach(([sx,p])=>[[20,29,0.55],[30,39,0.8],[40,49,1],[50,59,1.45],[60,70,2.1]].forEach(([a1,a2,af])=>["1","2","3"].forEach(g=>{
+      const gf=/^a/.test(k)||k==="frac"?(g==="1"?1:g==="2"?1.35:1.8):1; if(pi===2&&/^(a|frac)/.test(k)) return;
+      R.push({ins,prod,key:k,sex:sx,grade:g,a1,a2,base:amt,prem:Math.round(p*f*af*gf/10)*10,src:"예시 수치",at:"-"}); }))));
+  }); return R; })();
+function qtRates(){ return ME.demo?QT_DEMO:[...QT.shared,...QT.rates]; }
+async function qtLoadShared(){ if(QT.sharedTried) return; QT.sharedTried=true;
+  try{ const r=await fetch("rates.json?t="+Date.now(),{cache:"no-store"}); if(r.ok){ const j=await r.json(); if(Array.isArray(j)) QT.shared=j.filter(x=>x&&x.ins&&x.key); } }catch(e){} }
+function insAge(birth,at){ const b=new Date(birth), d=new Date(at||today()); if(isNaN(b)) return null;
+  let m=(d.getFullYear()-b.getFullYear())*12+(d.getMonth()-b.getMonth()); if(d.getDate()<b.getDate()) m--; const y=Math.floor(m/12), r=m%12; return {full:y,ins:r>=6?y+1:y,rem:r}; }
+function qtPrem(prodKey,key,amt){ const [ins,prod]=prodKey.split("\u0001");
+  const c=qtRates().filter(x=>x.ins===ins&&x.prod===prod&&x.key===key&&(+x.a1<=QT.age)&&(QT.age<=+x.a2)&&(!x.sex||x.sex===QT.sex)&&(!x.grade||String(x.grade)===QT.grade));
+  if(!c.length) return null; c.sort((a,b)=>(b.sex?1:0)+(b.grade?1:0)-((a.sex?1:0)+(a.grade?1:0))); const r=c[0];
+  return {v:Math.round(r.prem*amt/(+r.base||1)/10)*10,src:r.src,at:r.at}; }
+function qtProds(){ return [...new Set(qtRates().map(x=>x.ins+"\u0001"+x.prod))]; }
+function renderQuote(){
+  qtLoadShared().then(()=>{ if(S.view==="quote") qtResult(); });
+  $("#qt-ex").hidden=!ME.demo;
+  $("#qt-age").value=QT.age; $("#qt-birth").value=QT.birth||"";
+  document.querySelectorAll("#qt-sex [data-v]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===QT.sex));
+  document.querySelectorAll("#qt-grade [data-v]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===QT.grade));
+  let g=""; $("#qt-covs").innerHTML=`<div class="qt-cov">${CR.map(r=>{ const head=r[0]!==g?`<div class="g">${r[0]}</div>`:""; g=r[0]; const on=QT.checks[r[1]]!=null;
+    return `${head}<input type="checkbox" data-qtc="${r[1]}" ${on?"checked":""} aria-label="${r[2]}"><label for="" style="font-size:13px">${r[2]}</label><input type="text" inputmode="numeric" data-qta="${r[1]}" value="${on?QT.checks[r[1]]:""}" placeholder="만원" ${on?"":"disabled"} aria-label="${r[2]} 가입금액">`; }).join("")}</div>`;
+  qtAgeNote(); qtResult(); }
+function qtAgeNote(){ const a=QT.birth?insAge(QT.birth):null;
+  $("#qt-agenote").textContent=a?`만 ${a.full}세 ${a.rem}개월 → 보험나이 ${a.ins}세 (계약일 기준 만 나이에서 6개월 이상 끝수는 1년으로 계산 · 표준약관 보험나이 조항)`:"생년월일을 넣으면 오늘 기준 보험나이를 계산합니다."; }
+function qtResult(){
+  const prods=qtProds(); if(!QT.pick) QT.pick=prods.slice(0,4);
+  QT.pick=QT.pick.filter(p=>prods.includes(p));
+  $("#qt-n").textContent=ME.demo?`예시 ${prods.length}개 상품`:`공용 ${QT.shared.length}줄 · 내 기준표 ${QT.rates.length}줄 · 상품 ${prods.length}개`;
+  $("#qt-prods").innerHTML=prods.length?prods.map(p=>{ const [i,pr]=p.split("\u0001"); return `<label class="row note" style="gap:5px"><input type="checkbox" data-qtp="${esc(p)}" ${QT.pick.includes(p)?"checked":""}> ${esc(i)} · ${esc(pr)}</label>`; }).join(""):"";
+  const keys=Object.keys(QT.checks).filter(k=>CRK[k]&&+QT.checks[k]>0);
+  if(!prods.length){ $("#qt-res").innerHTML=`<p class="note">아직 보험료 기준표가 없습니다. 오른쪽 아래 [엑셀 양식 받기]로 양식을 받아 보험사 가설계 결과를 채운 뒤 [엑셀 올리기]를 누르세요.</p>`; return; }
+  if(!QT.pick.length||!keys.length){ $("#qt-res").innerHTML='<p class="note">비교할 상품과 담보를 하나 이상 고르세요.</p>'; return; }
+  const P=QT.pick.slice(0,6), cell={}, tot=P.map(()=>({v:0,miss:0}));
+  keys.forEach(k=>P.forEach((p,j)=>{ const r=qtPrem(p,k,+QT.checks[k]); cell[k+"|"+j]=r; if(r) tot[j].v+=r.v; else tot[j].miss++; }));
+  const rowBest=k=>{ const vs=P.map((p,j)=>cell[k+"|"+j]).filter(Boolean).map(r=>r.v); return vs.length>1?Math.min(...vs):null; };
+  const full=tot.filter(t=>!t.miss).map(t=>t.v), bestTot=full.length>1?Math.min(...full):null;
+  $("#qt-res").innerHTML=`<div class="tbl-wrap"><table class="qt-t"><thead><tr><th>담보</th><th style="text-align:right">가입금액</th>${P.map(p=>{const [i,pr]=p.split("\u0001"); return `<th style="text-align:right">${esc(i)}<br><span class="note" style="font-weight:400">${esc(pr)}</span></th>`;}).join("")}</tr></thead>
+   <tbody>${keys.map(k=>{ const b=rowBest(k); return `<tr><td>${esc(CRK[k][2])}</td><td class="num" style="text-align:right">${man(+QT.checks[k])}</td>${P.map((p,j)=>{ const r=cell[k+"|"+j]; return r?`<td class="num${b!=null&&r.v===b?" best":""}" style="text-align:right">${r.v.toLocaleString()}원</td>`:'<td class="na" style="text-align:right">자료 없음</td>'; }).join("")}</tr>`; }).join("")}</tbody>
+   <tfoot><tr><td colspan="2">월 보험료 합계 (선택 담보)</td>${tot.map(t=>`<td class="num${bestTot!=null&&!t.miss&&t.v===bestTot?" best":""}" style="text-align:right">${t.v.toLocaleString()}원${t.miss?`<br><span class="note" style="font-weight:400">${t.miss}개 담보 자료 없음</span>`:""}</td>`).join("")}</tr></tfoot></table></div>`;
+  $("#qt-msg").textContent=`${QT.sex==="M"?"남":"여"} · 보험나이 ${QT.age}세 · 직업 ${QT.grade}급 기준. 초록색 칸이 가장 낮은 보험료입니다. 기준표 가입금액에 비례해 환산한 예상치이며, 청약 보험료는 보험사 설계로 확인합니다.`;
+}
+const QT_COLS=["보험사","상품명","담보","성별(남/여/공통)","직업급수(1/2/3/공통)","나이부터","나이까지","기준가입금액(만원)","월보험료(원)","출처(설계번호 등)","기준일"];
+function qtImportRows(rows){ const out=[], bad=[];
+  rows.forEach((r,i)=>{ if(!r||!r.length||r.every(x=>x===""||x==null)) return; if(String(r[0]).trim()==="보험사") return;
+    const key=rowOf(r[2]); const sx=String(r[3]||"").trim(), gr=String(r[4]||"").trim().replace(/급/,"");
+    const o={ins:String(r[0]||"").trim(),prod:String(r[1]||"").trim(),key,sex:/^(남|M)/i.test(sx)?"M":/^(여|F)/i.test(sx)?"F":"",grade:/^[123]$/.test(gr)?gr:"",a1:+r[5]||0,a2:+r[6]||120,base:toMan(r[7])||+r[7]||0,prem:+String(r[8]||"").replace(/[^\d.]/g,"")||0,src:String(r[9]||""),at:String(r[10]||"")};
+    if(!o.ins||!o.prod||!key||!o.base||!o.prem) bad.push(i+1); else out.push(o); });
+  return {out,bad}; }
+document.addEventListener("click",async e=>{
+  const s=e.target.closest("#qt-sex [data-v]"); if(s){ QT.sex=s.dataset.v; renderQuote(); return; }
+  const g=e.target.closest("#qt-grade [data-v]"); if(g){ QT.grade=g.dataset.v; renderQuote(); return; }
+  if(e.target.closest("#qt-tpl")){ if(!window.XLSX){ flash($("#qt-imsg"),"엑셀 도구를 불러오지 못했습니다."); return; }
+    const ws=XLSX.utils.aoa_to_sheet([QT_COLS,["OO손해보험","OO건강보험(무)","일반암 진단비","남","공통",40,40,1000,3200,"가설계 2026-10-15",today()]]);
+    const ws2=XLSX.utils.aoa_to_sheet([["담보 이름은 아래 중 하나로 적으세요 (비슷한 이름도 자동 인식)"],...CR.map(r=>[r[2]])]);
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"보험료기준표"); XLSX.utils.book_append_sheet(wb,ws2,"담보목록");
+    const buf=XLSX.write(wb,{bookType:"xlsx",type:"array"}); const r=await saveBlob(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"보잇_보험료기준표_양식.xlsx"); flash($("#qt-imsg"),r==="ok"?"양식을 저장했습니다.":"저장하지 못했습니다."); return; }
+  if(e.target.closest("#qt-clear")){ if(confirm("내가 올린 보험료 기준표를 모두 지울까요?")){ QT.rates=[]; QT.pick=null; renderQuote(); } return; }
+  if(e.target.closest("#qt-pdf")){ await qtPdf(); return; }
+});
+document.addEventListener("change",async e=>{
+  const c=e.target.closest("[data-qtc]"); if(c){ const k=c.dataset.qtc; if(c.checked) QT.checks[k]=QT.checks[k]||({adth:10000,ddth:1000,cgen:3000,csim:600,chigh:3000,c2:1000,ctx:1000,bcv:1000,bstr:1000,bhem:1000,hisc:1000,hami:1000,cvtx:1000,asurg:30,dsurg:30,nsurg:100,csurg:500,bsurg:500,ahosp:3,dhosp:3,chosp:5,frac:30,burn:30,dem:1000,car:100,dfine:2000,dlaw:2000,dsettle:20000,liab:10000,adis:10000,ddis:1000}[k]||100); else delete QT.checks[k]; renderQuote(); return; }
+  const p=e.target.closest("[data-qtp]"); if(p){ const v=p.dataset.qtp; QT.pick=(QT.pick||[]).filter(x=>x!==v); if(p.checked) QT.pick.push(v); qtResult(); return; }
+  if(e.target.id==="qt-birth"){ QT.birth=e.target.value; const a=QT.birth?insAge(QT.birth):null; if(a) QT.age=a.ins; renderQuote(); return; }
+  if(e.target.id==="qt-file"){ const f=e.target.files[0]; if(!f) return; const m=$("#qt-imsg");
+    try{ const wb=XLSX.read(await f.arrayBuffer(),{type:"array"}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
+      const {out,bad}=qtImportRows(rows); QT.rates.push(...out); QT.pick=null; renderQuote();
+      m.textContent=`${out.length}줄을 넣었습니다.${bad.length?` ${bad.length}줄은 보험사·상품·담보·금액·보험료가 비어 있거나 담보 이름을 알 수 없어 뺐습니다 (엑셀 ${bad.slice(0,8).join(", ")}행).`:""}`; }
+    catch(err){ m.textContent="파일을 읽지 못했습니다. 양식(엑셀)을 확인하세요."; } e.target.value=""; }
+});
+document.addEventListener("input",e=>{
+  const a=e.target.closest("[data-qta]"); if(a){ QT.checks[a.dataset.qta]=toMan(a.value)||+a.value||0; qtResult(); return; }
+  if(e.target.id==="qt-age"){ QT.age=Math.max(0,Math.min(120,+e.target.value||0)); QT.birth=""; $("#qt-birth").value=""; qtAgeNote(); qtResult(); }
+});
+async function qtPdf(){ const m=$("#qt-msg"); const res=$("#qt-res table"); if(!res){ flash(m,"비교표가 없습니다."); return; }
+  if(!window.html2canvas||!window.jspdf){ flash(m,"PDF 도구를 불러오지 못했습니다."); return; }
+  const sh=$("#sheets-quote"); sh.hidden=false;
+  sh.innerHTML=page("가설계 보험료 비교",1,1,`<h3>가설계 보험료 비교</h3><p style="margin:0;color:var(--ink2)">${QT.sex==="M"?"남성":"여성"} · 보험나이 ${QT.age}세 · 직업 ${QT.grade}급</p>${res.outerHTML.replace(/class="qt-t"/,'class="qt-t" style="width:100%"')}
+    <p style="margin:0;font-size:11.5px;color:var(--ink2)">각 보험사 가설계 결과(기준표)의 가입금액에 비례해 환산한 예상 월보험료입니다. 실제 보험료는 가입 시점의 보험사 설계·심사 결과에 따릅니다.${ME.demo?" 이 표는 예시 수치입니다.":""}</p>`);
+  try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; const cv=await html2canvas(sh.querySelector(".a4"),{scale:2,backgroundColor:"#ffffff"});
+    const pdf=new jspdf.jsPDF({unit:"mm",format:"a4"}); pdf.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",0,0,210,297);
+    const r=await saveBlob(pdf.output("blob"),`가설계비교_${today()}.pdf`); flash(m,r==="ok"?"PDF를 저장했습니다.":"이 화면에서는 저장을 지원하지 않습니다."); }
+  catch(err){ flash(m,"PDF를 만들지 못했습니다."); } finally{ sh.hidden=true; sh.innerHTML=""; } }
+
+/* ================= 보장표 (현재 · 제안) — 제안서 앞장 ================= */
+const CG={on:true};
+const LONG=k=>!["자동차","화재","배상책임"].includes(k.kind);
+function cgContracts(c){ return CONTRACTS.filter(k=>k.cust===c.id&&LONG(k)); }
+function cgVal(k,key){ return (k.cov||[]).filter(x=>rowOf(x.name)===key).reduce((a,x)=>a+toMan(x.amount),0); }
+function cgSet(k,key,v){ k.cov=(k.cov||[]).filter(x=>rowOf(x.name)!==key); if(v>0) k.cov.push({name:CRK[key][2],amount:v+"만원"}); }
+function cgProp(c){ if(!c.prop) c.prop={name:"",prem:0,cov:{}}; return c.prop; }
+function renderCG(){ const box=$("#cg-edit"); if(!box) return; const c=docCust("proposal"); const ks=cgContracts(c).slice(0,6), pr=cgProp(c);
+  let g=""; box.innerHTML=`<div class="row between"><h2>보장표 <span class="note" style="font-weight:400">현재 가입 담보 → 제안 상품 (만원)</span></h2><label class="row note" style="gap:6px"><input type="checkbox" id="cg-on" ${CG.on?"checked":""}> 제안서 첫 장에 넣기</label></div>
+  <p class="note" style="margin:4px 0 0">계약별 담보 금액은 고객관리의 계약 담보와 같은 자료입니다. 여기서 고치면 계약 정보에도 저장됩니다. ${ks.length?"":"<b>이 고객은 장기·건강 계약이 없습니다. 고객관리에서 계약을 먼저 등록하세요.</b>"}</p>
+  <div class="row" style="margin-top:8px;gap:8px"><input id="cg-pname" placeholder="제안 상품명" value="${esc(pr.name)}" style="flex:1;min-width:180px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--surface)"><input id="cg-pprem" inputmode="numeric" placeholder="제안 월보험료(원)" value="${pr.prem||""}" style="width:160px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--surface)"></div>
+  <div class="tbl-wrap" style="margin-top:8px"><table class="cg-t"><thead><tr><th>담보</th>${ks.map((k,j)=>`<th style="text-align:right">${esc(k.insurer)}<br><span class="note" style="font-weight:400">${esc((k.product||"").slice(0,14))}</span></th>`).join("")}<th style="text-align:right">현재 합계</th><th style="text-align:right;color:var(--accent)">제안</th></tr></thead><tbody>
+  ${CR.map(r=>{ const head=r[0]!==g?`<tr><td class="g" colspan="${ks.length+3}">${r[0]}</td></tr>`:""; g=r[0]; const sum=ks.reduce((a,k)=>a+cgVal(k,r[1]),0);
+    return `${head}<tr><td>${r[2]}</td>${ks.map((k,j)=>`<td style="text-align:right"><input inputmode="numeric" data-cgk="${CONTRACTS.indexOf(k)}" data-cgr="${r[1]}" value="${cgVal(k,r[1])||""}" aria-label="${esc(k.insurer)} ${r[2]}"></td>`).join("")}<td class="num" style="text-align:right">${sum?sum.toLocaleString():"–"}</td><td style="text-align:right"><input inputmode="numeric" data-cgp="${r[1]}" value="${pr.cov[r[1]]||""}" aria-label="제안 ${r[2]}"></td></tr>`; }).join("")}</tbody></table></div>`; }
+function docCovGrid(c){ const ks=cgContracts(c), pr=cgProp(c);
+  const shown=ks.slice(0,4), rest=ks.slice(4);
+  const cols=[...shown.map(k=>({h:esc(k.insurer),s:esc((k.product||"").slice(0,12)),p:+k.premium||0,v:key=>cgVal(k,key)}))];
+  if(rest.length) cols.push({h:`그 외 ${rest.length}건`,s:"",p:rest.reduce((a,k)=>a+(+k.premium||0),0),v:key=>rest.reduce((a,k)=>a+cgVal(k,key),0)});
+  const nowSum=key=>ks.reduce((a,k)=>a+cgVal(k,key),0);
+  const core=["adth","ddth","cgen","csim","bcv","hisc","dsurg","dhosp"];
+  const rows=CR.filter(r=>core.includes(r[1])||nowSum(r[1])||+pr.cov[r[1]]);
+  const premNow=ks.reduce((a,k)=>a+(+k.premium||0),0);
+  let g="";
+  const body=rows.map(r=>{ const head=r[0]!==g?`<tr><td class="gp" colspan="${cols.length+4}">${r[0]}</td></tr>`:""; g=r[0]; const n=nowSum(r[1]), p=+pr.cov[r[1]]||0;
+    return `${head}<tr><td class="cl">${r[2]}</td>${cols.map(c=>`<td>${manS(c.v(r[1]))}</td>`).join("")}<td class="sumc">${manS(n)}</td><td class="prc">${p?"+"+man(p):"–"}</td><td class="sumc" style="color:var(--pacc)">${manS(n+p)}</td></tr>`; }).join("");
+  return page("보장 현황표",1,0,`<div style="display:flex;justify-content:space-between;align-items:flex-end"><div><h3>${esc(c.name)} 고객님 보장 현황표</h3><p style="margin:4px 0 0;color:var(--ink2);font-size:13px">현재 가입하신 계약의 담보를 한 장에 모으고, 제안 상품을 더했을 때를 함께 보여드립니다.</p></div></div>
+    <table class="cgp"><thead><tr><th>담보</th>${cols.map(c=>`<th>${c.h}${c.s?`<br><span style="font-weight:400">${c.s}</span>`:""}</th>`).join("")}<th class="sumc">현재 합계</th><th class="prc">제안${pr.name?`<br><span style="font-weight:400">${esc(pr.name.slice(0,12))}</span>`:""}</th><th class="sumc">제안 후</th></tr>
+    <tr><td class="cl">월 보험료</td>${cols.map(c=>`<td>${c.p?c.p.toLocaleString()+"원":"–"}</td>`).join("")}<td class="sumc">${premNow.toLocaleString()}원</td><td class="prc">${pr.prem?(+pr.prem).toLocaleString()+"원":"–"}</td><td class="sumc">${(premNow+(+pr.prem||0)).toLocaleString()}원</td></tr></thead>
+    <tbody>${body}</tbody></table>
+    ${ks.length?"":`<p style="margin:0;font-size:12px;color:var(--ink2)">등록된 장기·건강 계약이 없습니다.</p>`}
+    <p style="margin:0;font-size:11px;color:var(--ink2)">금액은 계약별 가입금액(만원 기준)이며, 같은 이름의 담보라도 보장 범위·지급 조건은 상품 약관마다 다릅니다. 갱신형 담보는 갱신 시 보험료가 바뀔 수 있습니다.</p>`); }
+if(typeof docProposal==="function"){ const _dp=docProposal; docProposal=function(c){ renderCG(); const base=_dp(c); if(!CG.on) return base;
+  const m=base.match(/기준 · \d+\/(\d+)</); const total=(m?+m[1]:0)+1;
+  return docCovGrid(c).replace(" · 1/0"," · 1/"+total)+base.replace(/기준 · (\d+)\/(\d+)</g,(x,a)=>`기준 · ${+a+1}/${total}<`); }; }
+document.addEventListener("change",e=>{
+  if(e.target.id==="cg-on"){ CG.on=e.target.checked; renderDoc("proposal"); return; }
+  const k=e.target.closest("[data-cgk]"); if(k){ const ct=CONTRACTS[+k.dataset.cgk]; if(ct){ cgSet(ct,k.dataset.cgr,toMan(k.value)||+k.value||0); renderDoc("proposal"); } return; }
+  const p=e.target.closest("[data-cgp]"); if(p){ const c=docCust("proposal"); cgProp(c).cov[p.dataset.cgp]=toMan(p.value)||+p.value||0; renderDoc("proposal"); return; }
+  if(e.target.id==="cg-pname"||e.target.id==="cg-pprem"){ const c=docCust("proposal"), pr=cgProp(c); if(e.target.id==="cg-pname") pr.name=e.target.value.trim(); else pr.prem=+String(e.target.value).replace(/[^\d]/g,"")||0; renderDoc("proposal"); }
+});
+
+/* ================= 개인페이지 ================= */
+const PG_DEF={slug:"",title:"보험설계사",greet:"보험은 가입보다 관리가 중요합니다. 보장 점검부터 보험금 청구까지 끝까지 챙겨드리겠습니다.",kakao:"",email:"",office:"",tags:"보장분석, 보험금 청구, 실손보험, 자동차보험",career:"",reg:"",color:"#0E7A5F",showClaim:true,showNews:true,showCheck:true,published:""};
+function PGo(){ if(!ME.page) ME.page=Object.assign({},PG_DEF); return ME.page; }
+function hpUrl(){ const p=ME.page; if(!p||!p.slug||!p.published) return ""; return `${location.origin}${location.pathname.replace(/[^/]*$/,"")}p.html?u=${encodeURIComponent(p.slug)}`; }
+SCR.hpUrl=hpUrl;
+function pgData(){ const p=PGo(); return {name:ME.name||"",phone:ME.phone||"",company:ME.company||"",branch:ME.branch||"",photo:ME.photo||"",title:p.title,greet:p.greet,kakao:p.kakao,email:p.email,office:p.office,tags:p.tags,career:p.career,reg:p.reg,color:p.color,showClaim:!!p.showClaim,showNews:!!p.showNews,showCheck:!!p.showCheck}; }
+SCR.BOIT_HP_RENDER=hpHTML;
+function hpHTML(d,news){ const tel=String(d.phone||"").replace(/[^\d]/g,"");
+  const acts=[["📞","전화",tel?`tel:${tel}`:""],["💬","문자",tel?`sms:${tel}`:""],["🟡","카카오톡",d.kakao||""],["👤","연락처 저장","#vcard"]].filter(a=>a[2]);
+  const tags=String(d.tags||"").split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+  const career=String(d.career||"").split("\n").map(s=>s.trim()).filter(Boolean);
+  return `<div class="hpv" style="--hpc:${esc(d.color||"#0E7A5F")}"><div class="ban"></div><div class="pf">${d.photo?`<img class="ph" src="${esc(d.photo)}" alt="">`:`<div class="ph"></div>`}
+    ${d.company?`<span class="org">${esc(d.company)}${d.branch?" · "+esc(d.branch):""}</span>`:""}<h3>안녕하세요.<br><em>${esc(d.name||"이름")} ${esc(d.title||"")}</em> 입니다.</h3><p style="margin:0;font-size:13px;color:#4A5753;line-height:1.6">${esc(d.greet||"")}</p></div>
+    <div class="acts">${acts.map(a=>`<a href="${esc(a[2])}" ${a[2].startsWith("http")?'target="_blank" rel="noopener"':""} data-hpact="${a[1]}"><span>${a[0]}</span>${a[1]}</a>`).join("")}</div>
+    ${tags.length?`<div class="blk"><h4>상담 분야</h4><div class="tags">${tags.map(t=>`<span>${esc(t)}</span>`).join("")}</div></div>`:""}
+    ${career.length?`<div class="blk"><h4>경력·자격</h4><p>${career.map(esc).join("<br>")}</p></div>`:""}
+    ${d.showClaim?`<div class="blk"><h4>보험금 청구 도와드립니다</h4><p>병원 영수증·진료비 세부내역서·진단서 등을 사진으로 찍어 보내 주시면, 확인 후 보험사 청구 접수를 도와드립니다. 필요한 서류는 보험사·상품마다 달라 부족한 서류는 따로 안내해 드립니다.</p>${tel?`<a class="cta" href="sms:${tel}?body=${encodeURIComponent("보험금 청구 서류 보내드립니다. 이름: ")}">청구 서류 사진 보내기</a>`:""}</div>`:""}
+    ${d.showCheck?`<div class="blk"><h4>내 진료기록 직접 확인하기</h4><p>보험 가입·보장 점검 전, 최근 5년 진료기록은 건강보험심사평가원 '내 진료정보 열람'에서 본인 인증 후 직접 볼 수 있습니다.</p><a class="cta" style="background:#fff;color:var(--hpc,#0E7A5F);border:1px solid currentColor" href="https://www.hira.or.kr" target="_blank" rel="noopener">심평원 홈페이지 열기</a></div>`:""}
+    ${d.showNews&&news&&(news.news||[]).length?`<div class="blk"><h4>오늘의 뉴스 <span style="font-weight:400;font-size:12px;color:#7A8682">${esc(news.dateLabel||news.date||"")}</span></h4>${news.news.slice(0,5).map(n=>`<div class="nw">${n.url?`<a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:esc(n.title)}</div>`).join("")}</div>`:""}
+    ${d.office||d.email?`<div class="blk"><h4>연락처</h4><p>${d.office?esc(d.office)+"<br>":""}${d.email?esc(d.email):""}</p></div>`:""}
+    <div class="ft">${d.reg?`보험설계사 등록번호 ${esc(d.reg)}<br>`:""}${d.company?esc(d.company)+" 소속 · ":""}보험 상품 가입 전 상품설명서와 약관을 확인하세요.<br>보잇 BOIT 개인페이지</div></div>`; }
+function renderHomepage(){ const p=PGo(); mnLoad();
+  const st=$("#hp2-st"); st.className="pill "+(p.published?"ok":"ex"); st.textContent=p.published?`공개 중 · ${p.published}`:"아직 공개 전";
+  $("#hp2-form").innerHTML=`<h2>기본 정보 <span class="note" style="font-weight:400">이름·연락처·소속·사진은 마이페이지 정보를 씁니다</span></h2>
+   <p class="note" style="margin:4px 0 0">${esc(ME.name||"(이름 없음)")} · ${esc(ME.phone||"(전화 없음)")} · ${esc([ME.company,ME.branch].filter(Boolean).join(" ")||"(소속 없음)")} <button class="lnk" type="button" data-go="mypage">마이페이지에서 고치기</button></p>
+   <div class="grid3" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:10px">
+    <div class="field"><label for="hp-slug">공개 주소 (영문·숫자 4~30자)</label><input id="hp-slug" data-hp="slug" value="${esc(p.slug)}" placeholder="예: kimhj"></div>
+    <div class="field"><label for="hp-title">직함</label><input id="hp-title" data-hp="title" value="${esc(p.title)}" placeholder="예: 지사장, 보험설계사"></div>
+    <div class="field" style="grid-column:1/-1"><label for="hp-greet">인사말</label><input id="hp-greet" data-hp="greet" value="${esc(p.greet)}"></div>
+    <div class="field"><label for="hp-kakao">카카오톡 링크 (오픈채팅·채널 주소)</label><input id="hp-kakao" data-hp="kakao" value="${esc(p.kakao)}" placeholder="https://open.kakao.com/..."></div>
+    <div class="field"><label for="hp-email">이메일</label><input id="hp-email" data-hp="email" value="${esc(p.email)}"></div>
+    <div class="field" style="grid-column:1/-1"><label for="hp-office">사무실 주소</label><input id="hp-office" data-hp="office" value="${esc(p.office)}"></div>
+    <div class="field" style="grid-column:1/-1"><label for="hp-tags">상담 분야 (쉼표로 구분)</label><input id="hp-tags" data-hp="tags" value="${esc(p.tags)}"></div>
+    <div class="field" style="grid-column:1/-1"><label for="hp-career">경력·자격 (한 줄에 하나)</label><textarea id="hp-career" data-hp="career" rows="3" style="border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;background:var(--surface)">${esc(p.career)}</textarea></div>
+    <div class="field"><label for="hp-reg">보험설계사 등록번호 (선택)</label><input id="hp-reg" data-hp="reg" value="${esc(p.reg)}"></div>
+    <div class="field"><label for="hp-color">대표 색</label><input id="hp-color" data-hp="color" type="color" value="${esc(p.color)}" style="height:40px;padding:3px"></div></div>
+   <div class="checks" style="margin-top:10px"><label><input type="checkbox" data-hpb="showClaim" ${p.showClaim?"checked":""}> 보험금 청구 안내 넣기</label><label><input type="checkbox" data-hpb="showCheck" ${p.showCheck?"checked":""}> 진료기록 직접 확인 안내 넣기 (심평원)</label><label><input type="checkbox" data-hpb="showNews" ${p.showNews?"checked":""}> 오늘의 뉴스 넣기</label></div>
+   <p class="note" style="margin:10px 0 0">보험 상품을 홍보하는 문구를 넣으면 보험업법 제95조의4(모집광고 관련 준수사항)가 적용될 수 있습니다. 상품명·보장 내용 광고는 소속 대리점 준법감시 확인 후 넣으세요.</p>
+   <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="hp-pub">${p.published?"수정 내용 공개하기":"공개하기"}</button><button class="btn" type="button" id="hp-copy" ${p.published?"":"disabled"}>주소 복사</button><button class="btn" type="button" id="hp-share" ${p.published?"":"disabled"}>공유하기</button><button class="btn" type="button" id="hp-open" ${p.published?"":"disabled"}>새 창으로 보기</button></div>
+   <p class="note" id="hp-msg" style="margin:8px 0 0">${p.published?esc(hpUrl()):""}</p>`;
+  hpPrev(); }
+function hpPrev(){ const el=$("#hp2-prev"); if(el) el.innerHTML=hpHTML(pgData(),MN.data); }
+document.addEventListener("input",e=>{ const f=e.target.closest("[data-hp]"); if(!f) return; PGo()[f.dataset.hp]=f.value; hpPrev(); });
+document.addEventListener("change",e=>{ const f=e.target.closest("[data-hpb]"); if(!f) return; PGo()[f.dataset.hpb]=f.checked; hpPrev(); });
+document.addEventListener("click",async e=>{
+  if(e.target.closest("#hp2-prev [data-hpact]")){ e.preventDefault(); return; }
+  if(e.target.closest("#hp-copy")){ copyText(hpUrl(),$("#hp-msg")); return; }
+  if(e.target.closest("#hp-open")){ window.open(hpUrl(),"_blank","noopener"); return; }
+  if(e.target.closest("#hp-share")){ try{ await navigator.share({title:`${ME.name} ${PGo().title}`,url:hpUrl()}); }catch(err){ if(!(err&&err.name==="AbortError")) copyText(hpUrl(),$("#hp-msg")); } return; }
+  if(e.target.closest("#hp-pub")){ const m=$("#hp-msg"), p=PGo(); p.slug=String(p.slug||"").trim().toLowerCase();
+    if(!/^[a-z0-9][a-z0-9-]{3,29}$/.test(p.slug)){ m.textContent="공개 주소는 영문 소문자·숫자·하이픈 4~30자로 적어 주세요."; return; }
+    if(!ME.name||!ME.phone){ m.textContent="마이페이지에서 이름과 전화번호를 먼저 넣어 주세요."; return; }
+    if(ME.demo||!CLOUD.user||!CLOUD.sb){ m.textContent="체험 모드에서는 공개할 수 없습니다. 회원가입 후 이용하세요."; return; }
+    m.textContent="공개하는 중…";
+    const {error}=await CLOUD.sb.from("boit_pages").upsert({slug:p.slug,user_id:CLOUD.user.id,data:pgData(),updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    if(error){ m.textContent=/duplicate|unique/i.test(error.message)?"이미 다른 분이 쓰는 주소입니다. 다른 주소를 적어 주세요.":/relation|does not exist|schema cache/i.test(error.message)?"개인페이지 저장소가 아직 준비되지 않았습니다 (운영자 설정 필요).":"공개하지 못했습니다: "+error.message; return; }
+    p.published=today(); cloudSave(true); renderHomepage(); flash($("#hp-msg"),"공개했습니다. "+hpUrl()); }
+});
+
+/* ================= 고지의무 확인 ================= */
+const DS={rows:[],base:""};
+function dsMsg(c){ const nm=c?c.name:"고객"; return `${nm}님, 보험 가입 전 알릴 사항(고지의무) 확인을 위해 최근 5년 진료기록 조회를 부탁드립니다.
+
+▶ 조회 방법 (본인만 가능)
+1) 건강보험심사평가원 홈페이지 www.hira.or.kr 접속
+2) '내 진료정보 열람' 메뉴 → 간편인증(카카오·네이버·PASS 등)
+3) 조회 기간을 최근 5년으로 설정 → 엑셀 내려받기
+※ 휴대폰은 '건강e음' 앱 > 내 진료정보에서도 볼 수 있습니다.
+
+내려받은 파일이나 화면 캡처를 보내 주시면 청약서 질문 기간에 맞춰 정리해 드리겠습니다.
+${ME.name||""} ${ME.phone||""}`; }
+function renderDisclose(){ if(!DS.base) DS.base=today(); $("#ds-base").value=DS.base;
+  if(!$("#ds-text").value) $("#ds-text").value=dsMsg(null); dsResult(); }
+function pDate(v){ if(v==null||v==="") return ""; if(typeof v==="number"&&v>20000&&v<80000){ const d=new Date(Math.round((v-25569)*864e5)); return ymd(new Date(d.getTime()+d.getTimezoneOffset()*6e4)); }
+  const s=String(v).trim(); let m=s.match(/^(\d{4})[-./]?\s?(\d{1,2})[-./]?\s?(\d{1,2})/); if(m) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`; return ""; }
+function monthsBetween(a,b){ const x=new Date(a), y=new Date(b); let m=(y.getFullYear()-x.getFullYear())*12+(y.getMonth()-x.getMonth()); if(y.getDate()<x.getDate()) m--; return m; }
+function dsParse(rows){ let hi=-1, map={};
+  const pat={d:/진료(개시)?일|진료일자|요양개시|진료시작|내원일|일자/,h:/요양기관|병.?의원|기관명|의료기관|병원/,c:/상병코드|질병코드|주상병코드|코드/,n:/상병명|질병명|주상병명|진단명/,t:/입원|외래|진료형태|입내원구분|구분/,k:/입내원일수|내원일수|입원일수|진료일수/,r:/투약일수|처방일수|투여일수/};
+  for(let i=0;i<Math.min(rows.length,15);i++){ const r=rows[i].map(x=>String(x||"").replace(/\s/g,"")); const m={};
+    Object.entries(pat).forEach(([k,re])=>{ const j=r.findIndex((x,ix)=>re.test(x)&&!Object.values(m).includes(ix)); if(j>=0) m[k]=j; });
+    if(m.d!=null&&(m.n!=null||m.c!=null)){ hi=i; map=m; break; } }
+  if(hi<0) return null;
+  return rows.slice(hi+1).map(r=>({d:pDate(r[map.d]),h:String(map.h!=null?r[map.h]:"").trim(),c:String(map.c!=null?r[map.c]:"").trim().toUpperCase(),n:String(map.n!=null?r[map.n]:"").trim(),t:/입원/.test(String(map.t!=null?r[map.t]:""))?"입원":"외래",k:+(map.k!=null?r[map.k]:0)||0,r:+(map.r!=null?r[map.r]:0)||0,s:false})).filter(x=>x.d); }
+const DS_DIS=[["백혈병",/^C9[1-5]/],["암",/^C[0-8]\d|^C9[0-7]/],["고혈압",/^I1[0-5]/],["협심증",/^I20/],["심근경색",/^I2[12]/],["심장판막증",/^I0[5-8]|^I3[4-9]/],["뇌졸중(뇌출혈·뇌경색)",/^I6[0-4]/],["간경화",/^K74/],["당뇨병",/^E1[0-4]/],["HIV",/^B2[0-4]/]];
+function dsResult(){ const el=$("#ds-res"); if(!el) return; const base=DS.base||today();
+  if(!DS.rows.length){ el.innerHTML='<p class="note">진료내역을 올리면 여기에 기간별로 정리됩니다.</p>'; return; }
+  const rs=DS.rows.map((x,i)=>({...x,i,m:monthsBetween(x.d,base)})).filter(x=>x.m>=0).sort((a,b)=>a.d<b.d?1:-1);
+  const in3=rs.filter(x=>x.m<3), in12=rs.filter(x=>x.m<12), in60=rs.filter(x=>x.m<60);
+  const byCode={}; in60.forEach(x=>{ const k=x.c||x.n; (byCode[k]=byCode[k]||{n:x.n,c:x.c,dates:new Set(),drug:0,adm:0}); byCode[k].dates.add(x.d); byCode[k].drug+=x.r; if(x.t==="입원") byCode[k].adm++; });
+  const adm60=in60.filter(x=>x.t==="입원"), surg60=in60.filter(x=>x.s), drug30=in60.filter(x=>x.r>=30), visit7=Object.values(byCode).filter(v=>v.dates.size>=7);
+  const dis=in60.filter(x=>DS_DIS.some(([,re])=>re.test(x.c))).map(x=>({...x,dn:DS_DIS.find(([,re])=>re.test(x.c))[0]}));
+  const li=a=>a.length?`<ul class="ds-t" style="margin:4px 0 0;padding-left:18px">${a.slice(0,30).map(x=>`<li>${x.d}${x.h?" · "+esc(x.h):""} · ${esc(x.c)} ${esc(x.n)} · ${x.t}${x.k?` ${x.k}일`:""}${x.r?` · 투약 ${x.r}일`:""}${x.dn?` · <b>${esc(x.dn)}</b>`:""}</li>`).join("")}${a.length>30?`<li>외 ${a.length-30}건</li>`:""}</ul>`:'<p class="note" style="margin:4px 0 0">해당 없음</p>';
+  const Q=(t,sub,a,body)=>`<div class="ds-q${a?" hit":""}"><h3>${t} <span class="pill ${a?"warn":"ok"}">${a?a+"건 확인 필요":"해당 없음"}</span></h3><p class="note" style="margin:0">${sub}</p>${body}</div>`;
+  el.innerHTML=`<p class="note" style="margin:0 0 10px">기준일 ${base} · 전체 ${rs.length}건 (5년 이내 ${in60.length}건)</p>
+   ${Q("최근 3개월 이내 진료","진찰·검사로 진단·치료·입원·수술·투약을 받은 사실 (3개월 문항)",in3.length,li(in3))}
+   ${Q("3개월~1년 이내 진료","추가검사(재검사) 문항이 있는 청약서는 이 기간 기록 중 재검사 소견이 있었는지 고객에게 확인",in12.filter(x=>x.m>=3).length,li(in12.filter(x=>x.m>=3)))}
+   ${Q("최근 5년 이내 입원","입원 문항",adm60.length,li(adm60))}
+   ${Q("최근 5년 이내 수술","수술은 진료내역만으로 알 수 없어 아래 표에서 직접 표시",surg60.length,li(surg60))}
+   ${Q("최근 5년 이내 30일 이상 투약","한 번 처방 투약일수 30일 이상 (같은 병 누적 투약도 고객에게 확인)",drug30.length,li(drug30))}
+   ${Q("같은 병으로 7일 이상 진료","'계속하여 7일 이상 치료' 문항 확인용 — 같은 상병 진료일이 7일 이상인 경우",visit7.length,visit7.length?`<ul class="ds-t" style="margin:4px 0 0;padding-left:18px">${visit7.map(v=>`<li>${esc(v.c)} ${esc(v.n)} · 진료일 ${v.dates.size}일${v.drug?` · 투약 합계 ${v.drug}일`:""}</li>`).join("")}</ul>`:'<p class="note" style="margin:4px 0 0">해당 없음</p>')}
+   ${Q("최근 5년 이내 지정 질병","청약서에 지정 질병 문항이 있을 때 확인 (상병코드 기준: 암·백혈병·고혈압·협심증·심근경색·심장판막증·뇌졸중·간경화·당뇨병·HIV)",dis.length,li(dis))}
+   <details style="margin-top:8px"><summary class="note" style="cursor:pointer">전체 진료내역 보기 · 수술 표시</summary><div class="tbl-wrap"><table class="ds-t"><thead><tr><th>진료일</th><th>병원</th><th>상병</th><th>구분</th><th>일수</th><th>투약</th><th>수술</th><th></th></tr></thead><tbody>
+   ${rs.map(x=>`<tr><td class="num">${x.d}</td><td>${esc(x.h)}</td><td>${esc(x.c)} ${esc(x.n)}</td><td>${x.t}</td><td class="num">${x.k||""}</td><td class="num">${x.r||""}</td><td><input type="checkbox" data-dss="${x.i}" ${x.s?"checked":""} aria-label="수술"></td><td><button class="lnk" type="button" data-dsd="${x.i}">삭제</button></td></tr>`).join("")}</tbody></table></div></details>`; }
+document.addEventListener("change",async e=>{
+  if(e.target.id==="ds-base"){ DS.base=e.target.value||today(); dsResult(); return; }
+  if(e.target.id==="ds-cust"){ const id=resolveCust(e.target.value); const c=CUSTOMERS.find(x=>x.id===id); $("#ds-text").value=dsMsg(c); return; }
+  const s=e.target.closest("[data-dss]"); if(s){ DS.rows[+s.dataset.dss].s=s.checked; dsResult(); return; }
+  if(e.target.id==="ds-file"){ const f=e.target.files[0], m=$("#ds-fmsg"); if(!f) return;
+    try{ const wb=XLSX.read(await f.arrayBuffer(),{type:"array",cellDates:false}); let got=null;
+      for(const n of wb.SheetNames){ got=dsParse(XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:""})); if(got&&got.length) break; }
+      if(!got||!got.length){ m.textContent="진료일·상병 칸을 찾지 못했습니다. 심평원에서 내려받은 엑셀인지 확인하거나 직접 입력하세요."; }
+      else { DS.rows.push(...got); m.textContent=`${got.length}건을 읽었습니다.`; dsResult(); } }
+    catch(err){ m.textContent="파일을 읽지 못했습니다."; } e.target.value=""; }
+});
+document.addEventListener("click",async e=>{
+  const d=e.target.closest("[data-dsd]"); if(d){ DS.rows.splice(+d.dataset.dsd,1); dsResult(); return; }
+  if(e.target.closest("#ds-reset")){ DS.rows=[]; dsResult(); flash($("#ds-fmsg"),""); return; }
+  if(e.target.closest("#dsn-add")){ const v=id=>$(id).value.trim(); const dd=v("#dsn-d"); if(!dd||!(v("#dsn-c")||v("#dsn-n"))){ flash($("#ds-fmsg"),"진료일과 상병코드 또는 상병명을 넣어 주세요."); return; }
+    DS.rows.push({d:dd,h:v("#dsn-h"),c:v("#dsn-c").toUpperCase(),n:v("#dsn-n"),t:$("#dsn-t").value,k:+v("#dsn-k")||0,r:+v("#dsn-r")||0,s:false}); ["#dsn-h","#dsn-c","#dsn-n","#dsn-k","#dsn-r"].forEach(i=>$(i).value=""); flash($("#ds-fmsg"),""); dsResult(); return; }
+  if(e.target.closest("#ds-copy")){ copyText($("#ds-text").value,$("#ds-smsg")); return; }
+  if(e.target.closest("#ds-share")){ try{ await navigator.share({text:$("#ds-text").value}); }catch(err){ if(!(err&&err.name==="AbortError")) copyText($("#ds-text").value,$("#ds-smsg")); } return; }
+  if(e.target.closest("#ds-sms")){ const id=resolveCust($("#ds-cust").value); const c=CUSTOMERS.find(x=>x.id===id); const tel=c?String(c.phone||"").replace(/[^\d]/g,""):"";
+    location.href=`sms:${tel}${/iPhone|iPad/.test(navigator.userAgent)?"&":"?"}body=${encodeURIComponent($("#ds-text").value)}`; return; }
+});
+
+/* ================= 화면 연결 ================= */
+if(typeof go==="function"){ const _go=go; go=function(v){ _go(v); const w=S.view;
+  if(w==="morning") renderMorning(); if(w==="quote") renderQuote(); if(w==="homepage") renderHomepage(); if(w==="disclose") renderDisclose(); if(w==="proposal") renderCG(); }; }
+if(typeof cloudSnap==="function"){ const _s=cloudSnap; cloudSnap=function(){ const o=_s(); o.me.page=ME.page||null; o.quoteRates=QT.rates; return o; }; }
+if(typeof cloudApply==="function"){ const _a=cloudApply; cloudApply=function(d){ _a(d); if(d&&Array.isArray(d.quoteRates)) QT.rates=d.quoteRates; }; }
+})();
 </script>

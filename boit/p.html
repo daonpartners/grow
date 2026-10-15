@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>보험설계사 개인페이지</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{--f-ui:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+html,body{margin:0;background:#E9EDEB}
+body{font-family:var(--f-ui)}
+*{box-sizing:border-box}
+#app{max-width:480px;margin:0 auto;min-height:100vh;background:#F6F7F6}
+.msg{padding:60px 20px;text-align:center;color:#4A5753;font-size:14px}
+.hpv{font-family:var(--f-ui);color:#18221F;background:#F6F7F6;font-size:14px}
+.hpv .ban{height:120px;background:linear-gradient(135deg,var(--hpc,#0E7A5F),#0B4F40)}
+.hpv .pf{padding:0 16px 14px;margin-top:-44px;display:flex;flex-direction:column;gap:6px}
+.hpv .ph{width:88px;height:88px;border-radius:50%;border:4px solid #fff;object-fit:cover;background:#DDE3DF}
+.hpv .org{display:inline-block;align-self:flex-start;font-size:11.5px;padding:2px 8px;border-radius:99px;background:#E2F1EB;color:#0E7A5F;font-weight:600}
+.hpv h3{margin:0;font-size:20px;line-height:1.35}.hpv h3 em{font-style:normal;color:var(--hpc,#0E7A5F)}
+.hpv .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 12px}
+.hpv .acts a{display:flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:1px solid #E1E6E3;border-radius:10px;padding:9px 2px;font-size:11.5px;color:#18221F;text-decoration:none;font-weight:600}
+.hpv .acts a span{font-size:18px;line-height:1}
+.hpv .blk{background:#fff;margin:10px 12px 0;border-radius:12px;padding:12px 14px;border:1px solid #E7EBE9}
+.hpv .blk h4{margin:0 0 6px;font-size:14px}
+.hpv .blk p{margin:0;font-size:13px;color:#4A5753;line-height:1.6}
+.hpv .tags{display:flex;flex-wrap:wrap;gap:5px}.hpv .tags span{font-size:12px;background:#F0F3F1;border-radius:99px;padding:2px 9px}
+.hpv .cta{display:block;text-align:center;margin-top:8px;background:var(--hpc,#0E7A5F);color:#fff;border-radius:9px;padding:10px;font-weight:700;text-decoration:none;font-size:13.5px}
+.hpv .nw{font-size:12.5px;line-height:1.5;padding:5px 0;border-bottom:1px solid #EEF1EF}.hpv .nw a{color:#18221F;text-decoration:none}
+.hpv .ft{padding:14px 16px 18px;font-size:11px;color:#7A8682;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="app"><p class="msg">불러오는 중…</p></div>
+<script src="supabase.js"></script>
+<script>
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const BOIT_CLOUD={url:"https://lobdowpxujgiadrtxklb.supabase.co",key:"sb_publishable_3mJ3y2GqpQWMIzwgzV7yVg_M_HCdTzW"};
+function hpHTML(d,news){ const tel=String(d.phone||"").replace(/[^\d]/g,"");
+  const acts=[["📞","전화",tel?`tel:${tel}`:""],["💬","문자",tel?`sms:${tel}`:""],["🟡","카카오톡",d.kakao||""],["👤","연락처 저장","#vcard"]].filter(a=>a[2]);
+  const tags=String(d.tags||"").split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+  const career=String(d.career||"").split("\n").map(s=>s.trim()).filter(Boolean);
+  return `<div class="hpv" style="--hpc:${esc(d.color||"#0E7A5F")}"><div class="ban"></div><div class="pf">${d.photo?`<img class="ph" src="${esc(d.photo)}" alt="">`:`<div class="ph"></div>`}
+    ${d.company?`<span class="org">${esc(d.company)}${d.branch?" · "+esc(d.branch):""}</span>`:""}<h3>안녕하세요.<br><em>${esc(d.name||"이름")} ${esc(d.title||"")}</em> 입니다.</h3><p style="margin:0;font-size:13px;color:#4A5753;line-height:1.6">${esc(d.greet||"")}</p></div>
+    <div class="acts">${acts.map(a=>`<a href="${esc(a[2])}" ${a[2].startsWith("http")?'target="_blank" rel="noopener"':""} data-hpact="${a[1]}"><span>${a[0]}</span>${a[1]}</a>`).join("")}</div>
+    ${tags.length?`<div class="blk"><h4>상담 분야</h4><div class="tags">${tags.map(t=>`<span>${esc(t)}</span>`).join("")}</div></div>`:""}
+    ${career.length?`<div class="blk"><h4>경력·자격</h4><p>${career.map(esc).join("<br>")}</p></div>`:""}
+    ${d.showClaim?`<div class="blk"><h4>보험금 청구 도와드립니다</h4><p>병원 영수증·진료비 세부내역서·진단서 등을 사진으로 찍어 보내 주시면, 확인 후 보험사 청구 접수를 도와드립니다. 필요한 서류는 보험사·상품마다 달라 부족한 서류는 따로 안내해 드립니다.</p>${tel?`<a class="cta" href="sms:${tel}?body=${encodeURIComponent("보험금 청구 서류 보내드립니다. 이름: ")}">청구 서류 사진 보내기</a>`:""}</div>`:""}
+    ${d.showCheck?`<div class="blk"><h4>내 진료기록 직접 확인하기</h4><p>보험 가입·보장 점검 전, 최근 5년 진료기록은 건강보험심사평가원 '내 진료정보 열람'에서 본인 인증 후 직접 볼 수 있습니다.</p><a class="cta" style="background:#fff;color:var(--hpc,#0E7A5F);border:1px solid currentColor" href="https://www.hira.or.kr" target="_blank" rel="noopener">심평원 홈페이지 열기</a></div>`:""}
+    ${d.showNews&&news&&(news.news||[]).length?`<div class="blk"><h4>오늘의 뉴스 <span style="font-weight:400;font-size:12px;color:#7A8682">${esc(news.dateLabel||news.date||"")}</span></h4>${news.news.slice(0,5).map(n=>`<div class="nw">${n.url?`<a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:esc(n.title)}</div>`).join("")}</div>`:""}
+    ${d.office||d.email?`<div class="blk"><h4>연락처</h4><p>${d.office?esc(d.office)+"<br>":""}${d.email?esc(d.email):""}</p></div>`:""}
+    <div class="ft">${d.reg?`보험설계사 등록번호 ${esc(d.reg)}<br>`:""}${d.company?esc(d.company)+" 소속 · ":""}보험 상품 가입 전 상품설명서와 약관을 확인하세요.<br>보잇 BOIT 개인페이지</div></div>`; }
+
+function vcard(d){ const tel=String(d.phone||"").replace(/[^\d+]/g,"");
+  const v=["BEGIN:VCARD","VERSION:3.0",`FN:${d.name||""}`,`N:${d.name||""};;;;`,d.company?`ORG:${d.company}${d.branch?";"+d.branch:""}`:"",d.title?`TITLE:${d.title}`:"",tel?`TEL;TYPE=CELL:${tel}`:"",d.email?`EMAIL:${d.email}`:"",d.office?`ADR;TYPE=WORK:;;${d.office};;;;`:"",`URL:${location.href}`,"END:VCARD"].filter(Boolean).join("\r\n");
+  return new Blob([v],{type:"text/vcard;charset=utf-8"}); }
+(async function(){
+  const app=document.getElementById("app"), u=(new URLSearchParams(location.search).get("u")||"").toLowerCase();
+  if(!/^[a-z0-9][a-z0-9-]{3,29}$/.test(u)){ app.innerHTML='<p class="msg">주소가 올바르지 않습니다.</p>'; return; }
+  let d=null, news=null;
+  try{ const sb=supabase.createClient(BOIT_CLOUD.url,BOIT_CLOUD.key,{auth:{persistSession:false}});
+    const r=await sb.from("boit_pages").select("data").eq("slug",u).maybeSingle(); if(r.error) throw r.error; d=r.data&&r.data.data; }catch(e){}
+  if(!d){ app.innerHTML='<p class="msg">페이지를 찾을 수 없습니다.</p>'; return; }
+  if(d.showNews){ try{ const r=await fetch("../dailynews/latest.json?t="+Date.now(),{cache:"no-store"}); if(r.ok) news=await r.json(); }catch(e){} }
+  document.title=`${d.name||""} ${d.title||""}`.trim()||document.title;
+  app.innerHTML=hpHTML(d,news);
+  app.addEventListener("click",e=>{ const a=e.target.closest('[data-hpact="연락처 저장"]'); if(!a) return; e.preventDefault();
+    const url=URL.createObjectURL(vcard(d)), x=document.createElement("a"); x.href=url; x.download=`${d.name||"연락처"}.vcf`; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); });
+})();
+</script>
+</body>
+</html>
