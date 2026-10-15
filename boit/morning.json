@@ -54,20 +54,20 @@
   "market": [
     {
       "label": "코스피",
-      "value": "5,575.60",
-      "diff": "-433.21",
+      "value": "5,600.11",
+      "diff": "-408.70",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "765.21",
-      "diff": "-58.67",
+      "value": "767.44",
+      "diff": "-56.44",
       "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,349.41",
-      "diff": "+9.10",
+      "value": "1,350.48",
+      "diff": "+10.17",
       "dir": "up"
     },
     {
@@ -78,8 +78,8 @@
     },
     {
       "label": "금(돈)",
-      "value": "677,254",
-      "diff": "+13,438",
+      "value": "677,498",
+      "diff": "+13,682",
       "dir": "up"
     }
   ],
@@ -108,17 +108,17 @@
     },
     {
       "cat": "보험",
-      "title": "KB손해보험, 앱 메인화면 개편…보험 계약·청구 현황 한눈에",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1lZUtITnl1Y2xEUmhLcXA5U0NqT0t3OWJKTl9nUWFKSVJhdWVBXzhxaEw1djZRZXFLcE4ySEtfanlvdHNWMXpGMTdyRWpoYXY0aXBHUnZtRU0zX1dBcnNJeHZQc3F6SGlx?oc=5",
-      "host": "한국NGO신문"
-    },
-    {
-      "cat": "보험",
       "title": "농협, 80세 이상에 10년 넘는 장기보험 판매 급증…고령자 보호 우려",
       "summary": "",
       "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBQWlNzUEctbF9Qck1LQkxoOHhxc2lPZnQ2dmhla003VERIUnhwS2J6X2gyZm5RNEYxRHBmWnp2b2hYa0tiLThrSkxSdHlMeHpaTDFCN2xWSnRFWXg1Umh5dERueTljcXpNeFd2azlLcEZoTzM5?oc=5",
       "host": "조세일보"
+    },
+    {
+      "cat": "보험",
+      "title": "농·축협, 80세 이상 장기보험 판매 급증…신장식 “방카슈랑스 특례 재검토해야”",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9RRVhOaU1LVDJRaGR1Mk0tZWhRN2xxQXJBbWM0X19xa0ZEcEhybDBjeEVnYU5FbFlSTmRmZEtlLVlKVG11TzVPVTg0aFg1dURnWGtlX2NCRERtcHIyOHRndjlRVnFzY3U1OENWTFRB?oc=5",
+      "host": "아시아투데이"
     },
     {
       "cat": "경제",
@@ -136,17 +136,10 @@
     },
     {
       "cat": "경제",
-      "title": "(설명) 서울경제, \"\"주52시간에 고용？매출 모두 뒷걸음\"…KDI의 뼈아픈 지적\" 기사 등 관련",
+      "title": "(보도설명) 대외경제협력기금은 질적 내실화와 AI, 문화 등 분야의 협력사업을 적극 추진하고 있습니다.",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxORTRtVFZ3aEdiRmRkSnFZdi1MZVUzQ1YtRE16UTRMOVpuT0hLTXBxVkJJMjFmNFVldGJZd29OVWZrZXpVamFXVTAxVDVHc2dXZ2dNdUhxWGpTcGlEaDJ6YjRLQ1otbHFLNlJjT25KRTF0a2h3cDgtV09YU3NNajA1VGtUWnA1QWZv?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5CRTZUX3VlU1NTQ3JzcHA1ZHBsOHJhM2dBOGJ6VDNOa0w5UDh6Y0tZU2lqdUYxN0h0bTVMdUVqR2c1dHpJZXVsOU9WemNyMHBtMVhrVkpENS1RQ01QRTU0RlNLWlpaU1owUU1hUzZrRQ?oc=5",
       "host": "정책브리핑"
-    },
-    {
-      "cat": "경제",
-      "title": "파주시, 평화경제특구 지정 한전과 협력",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5MVFhNM3VLbVQ3b1p3R3U2OHlmRHI5VjhIdjZfLVU4MWVacTlmaGY2S0ZCa0lESTZMcjFGNlZteHM4Tk9MaTBFQkRNVXBkX1B3V1VCOXZGQ1BIY0VrRkR1ZdIBYEFVX3lxTE5MVFhNM3VLbVQ3b1p3R3U2OHlmRHI5VjhIdjZfLVU4MWVacTlmaGY2S0ZCa0lESTZMcjFGNlZteHM4Tk9MaTBFQkRNVXBkX1B3V1VCOXZGQ1BIY0VrRkR1ZQ?oc=5",
-      "host": "연합뉴스"
     },
     {
       "cat": "경제",
@@ -154,6 +147,13 @@
       "summary": "",
       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBfU0RxZDFpMktZM2t5ZFdKZUQxeFgzb0llVFA5bXYwZDJGSVVFV0dpZEpYelRqaW8zd3BzM0pXNWZnaXZEVl9jaVhzUGFOeUhPMldZTEdwMVBKMkpSNk1QYzJ4NzhNaDFoVWZmeVNXdjE?oc=5",
       "host": "인천투데이"
+    },
+    {
+      "cat": "경제",
+      "title": "\"우리경제, 내년 상반기까지는 OK, 하반기부터는 위기\"",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1JMVVxUUItTjNFNWRETXVhblhidmRBSWkyeC1Hb0RndVVnbjZEb2kzcktUeGF1dDhVMHdremhIZV9vNlVyQU5HWC16SkFSaUczem1xSWxqV2gyLUFGd1dVZEJaa1MzR00?oc=5",
+      "host": "세종의소리"
     }
   ],
   "quote": {
@@ -161,5 +161,5 @@
     "author": "공자"
   },
   "source": "auto",
-  "updatedAt": "2026-10-15T02:36:38.481Z"
+  "updatedAt": "2026-10-15T02:39:28.700Z"
 }
