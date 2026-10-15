@@ -1112,6 +1112,7 @@ const INS_RAW=[
  ["post","우체국보험","son","1599-0100","V","","https://www.epostbank.go.kr",""],
  ["sh_s","수협공제","son","1588-4119","V","","https://www.suhyup-bank.com",""],
  ["cu","신협공제","son","1544-3030","V","","https://www.cu.co.kr",""],
+ ["ktcu","교직원공제(TheK손해보험)","son","1577-3993","V","","https://www.ktcu.or.kr",""],
  ["mr","미래에셋생명","life","1588-0220","V","","https://life.miraeasset.com",""],
  ["sl","삼성생명","life","1588-3114","V","","https://www.samsunglife.com",""],
  ["kyobo","교보생명","life","1588-1001","V","","https://www.kyobo.com",""],
@@ -1137,7 +1138,7 @@ const INS_RAW=[
 ];
 /* 보험사 로고: 각 보험사 공식 홈페이지 아이콘(파비콘)을 불러오고, 실패하면 머리글자로 표시 (GROW ON과 같은 방식) */
 const INS_LOGO={kb:["kbinsure.co.kr","#FFB81C"],ss:["samsungfire.com","#1428A0"],hd:["hi.co.kr","#004EA2"],db:["idbins.com","#F58220"],mz:["meritzfire.com","#E4032E"],hw:["hwgeneralins.com","#FF4800"],hk:["heungkukfire.co.kr","#F7941D"],nh:["nhfire.co.kr","#00A366"],ln:["chubb.com","#003D6E"],lt:["lotteins.co.kr","#ED1C24"],hn:["hanainsure.co.kr","#009490"],
- aig:["aig.co.kr","#001871"],axa:["axa.co.kr","#00008F"],mg:["kfcc.co.kr","#0055A5"],shez:["shinhanez.co.kr","#0046FF"],yb:["","#5B6B8C"],crt:["carrotins.com","#FF6B00"],post:["epostbank.go.kr","#E8380D"],sh_s:["suhyup-bank.com","#0B4DA2"],cu:["cu.co.kr","#E5B200"],
+ aig:["aig.co.kr","#001871"],axa:["axa.co.kr","#00008F"],mg:["kfcc.co.kr","#0055A5"],shez:["shinhanez.co.kr","#0046FF"],yb:["","#5B6B8C"],crt:["carrotins.com","#FF6B00"],post:["epostbank.go.kr","#E8380D"],sh_s:["suhyup-bank.com","#0B4DA2"],cu:["cu.co.kr","#E5B200"],ktcu:["ktcu.or.kr","#E4007F"],
  mr:["life.miraeasset.com","#0068B7"],sl:["samsunglife.com","#1428A0"],kyobo:["kyobo.com","#0066B3"],hwl:["hanwhalife.com","#FF4800"],kdb:["kdblife.co.kr","#004EA2"],sh:["shinhanlife.co.kr","#0046FF"],lnl:["lina.co.kr","#003D6E"],met:["metlife.co.kr","#00A9E0"],dy:["myangel.co.kr","#FF6600"],abl:["abllife.co.kr","#002856"],hkl:["heungkuklife.co.kr","#F7941D"],dbl:["idblife.com","#F58220"],im:["imlifeins.co.kr","#00AEEF"],hnl:["hanalife.co.kr","#009490"],kbl:["kblife.co.kr","#FFB81C"],fb:["fubonhyundai.com","#005BAC"],
  aia:["aia.co.kr","#D31145"],cdf:["cardif.co.kr","#00965E"],nhl:["nhlife.co.kr","#00A366"],lp:["lifeplanet.co.kr","#00B2A9"],orl:["","#F28C00"],chb:["","#003D6E"]};
 function insLogo(i){ const [d,col]=INS_LOGO[i.id]||["","#6B7280"], ini=esc((m=>m?m[0].slice(0,2):i.name.slice(0,1))(i.name.match(/^[A-Za-z]+/)));
@@ -1377,8 +1378,17 @@ Step 1. 청구 서류 작성 및 준비
 
 Step 2. 청구방법 선택
 - 수협공제 고객지원센터 1588-4119 문의
-- 청구방법 선택 > 안내된 가상 FAX 번호 또는 이메일 주소 확인`}};
-function vfGuide(id){ const g=VF_GUIDE[id]; if(!g) return; infoDlg(g.t,`<pre id="vfg-text" style="white-space:pre-wrap;font:inherit;font-size:14px;line-height:1.7;margin:0;background:var(--accent-soft);padding:12px;border-radius:8px">${esc(g.text)}</pre><div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="vfg-copy">안내문 복사</button><a class="btn" href="tel:15884119">1588-4119 전화</a><span class="note" id="vfg-msg"></span></div>`); }
+- 청구방법 선택 > 안내된 가상 FAX 번호 또는 이메일 주소 확인`,tel:"1588-4119"},
+  ktcu:{t:"교직원공제(TheK손해보험) 청구 방법",text:`[교직원공제(TheK손해보험) 보험금 청구 방법]
+
+Step 1. 청구 서류 작성 및 준비
+- 종합복지급여 보험금 청구서, 개인(신용)정보 동의서
+- 진단서·영수증 등 병원 서류, 수익자 통장사본
+
+Step 2. 팩스번호 확인
+- 보험컨택센터 1577-3993 전화
+- 청구용 팩스번호 확인 후 서류 발송`,tel:"1577-3993"}};
+function vfGuide(id){ const g=VF_GUIDE[id]; if(!g) return; infoDlg(g.t,`<pre id="vfg-text" style="white-space:pre-wrap;font:inherit;font-size:14px;line-height:1.7;margin:0;background:var(--accent-soft);padding:12px;border-radius:8px">${esc(g.text)}</pre><div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="vfg-copy">안내문 복사</button><a class="btn" href="tel:${g.tel.replace(/-/g,"")}">${g.tel} 전화</a><span class="note" id="vfg-msg"></span></div>`); }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-vfg]"); if(b){ e.preventDefault(); e.stopPropagation(); vfGuide(b.dataset.vfg); return; }
   if(e.target.closest("#vfg-copy")){ const t=$("#vfg-text").textContent; (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{$("#vfg-msg").textContent="복사했습니다. 고객 문자·카톡에 붙여넣으세요.";}).catch(()=>{ const r=document.createRange(); r.selectNodeContents($("#vfg-text")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); $("#vfg-msg").textContent="글자가 선택됐습니다. Ctrl+C로 복사하세요."; }); } },true);
 function infoDlg(t,html){ $("#info-t").textContent=t; $("#info-body").innerHTML=html; $("#info-dlg").hidden=false; }
