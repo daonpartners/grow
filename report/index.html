@@ -2008,9 +2008,9 @@ var KID_ITEMS=[
 ];
 function kidSrc(c){
   // 회사별 담보(깨끗한 이름)를 우선, 없으면 계약별 담보 줄
-  var L=[]; (c.ctrs||[]).forEach(function(k){ k.items.forEach(function(it){ L.push({name:it.name+(it.cat?' '+it.cat:''),amt:it.amt,co:k.co}); }); });
+  var L=[]; (c.ctrs||[]).forEach(function(k){ k.items.forEach(function(it){ L.push({name:it.name+(it.cat?' '+it.cat:''),base:it.name,amt:it.amt,co:k.co}); }); });
   if(!L.length) L=c.lines.map(function(l){return {name:l.name,amt:l.amt};});
-  return L.map(function(l){ return {name:l.name,amt:l.amt,co:l.co,n:l.name.replace(/\([^()]*제외\)?/g,'').replace(/\S*제외/g,'')}; });
+  return L.map(function(l){ return {name:l.name,base:l.base||l.name,amt:l.amt,co:l.co,n:l.name.replace(/\([^()]*제외\)?/g,'').replace(/\S*제외/g,'')}; });
 }
 function kidCheck(c){
   var src=kidSrc(c);
@@ -2034,16 +2034,9 @@ var TOOTH_T=[
   {k:'cons',lbl:'보존치료 (충치 등)',re:/보존|충치/}
 ];
 function toothBreak(c){
-  var src=kidSrc(c).filter(function(l){return /치아|보철|보존|크라운|임플란트|브릿지|충치|치과|레진|아말감|치수/.test(l.n)&&!/자동차|교통|치주/.test(l.n)&&l.amt>0;});
-  var by={};
-  src.forEach(function(l){
-    var t=TOOTH_T.filter(function(x){return x.re.test(l.n);})[0]; if(!t) return;
-    var lbl=t.k==='crown'&&/보존/.test(l.n)?'보존치료 (크라운 포함)':t.lbl;
-    if(!by[lbl]) by[lbl]={lbl:lbl,amt:0,names:[]};
-    by[lbl].amt+=l.amt; by[lbl].names.push((l.co?l.co+' ':'')+l.name+' '+won(l.amt));
-  });
-  var order=TOOTH_T.map(function(x){return x.lbl;}); order.splice(2,0,'보존치료 (크라운 포함)');
-  return Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){return order.indexOf(a.lbl)-order.indexOf(b.lbl);});
+  // 증권(보장분석 PDF)에 있는 치아 담보를 이름 그대로 1줄씩 (회사마다 담보 구성이 달라 합치지 않음)
+  return kidSrc(c).filter(function(l){return /치아|보철|보존|크라운|임플란트|브릿지|충치|치과|레진|아말감|치수/.test(l.n)&&!/자동차|교통|치주/.test(l.n)&&l.amt>0;})
+    .map(function(l){ return {lbl:(l.co?l.co+' · ':'')+l.base,amt:l.amt}; });
 }
 function toothDisp(c){ var tb=toothBreak(c); return tb.length?tb.map(function(t){return t.lbl.replace(/\s*\(.*$/,'')+' '+won(t.amt);}).join(' · '):''; }
 
@@ -2059,7 +2052,7 @@ function kidSummaryBlocks(c){
     return '<div class="card" style="padding:10px 14px;gap:2px"><div style="font-size:'+fz(15.5)+'px;font-weight:800;color:var(--navy);margin-bottom:3px">'+g+'</div>'+
       ch.filter(function(x){return x.grp===g;}).map(function(x){
         var tb=x.k==='tooth'&&x.has?toothBreak(c):[];
-        var right=tb.length?'<div style="font-size:11.5px;color:var(--muted);white-space:nowrap">치아 1개당</div>':
+        var right=tb.length?'<div style="font-size:11.5px;color:var(--muted);white-space:nowrap">가입 담보</div>':
           (x.has?'<div style="font-size:'+fz(14)+'px;font-weight:800;color:#2F7D4A;white-space:nowrap">'+won(x.amt)+'</div>':'<div style="font-size:12px;font-weight:800;color:#fff;background:#B4472F;border-radius:12px;padding:2px 9px;white-space:nowrap">없음</div>');
         return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 0;border-top:1px solid #EEE8E1"><div style="font-size:'+fz(13.5)+'px;font-weight:700">'+esc(x.title)+'</div>'+right+'</div>'+
           tb.map(function(t){return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:2px 0 2px 10px"><div style="font-size:'+fz(12.5)+'px;color:var(--ink2)">· '+esc(t.lbl)+'</div><div style="font-size:'+fz(13)+'px;font-weight:800;color:#2F7D4A;white-space:nowrap">'+won(t.amt)+'</div></div>';}).join('');
@@ -2076,7 +2069,7 @@ function kidPropBlocks(c){
   var miss=KID_PRI.map(function(k){return kidGet(ch,k);}).filter(function(x){return !x.has;}).slice(0,6);
   var ok=ch.filter(function(x){return x.has;});
   out.push('<p class="lead">아이 보험은 자주 생기는 일(감기·독감·장염 입원, 골절, 수술, 치아)과 드물지만 큰 일(소아암, 큰 사고)을 함께 대비하는 것이 기본입니다. 지금 비어 있는 보장을 우선순위대로 정리했습니다.</p>');
-  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.title)+' '+(x.k==='tooth'?'(1개당 '+(toothDisp(c)||won(x.amt))+')':won(x.amt))+'</span>';}).join('')+'</div></div>');
+  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.title)+' '+(x.k==='tooth'?toothBreak(c).length+'개 담보':won(x.amt))+'</span>';}).join('')+'</div></div>');
   out.push('<div class="keepnext" style="font-size:19px;font-weight:800;color:var(--navy);margin-top:6px">이렇게 보완하시길 권합니다</div>');
   if(!miss.length) out.push('<div class="card" style="font-size:14.5px">아이에게 필요한 주요 보장이 모두 준비되어 있습니다. 만기와 갱신 시점을 함께 관리하세요.</div>');
   miss.forEach(function(p,i){
@@ -2106,7 +2099,7 @@ function kidScenarios(c){
     surg('충수절제술(맹장)','10대 수술 1위',/충수|맹장/,'수술 종은 회사별로 다름'),
     {sit:'팔·다리 골절 + 깁스',code:'S코드 골절',amt:g('fracture').amt+g('cast').amt,basis:g('fracture').basis.concat(g('cast').basis),plus:covRows(c,['surg_inj']).reduce(function(a,r){return a+r.amt;},0),plusLbl:'수술 시 상해수술비',note:'치아파절 제외 여부 약관 확인'},
     {sit:'화상',code:'T20~T32',amt:g('burn').amt,basis:g('burn').basis,note:'화상 정도(심재성 2도 이상 등) 기준은 약관 확인'},
-    {sit:'영구치 충치·보철',code:'K02 등',tooth:toothBreak(c),amt:g('tooth').amt,basis:[],note:'치아 1개당 금액 · 연간 개수 한도·감액기간·유치 보장 여부는 약관 확인 · 10대 외래 다빈도 2위(치아우식)'},
+    {sit:'영구치 충치·보철',code:'K02 등',tooth:toothBreak(c),amt:g('tooth').amt,basis:[],note:'담보별 지급 기준(치아 1개당·연간 한도)·감액기간·유치 보장 여부는 약관 확인 · 10대 외래 다빈도 2위(치아우식)'},
     {sit:'친구를 다치게 하거나 물건 파손',code:'일상생활배상책임',amt:g('liab').amt,basis:g('liab').basis,note:'실제 손해액 한도 내 보상 · 자기부담금 있음',lbl:'보상 한도'},
     {sit:'소아암(백혈병 등)',code:'C00~C97',amt:g('cancer').amt,basis:g('cancer').basis,plus:covRows(c,['cancer_main','cancer_nonpay']).reduce(function(a,r){return a+r.amt;},0),plusLbl:'치료 시 주요치료비',note:'유사암 범위·감액기간은 약관 확인'}
   ];
@@ -2118,7 +2111,7 @@ function kidScenarioBlocks(c){
     out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch">'+L.slice(i,i+3).map(function(r){
       return '<div class="card" style="padding:9px 12px;gap:4px;border-top:4px solid '+(r.amt?'var(--blue)':'#B4472F')+'">'+
         '<div><div style="font-size:'+fz(14.5)+'px;font-weight:800;line-height:1.3">'+esc(r.sit)+'</div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+esc(r.code)+'</div></div>'+
-        (r.tooth?'<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">치료 1개당 받는 금액</div>'+(r.tooth.length?r.tooth.map(function(t){return '<div style="display:flex;justify-content:space-between;gap:6px;padding:3px 0;border-bottom:1px dotted #E7DFD6"><span style="font-size:'+fz(12)+'px;color:var(--ink)">'+esc(t.lbl)+'</span><b style="font-size:'+fz(14)+'px;color:var(--blue);white-space:nowrap">'+won(t.amt)+'</b></div>';}).join(''):'<div style="font-size:'+fz(21)+'px;font-weight:800;color:#B4472F">없음</div>')+'</div>':'')+
+        (r.tooth?'<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">가입한 치아 담보 (증권 그대로)</div>'+(r.tooth.length?r.tooth.map(function(t){return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;padding:3px 0;border-bottom:1px dotted #E7DFD6;align-items:baseline"><span style="font-size:'+fz(11.5)+'px;line-height:1.35;color:var(--ink)">'+esc(t.lbl)+'</span><b style="font-size:'+fz(14)+'px;color:var(--blue);white-space:nowrap">'+won(t.amt)+'</b></div>';}).join(''):'<div style="font-size:'+fz(21)+'px;font-weight:800;color:#B4472F">없음</div>')+'</div>':'')+
         (r.tooth?'':'<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+(r.lbl||'받을 수 있는 금액')+'</div><div style="font-size:'+fz(21)+'px;font-weight:800;letter-spacing:-.02em;color:'+(r.amt?'var(--blue)':'#B4472F')+'">'+(r.amt?won(r.amt):'없음')+'</div></div>')+
         (r.plus?'<div style="background:#EEF2FA;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;line-height:1.4;color:var(--navy)"><b>+ 최대 '+won(r.plus)+'</b> · '+esc(r.plusLbl)+'</div>':'')+
         (r.basis.length?'<div style="font-size:'+fz(10.5)+'px;line-height:1.4;color:var(--ink2)">'+r.basis.slice(0,3).map(esc).join('<br>')+(r.basis.length>3?'<br>외 '+(r.basis.length-3)+'건':'')+'</div>':'')+
