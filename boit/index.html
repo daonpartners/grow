@@ -3205,7 +3205,7 @@ async function previewClaims(){ const box=$("#cf-msg"); if(!S.ins.length){ flash
 document.addEventListener("click",e=>{ if(e.target.closest("#cf-prev")) previewClaims(); });
 async function decorateClaim(){ const B=$("#stepbody"); if(!B||S.sent||S.sending) return; const data=await formsLoad();
   const h=[...B.querySelectorAll(".fsec h3")].find(x=>/고객 서명/.test(x.textContent)); if(h&&!$("#cf-box")){ const sup=S.ins.filter(id=>data.insurers[formKey(id,S.cat)]).length;
-    h.parentNode.insertAdjacentHTML("beforeend",`<div id="cf-box" style="margin-top:10px"><div class="row" style="gap:8px"><button class="btn" type="button" id="cf-prev">보험사별 청구서 미리보기</button><span class="note">${S.ins.length?`선택 ${S.ins.length}곳 중 ${sup}곳 자동 작성 지원`:"보험사를 고르면 자동 작성 여부가 표시됩니다"}</span></div><div id="cf-msg" class="note" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div></div>`); } }
+    h.parentNode.insertAdjacentHTML("beforeend",`<div id="cf-box" style="margin-top:10px"><div class="row" style="gap:8px"><button class="btn" type="button" id="cf-prev">보험사별 청구서 미리보기</button></div><div id="cf-msg" class="note" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div></div>`); } }
 if(typeof renderStep==="function"){ const _rs=renderStep; renderStep=function(){ _rs(); decorateClaim(); }; }
 
 /* ================= 화면 연결 ================= */
