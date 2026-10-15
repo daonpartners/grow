@@ -1494,14 +1494,14 @@ document.addEventListener("input",e=>{ if(e.target.id==="lk-name") updLink(); if
 function showGuide(){ infoDlg("보잇 보험금 청구 이용 방법",GUIDE.map(([q,a],i)=>`<div class="panel" style="padding:12px"><b>${String(i+1).padStart(2,"0")} ${q}</b><p class="note" style="margin:6px 0 0;line-height:1.6">${a}</p></div>`).join("")); }
 /* 보험사별 서식 내려받기 (대표 제공 원본, 2026-10-15) — 서류 종류별로 필요서류 항목 아래에 표시 */
 const DLDOC={
-  tooth:{t:"치과치료확인서 (치과에서 작성)",f:[["KB손해보험","dental_kb.pdf"],["DB손해보험","dental_db.pdf"],["삼성화재","dental_samsung.pdf"],["현대해상","dental_hyundai.pdf"],["롯데손해보험","dental_lotte.pdf"],["NH농협손해보험","dental_nh.pdf"],["흥국화재","dental_heungkuk.pdf"],["라이나손해보험","dental_lina.pdf"]]},
+  tooth:{t:"치과치료확인서 (치과에서 작성)",f:[["KB손해보험","dental_kb.pdf"],["메리츠화재","dental_meritz.pdf"],["DB손해보험","dental_db.pdf"],["삼성화재","dental_samsung.pdf"],["현대해상","dental_hyundai.pdf"],["롯데손해보험","dental_lotte.pdf"],["NH농협손해보험","dental_nh.pdf"],["흥국화재","dental_heungkuk.pdf"],["라이나손해보험","dental_lina.pdf"]]},
   care:{t:"간병인 사용 확인서 · 간병일지 (간병인 쓴 경우)",f:[["KB손해보험 간병인 사용 확인서","care_kb.pdf"],["삼성화재 간병사실확인서","care_samsung.pdf"],["삼성화재 간병일지","carelog_samsung.pdf"]]},
   leak:{t:"누수사고 청구서류 묶음 (청구서·경위서·기술소견서)",f:[["DB손해보험 배상책임 누수사고 전용","leak_db.pdf"]]}};
 const DL_AT={tooth:"tooth",hosp:"care",leak:"leak"};
 function dlChips(key){ const g=DLDOC[key]; if(!g) return ""; return `<div style="margin:6px 0 2px"><span class="note"><b>${g.t}</b> 내려받기</span><div class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div></div>`; }
 function showForms(){
   const typ=Object.keys(ITEMS).filter(t=>t!=="재해"&&t!=="상해(재해)");
-  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 흥국 · 하나 · 라이나손보 · 신한EZ · 수협공제 · 교직원공제 · AIG · AXA · 예별 · 신한라이프 / 펫: DB · KB · 메리츠 · NH농협 · 한화 · 라이나손보 · 신한EZ / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 · 흥국 · 라이나손보 (나머지는 준비 중 — [보험사별 청구서 미리보기]에서 확인)</p></div>
+  infoDlg("청구 서식 · 필요서류",`<div><b>자동 작성 (보잇이 채워서 보냄)</b><p class="note" style="margin:4px 0 0">보험금 청구서 · 개인(신용)정보 처리 동의서 — 보험사 공식 양식에 자동 기입. 지원(장기): DB · KB · 삼성화재 · 메리츠 · 한화 · 현대 · 롯데 · NH농협 · 흥국 · 하나 · 라이나손보 · 신한EZ · 수협공제 · 교직원공제 · AIG · AXA · 예별 · 우체국 · 신한라이프 / 펫: DB · KB · 삼성화재 · 현대 · 메리츠 · NH농협 · 한화 · 라이나손보 · 신한EZ / 배상책임: DB · KB · 삼성화재 · 메리츠 · 현대 · 흥국 · 라이나손보 · 하나 · 한화 · 롯데 · AIG · AXA · 예별 (나머지는 준비 중 — [보험사별 청구서 미리보기]에서 확인)</p></div>
   <div><b>병원·고객이 따로 작성하는 서식</b><p class="note" style="margin:4px 0 0">치과치료 확인서 · 간병인 사용 확인서 · 배상책임 보험금 청구서 · 표적항암약물허가치료 확인서 — 양식은 보험사마다 달라 각 보험사 공식 홈페이지의 서식 자료실에서 받습니다.</p>
   ${dlChips("tooth")}${dlChips("care")}${dlChips("leak")}
   <p class="note" style="margin:4px 0 0">목록에 없는 보험사는 보험사 홈페이지 → 고객센터(또는 보상) → 보험금 청구 → 청구서류·서식 메뉴에서 받습니다. 원본 파일을 주시면 여기에 추가합니다.</p></div>
@@ -3213,8 +3213,8 @@ function fWhen(w,D){ if(!w) return true; if(w[0]==="!"&&!w.includes("|")) return
 function textPng(t,pt,bold){ const sc=4, c=document.createElement("canvas"), x=c.getContext("2d"), font=`${bold?"700 ":""}${pt*sc}px "Malgun Gothic","Apple SD Gothic Neo","IBM Plex Sans KR",sans-serif`;
   x.font=font; const m=x.measureText(t), asc=m.actualBoundingBoxAscent||pt*sc*0.8, desc=m.actualBoundingBoxDescent||pt*sc*0.1; const w=Math.ceil(m.width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="alphabetic"; y.fillText(t,1,c.height/2+(asc-desc)/2);
   return {url:c.toDataURL("image/png"),w:w/sc,h:c.height/sc}; }
-function formKey(insId,cat){ return (cat==="pet"||cat==="liab")?insId+":"+cat:insId; }  /* 펫·배상책임은 "db:pet", "db:liab" 처럼 따로 등록 */
-async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[formKey(insId,D.cat)]; if(!F) return null; await loadPdfLib();
+function formKey(insId,cat,D){ if(cat==="pet"&&D&&D.acc&&D.acc.items&&D.acc.items.pliab&&FORMS.data&&FORMS.data.insurers[insId+":petliab"]) return insId+":petliab"; return (cat==="pet"||cat==="liab")?insId+":"+cat:insId; }  /* 현대해상 펫 배상책임은 별도 서식 */  /* 펫·배상책임은 "db:pet", "db:liab" 처럼 따로 등록 */
+async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[formKey(insId,D.cat,D)]; if(!F) return null; await loadPdfLib();
   const bytes=await (await fetch("forms/"+encodeURI(F.file))).arrayBuffer(); const src=await PDFLib.PDFDocument.load(bytes,{ignoreEncryption:true});
   /* 원본 페이지를 그림으로 넣고 그 위에 씀 — 원본의 잘라내기(클립) 설정이 우리 글씨를 가리는 문제 방지 */
   const pdf=await PDFLib.PDFDocument.create(), n=src.getPageCount(), keep=(Array.isArray(F.keep)&&F.keep.length?F.keep:[...Array(n).keys()].map(i=>i+1)).filter(i=>i>=1&&i<=n);
