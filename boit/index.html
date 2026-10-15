@@ -3069,7 +3069,8 @@ function fWhen(w,D){ if(!w) return true; if(w.includes("|")) return w.split("|")
 function textPng(t,pt,bold){ const sc=4, c=document.createElement("canvas"), x=c.getContext("2d"), font=`${bold?"700 ":""}${pt*sc}px "Malgun Gothic","Apple SD Gothic Neo","IBM Plex Sans KR",sans-serif`;
   x.font=font; const m=x.measureText(t), asc=m.actualBoundingBoxAscent||pt*sc*0.8, desc=m.actualBoundingBoxDescent||pt*sc*0.1; const w=Math.ceil(m.width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="alphabetic"; y.fillText(t,1,c.height/2+(asc-desc)/2);
   return {url:c.toDataURL("image/png"),w:w/sc,h:c.height/sc}; }
-async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[insId]; if(!F) return null; await loadPdfLib();
+function formKey(insId,cat){ return (cat==="pet"||cat==="liab")?insId+":"+cat:insId; }  /* 펫·배상책임은 "db:pet", "db:liab" 처럼 따로 등록 */
+async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[formKey(insId,D.cat)]; if(!F) return null; await loadPdfLib();
   const bytes=await (await fetch("forms/"+encodeURI(F.file))).arrayBuffer(); const src=await PDFLib.PDFDocument.load(bytes,{ignoreEncryption:true});
   /* 원본 페이지를 그림으로 넣고 그 위에 씀 — 원본의 잘라내기(클립) 설정이 우리 글씨를 가리는 문제 방지 */
   const pdf=await PDFLib.PDFDocument.create(), n=src.getPageCount(), keep=(Array.isArray(F.keep)&&F.keep.length?F.keep:[...Array(n).keys()].map(i=>i+1)).filter(i=>i>=1&&i<=n);
@@ -3091,8 +3092,8 @@ async function previewClaims(){ const box=$("#cf-msg"); if(!S.ins.length){ flash
     const u=URL.createObjectURL(r.blob); return `<div>${esc(n)}: <a href="${u}" target="_blank" rel="noopener" class="lnk">청구서 열기 (${r.pages}장)</a> <a href="${u}" download="${esc(n)}_보험금청구서_${esc(S.cl.name||"")}.pdf" class="lnk">저장</a> <span class="note">서식 ${esc(r.ver)}</span></div>`; }).join(""); }
 document.addEventListener("click",e=>{ if(e.target.closest("#cf-prev")) previewClaims(); });
 async function decorateClaim(){ const B=$("#stepbody"); if(!B||S.sent||S.sending) return; const data=await formsLoad();
-  B.querySelectorAll("[data-ins]").forEach(b=>{ if(data.insurers[b.dataset.ins]&&!b.querySelector(".cf-ok")) b.insertAdjacentHTML("beforeend",'<span class="cf-ok" title="청구서 자동 작성 지원" style="font-size:10px;font-weight:700;color:var(--ok);margin-left:4px">자동작성</span>'); });
-  const h=[...B.querySelectorAll(".fsec h3")].find(x=>/고객 서명/.test(x.textContent)); if(h&&!$("#cf-box")){ const sup=S.ins.filter(id=>data.insurers[id]).length;
+  B.querySelectorAll("[data-ins]").forEach(b=>{ if(data.insurers[formKey(b.dataset.ins,S.cat)]&&!b.querySelector(".cf-ok")) b.insertAdjacentHTML("beforeend",'<span class="cf-ok" title="청구서 자동 작성 지원" style="font-size:10px;font-weight:700;color:var(--ok);margin-left:4px">자동작성</span>'); });
+  const h=[...B.querySelectorAll(".fsec h3")].find(x=>/고객 서명/.test(x.textContent)); if(h&&!$("#cf-box")){ const sup=S.ins.filter(id=>data.insurers[formKey(id,S.cat)]).length;
     h.parentNode.insertAdjacentHTML("beforeend",`<div id="cf-box" style="margin-top:10px"><div class="row" style="gap:8px"><button class="btn" type="button" id="cf-prev">보험사별 청구서 미리보기</button><span class="note">${S.ins.length?`선택 ${S.ins.length}곳 중 ${sup}곳 자동 작성 지원`:"보험사를 고르면 자동 작성 여부가 표시됩니다"}</span></div><div id="cf-msg" class="note" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div></div>`); } }
 if(typeof renderStep==="function"){ const _rs=renderStep; renderStep=function(){ _rs(); decorateClaim(); }; }
 
