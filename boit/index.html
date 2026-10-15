@@ -3051,6 +3051,43 @@ document.addEventListener("click",async e=>{
     location.href=`sms:${tel}${/iPhone|iPad/.test(navigator.userAgent)?"&":"?"}body=${encodeURIComponent($("#ds-text").value)}`; return; }
 });
 
+/* ================= 보험사별 청구서 자동 작성 (2026-10-15) =================
+   forms/forms.json 에 보험사별 공식 서식 PDF와 칸 위치를 등록 → 청구 화면 입력값·서명을 그 칸에 넣어 PDF 생성
+   좌표: 페이지 왼쪽 위 기준 pt (x, y). 글자는 화면 글꼴로 그림 이미지로 찍어 한글 글꼴 파일이 필요 없음 */
+const FORMS={data:null,busy:false};
+async function formsLoad(){ if(FORMS.data) return FORMS.data; try{ const r=await fetch("forms/forms.json?t="+Date.now(),{cache:"no-store"}); FORMS.data=r.ok?await r.json():{insurers:{}}; }catch(e){ FORMS.data={insurers:{}}; } if(!FORMS.data.insurers) FORMS.data.insurers={}; return FORMS.data; }
+function loadPdfLib(){ if(window.PDFLib) return Promise.resolve(); return new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"; sc.onload=res; sc.onerror=()=>rej(new Error("pdf-lib")); document.head.appendChild(sc); }); }
+function claimData(){ return {cl:{...S.cl},acc:{...S.acc,items:{...S.acc.items}},sig:{...(S.sign&&S.sign.sig||{})},cat:S.cat}; }
+function fVal(k,D){ const dg=v=>String(v||"").replace(/\D/g,""), r=dg(D.cl.rrn), d=String(D.acc.date||""), t=today();
+  const M={name:D.cl.name,rrn:D.cl.rrn,rrn6:r.slice(0,6),rrn7:r.slice(6),phone:D.cl.phone,holder:D.cl.same?D.cl.name:D.cl.holder,holderRel:D.cl.same?"본인":D.cl.holderRel,
+    accDate:d,accY:d.slice(0,4),accM:d.slice(5,7),accD:d.slice(8,10),accType:D.acc.type,memo:D.acc.memo,
+    bank:D.acc.acct==="paid"?"":D.acc.bank,acctNo:D.acc.acct==="paid"?"":D.acc.acctNo,acctName:D.acc.acct==="paid"?"":D.acc.acctName,
+    today:t,todayY:t.slice(0,4),todayM:t.slice(5,7),todayD:t.slice(8,10),agent:ME.name||"",agentPhone:ME.phone||""};
+  return M[k]==null?"":String(M[k]); }
+function fWhen(w,D){ if(!w) return true; const [a,b]=w.split("="); if(a==="acc.type") return String(D.acc.type||"").startsWith(b); if(a==="item") return !!D.acc.items[b]; if(a==="acct") return D.acc.acct===b; if(a==="same") return String(!!D.cl.same)===b; if(a==="cat") return D.cat===b; return false; }
+function textPng(t,pt,bold){ const sc=4, c=document.createElement("canvas"), x=c.getContext("2d"), font=`${bold?"700 ":""}${pt*sc}px "Malgun Gothic","Apple SD Gothic Neo","IBM Plex Sans KR",sans-serif`;
+  x.font=font; const w=Math.ceil(x.measureText(t).width)+2; c.width=w; c.height=Math.ceil(pt*sc*1.3); const y=c.getContext("2d"); y.font=font; y.fillStyle="#000"; y.textBaseline="middle"; y.fillText(t,1,c.height/2);
+  return {url:c.toDataURL("image/png"),w:w/sc,h:c.height/sc}; }
+async function buildClaimPdf(insId,D){ const F=(await formsLoad()).insurers[insId]; if(!F) return null; await loadPdfLib();
+  const bytes=await (await fetch("forms/"+encodeURI(F.file))).arrayBuffer(); const pdf=await PDFLib.PDFDocument.load(bytes,{ignoreEncryption:true}); const pages=pdf.getPages();
+  for(const f of F.fields||[]){ const pg=pages[(f.p||1)-1]; if(!pg||!fWhen(f.when,D)) continue; const H=pg.getHeight();
+    if(f.k&&f.k.startsWith("sign:")){ const sg=D.sig[f.k.slice(5)]; if(!sg||!/^data:image\/png/.test(sg)) continue; const im=await pdf.embedPng(sg); const w=f.w||70,h=f.h||28, r=Math.min(w/im.width,h/im.height); pg.drawImage(im,{x:f.x,y:H-f.y-im.height*r,width:im.width*r,height:im.height*r}); continue; }
+    const v=f.k==="check"?"V":(f.text!=null?f.text:fVal(f.k,D)); if(!v) continue;
+    const im=textPng(v,f.s||9,f.k==="check"), img=await pdf.embedPng(im.url); pg.drawImage(img,{x:f.x,y:H-f.y-im.h/2,width:im.w,height:im.h}); }
+  if(Array.isArray(F.keep)&&F.keep.length){ for(let i=pages.length;i>=1;i--) if(!F.keep.includes(i)) pdf.removePage(i-1); }
+  return {blob:new Blob([await pdf.save()],{type:"application/pdf"}),pages:pdf.getPageCount(),name:F.name||insId,ver:F.version||""}; }
+SCR.buildClaimPdf=buildClaimPdf; SCR.claimData=claimData;
+async function previewClaims(){ const box=$("#cf-msg"); if(!S.ins.length){ flash(box,"보험사를 먼저 고르세요."); return; } flash(box,"청구서를 만드는 중…");
+  const D=claimData(), out=[]; try{ for(const id of S.ins){ const r=await buildClaimPdf(id,D); out.push([id,r]); } }catch(e){ flash(box,"청구서를 만들지 못했습니다: "+(e.message||e)); return; }
+  box.innerHTML=out.map(([id,r])=>{ const n=insBy(id).name; if(!r) return `<div>${esc(n)}: <span class="pill ex">서식 준비 중</span> 보험사 청구서를 직접 작성해 서류로 첨부하세요.</div>`;
+    const u=URL.createObjectURL(r.blob); return `<div>${esc(n)}: <a href="${u}" target="_blank" rel="noopener" class="lnk">청구서 열기 (${r.pages}장)</a> <a href="${u}" download="${esc(n)}_보험금청구서_${esc(S.cl.name||"")}.pdf" class="lnk">저장</a> <span class="note">서식 ${esc(r.ver)}</span></div>`; }).join(""); }
+document.addEventListener("click",e=>{ if(e.target.closest("#cf-prev")) previewClaims(); });
+async function decorateClaim(){ const B=$("#stepbody"); if(!B||S.sent||S.sending) return; const data=await formsLoad();
+  B.querySelectorAll("[data-ins]").forEach(b=>{ if(data.insurers[b.dataset.ins]&&!b.querySelector(".cf-ok")) b.insertAdjacentHTML("beforeend",'<span class="cf-ok" title="청구서 자동 작성 지원" style="font-size:10px;font-weight:700;color:var(--ok);margin-left:4px">자동작성</span>'); });
+  const h=[...B.querySelectorAll(".fsec h3")].find(x=>/고객 서명/.test(x.textContent)); if(h&&!$("#cf-box")){ const sup=S.ins.filter(id=>data.insurers[id]).length;
+    h.parentNode.insertAdjacentHTML("beforeend",`<div id="cf-box" style="margin-top:10px"><div class="row" style="gap:8px"><button class="btn" type="button" id="cf-prev">보험사별 청구서 미리보기</button><span class="note">${S.ins.length?`선택 ${S.ins.length}곳 중 ${sup}곳 자동 작성 지원`:"보험사를 고르면 자동 작성 여부가 표시됩니다"}</span></div><div id="cf-msg" class="note" style="margin-top:6px;display:flex;flex-direction:column;gap:4px"></div></div>`); } }
+if(typeof renderStep==="function"){ const _rs=renderStep; renderStep=function(){ _rs(); decorateClaim(); }; }
+
 /* ================= 화면 연결 ================= */
 const INIT_VIEW={morning:()=>renderMorning(),quote:()=>renderQuote(),homepage:()=>renderHomepage(),disclose:()=>renderDisclose()};
 if(typeof S!=="undefined"&&INIT_VIEW[S.view]) setTimeout(()=>INIT_VIEW[S.view](),0);
