@@ -44,6 +44,12 @@ label.f input{font:inherit;font-size:15px;color:var(--ink);padding:9px 11px;bord
 .item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid #E4DCD2;background:#fff;cursor:pointer;font-size:14px;text-align:left;width:100%}
 .item.on{border-color:var(--navy);background:#EEF2FA}
 .item small{color:var(--muted)}
+.item .nm{flex:1;min-width:0;overflow-wrap:anywhere}
+.item .acts{display:flex;gap:4px;flex-shrink:0}
+.ibtn{border:1px solid #D9CFC4;background:#fff;border-radius:7px;font-size:12px;font-weight:700;padding:4px 8px;cursor:pointer;color:var(--ink2);font-family:inherit}
+.ibtn:hover{border-color:var(--navy);color:var(--navy)}
+.ibtn.del:hover{border-color:#B4472F;color:#B4472F}
+.listbar{display:flex;justify-content:flex-end;margin-top:6px}
 .tag{font-size:12px;padding:2px 8px;border-radius:20px;background:#E8E1D8;color:var(--ink2);white-space:nowrap}
 .tag.ok{background:#DCEBDD;color:#1F5A2B}.tag.warn{background:#FBE3D9;color:var(--warm2)}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -144,7 +150,7 @@ body{overflow-x:hidden}
     <div class="panel">
       <h2 id="upTitle">2. 결과지 PDF 올리기</h2>
       <label class="drop" id="drop">
-        <input type="file" id="file" accept="application/pdf,.pdf" multiple style="display:none">
+        <input type="file" id="file" accept="application/pdf,.pdf" multiple style="display:none"><input type="file" id="rfile" accept="application/pdf,.pdf" style="display:none">
         <span id="dropText">KGATest 성인 결과지 PDF를 <b>여기로 끌어놓거나 클릭</b>하세요<br>여러 명을 한 번에 올려도 됩니다</span>
       </label>
       <button class="btn ghost" id="manualBtn" style="display:none;width:100%;margin-top:10px">PDF 없이 직접 입력해서 만들기</button>
@@ -1281,7 +1287,7 @@ async function parseCoverage(file){
   var text=all.join('\n'), m;
   var c={mode:'coverage',warns:[],fileName:file.name,rows:[],lines:[]};
   if((m=text.match(/([가-힣*]{2,5})\s*(?:\([^)]*\)\s*)?님의\s*전체\s*보장현황/))||(m=text.match(/([가-힣*]{2,5})\s*고객님/))) c.name=m[1];
-  if((m=text.match(/(\d{2,3})\s*세/))) c.age=m[1];
+  if((m=text.match(/고객님\s*[남여]\s*(\d{1,3})\s*세/))||(m=text.match(/\(\s*(\d{1,3})\s*세\s*,?\s*(?:남자|여자)\s*\)/))||(m=text.match(/(\d{2,3})\s*세/))) c.age=m[1];
   if((m=text.match(/(남자|여자)/))) c.gender=m[1]==='남자'?'남':'여'; else if((m=text.match(/고객님\s*(남|여)\s*\d/))) c.gender=m[1];
   if((m=text.match(/정상계약\s*(\d+)\s*건/))) c.contracts=+m[1];
   if((m=text.match(/월\s*보험료(?:\s*합계)?\s*([\d,]+)\s*원/))) c.premium=+m[1].replace(/,/g,'');
@@ -1666,6 +1672,7 @@ function balancePage(pg){
   if(free>40) body.style.paddingTop=(parseFloat(getComputedStyle(body).paddingTop)+free/2)+'px';
 }
 function buildCoverage(c,host){
+  if(isKid(c)) return buildKidCoverage(c,host);
   var a=adv(); host.innerHTML='';
   var t=document.createElement('div');
   t.innerHTML=coverPage(c,a,{title:'통합 보장분석 리포트',kicker:'COVERAGE ANALYSIS REPORT',who:'고객님',
@@ -1898,7 +1905,7 @@ function endCtaBlocks(a,o){
     '<div style="font-size:'+fz(25)+'px;font-weight:800;line-height:1.35">아프기 전에만 살 수 있습니다.</div>'+
     '<div style="font-size:'+fz(14.5)+'px;line-height:1.6;color:#DCE3F0">'+o.sub+'</div></div>');
   var stat=male?['남성 2명 중 1명','44.6%']:female?['여성 3명 중 1명','38.2%']:['남성 2명 중 1명 · 여성 3명 중 1명','44.6% · 38.2%'];
-  var R=[
+  var R=o.reasons||[
     ['01','암, 생각보다 가깝습니다',stat[0]+'</b>이 기대수명까지 사는 동안 암에 걸립니다('+stat[1]+'). 2023년 한 해에만 <b>28만 8,613명</b>이 새로 암 진단을 받았습니다.'],
     ['02','건강할 때만 고를 수 있습니다','병원에서 <b>의심소견·재검사·치료·투약 기록</b>이 생기면 청약서의 \'계약 전 알릴 의무\' 질문에 해당되어 가입이 거절되거나, 그 부위를 빼고 보장(부담보)하거나, 보험료가 할증될 수 있습니다.'],
     ['03','늦을수록 보험료가 오릅니다','보험료는 가입하는 나이의 위험률로 정해집니다. 같은 보장이라도 <b>나이가 많을수록, 건강 기록이 늘수록</b> 보험료는 올라갑니다.'],
@@ -1917,7 +1924,7 @@ function endCtaBlocks(a,o){
     ['비어 있는 보장의 <b>설계안과 월 보험료</b>를 바로 받아봅니다.','지금 계약은 그대로 두고 <b>부족한 담보만 더하는 방법</b>부터 확인합니다.','<b>가입 가능 여부(인수심사)</b>를 먼저 확인해 건강할 때의 조건을 지킵니다.'].map(function(t){
       return '<div style="display:grid;grid-template-columns:'+fz(24)+'px minmax(0,1fr);gap:8px;align-items:start;font-size:'+fz(15)+'px;line-height:1.55"><span style="width:'+fz(20)+'px;height:'+fz(20)+'px;border:2px solid var(--warm);border-radius:5px;margin-top:2px"></span><span>'+t+'</span></div>';}).join('')+
     (a.name?'<div style="margin-top:4px;padding-top:10px;border-top:1px dashed #E2C7B0;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px"><div style="font-size:'+fz(14)+'px;color:var(--ink2)">담당 설계사 <b style="font-size:'+fz(17)+'px;color:var(--navy)">'+esc(a.name)+(a.title?' '+esc(a.title):'')+'</b></div>'+(a.phone?'<div style="font-size:'+fz(21)+'px;font-weight:800;color:var(--warm2)">'+esc(a.phone)+'</div>':'')+'</div>':'')+'</div>');
-  out.push('<div class="small" style="font-size:'+fz(11.5)+'px;line-height:1.6;color:#4A4A55">· 통계: 보건복지부·중앙암등록본부, 2023년 국가암등록통계(2026년 1월 발표).<br>· '+o.note+'<br>· 보험 가입 시 계약 전 알릴 의무는 사실대로 작성해야 하며, 실제 제안은 금융소비자보호법에 따라 재산·소득 상황과 가입 목적을 확인한 뒤 진행합니다. 가입 전 상품설명서와 약관을 확인하시기 바랍니다.</div>');
+  out.push('<div class="small" style="font-size:'+fz(11.5)+'px;line-height:1.6;color:#4A4A55">· '+(o.src||'통계: 보건복지부·중앙암등록본부, 2023년 국가암등록통계(2026년 1월 발표).')+'<br>· '+o.note+'<br>· 보험 가입 시 계약 전 알릴 의무는 사실대로 작성해야 하며, 실제 제안은 금융소비자보호법에 따라 재산·소득 상황과 가입 목적을 확인한 뒤 진행합니다. 가입 전 상품설명서와 약관을 확인하시기 바랍니다.</div>');
   return out;
 }
 /* 회사별 가입 내역 (계약별 상품·보험료·담보·가입금액) */
@@ -1965,6 +1972,164 @@ function covPropBlocks(c){
       '<div style="font-size:14px;line-height:1.55;color:var(--ink2);margin-top:2px">지금 '+esc(p.name)+(p.amt>0?'이 '+won(p.amt)+'로 부족합니다'+gap:'이 없습니다')+'. '+(PROP_WHY[p.cat]?PROP_WHY[p.cat]+'하는 보장입니다.':'')+'</div></div></div></div>');
   });
   return out;
+}
+
+/* =====================================================================
+   자녀(19세 이하) 보장분석 리포트
+   - 아이들이 자주 걸리는 질병·수술·사고 기준으로 담보를 찾아 정리
+   - 통계 출처
+     · 국민건강보험공단 『2023년 주요수술 통계연보』(2024.12.16 발표): 9세 이하 1위 편도절제술 7,109건, 2위 서혜및대퇴허니아수술 4,266건 / 10대 1위 충수절제술 7,998건
+     · 국민건강보험공단 10대 다빈도 질병(2019년 진료분, 2020.11 보도): 입원 1위 위장염·결장염, 2위 인플루엔자, 3위 폐렴 / 외래 2위 치아우식
+     · 질병관리청(2026.6.5 보도): 수족구병은 6세 이하 영유아 중심, 6~9월 유행
+   ===================================================================== */
+function isKid(c){ return c&&c.age!=null&&c.age!==''&&+c.age<=19; }
+var KID_ITEMS=[
+  {k:'silson',grp:'병원비·입원',title:'실손의료비',cats:['silson'],max:true,why:'실제 쓴 병원비(입원·통원)를 돌려받는 기본 보장'},
+  {k:'hosp',grp:'병원비·입원',title:'질병 입원일당',re:/질병.*입원.*일당|질병입원일당/,ex:/중환자실|1인실|2인실|상급|간병|요양|암|뇌|심장|수술/,why:'질병으로 입원하면 하루 단위로 정액 지급'},
+  {k:'room',grp:'병원비·입원',title:'1인실·상급병실 입원일당',re:/1인실|상급병실|1~?2인실/,why:'1인실 등 상급병실을 쓸 때 하루 단위로 지급'},
+  {k:'flu',grp:'감염·호흡기',title:'독감(인플루엔자) 진단·치료비',re:/독감|인플루엔자/,why:'독감(인플루엔자) 진단·항바이러스제 치료 시 지급. 10대 입원 다빈도 2위가 인플루엔자입니다(국민건강보험공단)'},
+  {k:'hfm',grp:'감염·호흡기',title:'수족구 진단비',re:/수족구/,why:'수족구병 진단 시 지급. 6세 이하 영유아를 중심으로 매년 6~9월 유행합니다(질병관리청)'},
+  {k:'pneu',grp:'감염·호흡기',title:'폐렴 진단·입원',re:/폐렴/,why:'폐렴 진단·입원 시 지급. 10대 입원 다빈도 3위가 폐렴입니다(국민건강보험공단)'},
+  {k:'infect',grp:'감염·호흡기',title:'특정·법정 감염병 진단비',re:/감염병|전염병/,why:'정해진 감염병 진단 시 지급(대상 질병은 약관 확인)'},
+  {k:'surg_dis',grp:'수술',title:'질병수술비 (1~5종 포함)',cats:['surg_dis','surg_n'],why:'질병으로 수술받을 때 지급. 9세 이하 다빈도 수술은 편도절제술·탈장수술, 10대는 충수절제술이 1위입니다(국민건강보험공단 2023 주요수술 통계연보)'},
+  {k:'surg_inj',grp:'수술',title:'상해수술비 (1~5종 포함)',cats:['surg_inj','surg_injn'],why:'다쳐서 수술받을 때 지급'},
+  {k:'surg_kid',grp:'수술',title:'편도·탈장·충수 등 특정수술비',re:/편도|아데노이드|탈장|허니아|충수|맹장/,why:'아이들이 자주 받는 특정 수술을 별도 금액으로 지급'},
+  {k:'fracture',grp:'사고·성장',title:'골절 진단비',cats:['fracture'],re:/골절/,why:'뼈가 부러졌을 때 지급(치아파절 제외 여부는 약관 확인)'},
+  {k:'cast',grp:'사고·성장',title:'깁스치료비',re:/깁스|석고붕대/,why:'깁스(석고붕대) 치료 시 지급'},
+  {k:'burn',grp:'사고·성장',title:'화상 진단·수술비',re:/화상/,why:'화상 진단·수술 시 지급'},
+  {k:'er',grp:'사고·성장',title:'응급실 내원비',re:/응급실/,why:'응급실에 갈 때마다 지급'},
+  {k:'tooth',grp:'치아',title:'치아 치료비 (보존·보철)',re:/치아|보철|보존|크라운|임플란트|브릿지|충치|치과/,why:'영구치 충치 치료·보철 시 지급. 10대 외래 다빈도 2위가 치아우식(충치)입니다(국민건강보험공단)'},
+  {k:'liab',grp:'배상책임',title:'일상생활배상책임',cats:['liab'],re:/일상생활배상|가족일상|자녀배상|일상생활중배상/,max:true,why:'아이가 친구를 다치게 하거나 남의 물건을 파손했을 때 법률상 배상책임을 보상(실손형이라 여러 개 가입해도 실제 손해액 안에서 나눠 보상)'},
+  {k:'cancer',grp:'큰 병 대비',title:'암 진단비 (소아암·백혈병 포함)',cats:['cancer','cancer_multi'],why:'소아암(백혈병 등)을 포함한 암 진단 시 지급'},
+  {k:'cv',grp:'큰 병 대비',title:'뇌·심장 진단비',cats:['brain_all','stroke','ihd','ami'],why:'뇌혈관·심장 질환 진단 시 지급'},
+  {k:'disab',grp:'큰 병 대비',title:'후유장해',cats:['disab'],why:'사고·질병으로 장해가 남을 때 지급'}
+];
+function kidSrc(c){
+  // 회사별 담보(깨끗한 이름)를 우선, 없으면 계약별 담보 줄
+  var L=[]; (c.ctrs||[]).forEach(function(k){ k.items.forEach(function(it){ L.push({name:it.name+(it.cat?' '+it.cat:''),amt:it.amt,co:k.co}); }); });
+  if(!L.length) L=c.lines.map(function(l){return {name:l.name,amt:l.amt};});
+  return L.map(function(l){ return {name:l.name,amt:l.amt,co:l.co,n:l.name.replace(/\([^()]*제외\)?/g,'').replace(/\S*제외/g,'')}; });
+}
+function kidCheck(c){
+  var src=kidSrc(c);
+  return KID_ITEMS.map(function(t){
+    var hits=t.re?src.filter(function(l){return t.re.test(l.n)&&!(t.ex&&t.ex.test(l.n))&&l.amt>0;}):[];
+    var rows=t.cats?covRows(c,t.cats):[];
+    var amt=0, basis=[];
+    if(rows.length){ amt=t.max?Math.max.apply(null,rows.map(function(r){return r.amt;})):rows.reduce(function(a,r){return a+r.amt;},0); basis=rows.map(function(r){return r.name+' '+won(r.amt);}); }
+    else if(hits.length){ amt=t.max?Math.max.apply(null,hits.map(function(l){return l.amt;})):hits.reduce(function(a,l){return a+l.amt;},0); basis=hits.map(function(l){return (l.co?l.co+' ':'')+l.name+' '+won(l.amt);}); }
+    return {k:t.k,grp:t.grp,title:t.title,why:t.why,amt:amt,has:amt>0,basis:basis,n:hits.length||rows.length};
+  });
+}
+function kidGet(ch,k){ return ch.filter(function(x){return x.k===k;})[0]||{amt:0,has:false,basis:[]}; }
+
+/* 01 · 우리 아이 보장 한눈에 */
+function kidSummaryBlocks(c){
+  var ch=kidCheck(c), out=[], grps=[];
+  ch.forEach(function(x){ if(grps.indexOf(x.grp)<0) grps.push(x.grp); });
+  var has=ch.filter(function(x){return x.has;}).length;
+  out.push('<p class="lead">아이들이 자주 걸리는 질병·수술·사고를 기준으로 '+ch.length+'가지 보장이 지금 보험에 있는지 정리했습니다. 금액은 '+esc(c.source||'보장분석 자료')+'('+esc(c.date||'')+' 기준)에 등록된 가입금액이며, 여러 계약에 있으면 합산했습니다.</p>');
+  out.push('<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">'+[['계약',(c.contracts!=null?c.contracts:(c.ctrs||[]).length)+'건','var(--navy)'],['월 보험료',c.premium?c.premium.toLocaleString()+'원':'-','var(--navy)'],['준비된 보장',has+'개','#2F7D4A'],['비어 있는 보장',(ch.length-has)+'개','#B4472F']].map(function(v){
+    return '<div style="background:#fff;border:1px solid #E4DCD2;border-radius:10px;padding:9px 12px"><div style="font-size:12px;color:var(--muted)">'+v[0]+'</div><div style="font-size:'+fz(20)+'px;font-weight:800;color:'+v[2]+'">'+v[1]+'</div></div>';}).join('')+'</div>');
+  var card=function(g){
+    return '<div class="card" style="padding:10px 14px;gap:2px"><div style="font-size:'+fz(15.5)+'px;font-weight:800;color:var(--navy);margin-bottom:3px">'+g+'</div>'+
+      ch.filter(function(x){return x.grp===g;}).map(function(x){
+        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 0;border-top:1px solid #EEE8E1"><div style="font-size:'+fz(13.5)+'px;font-weight:700">'+esc(x.title)+'</div>'+
+          (x.has?'<div style="font-size:'+fz(14)+'px;font-weight:800;color:#2F7D4A;white-space:nowrap">'+won(x.amt)+'</div>':'<div style="font-size:12px;font-weight:800;color:#fff;background:#B4472F;border-radius:12px;padding:2px 9px;white-space:nowrap">없음</div>')+'</div>';
+      }).join('')+'</div>';
+  };
+  for(var i=0;i<grps.length;i+=2) out.push('<div class="two" style="gap:10px;align-items:start">'+card(grps[i])+(grps[i+1]?card(grps[i+1]):'<div></div>')+'</div>');
+  out.push('<div class="small" style="font-size:12px;color:#4A4A55">· 실손의료비·일상생활배상책임은 실제 손해만큼 보상하는 담보라 가장 큰 한도를 표시했습니다. 담보 이름으로 찾았기 때문에 실제 보장 범위는 각 약관으로 확인합니다.</div>');
+  return out;
+}
+/* 02 · 보완 제안 */
+var KID_PRI=['silson','liab','surg_dis','fracture','flu','hosp','surg_inj','tooth','cast','hfm','burn','pneu','cancer'];
+function kidPropBlocks(c){
+  var ch=kidCheck(c), out=[];
+  var miss=KID_PRI.map(function(k){return kidGet(ch,k);}).filter(function(x){return !x.has;}).slice(0,6);
+  var ok=ch.filter(function(x){return x.has;});
+  out.push('<p class="lead">아이 보험은 자주 생기는 일(감기·독감·장염 입원, 골절, 수술, 치아)과 드물지만 큰 일(소아암, 큰 사고)을 함께 대비하는 것이 기본입니다. 지금 비어 있는 보장을 우선순위대로 정리했습니다.</p>');
+  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.title)+' '+won(x.amt)+'</span>';}).join('')+'</div></div>');
+  out.push('<div class="keepnext" style="font-size:19px;font-weight:800;color:var(--navy);margin-top:6px">이렇게 보완하시길 권합니다</div>');
+  if(!miss.length) out.push('<div class="card" style="font-size:14.5px">아이에게 필요한 주요 보장이 모두 준비되어 있습니다. 만기와 갱신 시점을 함께 관리하세요.</div>');
+  miss.forEach(function(p,i){
+    out.push('<div class="card" style="padding:11px 14px;gap:4px"><div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start">'+
+      '<div style="width:30px;height:30px;border-radius:50%;background:var(--warm);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">'+(i+1)+'</div>'+
+      '<div><div style="font-size:16.5px;font-weight:800">'+esc(p.title)+' 추가 검토</div><div style="font-size:14px;line-height:1.55;color:var(--ink2);margin-top:2px">지금 보험에서 찾지 못했습니다. '+esc(p.why)+'.</div></div></div></div>');
+  });
+  return out;
+}
+/* 04 · 아이에게 자주 생기는 일, 얼마를 받을까요 */
+function kidScenarios(c){
+  var ch=kidCheck(c), g=function(k){return kidGet(ch,k);};
+  var hospDay=covRows(c,['hosp']).filter(function(r){return /질병/.test(r.name);}).reduce(function(a,r){return a+r.amt;},0)||g('hosp').amt;
+  var sj=surgJong(c), sd=covRows(c,['surg_dis']).reduce(function(a,r){return a+r.amt;},0);
+  var src=kidSrc(c), spec=function(re){ return src.filter(function(l){return re.test(l.n)&&l.amt>0;}); };
+  var surg=function(sit,code,re,note){
+    var sp=spec(re), v=sd+sp.reduce(function(a,l){return a+l.amt;},0);
+    return {sit:sit,code:code,amt:v,plus:sj?sj.max:0,plusLbl:sj?'수술 종(1~5종)에 따라 '+won(sj.min)+'~'+won(sj.max)+' 추가':'',basis:(sd?['질병수술비 '+won(sd)]:[]).concat(sp.map(function(l){return l.name+' '+won(l.amt);})),note:note};
+  };
+  var L=[
+    {sit:'독감(인플루엔자)',code:'J09~J11',amt:g('flu').amt,basis:g('flu').basis,note:'10대 입원 다빈도 2위 · 실손 통원의료비는 별도 청구'},
+    {sit:'수족구병',code:'B08.4',amt:g('hfm').amt,basis:g('hfm').basis,note:'6세 이하 영유아 중심, 6~9월 유행 · 실손 별도'},
+    {sit:'폐렴으로 5일 입원',code:'J12~J18',amt:g('pneu').amt+hospDay*5,basis:g('pneu').basis.concat(hospDay?['질병 입원일당 '+won(hospDay)+' × 5일']:[]),note:'10대 입원 다빈도 3위'},
+    {sit:'장염으로 3일 입원',code:'A08~A09',amt:hospDay*3,basis:hospDay?['질병 입원일당 '+won(hospDay)+' × 3일']:[],note:'10대 입원 다빈도 1위(위장염·결장염)'},
+    surg('편도절제술','9세 이하 수술 1위',/편도|아데노이드/,'몇 종 수술인지는 가입 회사 수술분류표로 결정'),
+    surg('탈장 수술','9세 이하 수술 2위',/탈장|허니아/,'서혜·대퇴 탈장 · 수술 종은 회사별로 다름'),
+    surg('충수절제술(맹장)','10대 수술 1위',/충수|맹장/,'수술 종은 회사별로 다름'),
+    {sit:'팔·다리 골절 + 깁스',code:'S코드 골절',amt:g('fracture').amt+g('cast').amt,basis:g('fracture').basis.concat(g('cast').basis),plus:covRows(c,['surg_inj']).reduce(function(a,r){return a+r.amt;},0),plusLbl:'수술 시 상해수술비',note:'치아파절 제외 여부 약관 확인'},
+    {sit:'화상',code:'T20~T32',amt:g('burn').amt,basis:g('burn').basis,note:'화상 정도(심재성 2도 이상 등) 기준은 약관 확인'},
+    {sit:'영구치 충치·보철',code:'K02 등',amt:g('tooth').amt,basis:g('tooth').basis,note:'10대 외래 다빈도 2위(치아우식) · 유치 보장 여부 확인'},
+    {sit:'친구를 다치게 하거나 물건 파손',code:'일상생활배상책임',amt:g('liab').amt,basis:g('liab').basis,note:'실제 손해액 한도 내 보상 · 자기부담금 있음',lbl:'보상 한도'},
+    {sit:'소아암(백혈병 등)',code:'C00~C97',amt:g('cancer').amt,basis:g('cancer').basis,plus:covRows(c,['cancer_main','cancer_nonpay']).reduce(function(a,r){return a+r.amt;},0),plusLbl:'치료 시 주요치료비',note:'유사암 범위·감액기간은 약관 확인'}
+  ];
+  return L;
+}
+function kidScenarioBlocks(c){
+  var L=kidScenarios(c), out=['<p class="lead">아이들이 실제로 자주 걸리고 자주 받는 수술·사고를 기준으로, 지금 보험으로 받을 수 있는 금액입니다. 질병코드는 일반적인 분류이며 실제 지급은 각 약관의 정의를 따릅니다.</p>'];
+  for(var i=0;i<L.length;i+=3){
+    out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch">'+L.slice(i,i+3).map(function(r){
+      return '<div class="card" style="padding:9px 12px;gap:4px;border-top:4px solid '+(r.amt?'var(--blue)':'#B4472F')+'">'+
+        '<div><div style="font-size:'+fz(14.5)+'px;font-weight:800;line-height:1.3">'+esc(r.sit)+'</div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+esc(r.code)+'</div></div>'+
+        '<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+(r.lbl||'받을 수 있는 금액')+'</div><div style="font-size:'+fz(21)+'px;font-weight:800;letter-spacing:-.02em;color:'+(r.amt?'var(--blue)':'#B4472F')+'">'+(r.amt?won(r.amt):'없음')+'</div></div>'+
+        (r.plus?'<div style="background:#EEF2FA;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;line-height:1.4;color:var(--navy)"><b>+ 최대 '+won(r.plus)+'</b> · '+esc(r.plusLbl)+'</div>':'')+
+        (r.basis.length?'<div style="font-size:'+fz(10.5)+'px;line-height:1.4;color:var(--ink2)">'+r.basis.slice(0,3).map(esc).join('<br>')+(r.basis.length>3?'<br>외 '+(r.basis.length-3)+'건':'')+'</div>':'')+
+        '<div style="font-size:'+fz(10.5)+'px;line-height:1.4;color:var(--muted)">'+esc(r.note)+'</div></div>';
+    }).join('')+'</div>');
+  }
+  return out;
+}
+/* 06 · 마무리 */
+function kidEndCta(c,a){
+  var ch=kidCheck(c), miss=KID_PRI.map(function(k){return kidGet(ch,k);}).filter(function(x){return !x.has;});
+  return endCtaBlocks(a,{gender:'',sub:'아이가 건강할 때가 보장을 가장 넓게, 가장 낮은 보험료로 준비할 수 있는 때입니다.',
+    reasons:[
+      ['01','아이들은 자주 아프고 다칩니다','10대 입원 다빈도 1~3위</b>는 장염·인플루엔자·폐렴이고, 9세 이하에서 가장 많이 받는 수술은 <b>편도절제술(2023년 7,109건)</b>, 10대는 <b>충수절제술(7,998건)</b>입니다.'],
+      ['02','건강할 때만 고를 수 있습니다','병원에서 <b>의심소견·재검사·치료·투약 기록</b>이 생기면 청약서의 \'계약 전 알릴 의무\' 질문에 해당되어 가입이 거절되거나, 그 부위를 빼고 보장(부담보)하거나, 보험료가 할증될 수 있습니다.'],
+      ['03','어릴수록 보험료가 낮습니다','보험료는 가입하는 나이의 위험률로 정해집니다. 같은 보장이라도 <b>어릴 때, 건강 기록이 없을 때</b> 가입하는 것이 가장 유리합니다.'],
+      ['04','보장 만기를 확인하세요','자녀보험은 상품마다 만기(예: 30세·100세)가 다릅니다. 만기가 짧으면 <b>성인이 된 뒤 다시 가입</b>해야 하고, 그때의 건강 상태에 따라 조건이 달라질 수 있습니다.']
+    ],
+    src:'통계: 국민건강보험공단 2023년 주요수술 통계연보(2024.12 발표) · 국민건강보험공단 10대 다빈도 질병(2019년 진료분) · 질병관리청 수족구병 발생 동향(2026.6)',
+    result:'아이에게 필요한 '+ch.length+'가지 보장 중 <b style="color:#B4472F">'+miss.length+'가지</b>가 지금 보험에서 확인되지 않습니다.'+(miss.length?' 아래 보장부터 채우시길 권합니다.':''),
+    chips:miss.slice(0,4).map(function(x){return x.title+' · 없음';}),
+    note:'본 리포트는 '+esc(c.source||'보장분석 자료')+'('+esc(c.date||'')+' 기준)를 담보 이름으로 정리한 것으로, 실제 가입내용·보장 범위는 각 보험증권과 약관에 따릅니다.'});
+}
+function buildKidCoverage(c,host){
+  var a=adv(); host.innerHTML='';
+  var t=document.createElement('div');
+  t.innerHTML=coverPage(c,a,{title:'자녀보험 보장분석 리포트',kicker:'CHILD COVERAGE REPORT',who:'자녀',
+    lead:'아이들이 자주 걸리는 질병, 자주 받는 수술, 자주 생기는 사고를 기준으로 지금 가입한 보험을 정리했습니다. 무엇이 준비되어 있고 무엇이 비어 있는지 한눈에 확인하세요.',
+    sub:esc([c.age!=null&&c.age!==''?c.age+'세':'',c.gender||''].filter(Boolean).join(' · ')),
+    meta:[['분석 기준일',c.date],['정상 계약',c.contracts!=null?c.contracts+'건':''],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'']]});
+  host.appendChild(t.firstChild);
+  [
+    {head:covHead('01 · 우리 아이 보장','아이 보험, 한눈에 보기'),blocks:function(){return kidSummaryBlocks(c);}},
+    {head:covHead('02 · 보완 제안','우리 아이에게 필요한 보장'),noBalance:true,blocks:function(){return kidPropBlocks(c);}},
+    {head:covHead('03 · 회사별 가입 내역','어느 회사에 무엇을 얼마나'),noBalance:true,blocks:function(){return ctrBlocks(c);}},
+    {head:covHead('04 · 이럴 때 받는 금액','아이에게 자주 생기는 일, 얼마를 받을까요'),fitOne:true,blocks:function(){return kidScenarioBlocks(c);}},
+    {head:covHead('05 · 마무리','자녀보험, 지금 점검해야 하는 이유'),fitOne:true,blocks:function(){return kidEndCta(c,a);}}
+  ].forEach(function(sec){ covSection(host,sec,a); });
+  COV_K=1;
 }
 
 /* =====================================================================
@@ -2037,10 +2202,16 @@ function renderList(){
   var html='';
   state.customers.forEach(function(c,i){
     if(c.mode!==state.mode) return;
-    html+='<button class="item'+(i===state.current?' on':'')+'" data-i="'+i+'"><span>'+esc(c.name||c.fileName)+' <small>'+esc(subLabel(c))+'</small></span>'+statusTag(c)+'</button>';
+    html+='<div class="item'+(i===state.current?' on':'')+'" data-i="'+i+'" role="button" tabindex="0"><span class="nm">'+esc(c.name||c.fileName)+' <small>'+esc(subLabel(c))+'</small></span>'+statusTag(c)+
+      '<span class="acts"><button class="ibtn" data-rep="'+i+'" title="다른 PDF로 바꾸기">교체</button><button class="ibtn del" data-del="'+i+'" title="목록에서 삭제">삭제</button></span></div>';
   });
+  var cnt=state.customers.filter(function(c){return c.mode===state.mode;}).length;
+  if(cnt>1) html+='<div class="listbar"><button class="ibtn del" id="delAll">이 탭 전체 삭제</button></div>';
   $('list').innerHTML=html;
   $('list').querySelectorAll('.item').forEach(function(b){ b.onclick=function(){select(+b.dataset.i);}; });
+  $('list').querySelectorAll('[data-del]').forEach(function(b){ b.onclick=function(e){ e.stopPropagation(); removeAt(+b.dataset.del); }; });
+  $('list').querySelectorAll('[data-rep]').forEach(function(b){ b.onclick=function(e){ e.stopPropagation(); repIdx=+b.dataset.rep; $('rfile').click(); }; });
+  if($('delAll')) $('delAll').onclick=function(){ state.customers=state.customers.filter(function(c){return c.mode!==state.mode;}); state.current=-1; renderList(); renderEdit(); renderCurrent(); fitPreview(); };
   var ok=state.customers.some(function(c){return c.mode===state.mode&&!c.error;});
   $('saveAll').disabled=!ok||state.busy;
   $('saveOne').disabled=!curC()||!!curC().error||state.busy;
@@ -2118,6 +2289,28 @@ async function addFiles(files){
   setStatus('');
   select(state.current);
 }
+/* 목록에서 삭제 · 다른 PDF로 교체 */
+var repIdx=-1;
+function removeAt(i){
+  if(i<0||i>=state.customers.length) return;
+  var m=state.customers[i].mode; state.customers.splice(i,1);
+  if(state.current===i){ state.current=-1; state.customers.forEach(function(c,k){ if(c.mode===m&&state.current<0) state.current=k; }); }
+  else if(state.current>i) state.current--;
+  renderList(); renderEdit(); renderCurrent(); fitPreview();
+}
+async function replaceAt(i,file){
+  var old=state.customers[i]; if(!old) return;
+  var before=state.customers.length;
+  await addFiles([file]);
+  var added=state.customers.slice(before).filter(function(x){return !x.waitCov;});
+  if(!added.length) return;
+  var n=added[0];
+  if(old.cov&&n.mode==='disease'&&!n.cov&&!n.error) linkCov(n,old.cov,old.covFile);
+  var oi=state.customers.indexOf(old); state.customers.splice(oi,1);
+  var ni=state.customers.indexOf(n); state.customers.splice(ni,1); state.customers.splice(oi,0,n);
+  select(oi);
+}
+$('rfile').onchange=function(){ var f=this.files[0]; this.value=''; if(f&&repIdx>=0) replaceAt(repIdx,f); repIdx=-1; };
 var drop=$('drop');
 $('file').onchange=function(){ addFiles(this.files); this.value=''; };
 ['dragenter','dragover'].forEach(function(ev){ drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('over');}); });
@@ -2128,7 +2321,8 @@ $('manualBtn').onclick=function(){ state.customers.push(newCoverageManual()); se
 /* ---------- PDF 저장 ---------- */
 function fileName(c){
   var a=adv(); var clean=function(s){return String(s||'').replace(/[\\\/:*?"<>|\s]+/g,'');};
-  return clean(c.name||'고객')+'_'+MODES[c.mode].file+'_'+clean(a.name||'설계사')+'.pdf';
+  var kind=(c.mode==='coverage'&&isKid(c))?'자녀보험보장분석리포트':MODES[c.mode].file;
+  return clean(c.name||'고객')+'_'+kind+'_'+clean(a.name||'설계사')+'.pdf';
 }
 /* ---------- 모바일: 미리보기를 화면 폭에 맞춤 · 데스크톱 모드 보정 · 하단 저장 버튼 ---------- */
 function fitPreview(){
