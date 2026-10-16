@@ -1,165 +1,165 @@
 {
-  "date": "2026-10-16",
-  "dateLabel": "2026.10.16(금)",
+  "date": "2026-10-17",
+  "dateLabel": "2026.10.17(토)",
   "weather": [
     {
       "city": "서울",
-      "min": 14,
-      "max": 23,
-      "code": 2
+      "min": 13,
+      "max": 24,
+      "code": 3
     },
     {
       "city": "부산",
-      "min": 14,
+      "min": 16,
       "max": 24,
       "code": 2
     },
     {
       "city": "대구",
-      "min": 14,
+      "min": 15,
+      "max": 24,
+      "code": 2
+    },
+    {
+      "city": "인천",
+      "min": 12,
       "max": 24,
       "code": 3
     },
     {
-      "city": "인천",
-      "min": 15,
-      "max": 22,
-      "code": 2
-    },
-    {
       "city": "광주",
-      "min": 11,
+      "min": 15,
       "max": 25,
       "code": 3
     },
     {
       "city": "대전",
-      "min": 9,
-      "max": 23,
-      "code": 2
+      "min": 11,
+      "max": 25,
+      "code": 3
     },
     {
       "city": "강릉",
-      "min": 14,
+      "min": 13,
       "max": 22,
       "code": 2
     },
     {
       "city": "제주",
-      "min": 17,
-      "max": 23,
+      "min": 21,
+      "max": 25,
       "code": 3
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "5,554.22",
-      "diff": "-481.13",
+      "value": "5,668.05",
+      "diff": "-340.76",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "760.82",
-      "diff": "-76.21",
+      "value": "794.78",
+      "diff": "-29.10",
       "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,341.63",
-      "diff": "+2.28",
-      "dir": "up"
+      "value": "1,334.20",
+      "diff": "-6.75",
+      "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "96.1",
-      "diff": "+1.0",
+      "value": "99.0",
+      "diff": "+1.1",
       "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "678,154",
-      "diff": "+14,814",
-      "dir": "up"
+      "value": "673,465",
+      "diff": "-724",
+      "dir": "down"
     }
   ],
   "trends": [],
   "news": [
     {
       "cat": "보험",
-      "title": "美 주간 신규 실업보험 청구 19만9천건…시장 전망치 하회(상보)",
+      "title": "글로벌 방재·보험 산업 패러다임 전환",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBCMk5aZ1p4enE3bUNFaHByZ1dBRXllM1dWZ0tHSFc3QWV5V05lYzR2MXlwUWdhWHFjMUxVcE44S2lqaHo3QUhXaGNyT2NXQ2NYYWxnTTBfT2FfaXRKU01IV21NMXAxV3ZVU2Y3d0cwRWY?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPT3IzYUw5WVV2cExSelBoR0x2am1RekVYSjBIdnh0SkhhakRySms3RWRCWHJIenVGZThIdWdZX1IydVJCeDgwcmZVdXUzOTBUMHhpSTExMnJpYjlnV25XZldOUHVUbkJiemNRTzRabWVJc1BQbXE0dDYtSnpnaTF6WWN0dU9QZDNoOGMwal8tREhqbHZ4dEdON0J2VVBlX0VlSzJzTFpLaw?oc=5",
+      "host": "Deloitte"
+    },
+    {
+      "cat": "보험",
+      "title": "작년 일상생활 배상책임보험 손해율 376%…\"선의의 가입자 부담 누증\"",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE55cllIOFphQzI5U1BydEpBRjRzaE1ZcE0yLUE5UzViV0xOWHZUNTlNc08yaHMwTTFLTmoxOF9oekI5U0N1RlFDM0FqM0dCbllScG5TWW9HemVnZlVGaE0yTGhqNElFNmdJV054WGllcHXSAXRBVV95cUxPYi1UT2VSaTQ4eWMtTnRkb2lmOWRhbkdxb0tIUzRTX3FEcDAtT3pLeGY1aV95YnkyeWR6TGtHMGJHcnJqQXFFam1GU3pMbVJGbkxzT04wZUpaSTFqQnNIVzdCNEVHV0txN2x2azlxQk8zQUQ3Sg?oc=5",
       "host": "연합인포맥스"
     },
     {
       "cat": "보험",
-      "title": "KB손해보험, 모바일 앱 ‘이용 편의성’ 높인다",
+      "title": "건강보험, 계속 유지할 가치 있을까",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9kUG95aU0yTF8tczJrX0x0YnZCdXBGMmxnMDdCc1FqOTNkcDZfb0pINUhCclhWVmZEaXNhN1cyanFRVG8tdlMwbEdUR0RpN3NDQmxyV2lhTThtV3NNb2Z0UHd2d0xMdUtxUDBV0gFvQVVfeXFMUDRCRUlEWkg4eXRGYW5uLUkyWTAzU21nT280UkVNeEFJR000U3FRaEFwNG1HYTZmZkhhR2RSMWZfNkhfbm44cS1IamN2MTNiVlBoZVlXa3JmQ0xiLW1fbFI5b1ZCbkx6Y09mazZ4WDFB?oc=5",
-      "host": "한국보험신문"
+      "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxPRjhFMjczTWJBcWxJWldXSE1TLUgza2wzck1ldkJ3VUIyQVVzc1FtQjBIaFc4Vy1XbzdRb1Y4cURqRmlRRnhlVlZ5OHFsQlVNMTFyTlFlNVJIcEMtaTNTMWlSOWFWNXByVHJhaDhYanE3d0ZOcGVXckxzZlFvSEx5eHVsR1VvTGk5VzJ4WFZvMnZGdkdxd2dRUkNPeUFnZjlERVlwRW9OSFJQS2Y0R3ZXd29TRHlmajVoeURndnY1WF9WT1VXV0lyemt3dGYtOFNXWlJtdHpEYzNYcXdzT2tuX05JcUZPZ094QVY0d2tkSUlwWFdkaVpqMg?oc=5",
+      "host": "위클리코리아"
     },
     {
       "cat": "보험",
-      "title": "‘고용보험 가입자’ 29세 이하 청년층만 줄었다…노동부가 밝힌 이유는",
+      "title": "제주, 갈수록 심각해지는 레드향 '열과' 피해...보험 가입 급증",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBMTG04Zl9tYTZVbTJ3Zzd6V0FFMUkyNEQ2d0hNTWk4X2ZDRTcxaEZqMU5DRmZaM3drQkRfWkdYTlhJSWk4RG0wZ0M5MVZZWVliVWp0N1Z1OFVVUQ?oc=5",
-      "host": "농민신문"
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5lY21vQTE1MTJVVV81cGtaQTdLdVdUd2tHNkhac20tTDVOVWhBZW9uelNGQjhWRENaSnlWVDBkckU5NEl5QmhMZmxrNWpBOWx4UVpRUDRGOUhsRDFyblN0N1d4ckVaRmVOeGNrZkt0MzR1Vm8?oc=5",
+      "host": "헤드라인제주"
     },
     {
       "cat": "보험",
-      "title": "건강보험 시범사업에 9.2조원 투입, 78%는 성과평가 '0회'",
+      "title": "[이달의 신상품] 삼성생명, ‘골든종신보험’ 개정…인출 시점 단축",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE0yb3hSRU5YdjZDN0JEUG1ZN2xKVnJtNlNjSV9UUnNPaEtKbVZORWRtWHZqQmNHV19pcjdKbExOVmVfMGRZYW9XVUtFSVMwZ1BoY3UxUlpFYUZ4c0dQTU1lWUpUTzcwWDdPRldIMg?oc=5",
-      "host": "약사공론"
-    },
-    {
-      "cat": "보험",
-      "title": "가입은 쉬워졌는데…디지털 앞세운 보험사들은 왜 합칠까 [알기쉬운경제]",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFAxMzhnTkg5dFRaMU5BQk5KUk92N3FzV3FKOHVUMjE0RUdNUzlnMWxjWjNfejNSa1RVb1JLQkRpTEs0UUxxZS1VWmI5RXNEbW5XR3BkWlZrRHJjd2F6UlVsb1lESQ?oc=5",
-      "host": "쿠키뉴스"
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1jdEl5QVk4dFZQbnBmZV96a2NPVlZHVG96dHYxWHlQSjZiZDZaTFhWM1BOSU41bDdtaWdubHlZc2g5dWNTUDBwU2FDc1c3LTlYcm1ReTdfaTFpbUhJVWlkcVItNExhZUI3?oc=5",
+      "host": "www.fetv.co.kr"
     },
     {
       "cat": "경제",
-      "title": "■10월 16일 금 경제 캘린더",
+      "title": "정부 \"우리 경제·증시 기초여건 견조\"…금융시장 위험요인 점검",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1IMEw3Sk9WZDhnc3ktZ0IyZkE4QXlSTnd5NjM2VUk2WFZkcjVmYWwyZ3ZoSVhFT0xmUmN1SVlZT2JUM1FGSV81YXdueUxDd0FJOFB4WVlaakRPX0Q3a0E?oc=5",
-      "host": "YTN"
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFA0akE0TktQTnU5VFFyRE9QVWFfVzFQaXdZWUJ0aVRyMFZzRU14X3RtWTVvbHJ5ai16SkVXMDV2dlEtc1I5cGVvekhBZGFCMEZCdzd5b0g2VERMTlo1TXMxQ2JSWVVwRldFUGd6bw?oc=5",
+      "host": "대한민국 정책브리핑"
     },
     {
       "cat": "경제",
-      "title": "국무부 “모든 유엔 회원국 대북제재 이행해야”…러시아, 북한과 경제협력 확대 추진",
+      "title": "\"경제 살릴 방안은?\"...지역 경제기관 국감",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPbVBXTUNXQWR1dk9EV19DMGdxVHV4Z2Qwei1LekZwN1VMQ2g3eWROM1FzZ2ZJOU81b0NvS3kzUXl2Ynk2SWM5U1FISW9mOTd1REJJbkhKUnFYMzU1RUdNZ2pmdGFMVGhqdjhyZEpaeHVMWEtyS3doQnVBREVHRzgyWWdR0gGEAUFVX3lxTE5GTVJGQ2dkMWExYWVvMmVoNmpsSXhQZlE0TUdqVVlDS2VuWFY1WURZQnNnY1oySU5GZDctekFYMmR1QVJ0WVdpYlNSNURWcGUwUUZZMVVWNmpSMjhBRTE3MldtdFVIaEt3eEg4MG9oUWZfZzNWTWJjdXNNcF9JQV9qX0JRRw?oc=5",
-      "host": "VOA 한국어 홈페이지"
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNc0Jiei1kbHdseTFRT0JxaFFfWTVKUXdPUHJUUXhhTXNNbmMyT1FWOHBRbHcxa0FKZngtZTAzV0dYMERZamdfdGIwWmdtMFNsTUh2VHliVVRic3pMenlLWE5SZUZ5UHNqUGxnTnc1dDNOeEVncmRMVl9ULVAyTFRYYzZBVlQ0Zw?oc=5",
+      "host": "Tbc.co.kr"
     },
     {
       "cat": "경제",
-      "title": "[국가미래전략원]AI 기반 경제안보 분석 에이전트 ARGUS 베타 공개 행사 ,10/16 - 전체 행사 - SNU 캘린더 - 서울대 소식",
+      "title": "워시 “세계 경제 대체로 예상대로”…금리 인상 가능성 작아져",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9tLXBTRFM1RURhcHNTMXB6OHZDd1hQTHNsR2tqa3lJUkhBaDNuM0xNVjVLNG5QaEtUT18tT1h0RGkybmQtWE1udll6TzlkU0lES3dMMms0R0ljN1JfTnVfLUNEbXU?oc=5",
-      "host": "서울대학교"
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE9yYzhwbUxVWGpNRlZrQ2FZX0VSLWQxM3NhOXJMSDFTOXhXWk9obG9XNUVRYXdQY0EwM3FJYlNfSFhmQ21lME56WEd6bnpaa2ZXd3gzN0VR?oc=5",
+      "host": "중앙일보"
     },
     {
       "cat": "경제",
-      "title": "한때 세계 2위 ‘경제대국’였는데…영국에도 밀려 60년만 탑5 밀려나는 일본",
+      "title": "한미 재무·통화당국 첫 2+2 면담…\"경제·금융 협력 논의\"",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTFBFZTA5R2N6UjlIWHlHYkZLWlRuRG8zY0l3bnhmSVJobmF4WXBUeldBUVh0dmR0bHNYQnlWVldqNlVCcFp0SUhIQmxrb0hxeDh2?oc=5",
-      "host": "문화일보"
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5GSWZBSUZ3aFZXZ3JZUWVDblVWbXRWR1B6SjNOZGhZSXF2WlRjUmFFUWpucF9zR2NxRmNPNm04amVJZ09odHlLTHRpYTQ3Qm12ZnMxbzZmVEZkV0RlM0VnTFZnSDNNY2M?oc=5",
+      "host": "연합뉴스TV"
     },
     {
       "cat": "경제",
-      "title": "세종상공회의소 세종경제포럼…수출·내수 양극화 대응 전략 모색",
+      "title": "IMF 최신 경제 전망의 행간읽기: “겨울이 오고 있다”",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBfelBlTnJ5YmRHMmpCMWIxVlB4Qmx4ZmZQZVFfOVJ5eE9uRUZwUU1rOV95eEd3OUxTanRaUlN6dXJhbG9FcmlwbDFrcUEwWC01MEdodUliaFFpbWVYNVB4LWs5aGc2TTc0ZHZldQ?oc=5",
-      "host": "충청뉴스"
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQTHFLMjNzTlJXc051Z0NsLVBDVGNzc1VuQjFmMXRuRkZoeTI1UHlPYmMzLUlnSEZlUXBKamx3U3NVeDdyTWxNV3lNa3J2M3JQbkx5RHVKZF9tMTNLV3ZZY2hnRXBHbU5EMHBXRG00UlpSQ0FpbU5qXzFYMC02WjM0alhSc25ubk1tcU5WXzNOdVU?oc=5",
+      "host": "Deloitte"
     }
   ],
   "quote": {
-    "text": "작은 일을 참지 못하면 큰 계획을 그르친다",
-    "author": "공자"
+    "text": "큰 그릇은 늦게 이루어진다",
+    "author": "노자"
   },
   "source": "auto",
-  "updatedAt": "2026-10-15T21:20:07.142Z"
+  "updatedAt": "2026-10-16T21:20:07.235Z"
 }
