@@ -1501,6 +1501,17 @@ body.growon{ background:var(--g-navy); }
               <div class="qna-form-msg" id="adminGateMsg"></div>
               <button type="button" id="adminGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">입장하기</button>
             </div>
+            <div style="max-width:360px; margin-top:10px;">
+              <a href="#" id="admChgToggle" style="font-size:12.5px; color:var(--navy-2); text-decoration:underline;">🔑 인증번호(관리자 코드) 변경</a>
+              <div id="admChgBox" style="display:none; margin-top:8px; padding:12px; border:1px solid var(--line); border-radius:10px; background:#fff;">
+                <input type="password" id="admChgCur" placeholder="현재 인증번호" autocomplete="off" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; margin-bottom:6px;">
+                <input type="password" id="admChgNew" placeholder="새 인증번호 (영문·숫자 6~20자)" autocomplete="off" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; margin-bottom:6px;">
+                <input type="password" id="admChgNew2" placeholder="새 인증번호 한 번 더" autocomplete="off" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; margin-bottom:8px;">
+                <button type="button" id="admChgBtn" style="width:100%; background:#fff; color:var(--navy-2); border:1px solid var(--line); border-radius:8px; padding:10px; font-size:13px; font-weight:800; cursor:pointer;">변경하기</button>
+                <div class="qna-form-msg" id="admChgMsg" style="margin-top:6px;"></div>
+                <div style="font-size:11.5px; color:#888; margin-top:6px;">지사·지점 인증번호만 변경됩니다. 바꾸면 DB관리 코드도 같이 바뀝니다.</div>
+              </div>
+            </div>
           </div>
           <div id="admStep2" style="display:none;">
             <div class="qna-notice">👤 본인을 선택해 주세요. 게시물 등록자로 기록됩니다.</div>
@@ -8651,12 +8662,9 @@ const limitCompareData = {};
   ];
   const ADMIN_ACCOUNTS = {
     'grow26':     { role: 'admin' },
-    'master26':   { role: 'masteradmin' },
-    'dy2026':     { role: 'manager', branch: '도약', label: '도약지사장' },
-    'dh2026':     { role: 'manager', branch: '동행', label: '동행지사장' },
-    'rc2026':     { role: 'manager', branch: '리치로드맵', label: '리치로드맵지사장' },
-    'hs2026':     { role: 'manager', branch: '혁신', label: '혁신지사장' }
+    'master26':   { role: 'masteradmin' }
   };
+  const ADMIN_SRV = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
 
   let admRole = '';
   let admBranch = '';
@@ -8782,23 +8790,52 @@ const limitCompareData = {};
     const code = document.getElementById('adminCode').value.trim();
     const msg = document.getElementById('adminGateMsg');
     const acct = ADMIN_ACCOUNTS[code];
-    if(acct){ try{ sessionStorage.setItem('growAdminCode', code); }catch(e){} }
-    if(!acct){
-      msg.textContent = '인증번호가 올바르지 않습니다.'; msg.style.color = 'var(--orange-deep)';
+    const fail = () => { msg.textContent = '인증번호가 올바르지 않습니다.'; msg.style.color = 'var(--orange-deep)'; };
+    if(acct){
+      try{ sessionStorage.setItem('growAdminCode', code); }catch(e){}
+      if(acct.role === 'admin'){ admShowPicker(); }
+      else if(acct.role === 'masteradmin'){ admShowMasterPicker(); }
       return;
     }
-    if(acct.role === 'admin'){
-      admShowPicker();
-    } else if(acct.role === 'masteradmin'){
-      admShowMasterPicker();
-    } else {
-      admRole = 'manager';
-      admBranch = acct.branch;
-      admName = '';
-      admLabel = acct.label;
-      admSaveSession();
-      unlockAdmin();
-    }
+    if(!code){ fail(); return; }
+    msg.textContent = '확인 중…'; msg.style.color = 'var(--slate)';
+    fetch(ADMIN_SRV, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'login', code: code }) })
+      .then(r => r.json()).then(r => {
+        if(!r || !r.ok){ fail(); return; }
+        try{ sessionStorage.setItem('growAdminCode', code); }catch(e){}
+        msg.textContent = '';
+        if(r.role === 'admin'){
+          const m = ADMIN_MEMBERS.find(x => x.branch === r.branch) || { name: '', title: r.branch + '지사장', branch: r.branch };
+          admRole = 'admin'; admName = m.name; admBranch = m.branch; admLabel = m.title;
+        } else {
+          admRole = 'manager'; admBranch = r.branch; admName = '';
+          admLabel = r.branch + (r.parent ? ' 지점장' : '지사장');
+        }
+        admSaveSession();
+        unlockAdmin();
+      }).catch(() => { msg.textContent = '네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'; msg.style.color = 'var(--orange-deep)'; });
+  });
+
+  const _ct = document.getElementById('admChgToggle');
+  if(_ct) _ct.addEventListener('click', e => { e.preventDefault(); const b = document.getElementById('admChgBox'); b.style.display = b.style.display === 'none' ? '' : 'none'; });
+  const _cb = document.getElementById('admChgBtn');
+  if(_cb) _cb.addEventListener('click', () => {
+    const cur = document.getElementById('admChgCur').value.trim();
+    const nw = document.getElementById('admChgNew').value.trim();
+    const nw2 = document.getElementById('admChgNew2').value.trim();
+    const m = document.getElementById('admChgMsg');
+    const bad = t => { m.textContent = t; m.style.color = 'red'; };
+    if(!cur || !nw){ bad('현재 인증번호와 새 인증번호를 입력해 주세요.'); return; }
+    if(nw !== nw2){ bad('새 인증번호가 서로 다릅니다.'); return; }
+    if(ADMIN_ACCOUNTS[cur]){ bad('이 인증번호(공용 코드)는 여기서 변경할 수 없습니다.'); return; }
+    m.textContent = '변경 중…'; m.style.color = 'var(--slate)'; _cb.disabled = true;
+    fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-code', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ dbCode: cur, newCode: nw }) })
+      .then(r => r.json()).then(r => {
+        _cb.disabled = false;
+        if(!r.ok){ bad(r.error || '변경하지 못했습니다.'); return; }
+        m.textContent = '✅ 변경되었습니다. 다음부터 새 인증번호로 입장하세요.'; m.style.color = 'green';
+        ['admChgCur','admChgNew','admChgNew2'].forEach(id => { document.getElementById(id).value = ''; });
+      }).catch(() => { _cb.disabled = false; bad('네트워크 오류가 발생했습니다.'); });
   });
 
   const _ac = document.getElementById('adminCode');
@@ -9781,7 +9818,7 @@ const limitCompareData = {};
       if(!nw) return;
       fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-code', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dbCode: code(), newCode: nw.trim()})}).then(r => r.json()).then(r => {
         if(!r.ok){ msg(r.error || '변경하지 못했습니다.', true); return; }
-        setCode(nw.trim()); msg('DB관리 코드를 변경했습니다. 다음부터 새 코드로 들어오세요.');
+        setCode(nw.trim()); try{ if(sessionStorage.getItem('growAdminCode')) sessionStorage.setItem('growAdminCode', nw.trim()); }catch(e){} msg('DB관리 코드를 변경했습니다. 다음부터 새 코드로 들어오세요.');
       }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
     });
     on('edbAssign', () => assign(null));
