@@ -1587,8 +1587,9 @@ const DLDOC={
   care:{t:"간병인 사용 확인서 · 간병일지 (간병인 쓴 경우)",f:[["KB손해보험 간병인 사용 확인서","care_kb.pdf"],["삼성화재 간병사실확인서","care_samsung.pdf"],["삼성화재 간병일지","carelog_samsung.pdf"],["DB손해보험 간병인 서비스 신청서","care_db.pdf"]]},
   leak:{t:"누수사고 청구서류 묶음 (청구서·경위서·기술소견서)",f:[["DB손해보험 배상책임 누수사고 전용","leak_db.pdf"]]},
   silson:{t:"실손 여러 곳 가입 · 단체보험",f:[["KB손해보험 실손 청구서류 접수대행 신청서","silson_relay_kb.pdf"],["삼성화재 단체보험 청구서 (임직원)","group_samsung.pdf"]]},
-  story:{t:"사고경위서",f:[["삼성화재 사고경위서","story_samsung.pdf"]]}};
-const DL_AT={tooth:"tooth",hosp:"care",leak:["leak","story"],silin:"silson",silout:"silson",prop:"story",bodily:"story"};
+  story:{t:"사고경위서",f:[["삼성화재 사고경위서","story_samsung.pdf"]]},
+  chemo:{t:"표적항암약물허가치료 확인서 (담당 의사 작성)",f:[["DB손해보험 표적항암 확인서","target_db.pdf","db"],["삼성화재 표적항암·특정항암호르몬 확인서","target_samsung.pdf","ss"],["메리츠화재 표적항암 확인서","target_meritz.pdf","mz"],["KB손해보험 사고증명서+표적항암 확인서","target_kb.pdf","kb"]]}};
+const DL_AT={chemo:"chemo",tooth:"tooth",hosp:"care",leak:["leak","story"],silin:"silson",silout:"silson",prop:"story",bodily:"story"};
 function dlChips(key){ const g=DLDOC[key]; if(!g) return ""; return `<div style="margin:6px 0 2px"><span class="note"><b>${g.t}</b> 내려받기</span><div class="row" style="gap:6px;margin-top:4px;flex-wrap:wrap">${g.f.map(([n,f])=>`<a class="btn sm" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div></div>`; }
 const SF_TABS=[["son","손해보험",["질병","상해","치아"]],["life","생명보험",["질병","재해","치아"]],["pet","펫보험",["pet"]],["liab","일반배상",["대물(누수 포함)","대인"]]];
 function sfDocs(k){ const ds=(ITEM_DOCS[k]||[]).filter(d=>CDOC[d]).map(d=>`<span class="sf-doc" title="${esc(CDOC[d][1]||"")}">${esc(CDOC[d][0])}</span>`);
@@ -1631,7 +1632,7 @@ const CDOC={
   outdx:["진단명 포함 통원 서류","통원확인서·처방전·진단서 중 하나 · 의료기관","D"], pharm:["약제비계산서·처방전","약국","D"],
   surgdoc:["수술확인서","진단명(코드)·수술명·수술일자 포함 · 의료기관","L"], biopsy:["조직검사결과지","암 진단 · 의료기관","L"],
   ctmri:["CT·MRI 판독결과지","뇌혈관질환 · 의료기관","L"], heartt:["검사결과지","관상동맥조영술·심전도·효소검사 등 · 의료기관","L"],
-  target:["표적항암약물 허가치료 확인서","표적항암 시 · 보험사 양식","L"], xray:["X-ray 결과지","골절은 진단서 대신 통원확인서+X-ray 가능 · 의료기관","L"],
+  target:["표적항암약물 허가치료 확인서","표적항암 시 · 보험사 양식 · 담당 의사 작성, 병원 직인·의사 날인 필수","L"], chemorec:["항암 투약 의무기록","표적항암 시 · 입·통원 진료기록지 등 · 의료기관","L"], xray:["X-ray 결과지","골절은 진단서 대신 통원확인서+X-ray 가능 · 의료기관","L"],
   disabdx:["후유장해진단서","의료기관","L"], deathc:["사망진단서(사체검안서)","의료기관","L"], basic:["기본증명서(사망 기재)","주민센터·정부24","L"],
   heir:["상속관계 서류","수익자 미지정 시 · 가족관계증명서 등","L"],
   tooth:["치아치료확인서","치아번호·진단명·치료일 기재 · 보험사 양식","L"], dentrec:["치과 진료기록 사본","의료기관","L"], dentx:["치과 X-ray","보철(임플란트·브릿지·틀니) 시","L"],
@@ -1644,7 +1645,7 @@ const CDOC={
   reg:["건물 등기부등본","","D"], famreg:["주민등록등본","가족일상생활배상 시","D"], lease:["임대차계약서","임대인배상 시","D"],
   lossl:["손해품목 명세서","","D"], vid:["피해자 신분증 사본","","D"], vbill:["피해자 치료비 영수증","","D"], vdx:["피해자 진단서","","D"]};
 const ITEM_DOCS={silin:["dx","bill","detail"],silout:["outdx","bill","pharm"],hosp:["adm"],surg:["surgdoc","bill","detail"],dxc:["dx","biopsy"],dxb:["dx","ctmri"],dxh:["dx","heartt"],
-  chemo:["dx","target"],disab:["disabdx"],death:["deathc","basic","heir"],frac:["dx","xray"],tooth:["tooth","dentrec","dentx"],
+  chemo:["dx","target","chemorec","bill","detail"],disab:["disabdx"],death:["deathc","basic","heir"],frac:["dx","xray"],tooth:["tooth","dentrec","dentx"],
   pin:["petdx","petbill","petrec","petx"],pout:["petdx","petbill","petrec"],psurg:["petdx","petbill","petrec","petx"],pliab:["story"],pfun:["petdeath"],
   leak:["story","photo","leaktech","est","recp","reg","famreg","lease"],prop:["story","photo","lossl","est","recp","agree","vid"],bodily:["story","vbill","vdx","agree","vid"]};
 const PET_ITEM_LBL={disab:"후유장해",death:"사망"};
@@ -1776,11 +1777,15 @@ function secAcc(){ const types=ACC_TYPES[S.cat];
   ${S.acc.type?`<div class="itemgrid">${itemsFor().map(([k,v])=>`<label class="itemc"><input type="checkbox" data-item="${k}" ${S.acc.items[k]?"checked":""}> ${v}</label>`).join("")}</div>`:""}
   <div class="field" style="margin-top:10px"><label for="acc-memo">사고 내용 (선택)</label><input id="acc-memo" value="${esc(S.acc.memo)}" placeholder="예: 건강검진 중 대장용종 발견, 내시경으로 제거"></div>
   <div class="fgrid" style="margin-top:8px"><div class="field"><label for="acc-place">사고장소 (선택)</label><input id="acc-place" value="${esc(S.acc.place||"")}" placeholder="예: 서울 강남구 자택 욕실" autocomplete="off"></div>${S.cat==="liab"?`<div class="field"><label for="acc-damage">손해내역 (예상 금액)</label><input id="acc-damage" value="${esc(S.acc.damage||"")}" placeholder="예: 아래층 천장 누수 · 견적 150만원" autocomplete="off"></div>`:""}</div></section>`; }
+function targetBox(){ const all=DLDOC.chemo.f, mine=all.filter(f=>S.ins.includes(f[2])), list=mine.length?mine:all;
+  return `<div class="hbox" style="margin-top:10px"><h3>표적항암 확인서 — 병원에 가져가 담당 의사에게 작성 요청</h3><div class="row" style="gap:6px;flex-wrap:wrap;margin:6px 0">${list.map(([n,f])=>`<a class="btn sm" style="text-decoration:none;color:var(--fg)" href="forms/docs/${f}" download="${esc(n)}.pdf" target="_blank" rel="noopener">📄 ${esc(n)}</a>`).join("")}</div>
+  · 의무기록(진료기록지)과 투약내역(처방전·영수증·세부내역서)을 함께 제출<br>· 허가범위 외 사용으로 심평원 암질환심의위원회 <b>심사 중</b>이면 승인·통보 후 청구 접수 가능${mine.length<S.ins.length&&S.ins.length?`<br>· 고른 보험사 중 서식이 없는 곳은 보험사 양식을 확인하세요`:""}</div>`; }
 function secDocs(){ const keys=reqDocs(), have=k=>[k].concat(DOC_ALIAS[k]||[]).some(x=>(S.docs[x]||[]).length>0), files=Object.entries(S.docs).flatMap(([k,fs])=>fs.map((f,i)=>({k,i,f})));
   const opts=[...new Set(keys.concat(Object.keys(S.docs)).concat(["etc"]))];
   return `<section class="fsec"><h3><i>4</i>서류</h3>
   <label class="dropz" for="df-all" id="dropz"><b>서류 파일을 끌어다 놓거나 눌러서 선택</b><span>사진·PDF 여러 개 한꺼번에</span></label><input type="file" id="df-all" accept="image/*,application/pdf" multiple hidden>
   ${keys.length?`<div class="reqchk">${keys.map(k=>`<span class="rq ${have(k)?"ok":""}">${have(k)?"✔":"○"} ${CDOC[k][0]}</span>`).join("")}</div>`:""}
+  ${keys.includes("target")?targetBox():""}
   ${files.length?`<div class="flist">${files.map(({k,i,f})=>`<div class="frow ${k==="etc"?"un":""}"><span class="fn">${esc(f.name)}</span><select data-dmv="${k}:${i}" aria-label="서류 종류">${opts.map(o=>`<option value="${o}" ${o===k?"selected":""}>${docLabel(o)}</option>`).join("")}</select><button class="btn sm" data-drm="${k}:${i}" aria-label="삭제">✕</button></div>`).join("")}</div>`:""}
   ${files.length?`<p class="note" style="margin:8px 0 0">보험사당 ${allFiles().length+2}장 (청구서·동의서 자동 포함)</p>`:""}</section>`; }
 function renderStep(){
