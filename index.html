@@ -9743,7 +9743,7 @@ const limitCompareData = {};
       $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td style="white-space:normal; min-width:200px; font-size:11.5px;">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="11" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
     window.edbLoad = function(){
-      if(!code()){ showGate(true); return; }
+      if(!code()){ let ac = ''; try{ ac = sessionStorage.getItem('growAdminCode') || ''; }catch(e){} if(ac){ setCode(ac); } else { showGate(true); return; } }
       msg('불러오는 중…');
       call({action:'list', eventName:$('edbEvent').value, from:$('edbFrom').value, to:$('edbTo').value}).then(r => {
         if(!r.ok){ msg(r.error || '불러오지 못했습니다.', true); if(/코드/.test(r.error||'')){ setCode(''); showGate(true); } return; }
