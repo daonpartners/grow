@@ -449,6 +449,12 @@ tr.sel td{background:var(--accent-soft)}
 .hpv .nw{font-size:12.5px;line-height:1.5;padding:5px 0;border-bottom:1px solid #EEF1EF}.hpv .nw a{color:#18221F;text-decoration:none}
 .hpv .ft{padding:14px 16px 18px;font-size:11px;color:#7A8682;line-height:1.6}
 /* 고지의무 */
+.ds-top{display:grid;grid-template-columns:1fr 240px;gap:12px;margin-top:8px}@media(max-width:820px){.ds-top{grid-template-columns:1fr}}
+.ds-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ds-card{text-align:left;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:4px;font:inherit;color:var(--ink)}
+.ds-card span{font-size:12px;color:var(--muted)}.ds-card b{font-size:24px;line-height:1}.ds-card small{font-size:12px;font-weight:500;margin-left:3px;color:var(--muted)}
+.ds-card.on{border-color:var(--warn);background:var(--warn-soft)}.ds-card.red b{color:var(--bad)}.ds-card.red{border-color:var(--bad);background:var(--bad-soft)}
+.ds-cost{background:var(--ink);color:var(--paper,#fff);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;font-size:13px}.ds-cost b{font-size:24px}
 .ds-q{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
 .ds-q h3{margin:0 0 6px;font-size:15px}
 .ds-q.hit{border-color:var(--warn);background:var(--warn-soft)}
@@ -3122,9 +3128,15 @@ async function hlCall(action,body){ /* 서버 기능 호출. 배포 전이거나
   try{ const tok=(typeof CLOUD!=="undefined"&&CLOUD.sb)?(await CLOUD.sb.auth.getSession()).data.session?.access_token:null; if(!tok) return null;
     const r=await fetch(BOIT_CLOUD.url+"/functions/v1/health-lookup",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+tok,"apikey":BOIT_CLOUD.key},body:JSON.stringify({action,...body})});
     if(r.status===404) return null; const j=await r.json().catch(()=>null); if(j&&j.error==="not_configured") return null; return j||{error:"bad_response"}; }catch(e){ return null; } }
-function hlDemoRows(base){ const t=new Date(base||today()), d=m=>{ const x=new Date(t); x.setMonth(x.getMonth()-m); return x.toISOString().slice(0,10); };
-  return [{d:d(1),h:"(예시)OO내과의원",c:"J20",n:"급성 기관지염",t:"외래",k:"1",r:"5"},{d:d(8),h:"(예시)OO정형외과",c:"M51",n:"기타 추간판장애",t:"외래",k:"3",r:"14"},
-    {d:d(20),h:"(예시)OO병원",c:"K35",n:"급성 충수염",t:"입원",k:"4",r:"7"},{d:d(40),h:"(예시)OO안과",c:"H52",n:"굴절 및 조절의 장애",t:"외래",k:"1",r:""}].map(x=>({...x,s:true})); }
+function hlDemoRows(base){ const t=new Date(base||today()), d=(m,dd=0)=>{ const x=new Date(t); x.setMonth(x.getMonth()-m); x.setDate(x.getDate()-dd); return x.toISOString().slice(0,10); };
+  const R=(o)=>({k:1,r:0,tot:0,pay:0,self:0,...o});
+  const rows=[R({d:d(1),h:"(예시)OO내과의원",dept:"내과",c:"AJ20",n:"급성 기관지염",t:"외래",r:5,tot:21000,pay:14700,self:6300}),
+    R({d:d(2),h:"(예시)OO내과의원",dept:"내과",c:"AI10",n:"본태성 고혈압",t:"외래",r:30,tot:38000,pay:26600,self:11400}),
+    R({d:d(20),h:"(예시)OO병원",dept:"외과",c:"AK35",n:"급성 충수염",t:"입원",k:4,r:7,proc:"충수절제술",tot:2850000,pay:2280000,self:570000}),
+    R({d:d(30),h:"(예시)OO한방병원",dept:"한방",c:"BS134",n:"목뼈의 염좌",t:"입원",k:6,auto:true,tot:1200000}),
+    R({d:d(40),h:"(예시)OO안과",dept:"안과",c:"AH52",n:"굴절 및 조절의 장애",t:"외래",tot:15000,pay:10500,self:4500})];
+  for(let i=0;i<8;i++) rows.push(R({d:d(9,i*4),h:"(예시)OO정형외과",dept:"정형외과",c:"AM51",n:"기타 추간판장애",t:"외래",r:i<4?7:0,proc:i%2?"물리치료":"",tot:32000,pay:22400,self:9600}));
+  return rows.map(x=>({...x,s:/술$/.test(x.proc||"")})); }
 document.addEventListener("click",async e=>{
   const g=id=>{ const el=$(id); return el?el.value.trim():""; };
   if(e.target.closest("#hl-open")){ const b=$("#hl-box"); b.hidden=!b.hidden; if(!b.hidden){ const ci=resolveCust(g("#ds-cust")), c=CUSTOMERS.find(x=>x.id===ci); if(c&&HL.name!==c.name){ HL.name=c.name; HL.phone=c.phone; HL.birth=(c.birth||"").replace(/-/g,""); } HL.step=0; HL.msg=""; hlRender(); } return; }
@@ -3139,7 +3151,7 @@ document.addEventListener("click",async e=>{
     HL.demo=!r; HL.job=r&&r.job||null; HL.step=1; HL.msg=""; hlRender(); return; }
   if(e.target.closest("#hl-finish")){ let rows;
     if(HL.demo) rows=hlDemoRows(DS.base);
-    else { HL.msg="불러오는 중…"; hlRender(); const r=await hlCall("finish",{job:HL.job}); if(!r||r.error){ HL.msg=r&&r.error==="not_approved"?"아직 고객이 승인하지 않았습니다. 승인 후 다시 누르세요.":"불러오지 못했습니다: "+((r&&(r.message||r.error))||"서버 응답 없음"); hlRender(); return; } rows=(r.rows||[]).map(x=>({...x,s:true})); }
+    else { HL.msg="불러오는 중…"; hlRender(); const r=await hlCall("finish",{job:HL.job}); if(!r||r.error){ HL.msg=r&&r.error==="not_approved"?"아직 고객이 승인하지 않았습니다. 승인 후 다시 누르세요.":"불러오지 못했습니다: "+((r&&(r.message||r.error))||"서버 응답 없음"); hlRender(); return; } rows=(r.rows||[]).map(x=>({...x,s:/술$/.test(x.proc||"")})); }
     DS.rows.push(...rows); dsResult(); HL.step=2; HL.msg=`${HL.name}님 진료내역 ${rows.length}건을 아래 표에 넣었습니다.${HL.demo?" (시범 예시 데이터 — 실제 고객 자료 아님)":""} 내용을 확인한 뒤 고지 대상을 판단하세요.`; hlRender(); return; }
 });
 /* ===== 진료내역을 고객 상담기록으로 저장 (2026-10-15) =====
@@ -3165,7 +3177,7 @@ document.addEventListener("click",async e=>{
   if(e.target.closest("#dsv-close")){ $("#dsv-box").hidden=true; return; }
   const k=e.target.closest("[data-dsvk]"); if(k){ DS.keep=+k.dataset.dsvk; dsvRender(); return; }
   if(e.target.closest("#dsv-save")){ const m=$("#dsv-msg"), cid=dsCustId(); if(!cid){ m.textContent="1번 칸에서 고객관리에 있는 고객을 고르세요."; return; } if(!$("#dsv-agree").checked){ m.textContent="고객의 별도 동의를 받았는지 확인해 주세요."; return; }
-    const base=DS.base||today(), keep=DS.keep||6, rows=DS.rows.map(({d,h,c,n,t,k,r,s})=>({d,h,c,n,t,k,r,s}));
+    const base=DS.base||today(), keep=DS.keep||6, rows=DS.rows.map(({d,h,c,n,t,k,r,s,dept,proc,auto,tot,pay,self})=>({d,h,c,n,t,k,r,s,dept,proc,auto,tot,pay,self}));
     const hx=await acctSeal(JSON.stringify({base,rows})); const rec={cust:cid,date:today(),stage:"고지의무 확인",memo:`${dsSummary(rows,base)} · 청약 기준일 ${base} · 진료내역 암호화 보관(${addMonths(today(),keep)}까지, 고객 동의 ${today()})`,hx,hxUntil:addMonths(today(),keep),hxAgree:today()};
     CONSULTS.push(rec); if(typeof cloudSave==="function") try{ cloudSave(true); }catch(_){}
     $("#dsv-box").hidden=true; dsvLoadBar(); flash($("#ds-fmsg"),`${custName(cid)}님 상담기록에 저장했습니다. 다음에 고객을 고르면 [저장분 불러오기]가 나옵니다.`); return; }
@@ -3175,25 +3187,67 @@ document.addEventListener("click",async e=>{
 });
 document.addEventListener("input",e=>{ if(e.target&&e.target.id==="ds-cust"){ dsvLoadBar(); const b=$("#dsv-box"); if(b&&!b.hidden) dsvRender(); } });
 document.addEventListener("change",e=>{ if(e.target&&e.target.id==="ds-cust") dsvLoadBar(); });
-function dsResult(){ dsList(); const el=$("#ds-res"); if(!el) return; const base=DS.base||today();
-  if(!DS.rows.length){ el.innerHTML='<p class="note">진료내역을 올리면 여기에 기간별로 정리됩니다.</p>'; return; }
-  const rs=DS.rows.map((x,i)=>({...x,i,m:monthsBetween(x.d,base)})).filter(x=>x.m>=0).sort((a,b)=>a.d<b.d?1:-1);
-  const in3=rs.filter(x=>x.m<3), in12=rs.filter(x=>x.m<12), in60=rs.filter(x=>x.m<60);
-  const byCode={}; in60.forEach(x=>{ const k=x.c||x.n; (byCode[k]=byCode[k]||{n:x.n,c:x.c,dates:new Set(),drug:0,adm:0}); byCode[k].dates.add(x.d); byCode[k].drug+=x.r; if(x.t==="입원") byCode[k].adm++; });
-  const adm60=in60.filter(x=>x.t==="입원"), surg60=in60.filter(x=>x.s), drug30=in60.filter(x=>x.r>=30), visit7=Object.values(byCode).filter(v=>v.dates.size>=7);
-  const dis=in60.filter(x=>DS_DIS.some(([,re])=>re.test(x.c))).map(x=>({...x,dn:DS_DIS.find(([,re])=>re.test(x.c))[0]}));
-  const li=a=>a.length?`<ul class="ds-t" style="margin:4px 0 0;padding-left:18px">${a.slice(0,30).map(x=>`<li>${x.d}${x.h?" · "+esc(x.h):""} · ${esc(x.c)} ${esc(x.n)} · ${x.t}${x.k?` ${x.k}일`:""}${x.r?` · 투약 ${x.r}일`:""}${x.dn?` · <b>${esc(x.dn)}</b>`:""}</li>`).join("")}${a.length>30?`<li>외 ${a.length-30}건</li>`:""}</ul>`:'<p class="note" style="margin:4px 0 0">해당 없음</p>';
-  const Q=(t,sub,a,body)=>`<div class="ds-q${a?" hit":""}"><h3>${t} <span class="pill ${a?"warn":"ok"}">${a?a+"건 확인 필요":"해당 없음"}</span></h3><p class="note" style="margin:0">${sub}</p>${body}</div>`;
-  el.innerHTML=`<p class="note" style="margin:0 0 10px">기준일 ${base} · 전체 ${rs.length}건 (5년 이내 ${in60.length}건)</p>
-   ${Q("최근 3개월 이내 진료","진찰·검사로 진단·치료·입원·수술·투약을 받은 사실 (3개월 문항)",in3.length,li(in3))}
-   ${Q("3개월~1년 이내 진료","추가검사(재검사) 문항이 있는 청약서는 이 기간 기록 중 재검사 소견이 있었는지 고객에게 확인",in12.filter(x=>x.m>=3).length,li(in12.filter(x=>x.m>=3)))}
-   ${Q("최근 5년 이내 입원","입원 문항",adm60.length,li(adm60))}
-   ${Q("최근 5년 이내 수술","수술은 진료내역만으로 알 수 없어 아래 표에서 직접 표시",surg60.length,li(surg60))}
-   ${Q("최근 5년 이내 30일 이상 투약","한 번 처방 투약일수 30일 이상 (같은 병 누적 투약도 고객에게 확인)",drug30.length,li(drug30))}
-   ${Q("같은 병으로 7일 이상 진료","'계속하여 7일 이상 치료' 문항 확인용 — 같은 상병 진료일이 7일 이상인 경우",visit7.length,visit7.length?`<ul class="ds-t" style="margin:4px 0 0;padding-left:18px">${visit7.map(v=>`<li>${esc(v.c)} ${esc(v.n)} · 진료일 ${v.dates.size}일${v.drug?` · 투약 합계 ${v.drug}일`:""}</li>`).join("")}</ul>`:'<p class="note" style="margin:4px 0 0">해당 없음</p>')}
-   ${Q("최근 5년 이내 지정 질병","청약서에 지정 질병 문항이 있을 때 확인 (상병코드 기준: 암·백혈병·고혈압·협심증·심근경색·심장판막증·뇌졸중·간경화·당뇨병·HIV)",dis.length,li(dis))}
-   <details style="margin-top:8px"><summary class="note" style="cursor:pointer">전체 진료내역 보기 · 수술 표시</summary><div class="tbl-wrap"><table class="ds-t"><thead><tr><th>진료일</th><th>병원</th><th>상병</th><th>구분</th><th>일수</th><th>투약</th><th>수술</th><th></th></tr></thead><tbody>
-   ${rs.map(x=>`<tr><td class="num">${x.d}</td><td>${esc(x.h)}</td><td>${esc(x.c)} ${esc(x.n)}</td><td>${x.t}</td><td class="num">${x.k||""}</td><td class="num">${x.r||""}</td><td><input type="checkbox" data-dss="${x.i}" ${x.s?"checked":""} aria-label="수술"></td><td><button class="lnk" type="button" data-dsd="${x.i}">삭제</button></td></tr>`).join("")}</tbody></table></div></details>`; }
+/* ===== 고지의무 요약 (2026-10-16 · 바로고지 벤치마킹) =====
+   표준체: 금감원 표준 청약서 계약전 알릴의무 1~5번 / 간편체: 3·N·5형 1~3번. 최종 판단은 가입 상품 청약서 문구 기준 */
+const DS_SIX=[["암",/^C[0-8]\d|^C9[0-7]/],["뇌졸중(뇌출혈·뇌경색)",/^I6[0-4]/],["협심증",/^I20/],["심근경색",/^I2[12]/],["심장판막증",/^I0[5-8]|^I3[4-9]/],["간경화",/^K74/]];
+const dsCode=c=>String(c||"").toUpperCase().replace(/^[ABC](?=[A-Z]\d)/,"");  /* 심평원 코드 앞 양방(A)·한방(B) 구분자 제거: AK0531 → K0531 */
+const won=n=>(+n||0).toLocaleString("ko-KR")+"원";
+function dsCalc(){ const base=DS.base||today();
+  const rs=DS.rows.map((x,i)=>({...x,i,cc:dsCode(x.c),m:monthsBetween(x.d,base)})).filter(x=>x.m>=0).sort((a,b)=>a.d<b.d?1:-1);
+  const in3=rs.filter(x=>x.m<3), in12=rs.filter(x=>x.m<12), in60=rs.filter(x=>x.m<60), med=in60.filter(x=>!x.auto);
+  const grp={}; med.forEach(x=>{ const k=x.cc||x.n; const g=(grp[k]=grp[k]||{c:x.cc,n:x.n,days:new Set(),drug:0,rows:[]}); g.days.add(x.d); g.drug+=+x.r||0; g.rows.push(x); });
+  const G=Object.values(grp);
+  const tag=(list,arr)=>arr.flatMap(x=>{ const h=list.find(([,re])=>re.test(x.cc)); return h?[{...x,dn:h[0]}]:[]; });
+  const nYears=DS.nYears||5;
+  return {base,rs,in3,in12,in60,
+    drug3:in3.filter(x=>!x.auto&&+x.r>0), out3:in3.filter(x=>!x.auto&&x.t!=="입원"),
+    adm60:med.filter(x=>x.t==="입원"), surg60:med.filter(x=>x.s||x.proc), surgOnly:med.filter(x=>x.s), autoAdm:in60.filter(x=>x.auto&&x.t==="입원"), autoOut:in60.filter(x=>x.auto&&x.t!=="입원"),
+    same7:G.filter(g=>g.days.size>=7), same30:G.filter(g=>g.drug>=30),
+    six:tag(DS_SIX,med), ten:tag(DS_DIS,med), admN:rs.filter(x=>x.m<nYears*12&&(x.t==="입원"||x.s)), nYears,
+    cost:{tot:in60.reduce((a,x)=>a+(+x.tot||0),0),pay:in60.reduce((a,x)=>a+(+x.pay||0),0),self:in60.reduce((a,x)=>a+(+x.self||0),0)}}; }
+const dsLi=a=>a.length?`<ul class="ds-t" style="margin:4px 0 0;padding-left:18px">${a.slice(0,40).map(x=>`<li>${x.d}${x.h?" · "+esc(x.h):""}${x.dept?" ("+esc(x.dept)+")":""} · ${esc(x.cc||"")} ${esc(x.n)} · ${x.auto?"자동차보험 ":""}${x.t}${x.k?` ${x.k}일`:""}${x.r?` · 투약 ${x.r}일`:""}${x.proc?` · 처치·수술: ${esc(x.proc)}`:x.s?" · 수술":""}${x.dn?` · <b>${esc(x.dn)}</b>`:""}${x.self?` · 본인부담 ${won(x.self)}`:""}</li>`).join("")}${a.length>40?`<li>외 ${a.length-40}건</li>`:""}</ul>`:'<p class="note" style="margin:4px 0 0">해당 없음</p>';
+const dsGi=a=>a.length?`<ul class="ds-t" style="margin:4px 0 0;padding-left:18px">${a.map(g=>`<li><b>${esc(g.c)} ${esc(g.n)}</b> · 진료일 ${g.days.size}일 · 투약 합계 ${g.drug}일 · ${[...g.days].sort().slice(0,1)[0]} ~ ${[...g.days].sort().slice(-1)[0]}</li>`).join("")}</ul>`:'<p class="note" style="margin:4px 0 0">해당 없음</p>';
+function dsCards(R){ const C=[["drug3","3개월 약물력",R.drug3.length],["out3","3개월 통원치료력",R.out3.length],["surg60","처치·수술 (5년)",R.surg60.length],["adm60","입원 (5년)",R.adm60.length],
+   ["same7","동일상병 7일 이상 치료",R.same7.length],["same30","동일상병 30일 이상 투약",R.same30.length],["six","6대 질병 (5년)",R.six.length,1],["ten","10대 질병 (5년)",R.ten.length,1],
+   ["autoAdm","자동차보험 입원",R.autoAdm.length],["autoOut","자동차보험 통원",R.autoOut.length]];
+  return `<div class="ds-cards">${C.map(([k,t,n,red])=>`<button type="button" class="ds-card${n?(red?" red":" on"):""}" data-dsc="${k}"><span>${t}</span><b>${n}<small>건</small></b></button>`).join("")}</div>`; }
+const DS_CARD_T={drug3:["3개월 약물력","최근 3개월 이내 투약 기록"],out3:["3개월 통원치료력","최근 3개월 이내 외래 진료"],surg60:["처치·수술 (5년)","조회 자료의 처치·수술 내역과 직접 표시한 수술"],adm60:["입원 (5년)","자동차보험 제외"],
+  same7:["동일상병 7일 이상 치료","같은 상병코드로 진료일이 7일 이상 (계속 치료 여부는 고객 확인)"],same30:["동일상병 30일 이상 투약","같은 상병코드 투약일수 합계 30일 이상"],six:["6대 질병 (5년)","간편심사 문항: 암·뇌졸중·협심증·심근경색·심장판막증·간경화"],
+  ten:["10대 질병 (5년)","표준 청약서 5번: 암·백혈병·고혈압·협심증·심근경색·심장판막증·간경화·뇌졸중·당뇨병·HIV"],autoAdm:["자동차보험 입원","교통사고 입원 (보험 청구 참고)"],autoOut:["자동차보험 통원","교통사고 통원"]};
+function dsCardDlg(k){ const R=dsCalc(), a=R[k]; const [t,s]=DS_CARD_T[k]; infoDlg(t+` · ${a.length}건`,`<p class="note" style="margin:0 0 6px">${s}</p>${k==="same7"||k==="same30"?dsGi(a):dsLi(a)}`); }
+/* 청약서 질문표 — auto: 자료로 판단한 근거 건수, ask: 자료로 알 수 없어 고객 확인 */
+function dsQs(R){ const std=[
+  ["s1","최근 3개월 이내 의사로부터 진찰·검사를 통해 질병확정진단, 질병의심소견, 치료, 입원, 수술, 투약을 받은 사실",R.in3.filter(x=>!x.auto),"질병의심소견은 자료에 나오지 않음 → 고객 확인"],
+  ["s2","최근 3개월 이내 마약·혈압강하제·신경안정제·수면제·각성제·진통제 등 약물을 상시 복용한 사실",R.drug3,"약 이름은 진료·투약 상세에서 확인"],
+  ["s3","최근 1년 이내 진찰·검사를 받고 그 결과 추가검사(재검사)를 받은 사실",R.in12.filter(x=>!x.auto),"재검사 소견 여부는 자료로 알 수 없음 → 고객 확인"],
+  ["s4","최근 5년 이내 입원, 수술(제왕절개 포함), 계속하여 7일 이상 치료, 계속하여 30일 이상 투약을 받은 사실",[...R.adm60,...R.autoAdm,...R.surgOnly,...R.same7.flatMap(g=>g.rows),...R.same30.flatMap(g=>g.rows)].filter((x,i,a)=>a.findIndex(y=>y.i===x.i)===i),"「계속하여」 여부는 진료 간격을 보고 고객 확인"],
+  ["s5","최근 5년 이내 10대 질병(암·백혈병·고혈압·협심증·심근경색·심장판막증·간경화·뇌졸중·당뇨병·에이즈/HIV)으로 진단·치료·입원·수술·투약을 받은 사실",R.ten,""]];
+  const smp=[["e1","최근 3개월 이내 입원필요소견, 수술필요소견, 추가검사(재검사)필요소견을 받은 사실",R.in3.filter(x=>!x.auto),"소견 여부는 자료로 알 수 없음 → 최근 3개월 진료를 보며 고객 확인"],
+  ["e2",`최근 ${R.nYears}년 이내 질병이나 사고로 입원 또는 수술을 받은 사실`,R.admN,"N은 상품마다 다름(1~10년) → 오른쪽에서 선택"],
+  ["e3","최근 5년 이내 6대 질병(암·뇌졸중·협심증·심근경색·심장판막증·간경화)으로 진단·입원·수술을 받은 사실",R.six,""]];
+  return {std,smp}; }
+function dsChecklist(R){ const mode=DS.mode||"std", Q=dsQs(R)[mode], A=DS.ans=DS.ans||{};
+  return `<div class="row between" style="margin-top:16px;flex-wrap:wrap;gap:8px"><b style="font-size:15px">청약서 질문표 체크</b>
+   <div class="row" style="gap:6px"><div class="seg"><button class="btn sm" type="button" data-dsm="std" aria-pressed="${mode==="std"}">표준체 (1~5번)</button><button class="btn sm" type="button" data-dsm="smp" aria-pressed="${mode==="smp"}">간편체 3·N·5</button></div>
+   ${mode==="smp"?`<select id="ds-ny" style="width:auto">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${R.nYears===n?"selected":""}>N = ${n}년</option>`).join("")}</select>`:""}</div></div>
+  ${Q.map(([id,q,hits,tip],i)=>`<div class="ds-q${hits.length?" hit":""}" style="margin-top:8px"><div class="row between" style="gap:10px;align-items:flex-start">
+    <div style="flex:1;min-width:0"><span class="note">${mode==="std"?"표준":"간편"} ${i+1}번</span><div style="font-weight:600;margin-top:2px">${q}</div></div>
+    <div class="seg" style="flex:none"><button class="btn sm" type="button" data-dsa="${id}:y" aria-pressed="${A[id]==="y"}">예</button><button class="btn sm" type="button" data-dsa="${id}:n" aria-pressed="${A[id]==="n"}">아니요</button></div></div>
+    <p style="margin:6px 0 0"><span class="pill ${hits.length?"warn":"ok"}">${hits.length?`자료상 ${hits.length}건 · 해당 가능`:"자료상 해당 없음"}</span>${tip?` <span class="note">${tip}</span>`:""}</p>
+    ${hits.length?`<details style="margin-top:4px"><summary class="note" style="cursor:pointer">근거 보기</summary>${dsLi(hits)}</details>`:""}</div>`).join("")}`; }
+function dsResult(){ dsList(); const el=$("#ds-res"); if(!el) return;
+  if(!DS.rows.length){ el.innerHTML='<p class="note">진료내역을 불러오거나 올리면 여기에 요약됩니다.</p>'; return; }
+  const R=dsCalc(), first=R.rs.length?R.rs[R.rs.length-1].d:"", c=R.cost;
+  el.innerHTML=`<div class="row between" style="flex-wrap:wrap;gap:6px"><span class="pill">${first} ~ ${R.base}</span><span class="note">전체 ${R.rs.length}건 · 5년 이내 ${R.in60.length}건 · 카드를 누르면 상세</span></div>
+   <div class="ds-top">${dsCards(R)}
+    <div class="ds-cost"><span>5년 총 진료비</span><b>${c.tot?won(c.tot):"–"}</b><div class="row between"><span>건강보험 부담</span><span>${c.pay?won(c.pay):"–"}</span></div><div class="row between"><span>본인부담</span><span>${c.self?won(c.self):"–"}</span></div>${c.tot?"":`<p class="note" style="margin:6px 0 0;color:inherit;opacity:.8">진료비는 자동 조회 자료에만 있습니다</p>`}</div></div>
+   ${dsChecklist(R)}
+   <details style="margin-top:12px"><summary class="note" style="cursor:pointer">전체 진료내역 보기 · 수술 직접 표시</summary><div class="tbl-wrap"><table class="ds-t"><thead><tr><th>진료일</th><th>병원</th><th>상병</th><th>구분</th><th>일수</th><th>투약</th><th>수술</th><th></th></tr></thead><tbody>
+   ${R.rs.map(x=>`<tr><td class="num">${x.d}</td><td>${esc(x.h)}</td><td>${esc(x.cc)} ${esc(x.n)}</td><td>${x.auto?"자동차 ":""}${x.t}</td><td class="num">${x.k||""}</td><td class="num">${x.r||""}</td><td><input type="checkbox" data-dss="${x.i}" ${x.s?"checked":""} aria-label="수술"></td><td><button class="lnk" type="button" data-dsd="${x.i}">삭제</button></td></tr>`).join("")}</tbody></table></div></details>`; }
+document.addEventListener("click",e=>{ const c=e.target.closest("[data-dsc]"); if(c){ dsCardDlg(c.dataset.dsc); return; }
+  const m=e.target.closest("[data-dsm]"); if(m){ DS.mode=m.dataset.dsm; dsResult(); return; }
+  const a=e.target.closest("[data-dsa]"); if(a){ const [id,v]=a.dataset.dsa.split(":"); DS.ans=DS.ans||{}; DS.ans[id]=DS.ans[id]===v?"":v; dsResult(); return; } });
+document.addEventListener("change",e=>{ if(e.target.id==="ds-ny"){ DS.nYears=+e.target.value; dsResult(); } });
 document.addEventListener("change",async e=>{
   if(e.target.id==="ds-base"){ DS.base=e.target.value||today(); dsResult(); return; }
   if(e.target.id==="ds-cust"){ const id=resolveCust(e.target.value); const c=CUSTOMERS.find(x=>x.id===id); $("#ds-text").value=dsMsg(c); return; }
