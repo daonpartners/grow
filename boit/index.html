@@ -161,6 +161,21 @@ form.panel{margin:0}
 .smsprev{background:var(--bg);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 #sms-prev{white-space:pre-wrap;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;max-width:340px}
 .onb{border:2px solid var(--accent);margin-bottom:16px}
+.gate{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--warn-soft);border-radius:10px;padding:8px 10px;margin-top:4px;width:100%}.gate>b{flex-basis:100%;font-size:13px}
+.gate-list{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto;flex-basis:100%}.gate-list a{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;border-radius:8px;background:var(--surface);border:1px solid var(--line);color:var(--fg);text-decoration:none;font-size:13px}
+.mw{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;align-items:start}@media(max-width:860px){.mw{grid-template-columns:1fr}}
+.kseg{display:flex;flex-wrap:wrap;gap:6px}.kseg .btn[aria-pressed=true]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.hbox{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.6}.hbox h3{margin:0 0 4px;font-size:14px;color:var(--accent)}
+.pbst{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}@media(max-width:700px){.pbst{grid-template-columns:1fr}}
+.pbst>div{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;background:var(--surface)}.pbst>div.ok{border-color:var(--accent)}.pbst h3{margin:0;font-size:14px}
+.smc{width:360px;height:360px;box-sizing:border-box;position:relative;overflow:hidden;border-radius:18px;padding:30px 28px 22px;display:flex;flex-direction:column;color:#fff;font-family:var(--f-ui);background:var(--c1)}
+.smc::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-90px;top:-90px;background:var(--c2);opacity:.55}
+.smc::after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;left:-50px;bottom:60px;background:var(--c2);opacity:.3}
+.smc>*{position:relative;z-index:1}.smc .lb{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.smc .tt{margin-top:auto;font-size:27px;line-height:1.3;font-weight:800;letter-spacing:-.02em;word-break:keep-all}.smc .ln{margin-top:10px;font-size:15px;line-height:1.5;opacity:.95;word-break:keep-all}
+.smc .fc{margin-top:22px;padding-top:12px;border-top:1px solid rgba(255,255,255,.45);display:flex;justify-content:space-between;align-items:flex-end;gap:8px;font-size:12.5px}.smc .fc b{font-size:15px;display:block}
+.smc.k-bday{--c1:#D9466F;--c2:#FFB3C6}.smc.k-seol{--c1:#B3261E;--c2:#F2B84B}.smc.k-chuseok{--c1:#8A4B14;--c2:#F2B84B}.smc.k-month{--c1:#0E7A5F;--c2:#7FD6B8}
+.smc.k-exp{--c1:#1D4E89;--c2:#7FB2F0}.smc.k-start{--c1:#4B3A9A;--c2:#B9A8F5}.smc.k-thanks{--c1:#22313F;--c2:#E6B655}.smc.k-claim{--c1:#0B6E7A;--c2:#86E0E8}
 .onb-s{margin:10px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:o}
 .onb-s li{counter-increment:o;display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:10px;background:var(--bg)}
 .onb-s li b::before{content:counter(o)". ";color:var(--accent)}
@@ -577,7 +592,7 @@ tr.sel td{background:var(--accent-soft)}
       <button data-go="morning"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h13v14H6a2 2 0 01-2-2z"/><path d="M17 9h3v8a2 2 0 01-2 2"/><path d="M7 9h7M7 12h7M7 15h4"/></svg><span>모닝뉴스</span></button>
       <button data-go="homepage"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><circle cx="12" cy="9" r="2.2"/><path d="M8.5 15c.8-1.6 2-2.3 3.5-2.3s2.7.7 3.5 2.3"/></svg><span>개인페이지</span></button>
       <button data-go="materials"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg><span>영업자료</span><span class="tag">준비중</span></button>
-      <button data-go="sms"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>문자발송</span><span class="tag">준비중</span></button>
+      <button data-go="sms"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>문자발송</span></button>
       <div class="grp">사후관리</div>
       <button data-go="claim" class="hl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M12 11v6M9 14h6"/></svg><span>보상청구</span></button>
       <button data-go="history"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg><span>청구내역</span></button>
@@ -670,11 +685,12 @@ tr.sel td{background:var(--accent-soft)}
         <div class="row"><button class="btn primary" type="submit">변경</button><span class="note" id="pw-msg"></span></div>
       </form>
       <div data-mpv="bill" hidden style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
-        <div class="kpis"><div class="kpi"><span>이용권</span><b id="bl-plan" style="font-size:18px"></b></div><div class="kpi"><span>잔여일</span><b id="bl-days"></b></div><div class="kpi"><span>만료일</span><b id="bl-exp" style="font-size:18px"></b></div><div class="kpi"><span>이번 달 팩스</span><b id="bl-fax"></b></div><div class="kpi"><span>충전금</span><b id="bl-cash"></b></div></div>
-        <div class="panel" style="display:flex;flex-direction:column;gap:10px"><div class="row between"><h2>문자·추가 팩스 충전</h2><span class="note">단문 25원 · 장문 55원 · 추가 팩스 150원 (VAT 포함)</span></div>
+        <div class="kpis"><div class="kpi"><span>이용권</span><b id="bl-plan" style="font-size:18px"></b></div><div class="kpi"><span>잔여일</span><b id="bl-days"></b></div><div class="kpi"><span>만료일</span><b id="bl-exp" style="font-size:18px"></b></div><div class="kpi"><span>이번 달 팩스</span><b id="bl-fax"></b></div><div class="kpi"><span>팩스 충전금</span><b id="bl-cash"></b></div></div>
+        <div class="panel" style="display:flex;flex-direction:column;gap:10px"><div class="row between"><h2>추가 팩스 충전</h2><span class="note">포함 장수를 넘는 팩스 1장 150원 (VAT 포함) · 문자에는 쓰지 않습니다</span></div>
           <div class="seg" id="cash-amts"><button class="btn" type="button" data-cash="10000">1만원</button><button class="btn" type="button" data-cash="30000">3만원</button><button class="btn" type="button" data-cash="50000">5만원</button><button class="btn" type="button" data-cash="100000">10만원</button></div>
           <p class="note" id="cash-msg" style="margin:0">시범 화면입니다. 실제 서비스에서는 결제창(PG)이 열리고, 충전금은 사용하지 않은 금액에 한해 환불규정에 따라 환불합니다.</p>
           <div class="tbl-wrap"><table><thead><tr><th>일시</th><th>내용</th><th>금액</th><th>잔액</th></tr></thead><tbody id="cash-body"></tbody></table></div></div>
+        <div class="panel" style="display:flex;flex-direction:column;gap:8px"><div class="row between"><h2>사업자 문자 (팝빌)</h2><button class="btn" type="button" data-pbgo>문자 설정으로</button></div><p class="note" id="bl-pb" style="margin:0"></p></div>
         <div class="panel"><div class="row between"><h2>결제내역</h2><button class="btn primary" data-pre="pricing">이용권 연장·변경</button></div>
           <div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>결제일</th><th>이용권</th><th>기간</th><th>결제수단</th><th>금액</th><th>상태</th></tr></thead><tbody id="bl-body"></tbody></table></div></div>
       </div>
@@ -913,17 +929,55 @@ tr.sel td{background:var(--accent-soft)}
 
     <!-- SMS -->
     <section data-view="sms" hidden>
-      <div><h1>문자발송</h1><p class="sub">자동 발송 4종 · 고객 정보와 계약 정보에서 날짜를 계산합니다</p></div>
-      <div class="grid3" style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))" id="smsgrid">
-        <div class="panel"><h2>생일</h2><p class="note">고객 생일 당일 오전, 생일 카드이미지와 함께 발송</p></div>
-        <div class="panel"><h2>명절</h2><p class="note">설·추석 연휴 시작 전 근무일에 명절 카드 발송</p></div>
-        <div class="panel"><h2>월초 관리</h2><p class="note">매월 첫 근무일, 전체 또는 선택 그룹에 안부 카드 발송</p></div>
-        <div class="panel"><h2>면책·감액기간 종료 알림</h2><p class="note">계약별 면책·감액기간 종료일에 맞춰 “이제 보장이 시작·확대됩니다” 안내. 설계사에게 먼저 알림 후 고객 발송</p></div>
+      <div><h1>문자발송</h1></div>
+      <div class="tabs" id="sv-tabs" style="margin-top:12px"><button class="btn" type="button" data-sv="kit" aria-pressed="true">문구·이미지 (누구나)</button><button class="btn" type="button" data-sv="biz" aria-pressed="false">사업자 문자 (팝빌)</button></div>
+      <div data-svv="kit" style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
+        <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+          <div class="fgrid"><div class="field"><label for="mk-cust">고객 (선택하면 이름이 들어갑니다)</label><input id="mk-cust" list="dl-cust" placeholder="이름 또는 전화번호 뒷자리" autocomplete="off"></div></div>
+          <div class="kseg" id="mk-kinds"></div>
+        </div>
+        <div class="mw">
+          <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+            <h2 style="color:var(--accent)">① 문자 문구</h2>
+            <textarea id="mk-txt" rows="8" style="font:inherit;font-size:14px;line-height:1.6"></textarea>
+            <div class="row between"><span class="note" id="mk-bytes"></span><button class="btn" type="button" id="mk-reset">처음 문구로</button></div>
+            <div class="row"><button class="btn primary" type="button" id="mk-copy">문구 복사</button><button class="btn" type="button" id="mk-app">내 휴대폰 문자로 보내기</button><button class="btn" type="button" id="mk-share">공유하기</button></div>
+            <p class="note" id="mk-msg" style="margin:0"></p>
+            <div class="hbox"><h3>광고성 문구 주의</h3>상품 안내·가입 권유가 들어가면 광고성 정보입니다. 수신 동의한 고객에게만 보내고, 맨 앞에 (광고)와 수신거부 방법을 넣어야 합니다 (정보통신망법 제50조).</div>
+          </div>
+          <div class="panel" style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+            <h2 style="color:var(--accent)">② 문자용 이미지</h2>
+            <div id="mk-card"></div>
+            <div class="field" style="width:100%"><label for="mk-tt">이미지 큰 글씨</label><input id="mk-tt" autocomplete="off"></div>
+            <div class="field" style="width:100%"><label for="mk-ln">이미지 작은 글씨</label><input id="mk-ln" autocomplete="off"></div>
+            <div class="row"><button class="btn primary" type="button" id="mk-dl">이미지 다운로드</button><button class="btn" type="button" id="mk-ishare">이미지 공유</button></div>
+            <p class="note" id="mk-imsg" style="margin:0"></p>
+          </div>
+        </div>
       </div>
-      <div class="panel" style="margin-top:14px">
-        <h2>면책·감액기간은 계약마다 따로 입력합니다</h2>
-        <p class="note" style="margin:6px 0 0">암, 치아(임플란트 등) 담보의 면책·감액기간은 상품과 가입 시기마다 다릅니다. 앱에 고정값을 넣지 않고, 계약 등록 때 해당 약관의 기간을 입력·확인받아 종료일을 계산합니다.</p>
-        <p class="note" style="margin:6px 0 0">생일·명절·월초 문자는 영업 목적이 섞이면 광고성 정보로 볼 수 있어 수신동의와 야간 발송 제한을 적용합니다 (정보통신망법 제50조, 개발 전 조문 확인).</p>
+      <div data-svv="biz" hidden style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
+        <div class="hbox"><h3>사업자등록번호가 있는 회원만 사용</h3>문자는 각자 팝빌 회원(사업자)으로 가입해 팝빌에 직접 충전하고 씁니다. 보잇 팩스 충전금과는 따로 계산됩니다. 결제·환불·세금계산서는 팝빌이 처리합니다.</div>
+        <div class="pbst" id="pb-st"></div>
+        <form class="panel" id="f-pb" style="display:flex;flex-direction:column;gap:12px">
+          <h2 style="color:var(--accent)">사업자 정보</h2>
+          <div class="fgrid">
+            <div class="field"><label for="pb-no">사업자등록번호</label><input id="pb-no" inputmode="numeric" maxlength="12" placeholder="000-00-00000" autocomplete="off"></div>
+            <div class="field"><label for="pb-corp">상호</label><input id="pb-corp" autocomplete="off"></div>
+            <div class="field"><label for="pb-ceo">대표자</label><input id="pb-ceo" autocomplete="off"></div>
+            <div class="field"><label for="pb-snd">발신번호 (고객에게 보이는 번호)</label><input id="pb-snd" inputmode="tel" maxlength="13" placeholder="010-0000-0000" autocomplete="off"></div>
+          </div>
+          <div class="row"><button class="btn primary" type="submit" id="pb-join">팝빌 회원 연결</button><span class="note" id="pb-msg"></span></div>
+        </form>
+        <div class="panel">
+          <h2 style="color:var(--accent)">자동 발송 (연결 후 사용)</h2>
+          <div class="grid3" style="margin-top:10px;grid-template-columns:repeat(2,minmax(0,1fr))" id="smsgrid">
+            <div class="panel"><h2>생일</h2><p class="note">고객 생일 당일 오전, 생일 카드이미지와 함께 발송</p></div>
+            <div class="panel"><h2>명절</h2><p class="note">설·추석 연휴 시작 전 근무일에 명절 카드 발송</p></div>
+            <div class="panel"><h2>월초 관리</h2><p class="note">매월 첫 근무일, 전체 또는 선택 그룹에 안부 카드 발송</p></div>
+            <div class="panel"><h2>면책·감액기간 종료 알림</h2><p class="note">계약별 종료일에 맞춰 설계사에게 먼저 알림 후 고객 발송. 기간은 계약 등록 때 해당 약관 기준으로 입력</p></div>
+          </div>
+        </div>
+        <div class="panel"><h2>팝빌 포인트 사용내역</h2><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>일시</th><th>내용</th><th>금액</th><th>잔액</th></tr></thead><tbody id="pb-log"></tbody></table></div></div>
       </div>
     </section>
 
@@ -1205,6 +1259,7 @@ function go(v){
   if(v==="aftercare") renderDoc("after");
   if(v==="liab") renderLiab();
   if(v==="auto") renderAuto();
+  if(v==="sms") renderSmsView();
   window.scrollTo&&window.scrollTo(0,0);
 }
 
@@ -1333,7 +1388,7 @@ function checkPayReminders(){ const now=Date.now(), seen=new Set(), out=[];
   S.history.forEach(h=>{ if(!h.gid||h.ex||seen.has(h.gid)) return; seen.add(h.gid); const g=S.history.filter(x=>x.gid===h.gid);
     const base=g[0].alimAt||g[0].ts; if(!g.some(x=>x.res==="ok")||g.some(x=>x.paidAmt||x.replied)||g.some(x=>x.reminded)||!base||now-base<REMIND_DAYS*864e5) return;
     const v=VAULT[h.gid]||{}, ph=h.phone||(v.cl&&v.cl.phone)||(CUSTOMERS.find(x=>x.name===h.cust)||{}).phone||""; if(!phoneOk(ph)) return;
-    if(!ME.demo){ if((ME.cash||0)<SMS_PRICE.lms) return; cashLog(`지급 확인 재문자 자동 (${h.cust})`,-SMS_PRICE.lms); }
+    if(!pbReady()||pb().bal<SMS_PRICE.lms) return; pbLog(`지급 확인 재문자 자동 (${h.cust})`,-SMS_PRICE.lms);
     g.forEach(x=>x.reminded=now); const c=CUSTOMERS.find(x=>x.name===h.cust); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"보험금 지급 확인 재문자 (자동)"}); out.push(h.cust); });
   return out; }
 function purgeVault(){ checkPayReminders(); const now=Date.now();
@@ -1366,14 +1421,15 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#det-all")){ $("#det-msg").textContent="시범 화면: 실제 서비스에서 보관 중인 원본 파일을 묶어 내려받습니다."; return; }
   const mm=e.target.closest("[data-hmemo]"); if(mm){ const h=S.history[+mm.dataset.hmemo];
     infoDlg("메모 · 지급금액",`<p class="note" style="margin:0">${esc(h.cust)} · ${esc(h.ins)} · ${esc(h.at)}</p><div class="field"><label for="hm-memo">메모</label><textarea id="hm-memo" rows="4">${esc(h.memo||"")}</textarea></div><div class="field"><label for="hm-amt">지급금액 (원)</label><input id="hm-amt" inputmode="numeric" value="${h.paidAmt||""}"></div><label class="row note" style="gap:6px"><input type="checkbox" id="hm-rep" ${h.replied?"checked":""}> 고객 회신 받음 (금액 입력 없이 재확인 문자 중지)</label><details class="note"><summary>지급금액은 어떻게 확인하나요?</summary><ul style="margin:6px 0 0;padding-left:18px;line-height:1.6"><li>보험사가 지급하면 <b>고객</b>에게 지급 안내(문자·알림톡·지급내역서)를 보냅니다. 받은 안내를 캡처해 보내 달라고 요청하세요.</li><li>고객 본인이 보험사 앱·홈페이지의 청구 진행조회에서 확인할 수 있습니다.</li><li>설계사 영업 전산에서 담당 계약의 지급 내역을 볼 수 있는지는 회사마다 다릅니다 — 소속 회사에 확인하세요.</li><li>보상카드에 "지급 안내를 캡처해 보내 달라"는 문구가 들어갑니다. 알림을 보내고 7일 동안 지급금액이 입력되지 않으면 재확인 문자가 자동으로 한 번 나갑니다(충전금 55원).</li></ul></details>
-    <div class="row"><button class="btn" type="button" data-hask="${mm.dataset.hmemo}">고객에게 지급 결과 묻는 문자 (${SMS_PRICE.lms}원)</button><span class="note" id="hm-msg"></span></div>
+    <div class="row"><button class="btn" type="button" data-hask="${mm.dataset.hmemo}">고객에게 지급 결과 묻는 문자</button><span class="note" id="hm-msg"></span></div>
     <div class="row"><button class="btn primary" type="button" data-hmsave="${mm.dataset.hmemo}">저장</button><button class="btn" type="button" data-hmaf="${mm.dataset.hmemo}">저장 후 청구 후 관리제안서 만들기</button></div>`); return; }
   const ms=e.target.closest("[data-hmsave],[data-hmaf]"); if(ms){ const ix=+(ms.dataset.hmsave||ms.dataset.hmaf), h=S.history[ix]; h.memo=$("#hm-memo").value; h.paidAmt=+digits($("#hm-amt").value)||0; if($("#hm-rep")&&$("#hm-rep").checked) S.history.filter(x=>x.gid===h.gid).forEach(x=>x.replied=true); $("#info-dlg").hidden=true;
     if(ms.dataset.hmaf!==undefined){ AF.reason=(h.kind||"").replace(/^.*· /,"")+" 청구"; AF.date=h.ts?ymd(new Date(h.ts)):""; AF.paid=h.paidAmt?`${h.ins} 보험금 ${h.paidAmt.toLocaleString()}원`:AF.paid; const c=CUSTOMERS.find(x=>x.name===h.cust); if(c) DOC.after=c.id; const ed=$("#af-edit"); if(ed) ed.innerHTML=""; go("aftercare"); return; }
     renderHistory(); return; }
   const ak=e.target.closest("[data-hask]"); if(ak){ const h=S.history[+ak.dataset.hask], v=VAULT[h.gid]||{}, ph=(v.cl&&v.cl.phone)||(CUSTOMERS.find(x=>x.name===h.cust)||{}).phone||"";
     if(!phoneOk(ph)){ $("#hm-msg").textContent="고객 휴대폰번호가 없습니다."; return; }
-    if(!ME.demo){ if((ME.cash||0)<SMS_PRICE.lms){ $("#hm-msg").innerHTML=`충전금이 부족합니다. <a href="#" data-go-cash>충전하기</a>`; return; } cashLog(`지급 확인 문자 (${h.cust})`,-SMS_PRICE.lms); }
+    const askT=`${h.cust}님, ${h.ins}에 청구하신 보험금 지급 안내 받으셨나요? 받으신 문자나 지급내역서를 캡처해 보내주시면 정리해 드리겠습니다. - ${ME.name||"담당 설계사"}`;
+    if(!smsGate({cost:SMS_PRICE.lms,memo:`지급 확인 문자 (${h.cust})`,el:$("#hm-msg"),text:askT,phone:ph})) return;
     const c=CUSTOMERS.find(x=>x.name===h.cust); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"보험금 지급 결과 확인 요청"});
     $("#hm-msg").textContent=`보냈습니다 (시범): "${h.cust}님, ${h.ins}에 청구하신 보험금 지급 안내 받으셨나요? 받으신 문자나 지급내역서를 캡처해 보내주시면 정리해 드리겠습니다. - ${ME.name||"담당 설계사"}"`; return; }
   const sg=e.target.closest("[data-hsign]"); if(sg){ const h=S.history[+sg.dataset.hsign]; S.history.filter(x=>x.gid===h.gid&&x.res==="signwait").forEach(x=>{x.res="ok"; x.ts=Date.now();}); renderHistory(); return; }
@@ -1439,7 +1495,7 @@ const GUIDE=[
  ["전송실패가 떴거나 다시 보내야 할 때 (재청구)","전송실패·전송취소·발송 대기 건의 서류와 주민번호만 최대 7일 임시 보관합니다. 그 안에는 청구내역 → [재청구]로 다시 올리지 않고 그대로 보냅니다. 발송이 완료되거나 7일이 지나거나 [파일삭제]를 누르면 파기됩니다."],
  ["보험사 운영시간 밖에 보냈을 때","일부 보험사는 운영시간 안에만 팩스를 받아 밤·주말 발송이 실패할 수 있습니다. 보험사별 운영시간은 확인되는 대로 표시할 예정이며, 실패하면 청구내역에서 [재청구]하세요."],
  ["가상 팩스번호 보험사","일부 보험사는 고객이 콜센터에 전화해 받은 1회용 팩스번호로만 받습니다. [팩스번호] 단계에서 [고객에게 번호 요청 문자]를 보내고, 받은 번호를 입력하세요."],
- ["고객 서명","대면: 발송 화면에서 고객이 바로 서명. 비대면: 고객 휴대폰으로 서명 링크 문자를 보내고, 고객이 서명하면 발송할 수 있습니다(문자비는 충전금 차감)."],
+ ["고객 서명","대면: 발송 화면에서 고객이 바로 서명. 비대면: 고객 휴대폰으로 서명 링크 문자를 보내고, 고객이 서명하면 발송할 수 있습니다(사업자 문자 연결 시 팝빌 포인트 차감, 아니면 문구를 복사해 내 휴대폰으로 보냄)."],
  ["서류 사진 요령","글자가 잘리지 않게 한 장씩 밝은 곳에서 찍으세요. PDF는 페이지별 이미지로 바뀌어 보내집니다. 영수증은 카드 전표·소득공제용 '진료비납입확인서'가 아니라 진료비 영수증(약제비 포함)을 올려야 합니다."],
 ];
 /* 청구접수 알림톡 · 보상카드 */
@@ -1462,19 +1518,20 @@ function cardHTML(d){ return `<div class="rcard" id="rcard"><div class="rc-top">
 let ALIM={gid:null,ch:"kakao"};
 function openAlim(gid){ if(!gid||!S.history.some(h=>h.gid===gid)) return; ALIM.gid=gid; renderAlim(); }
 function renderAlim(){ const d=alimData(ALIM.gid), price=ALIM.ch==="kakao"?SMS_PRICE_KAKAO:SMS_PRICE.lms;
-  infoDlg("청구접수 알림톡 & 보상카드",`<div class="seg"><button class="btn" type="button" data-alch="kakao" aria-pressed="${ALIM.ch==="kakao"}">카카오 알림톡 (${SMS_PRICE_KAKAO}원)</button><button class="btn" type="button" data-alch="lms" aria-pressed="${ALIM.ch==="lms"}">문자 (${SMS_PRICE.lms}원)</button></div>
+  infoDlg("청구접수 알림톡 & 보상카드",`<div class="seg"><button class="btn" type="button" data-alch="kakao" aria-pressed="${ALIM.ch==="kakao"}">카카오 알림톡</button><button class="btn" type="button" data-alch="lms" aria-pressed="${ALIM.ch==="lms"}">문자</button></div>
   <div class="field"><label>받는 사람</label><input id="al-phone" value="${esc(fmtPhone(d.phone))}" inputmode="tel" maxlength="13" placeholder="010-0000-0000"></div>
   <div class="smsprev"><span class="note">메시지 미리보기 · 보상카드 이미지가 함께 갑니다</span><div style="white-space:pre-wrap">${esc(alimText(d))}</div></div>
   ${cardHTML(d)}
-  <p class="note" style="margin:0">알림톡은 카카오 비즈니스 채널과 메시지 양식(템플릿) 심사를 마친 뒤 실제 발송됩니다. 알림톡을 못 받는 고객은 문자로 자동 대체합니다. 충전금 ${(ME.cash||0).toLocaleString()}원</p>
-  <div class="row"><button class="btn primary" type="button" id="al-send">보내기 (${price}원)</button><button class="btn" type="button" id="al-save">카드 이미지 저장</button><span class="note" id="al-msg"></span></div>`); }
+  <p class="note" style="margin:0">사업자 문자(팝빌) 연결 회원만 보낼 수 있습니다. 알림톡은 카카오 비즈니스 채널과 양식(템플릿) 심사를 마친 뒤 발송되며, 못 받는 고객은 문자로 대체합니다. ${pbSummary()}</p>
+  <div class="row"><button class="btn primary" type="button" id="al-send">보내기</button><button class="btn" type="button" id="al-copy">문구 복사</button><button class="btn" type="button" id="al-save">카드 이미지 저장</button><span class="note" id="al-msg"></span></div>`); }
 document.addEventListener("click",async e=>{
   const ch=e.target.closest("[data-alch]"); if(ch){ ALIM.ch=ch.dataset.alch; renderAlim(); return; }
   if(e.target.closest("#al-send")){ const ph=$("#al-phone").value, d=alimData(ALIM.gid), price=ALIM.ch==="kakao"?SMS_PRICE_KAKAO:SMS_PRICE.lms;
     if(!phoneOk(ph)){ $("#al-msg").textContent="휴대폰번호를 확인하세요."; return; }
-    if(!ME.demo){ if((ME.cash||0)<price){ $("#al-msg").innerHTML=`충전금이 부족합니다. <a href="#" data-go-cash>충전하기</a>`; return; } cashLog(`청구접수 ${ALIM.ch==="kakao"?"알림톡":"문자"} (${d.name})`,-price); }
+    if(!smsGate({cost:price,memo:`청구접수 ${ALIM.ch==="kakao"?"알림톡":"문자"} (${d.name})`,el:$("#al-msg"),text:alimText(d),phone:ph})) return;
     d.hs.forEach(h=>{h.alim=true; h.alimAt=Date.now();}); const c=CUSTOMERS.find(x=>x.name===d.name); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"청구접수 알림·보상카드"});
-    $("#al-msg").textContent=`보냈습니다 (시범: 실제 발송 없음)${ME.demo?"":` · ${price}원 차감`}.`; if(!$("[data-view=history]").hidden) renderHistory(); return; }
+    $("#al-msg").textContent=`보냈습니다 (시범: 실제 발송 없음) · 팝빌 포인트 ${price}원 차감.`; if(!$("[data-view=history]").hidden) renderHistory(); return; }
+  if(e.target.closest("#al-copy")){ copyText(alimText(alimData(ALIM.gid)),$("#al-msg")); return; }
   if(e.target.closest("#al-save")){ const el=$("#rcard"); if(!window.html2canvas||!DL){ $("#al-msg").textContent="이 화면에서는 이미지 저장을 쓸 수 없습니다."; return; }
     try{ const cv=await html2canvas(el,{scale:2,backgroundColor:"#ffffff"}); const blob=await new Promise(r=>cv.toBlob(r,"image/png")); await DL.save({filename:`보상카드_${alimData(ALIM.gid).name}_${today()}.png`,data:blob}); $("#al-msg").textContent="저장했습니다."; }catch(err){ $("#al-msg").textContent="저장하지 못했습니다."; } return; }
 });
@@ -1485,7 +1542,7 @@ let CC={on:false};
 function openLink(){ infoDlg("고객 직접 청구 링크 보내기",`<p class="note" style="margin:0">고객이 휴대폰에서 직접 보험사를 고르고, 서류를 찍어 올리고, 서명까지 해서 청구합니다. 접수된 건은 내 청구내역에 '고객 직접'으로 들어옵니다.</p>
   <div class="fgrid"><div class="field"><label for="lk-name">고객 이름</label><input id="lk-name" autocomplete="off"></div><div class="field"><label for="lk-phone">휴대폰번호</label><input id="lk-phone" inputmode="tel" maxlength="13" autocomplete="off" placeholder="010-0000-0000"></div></div>
   <div class="smsprev"><span class="note">문자 미리보기</span><div id="lk-prev" style="white-space:pre-wrap"></div></div>
-  <div class="row"><button class="btn primary" type="button" id="lk-send">링크 문자 보내기 (${SMS_PRICE.lms}원)</button><button class="btn" type="button" id="lk-demo">고객 화면 미리보기</button><span class="note" id="lk-msg"></span></div>`); updLink(); }
+  <div class="row"><button class="btn primary" type="button" id="lk-send">링크 문자 보내기</button><button class="btn" type="button" id="lk-demo">고객 화면 미리보기</button><span class="note" id="lk-msg"></span></div>`); updLink(); }
 function updLink(){ const n=($("#lk-name")||{}).value||"고객"; const p=$("#lk-prev"); if(p) p.textContent=`[보험금 청구 링크]\n${n}님, ${ME.name||"담당"} 설계사입니다. 아래 링크에서 보험금 청구를 직접 접수하실 수 있습니다. 서류 사진과 서명까지 휴대폰으로 됩니다.\nhttps://boit.ai.kr/c/(고객별 코드)\n링크는 7일간 유효합니다.`; }
 function custClaimForm(){ return `<div class="ccform"><div class="cc-head"><b>보험금 청구</b><span>${esc(ME.name||"담당")} 설계사가 보낸 링크</span></div>
   <div><b style="font-size:13px">1. 동의 (필수)</b>${["개인정보 수집·이용 동의","민감정보(진료 기록 등 건강정보) 처리 동의","보험사에 청구서류 제공 동의"].map((t,i)=>`<label class="row note" style="gap:6px;margin-top:4px"><input type="checkbox" data-ccag="${i}"> ${t}</label>`).join("")}</div>
@@ -1504,7 +1561,7 @@ function initCanvas(cv,onDone){ if(!cv||!cv.getContext) return; let ctx=null; tr
 document.addEventListener("click",e=>{
   if(e.target.closest("#cl-link")){ openLink(); return; }
   if(e.target.closest("#lk-send")){ const n=$("#lk-name").value.trim(), ph=$("#lk-phone").value; if(!n||!phoneOk(ph)){ $("#lk-msg").textContent="이름과 휴대폰번호를 확인하세요."; return; }
-    if(!ME.demo){ if((ME.cash||0)<SMS_PRICE.lms){ $("#lk-msg").innerHTML=`충전금이 부족합니다. <a href="#" data-go-cash>충전하기</a>`; return; } cashLog(`청구 링크 문자 (${n})`,-SMS_PRICE.lms); }
+    if(!smsGate({cost:SMS_PRICE.lms,memo:`청구 링크 문자 (${n})`,el:$("#lk-msg"),text:$("#lk-prev").textContent,phone:ph})) return;
     const c=CUSTOMERS.find(x=>x.name===n&&digits(x.phone)===digits(ph)); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"보험금 청구 링크 발송"});
     $("#lk-msg").textContent="보냈습니다 (시범: 실제 발송 없음)."; return; }
   if(e.target.closest("#lk-demo")){ CC={on:true,type:"",signed:false}; infoDlg("고객 화면 (미리보기)",custClaimForm()); initCanvas($("#cc-cv"),()=>{CC.signed=true; $("#cc-signst").textContent="서명 완료";}); return; }
@@ -1821,7 +1878,8 @@ $("#stepbody").addEventListener("click",e=>{
   const sgm=e.target.closest("[data-signm]"); if(sgm){ if(S.sign.mode!==sgm.dataset.signm) S.sign={mode:sgm.dataset.signm,done:false,req:false,sig:{}}; renderStep(); return; }
   const sc=e.target.closest("[data-sigclr]"); if(sc){ delete S.sign.sig[sc.dataset.sigclr]; S.sign.done=false; renderStep(); return; }
   const sf=e.target.closest("[data-sigfull]"); if(sf){ const r=$("#sr-"+sf.dataset.sigfull), on=!r.classList.contains("full"); r.classList.toggle("full",on); sf.textContent=on?"서명 완료 · 닫기":"크게 서명"; document.body.style.overflow=on?"hidden":""; return; }
-  if(e.target.closest("#sign-req")){ const cost=SMS_PRICE.lms; if(!ME.demo){ if((ME.cash||0)<cost){ $("#donenote").innerHTML=`충전금이 부족합니다. <a href="#" data-go-cash>충전하러 가기</a>`; return; } cashLog(`서명 요청 문자 (${S.cl.name})`,-cost); }
+  if(e.target.closest("#sign-req")){ const cost=SMS_PRICE.lms, sgPh=isMinor()?S.cl.repPhone:S.cl.phone, sgNm=isMinor()?S.cl.repName:S.cl.name;
+    if(!smsGate({cost,memo:`서명 요청 문자 (${S.cl.name})`,el:$("#donenote"),text:`${sgNm}님, ${ME.name||"담당"} 설계사입니다. 보험금 청구서 서명 부탁드립니다. 아래 링크에서 서명하시면 바로 접수됩니다.\nhttps://boit.ai.kr/s/(서명 코드)`,phone:sgPh})) return;
     ACTS.push({cust:(CUSTOMERS.find(c=>c.name===S.cl.name.trim())||{}).id,date:today(),type:"문자",memo:"보험금 청구서 서명 요청"}); S.sign.req=true; renderStep(); return; }
   if(e.target.closest("#rep-from-holder")){ S.cl.repName=S.cl.holder; S.cl.repPhone=S.cl.holderPhone||S.cl.repPhone; renderStep(); return; }
   if(e.target.closest("#sign-sim")){ S.sign.done=true; renderStep(); return; }
@@ -2051,9 +2109,9 @@ $("#imp-go").onclick=()=>{
 /* ---- 회원 · 결제 · 마이페이지 ---- */
 const PLANS=[
   {id:"lite",name:"라이트",price:14900,tag:"청구 월 100장 이하",items:["고객·상담·활동·만기 관리","보장분석리포트·제안서·관리제안서","보장분석 PDF로 계약 등록 (고객 1명씩, 무제한)","보상청구 팩스 월 100장 포함 (넘으면 장당 150원)","손보 3 + 생보 3 동시 청구"]},
-  {id:"pro",name:"프로",price:29900,tag:"청구 월 100장 이상 · 고객 많은 설계사",items:["라이트 전체","보상청구 팩스 월 200장 포함 (넘으면 장당 150원, 제한 없음)","보장분석 PDF 여러 고객 한 번에 등록","만기 자동 안내 (자동차·화재·배상 D-30 문자 예약)"]},
+  {id:"pro",name:"프로",price:29900,tag:"청구 월 100장 이상 · 고객 많은 설계사",items:["라이트 전체","보상청구 팩스 월 200장 포함 (넘으면 장당 150원, 제한 없음)","보장분석 PDF 여러 고객 한 번에 등록","만기 자동 안내 (자동차·화재·배상 D-30 문자 예약 · 사업자 문자 연결 시)"]},
 ];
-const OVER="문자·알림톡은 요금제에 포함되지 않고 충전금으로 씁니다: 단문 25원 · 장문 55원 · 알림톡 20원 (VAT 포함). 포함 장수(라이트 100장 · 프로 200장)를 넘는 팩스도 제한 없이 보낼 수 있고, 넘는 장수만 1장 150원이 충전금에서 차감됩니다. 남은 팩스 장수는 다음 달로 넘어가지 않습니다.";
+const OVER="문자·알림톡은 요금제에 포함되지 않습니다. 사업자등록번호가 있는 회원이 팝빌에 직접 충전해 쓰며, 단가는 팝빌 요금을 따릅니다. 사업자가 아니어도 문자 문구 복사·문자용 이미지 다운로드는 쓸 수 있습니다. 포함 장수(라이트 100장 · 프로 200장)를 넘는 팩스도 제한 없이 보낼 수 있고, 넘는 장수만 1장 150원이 충전금에서 차감됩니다. 남은 팩스 장수는 다음 달로 넘어가지 않습니다.";
 const PERIODS=[{m:1,label:"1개월",rate:1}];
 const PAYM=["신용카드","계좌이체","간편결제"];
 const PAY={plan:"pro",m:1,method:"신용카드"};
@@ -2077,7 +2135,7 @@ function renderMe(){
 $("#logout").onclick=()=>{ME.email=""; ME.demo=false; showPre("landing");};
 /* 체험 모드 */
 document.addEventListener("click",e=>{const b=e.target.closest("[data-demo]"); if(!b) return; e.preventDefault();
-  Object.assign(ME,{demo:true,email:"",name:"체험 설계사",phone:"",company:"",branch:"",plan:null,expires:null,payments:[],qna:[]});
+  Object.assign(ME,{demo:true,email:"",name:"체험 설계사",phone:"",company:"",branch:"",plan:null,expires:null,payments:[],qna:[],pb:null});
   enterApp(b.dataset.demo);});
 
 
@@ -2127,7 +2185,7 @@ $("#f-signup").addEventListener("submit",e=>{e.preventDefault();
   if(!ME.certified) return m.textContent="휴대폰 인증을 해 주세요.";
   if($("#su-pw").value.length<8) return m.textContent="비밀번호는 8자 이상입니다.";
   if(!$("#su-a1").checked||!$("#su-a2").checked) return m.textContent="필수 동의 2개를 체크해 주세요.";
-  Object.assign(ME,{fresh:true,demo:false,email:em,name:$("#su-name").value.trim(),phone:$("#su-phone").value,company:$("#su-company").value.trim(),branch:$("#su-branch").value.trim(),plan:null,expires:null,payments:[]});
+  Object.assign(ME,{fresh:true,demo:false,email:em,name:$("#su-name").value.trim(),phone:$("#su-phone").value,company:$("#su-company").value.trim(),branch:$("#su-branch").value.trim(),plan:null,expires:null,payments:[],pb:null});
   e.target.reset(); m.textContent="";
   showPre("pricing"); $("#pay-msg").textContent="가입 완료. 이용권을 선택해 결제하세요.";
 });
@@ -2145,7 +2203,7 @@ function renderMypage(){
   document.querySelectorAll("[data-mpv]").forEach(v=>v.hidden=v.dataset.mpv!==MP);
   $("#mp-email").textContent=ME.email||"–"; $("#mp-name").value=ME.name; $("#mp-phone").value=ME.phone; $("#mp-company").value=ME.company; $("#mp-branch").value=ME.branch; renderMe();
   $("#bl-plan").textContent=planName(ME.plan); $("#bl-days").textContent=daysLeft()+"일"; $("#bl-exp").textContent=ME.expires||"–";
-  $("#bl-cash").textContent=(ME.cash||0).toLocaleString()+"원"; renderCash(); $("#bl-fax").textContent=S.history.filter(h=>!h.ex).reduce((a,h)=>a+h.pages,0)+"장";
+  $("#bl-cash").textContent=(ME.cash||0).toLocaleString()+"원"; renderCash(); $("#bl-pb").textContent=pbSummary(); $("#bl-fax").textContent=S.history.filter(h=>!h.ex).reduce((a,h)=>a+h.pages,0)+"장";
   $("#bl-body").innerHTML=ME.payments.length?ME.payments.map(p=>`<tr><td class="num">${p.at}</td><td>${p.plan}</td><td>${p.per}</td><td>${p.method}</td><td class="num">${p.amount.toLocaleString()}원</td><td><span class="pill ${p.st==="예시"?"ex":"ok"}">${p.st}</span></td></tr>`).join(""):'<tr><td colspan="6" class="empty">결제내역이 없습니다.</td></tr>';
   $("#q-list").innerHTML=ME.qna.length?ME.qna.map(q=>`<div class="it"><span><b>[${q.type}]</b> ${esc(q.title)}<br><span class="note num">${q.at}</span></span><span class="pill warn">답변 대기</span></div>`).join(""):'<div class="empty">문의 내역이 없습니다.</div>';
 }
@@ -2455,18 +2513,19 @@ function openRenew(ix){ const k=CONTRACTS[ix], c=CUSTOMERS.find(x=>x.id===k.cust
   <div class="field"><label for="rn-to">받는 사람 휴대폰</label><input id="rn-to" inputmode="tel" maxlength="13" value="${esc(fmtPhone(c.phone||""))}"></div>
   <div class="field"><label for="rn-txt">안내문 (직접 고칠 수 있습니다)</label><textarea id="rn-txt" rows="11">${esc(renewText(k,c))}</textarea></div>
   <div class="smsprev"><span class="note">고객 휴대폰 미리보기</span><div id="rn-prev" style="white-space:pre-wrap"></div></div>
-  <div class="row between"><span class="note" id="rn-bytes"></span><span class="note">충전금 ${(ME.cash||0).toLocaleString()}원</span></div>
-  <div class="row"><button class="btn primary" type="button" id="rn-send">즉시 발송</button><button class="btn" type="button" id="rn-copy">복사</button><button class="btn" type="button" id="rn-reset">처음 문구로</button><span class="note" id="rn-msg"></span></div>`); updRenew(); }
-function updRenew(){ const t=$("#rn-txt").value, by=bytesOf(t); $("#rn-prev").textContent=t; $("#rn-bytes").textContent=`${by}바이트 · ${by<=90?"단문 "+SMS_PRICE.sms:"장문 "+SMS_PRICE.lms}원${by>2000?" · 2,000바이트 초과":""}`; }
+  <div class="row between"><span class="note" id="rn-bytes"></span><span class="note">${pbSummary()}</span></div>
+  <div class="row"><button class="btn primary" type="button" id="rn-send">즉시 발송</button><button class="btn" type="button" id="rn-copy">문구 복사</button><button class="btn" type="button" id="rn-app">내 휴대폰 문자로</button><button class="btn" type="button" id="rn-reset">처음 문구로</button><span class="note" id="rn-msg"></span></div>`); updRenew(); }
+function updRenew(){ const t=$("#rn-txt").value, by=bytesOf(t); $("#rn-prev").textContent=t; $("#rn-bytes").textContent=`${by}바이트 · ${by<=90?"단문":"장문"}${by>2000?" · 2,000바이트 초과":""}`; }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-renew]"); if(b){ openRenew(+b.dataset.renew); return; }
   if(!RNW) return;
   if(e.target.closest("#rn-reset")){ const k=CONTRACTS[RNW.ix]; $("#rn-txt").value=renewText(k,CUSTOMERS.find(x=>x.id===k.cust)||{name:"고객"}); updRenew(); return; }
+  if(e.target.closest("#rn-app")){ openSmsApp($("#rn-to").value,$("#rn-txt").value); return; }
   if(e.target.closest("#rn-copy")){ const t=$("#rn-txt").value; (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{$("#rn-msg").textContent="복사했습니다.";}).catch(()=>{ $("#rn-txt").select(); $("#rn-msg").textContent="글자를 선택해 두었습니다. Ctrl+C로 복사하세요."; }); return; }
   if(e.target.closest("#rn-send")){ const k=CONTRACTS[RNW.ix], t=$("#rn-txt").value.trim(), ph=$("#rn-to").value, by=bytesOf(t), cost=by<=90?SMS_PRICE.sms:SMS_PRICE.lms;
     if(!t){ $("#rn-msg").textContent="내용을 입력하세요."; return; } if(by>2000){ $("#rn-msg").textContent="2,000바이트를 넘었습니다."; return; } if(!phoneOk(ph)){ $("#rn-msg").textContent="휴대폰번호를 확인하세요."; return; }
-    if(!ME.demo){ if((ME.cash||0)<cost){ $("#rn-msg").innerHTML=`충전금이 부족합니다. <a href="#" data-go-cash>충전하기</a>`; return; } cashLog(`${k.kind} 갱신 안내 (${custName(k.cust)})`,-cost); }
+    if(!smsGate({cost,memo:`${k.kind} 갱신 안내 (${custName(k.cust)})`,el:$("#rn-msg"),text:t,phone:ph})) return;
     k.renewSent=today(); ACTS.push({cust:k.cust,date:today(),type:"문자",memo:`${k.kind}보험 갱신 안내 (만기 ${k.end})`});
-    $("#rn-msg").textContent=`보냈습니다${ME.demo?"":` · ${cost}원 차감`} (시범: 실제 발송 없음). 활동관리에 기록했습니다.`; renderExp(k.kind==="자동차"?"auto":"liab"); return; }
+    $("#rn-msg").textContent=`보냈습니다 · 팝빌 포인트 ${cost}원 차감 (시범: 실제 발송 없음). 활동관리에 기록했습니다.`; renderExp(k.kind==="자동차"?"auto":"liab"); return; }
 });
 document.addEventListener("input",e=>{ if(e.target.id==="rn-txt") updRenew(); if(e.target.id==="rn-to") e.target.value=fmtPhone(e.target.value); });
 
@@ -2599,7 +2658,7 @@ function fillVars(t,r){ const k=r.k||{}; return t.replace(/#\{이름\}/g,r.c.nam
 function smsFinal(r){ let t=fillVars($("#sms-body").value,r); if($("#sms-ad").checked) t="(광고)"+t+"\n무료수신거부 080-000-0000"; return t; }
 function smsCost(){ return SMSST.list.reduce((a,r)=>a+(bytesOf(smsFinal(r))<=90?SMS_PRICE.sms:SMS_PRICE.lms),0); }
 function updSms(){ const r=SMSST.list[0]; const t=r?smsFinal(r):""; const by=bytesOf(t);
-  $("#sms-prev").textContent=t||"(내용을 입력하세요)"; const cost=smsCost(); $("#sms-bytes").textContent=`${by}바이트 · ${by<=90?"단문(SMS)":by<=2000?"장문(LMS)":"2,000바이트 초과 — 줄여주세요"} · 예상 차감 ${cost.toLocaleString()}원 (충전금 ${(ME.cash||0).toLocaleString()}원)`;
+  $("#sms-prev").textContent=t||"(내용을 입력하세요)"; const cost=smsCost(); $("#sms-bytes").textContent=`${by}바이트 · ${by<=90?"단문(SMS)":by<=2000?"장문(LMS)":"2,000바이트 초과 — 줄여주세요"} · 예상 ${cost.toLocaleString()}원 · ${pbSummary()}`;
   const h=new Date().getHours(), at=$("#sms-when").value==="later"&&$("#sms-at").value?new Date($("#sms-at").value).getHours():h;
   $("#sms-warn").textContent=$("#sms-ad").checked&&(at>=21||at<8)?"광고성 문자는 오후 9시~오전 8시에 보내려면 별도 사전 동의가 필요합니다 (정보통신망법 제50조)":""; }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-smsfor]"); if(!b) return; const key=b.dataset.smsfor; SMSST.key=key; SMSST.list=recipients(key);
@@ -2614,10 +2673,10 @@ document.addEventListener("click",e=>{
     if(bytesOf(smsFinal(SMSST.list[0]))>2000){ $("#sms-msg").textContent="2,000바이트를 넘었습니다."; return; }
     const later=$("#sms-when").value==="later"; if(later&&!$("#sms-at").value){ $("#sms-msg").textContent="예약 일시를 고르세요."; return; }
     const cost=smsCost();
-    if(!ME.demo&&(ME.cash||0)<cost){ $("#sms-msg").innerHTML=`충전금이 부족합니다 (필요 ${cost.toLocaleString()}원 · 잔액 ${(ME.cash||0).toLocaleString()}원). <a href="#" data-go-cash>충전하러 가기</a>`; return; }
-    if(!ME.demo) cashLog(`문자 ${SMSST.list.length}건 ${later?"예약":"발송"}`,-cost);
+    const gl=SMSST.list.map(r=>({nm:r.c.name,ph:r.c.phone||"",t:smsFinal(r)}));
+    if(!smsGate({cost,memo:`문자 ${SMSST.list.length}건 ${later?"예약":"발송"}`,el:$("#sms-msg"),text:gl[0].t,phone:gl[0].ph,list:gl.length>1?gl:null})) return;
     SMSST.list.forEach(r=>ACTS.push({cust:r.c.id,date:later?$("#sms-at").value.slice(0,10):today(),type:"문자",memo:smsFinal(r).slice(0,40)+"…"}));
-    $("#sms-msg").textContent=`${SMSST.list.length}명에게 ${later?"예약":"발송"} 처리했습니다${ME.demo?"":` · ${cost.toLocaleString()}원 차감`} (시범: 실제 발송 없음). 활동관리에 기록했습니다.`;
+    $("#sms-msg").textContent=`${SMSST.list.length}명에게 ${later?"예약":"발송"} 처리했습니다 · 팝빌 포인트 ${cost.toLocaleString()}원 차감 (시범: 실제 발송 없음). 활동관리에 기록했습니다.`;
     SEL[SMSST.key].clear(); refreshSel(SMSST.key); setTimeout(()=>{$("#sms-dlg").hidden=true;},1600); }
 });
 document.addEventListener("click",e=>{ if(!e.target.closest("[data-go-cash]")) return; e.preventDefault(); $("#sms-dlg").hidden=true; MP="bill"; go("mypage"); });
@@ -2711,7 +2770,7 @@ const BOIT_CLOUD={url:"https://lobdowpxujgiadrtxklb.supabase.co",key:"sb_publish
 const CLOUD={on:/(^|\.)grow\.ai\.kr$|(^|\.)boit\.ai\.kr$|github\.io$/.test(location.hostname),sb:null,user:null,last:"",busy:false};
 function nextCustId(){ return CUSTOMERS.reduce((m,c)=>Math.max(m,+c.id||0),0)+1; }
 function cloudSnap(){ return {v:1,customers:CUSTOMERS,contracts:CONTRACTS,consults:CONSULTS,acts:ACTS,history:S.history,keepDays:KEEP_DAYS,
-  me:{name:ME.name,phone:ME.phone,company:ME.company,branch:ME.branch,photo:ME.photo,plan:ME.plan,expires:ME.expires,payments:ME.payments,qna:ME.qna,cash:ME.cash||0,cashLog:ME.cashLog||[],fresh:!!ME.fresh}}; }
+  me:{name:ME.name,phone:ME.phone,company:ME.company,branch:ME.branch,photo:ME.photo,plan:ME.plan,expires:ME.expires,payments:ME.payments,qna:ME.qna,cash:ME.cash||0,cashLog:ME.cashLog||[],pb:ME.pb||null,fresh:!!ME.fresh}}; }
 function cloudApply(d){ const put=(a,v)=>{ if(Array.isArray(v)) a.splice(0,a.length,...v); };
   put(CUSTOMERS,d.customers); put(CONTRACTS,d.contracts); put(CONSULTS,d.consults); put(ACTS,d.acts); if(Array.isArray(d.history)) S.history=d.history;
   if(d.me) Object.assign(ME,d.me); const dl=$("#dl-cust"); if(dl) dl.innerHTML=""; }
@@ -3331,6 +3390,104 @@ if(typeof go==="function"){ const _go=go; go=function(v){ _go(v); const w=S.view
   if(w==="morning") renderMorning(); if(w==="quote") renderQuote(); if(w==="homepage") renderHomepage(); if(w==="disclose") renderDisclose(); if(w==="proposal") renderCG(); }; }
 if(typeof cloudSnap==="function"){ const _s=cloudSnap; cloudSnap=function(){ const o=_s(); o.me.page=ME.page||null; o.quoteRates=QT.rates; return o; }; }
 if(typeof cloudApply==="function"){ const _a=cloudApply; cloudApply=function(d){ _a(d); if(d&&Array.isArray(d.quoteRates)) QT.rates=d.quoteRates; }; }
+
+/* ===== 문자: 사업자 문자(팝빌 연동회원 · 각자 충전) + 누구나 쓰는 문구·이미지 ===== */
+/* 실제 연결 시 서버(보잇)가 팝빌 API 호출: JoinMember(연동회원 가입) · GetChargeURL(충전 팝업) · GetBalance(잔액) · 발신번호 관리 팝업 · SendSMS/SendLMS.
+   팝빌 결제방식은 '연동회원 결제'(선불, 회원이 직접 충전·정산). 아래는 시범 화면이며 실제 발송·결제는 없음. 단가는 시범값(SMS_PRICE). */
+function pb(){ if(!ME.pb) ME.pb={on:false,biz:"",corp:"",ceo:"",sender:"",senderOk:false,bal:0,log:[]}; return ME.pb; }
+function pbReady(){ const p=pb(); return p.on&&p.senderOk; }
+function pbLog(memo,amt){ const p=pb(), d=new Date(); p.bal=(p.bal||0)+amt; p.log.unshift({at:`${ymd(d)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`,memo,amt,bal:p.bal}); }
+function pbSummary(){ const p=pb(); return !p.on?"사업자 문자 미연결 — 문구 복사·내 휴대폰 문자로 보내기는 가능":!p.senderOk?"사업자 문자: 발신번호 등록 대기":`팝빌 포인트 ${(p.bal||0).toLocaleString()}원`; }
+const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent), isMobile=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+function smsHref(ph,t){ return `sms:${digits(ph||"")}${isIOS()?"&":"?"}body=${encodeURIComponent(t||"")}`; }
+function openSmsApp(ph,t,msgEl){ if(!isMobile()){ flash(msgEl,"휴대폰에서 누르면 문자앱이 열립니다. PC에서는 [문구 복사]를 쓰세요."); return; } location.href=smsHref(ph,t); }
+let GATE=null;
+/* 발송 전 확인: 사업자 문자 연결·발신번호 등록·포인트가 모두 되어야 true. 아니면 그 자리에 대신 쓸 버튼을 보여줌 */
+function smsGate({cost,memo,el,text,phone,list}){ const p=pb();
+  if(pbReady()&&(p.bal||0)>=cost){ pbLog(memo,-cost); return true; }
+  GATE={text:text||"",phone:phone||""};
+  const why=!p.on?"문자 직접 발송은 사업자 문자(팝빌)를 연결한 사업자 회원만 쓸 수 있습니다.":!p.senderOk?"발신번호 등록이 끝나야 보낼 수 있습니다.":`팝빌 포인트가 부족합니다 (필요 ${cost.toLocaleString()}원 · 잔액 ${(p.bal||0).toLocaleString()}원).`;
+  const act=!p.on?["setup","사업자 문자 연결"]:!p.senderOk?["setup","발신번호 등록"]:["charge","팝빌에서 충전"];
+  if(el) el.innerHTML=`<span class="gate"><b>${why}</b><button class="btn" type="button" data-gate="copy">문구 복사</button>${list?"":phoneOk(phone||"")?`<button class="btn" type="button" data-gate="app">내 휴대폰 문자로 보내기</button>`:""}<button class="btn" type="button" data-gate="${act[0]}">${act[1]}</button>${list?`<span class="note" style="flex-basis:100%">받는 사람을 하나씩 눌러 내 휴대폰 문자로 보내세요 (휴대폰에서)</span><span class="gate-list">${list.map(r=>phoneOk(r.ph)?`<a href="${esc(smsHref(r.ph,r.t))}">${esc(r.nm)} <span class="num">${esc(fmtPhone(r.ph))}</span></a>`:`<a aria-disabled="true">${esc(r.nm)} <span class="note">번호 없음</span></a>`).join("")}</span>`:""}<span class="note" data-gatemsg style="flex-basis:100%"></span></span>`;
+  return false; }
+let SV="kit";
+function pbGo(){ $("#sms-dlg").hidden=true; $("#info-dlg").hidden=true; SV="biz"; go("sms"); }
+function pbChargeDlg(){ const p=pb(); infoDlg("팝빌 포인트 충전 (시범)",`<p class="note" style="margin:0">실제 서비스에서는 팝빌 충전 창이 열리고, 결제·환불·세금계산서는 팝빌에서 처리됩니다. 지금 잔액 ${(p.bal||0).toLocaleString()}원</p>
+  <div class="seg">${[10000,30000,50000,100000].map(v=>`<button class="btn" type="button" data-pbc="${v}">${v/10000}만원</button>`).join("")}</div><p class="note" id="pbc-msg" style="margin:0"></p>`); }
+function pbSenderDlg(){ const p=pb(); infoDlg("발신번호 등록 (시범)",`<p class="note" style="margin:0">문자는 미리 등록한 번호로만 보낼 수 있습니다 (전기통신사업법 제84조의2). 실제 서비스에서는 팝빌 발신번호 등록 창에서 번호 명의 확인을 거칩니다.</p>
+  <div class="hbox"><h3>등록할 번호</h3><b class="num">${esc(p.sender||"-")}</b></div>
+  <div class="row"><button class="btn primary" type="button" id="pbs-ok">(시범) 등록 완료 처리</button></div>`); }
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-gate]"); if(g){ const m=g.closest(".gate").querySelector("[data-gatemsg]"), k=g.dataset.gate;
+    if(k==="copy") copyText(GATE?GATE.text:"",m); else if(k==="app") openSmsApp(GATE.phone,GATE.text,m); else if(k==="setup") pbGo(); else if(k==="charge") pbChargeDlg(); return; }
+  if(e.target.closest("[data-pbgo]")){ e.preventDefault(); pbGo(); return; }
+  const c=e.target.closest("[data-pbc]"); if(c){ const v=+c.dataset.pbc; pbLog("팝빌 포인트 충전 (시범)",v); $("#pbc-msg").textContent=`${v.toLocaleString()}원 충전했습니다 (시범: 실제 결제 없음). 잔액 ${pb().bal.toLocaleString()}원`; if(S.view==="sms") renderPb(); return; }
+  if(e.target.closest("#pbs-ok")){ pb().senderOk=true; $("#info-dlg").hidden=true; renderPb(); return; }
+  const t=e.target.closest("[data-sv]"); if(t){ SV=t.dataset.sv; renderSmsView(); return; }
+  if(e.target.closest("#pb-sender")){ pbSenderDlg(); return; }
+  if(e.target.closest("#pb-charge")){ pbChargeDlg(); return; }
+  if(e.target.closest("#pb-off")){ ME.pb=null; renderPb(); $("#pb-msg").textContent="연결을 해제했습니다."; return; }
+});
+/* 사업자등록번호 검증 (국세청 검증번호 규칙) */
+function bizOk(v){ const d=digits(v); if(d.length!==10) return false; const w=[1,3,7,1,3,7,1,3,5]; let sum=0; for(let i=0;i<9;i++) sum+=+d[i]*w[i]; sum+=Math.floor(+d[8]*5/10); return (10-sum%10)%10===+d[9]; }
+const fmtBiz=v=>{ const d=digits(v).slice(0,10); return d.length>5?`${d.slice(0,3)}-${d.slice(3,5)}-${d.slice(5)}`:d.length>3?`${d.slice(0,3)}-${d.slice(3)}`:d; };
+const telOk=v=>phoneOk(v)||/^0\d{8,10}$/.test(digits(v));
+function renderPb(){ const p=pb(), st=$("#pb-st"); if(!st) return;
+  st.innerHTML=`<div class="${p.on?"ok":""}"><h3>① 팝빌 회원</h3>${p.on?`<span class="pill ok">연결됨</span><span class="note">${esc(p.corp)} · <span class="num">${esc(p.biz)}</span></span><button class="btn" type="button" id="pb-off">연결 해제</button>`:`<span class="pill warn">미연결</span><span class="note">아래 사업자 정보를 넣고 연결</span>`}</div>
+  <div class="${p.senderOk?"ok":""}"><h3>② 발신번호</h3>${!p.on?`<span class="note">회원 연결 후 등록</span>`:p.senderOk?`<span class="pill ok">등록 완료</span><span class="num">${esc(p.sender)}</span>`:`<span class="pill warn">등록 대기</span><span class="num">${esc(p.sender)}</span><button class="btn primary" type="button" id="pb-sender">발신번호 등록</button>`}</div>
+  <div class="${p.on&&p.bal>0?"ok":""}"><h3>③ 팝빌 포인트</h3>${!p.on?`<span class="note">회원 연결 후 충전</span>`:`<b class="num" style="font-size:20px">${(p.bal||0).toLocaleString()}원</b><button class="btn primary" type="button" id="pb-charge">팝빌에서 충전</button><span class="note">시범 단가 단문 ${SMS_PRICE.sms}원 · 장문 ${SMS_PRICE.lms}원 (실제는 팝빌 요금)</span>`}</div>`;
+  if(p.on){ $("#pb-no").value=p.biz; $("#pb-corp").value=p.corp; $("#pb-ceo").value=p.ceo; $("#pb-snd").value=p.sender; } else if(!$("#pb-snd").value) $("#pb-snd").value=ME.phone||"";
+  $("#pb-join").textContent=p.on?"사업자 정보 저장":"팝빌 회원 연결";
+  $("#pb-log").innerHTML=p.log.length?p.log.map(x=>`<tr><td class="num">${x.at}</td><td>${esc(x.memo)}</td><td class="num">${x.amt>0?"+":""}${x.amt.toLocaleString()}원</td><td class="num">${x.bal.toLocaleString()}원</td></tr>`).join(""):'<tr><td colspan="4" class="empty">충전·사용 내역이 없습니다.</td></tr>'; }
+document.addEventListener("input",e=>{ if(e.target.id==="pb-no") e.target.value=fmtBiz(e.target.value); if(e.target.id==="pb-snd"&&phoneOk(e.target.value)) e.target.value=fmtPhone(e.target.value); });
+document.addEventListener("submit",e=>{ if(e.target.id!=="f-pb") return; e.preventDefault(); const m=$("#pb-msg"), no=$("#pb-no").value, corp=$("#pb-corp").value.trim(), ceo=$("#pb-ceo").value.trim(), snd=$("#pb-snd").value.trim();
+  if(!bizOk(no)) return flash(m,"사업자등록번호가 맞지 않습니다. 사업자등록증의 10자리를 확인하세요.");
+  if(!corp||!ceo) return flash(m,"상호와 대표자를 입력하세요."); if(!telOk(snd)) return flash(m,"발신번호를 확인하세요.");
+  const p=pb(), changed=p.sender!==snd; Object.assign(p,{on:true,biz:fmtBiz(no),corp,ceo,sender:snd}); if(changed) p.senderOk=false;
+  renderPb(); flash(m,p.senderOk?"저장했습니다.":"연결했습니다 (시범). 다음은 ② 발신번호 등록 → ③ 충전입니다."); });
+
+/* 문구·이미지 키트 — 사업자가 아니어도 사용 */
+const KIT=[
+ {id:"bday",n:"생일",lb:"Happy Birthday",tt:"#{이름}님, 생일 축하드립니다",ln:"건강하고 행복한 한 해 되세요",t:"#{이름}님, 생일 진심으로 축하드립니다. 건강하고 행복한 한 해 되세요.\n- #{설계사} 드림"},
+ {id:"seol",n:"설날",lb:"설날 인사",tt:"새해 복 많이 받으세요",ln:"가족 모두 건강하고 평안한 한 해 되세요",t:"#{이름}님, 새해 복 많이 받으세요. 올 한 해도 가족 모두 건강하고 평안하시길 바랍니다.\n- #{설계사} 드림"},
+ {id:"chuseok",n:"추석",lb:"한가위 인사",tt:"풍성한 한가위 보내세요",ln:"넉넉하고 따뜻한 명절 되세요",t:"#{이름}님, 풍성하고 따뜻한 한가위 보내세요. 늘 감사드립니다.\n- #{설계사} 드림"},
+ {id:"month",n:"월초 안부",lb:"#{월}월 안부",tt:"#{이름}님, #{월}월도 건강하세요",ln:"보험 관련 궁금한 점은 언제든 연락 주세요",t:"#{이름}님, 안녕하세요. 담당 설계사 #{설계사}입니다. #{월}월도 건강하게 보내세요. 보험 관련해 궁금하신 점이나 청구할 일이 있으면 언제든 연락 주세요.\n#{연락처}"},
+ {id:"exp",n:"만기 안내",lb:"만기 안내",tt:"#{보종}보험 만기가 다가옵니다",ln:"보장이 끊기지 않도록 미리 준비해 드립니다",t:"#{이름}님, #{보험사} #{보종}보험 만기가 #{만기일}입니다. 보장이 끊기지 않도록 갱신을 준비해 드리겠습니다. 바뀐 사항이 있으면 알려주세요.\n- #{설계사} #{연락처}"},
+ {id:"start",n:"면책·감액 종료",lb:"보장 안내",tt:"면책·감액기간 종료 안내",ln:"종료 후 달라지는 보장을 안내해 드립니다",t:"#{이름}님, 가입하신 보험의 면책·감액기간 종료일이 다가왔습니다. 종료 후 달라지는 보장 내용을 안내해 드리겠습니다. 편하실 때 연락 주세요.\n- #{설계사} #{연락처}"},
+ {id:"thanks",n:"계약 감사",lb:"Thank you",tt:"소중한 믿음에 감사드립니다",ln:"가입하신 보장, 끝까지 챙기겠습니다",t:"#{이름}님, 믿고 맡겨 주셔서 감사합니다. 가입하신 보장은 청구부터 갱신까지 끝까지 챙기겠습니다.\n- #{설계사} #{연락처}"},
+ {id:"claim",n:"청구 안내",lb:"보험금 청구",tt:"청구할 일 있으면 연락 주세요",ln:"영수증·서류 사진만 보내주시면 도와드립니다",t:"#{이름}님, 병원 진료 후 보험금 청구할 일이 있으면 영수증·진료비 세부내역서 등 서류 사진만 보내 주세요. 청구 접수를 도와드립니다.\n- #{설계사} #{연락처}"}];
+const MK={kind:"bday",cust:null};
+function mkRow(){ const c=CUSTOMERS.find(x=>x.id===MK.cust)||null;
+  const k=c?CONTRACTS.filter(x=>x.cust===c.id&&x.end).sort((a,b)=>((a.end<today())-(b.end<today()))||a.end.localeCompare(b.end))[0]:null;
+  return {c:c||{name:"고객",phone:""},k:k||{}}; }
+function mkFill(t){ return fillVars(t.replace(/#\{월\}/g,String(new Date().getMonth()+1)),mkRow()); }
+function mkKit(){ return KIT.find(x=>x.id===MK.kind)||KIT[0]; }
+function mkReset(){ const k=mkKit(); $("#mk-txt").value=mkFill(k.t); $("#mk-tt").value=mkFill(k.tt); $("#mk-ln").value=mkFill(k.ln); mkUpd(); }
+function mkUpd(){ const k=mkKit(), t=$("#mk-txt").value, by=bytesOf(t);
+  $("#mk-bytes").textContent=`${by}바이트 · ${by<=90?"단문":"장문"}${by>2000?" · 2,000바이트 초과":""}`;
+  $("#mk-card").innerHTML=`<div class="smc k-${k.id}" id="mk-node"><span class="lb">${esc(mkFill(k.lb))}</span><div class="tt">${esc($("#mk-tt").value)}</div><div class="ln">${esc($("#mk-ln").value)}</div>
+  <div class="fc"><div><b>${esc(ME.name||"담당 설계사")}</b>${esc([ME.company,ME.branch].filter(Boolean).join(" "))}</div><span class="num">${esc(ME.phone||"")}</span></div></div>`; }
+function renderKit(){ $("#mk-kinds").innerHTML=KIT.map(k=>`<button class="btn" type="button" data-mk="${k.id}" aria-pressed="${k.id===MK.kind}">${k.n}</button>`).join(""); if(!$("#mk-txt").value) mkReset(); else mkUpd(); }
+function renderSmsView(){ document.querySelectorAll("#sv-tabs [data-sv]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sv===SV)); document.querySelectorAll("[data-svv]").forEach(v=>v.hidden=v.dataset.svv!==SV);
+  if(SV==="kit") renderKit(); else renderPb(); }
+async function mkBlob(){ const n=$("#mk-node"); if(!n||!window.html2canvas) return null; if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+  const cv=await html2canvas(n,{scale:3,backgroundColor:null}); return await new Promise(r=>cv.toBlob(r,"image/png")); }
+const mkName=()=>`문자이미지_${mkKit().n.replace(/[·\s]/g,"")}_${today()}.png`;
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-mk]"); if(b){ MK.kind=b.dataset.mk; renderKit(); mkReset(); return; }
+  if(e.target.closest("#mk-reset")){ mkReset(); return; }
+  if(e.target.closest("#mk-copy")){ copyText($("#mk-txt").value,$("#mk-msg")); return; }
+  if(e.target.closest("#mk-app")){ openSmsApp(mkRow().c.phone,$("#mk-txt").value,$("#mk-msg")); return; }
+  if(e.target.closest("#mk-share")){ try{ await navigator.share({text:$("#mk-txt").value}); }catch(err){ if(!(err&&err.name==="AbortError")) copyText($("#mk-txt").value,$("#mk-msg")); } return; }
+  if(e.target.closest("#mk-dl")||e.target.closest("#mk-ishare")){ const m=$("#mk-imsg"); flash(m,"이미지를 만드는 중..."); let bl=null; try{ bl=await mkBlob(); }catch(err){}
+    if(!bl) return flash(m,"이미지를 만들지 못했습니다. 새로고침 후 다시 시도하세요.");
+    if(e.target.closest("#mk-dl")){ const r=await saveBlob(bl,mkName()); flash(m,r==="ok"?"저장했습니다. 문자·카카오톡에 이미지를 첨부해 보내세요.":"이 화면에서는 저장할 수 없습니다."); }
+    else shareOrSave(bl,mkName(),$("#mk-txt").value,m); return; }
+});
+document.addEventListener("input",e=>{ if(["mk-txt","mk-tt","mk-ln"].includes(e.target.id)) mkUpd(); });
+document.addEventListener("change",e=>{ if(e.target.id==="mk-cust"){ MK.cust=resolveCust(e.target.value); mkReset(); } });
+Object.assign(window,{pb,pbReady,pbLog,pbSummary,smsGate,openSmsApp,renderSmsView});
 })();
+
 </script>
 <script src="/assets/datefix.js"></script>
