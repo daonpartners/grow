@@ -9872,6 +9872,8 @@ const limitCompareData = {};
       const role = sessionStorage.getItem('growRole');
       b.style.display = (sessionStorage.getItem('growAdmin') === '1' && (role === 'admin' || role === 'manager')) ? '' : 'none';
     };
+    /* 새로고침 등으로 로그인 상태가 먼저 복원된 경우에도 탭을 표시 */
+    try{ window.edbShowTab(); }catch(e){}
   })();
 
   /* ===== 데일리뉴스 웹 발행 (관리자 전용) ===== */
