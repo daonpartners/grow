@@ -1622,6 +1622,16 @@ body.growon{ background:var(--g-navy); }
               <button type="button" class="qna-new-btn" id="edbUnassign" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">배분 취소</button>
               <button type="button" class="qna-new-btn" id="edbCsv" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">CSV 저장</button>
             </div>
+            <div id="edbAtt" style="margin:4px 0 12px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:#FAFAF7;">
+              <div style="font-size:13px; font-weight:700; margin-bottom:6px;">👥 이 행사 참석 설계사 <span style="font-weight:400; color:#888;">(행사마다 입력 · 이 기기에 저장)</span></div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="edbAttIn" list="edbFcList" placeholder="설계사 이름 입력 후 추가 (쉼표로 여러 명)" autocomplete="off" style="flex:1; min-width:180px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                <button type="button" class="qna-new-btn" id="edbAttAdd" style="margin:0;">추가</button>
+              </div>
+              <div id="edbAttList" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
+              <button type="button" class="qna-new-btn" id="edbAttSplit" style="margin:10px 0 0;">선택 건을 참석 설계사에게 골고루 분배</button>
+              <div style="font-size:11.5px; color:#888; margin-top:6px;">이름을 누르면 그 설계사에게 선택 건을 한 번에 배분합니다. ×는 참석 명단에서만 뺍니다.</div>
+            </div>
             <div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; font-size:12.5px; min-width:900px;">
               <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
               <tbody id="edbRows"></tbody>
@@ -9810,6 +9820,42 @@ const limitCompareData = {};
       }).catch(() => { setCode(''); gm.textContent = '네트워크 오류가 발생했습니다.'; gm.style.color = 'red'; });
     });
     on('edbLogout', () => { setCode(''); showGate(true); });
+    /* 행사 참석 설계사: 행사(선택된 행사명)별로 이 기기에 저장 */
+    const attKey = () => 'growEdbAtt:' + ($('edbEvent').value || '전체');
+    function attGet(){ try{ return JSON.parse(localStorage.getItem(attKey()) || '[]'); }catch(e){ return []; } }
+    function attSet(a){ try{ localStorage.setItem(attKey(), JSON.stringify(a)); }catch(e){} attDraw(); }
+    function attDraw(){
+      const box = $('edbAttList'); if(!box) return;
+      const a = attGet();
+      box.innerHTML = a.length ? a.map((n, i) => '<span style="display:inline-flex; align-items:center; gap:4px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:4px 6px 4px 11px; font-size:12.5px;"><button type="button" class="edbAttOne" data-n="' + escapeHtml(n) + '" style="border:0; background:none; font:inherit; font-weight:700; cursor:pointer; padding:0;">' + escapeHtml(n) + '</button><button type="button" class="edbAttDel" data-i="' + i + '" style="border:0; background:none; cursor:pointer; color:#999; font-size:13px;">×</button></span>').join('') : '<span style="font-size:12px; color:#999;">아직 입력한 참석 설계사가 없습니다.</span>';
+      box.querySelectorAll('.edbAttDel').forEach(b => b.addEventListener('click', () => { const a2 = attGet(); a2.splice(Number(b.dataset.i), 1); attSet(a2); }));
+      box.querySelectorAll('.edbAttOne').forEach(b => b.addEventListener('click', () => assign(b.dataset.n)));
+    }
+    on('edbAttAdd', () => {
+      const v = $('edbAttIn').value.split(/[,，\n]+/).map(x => x.trim()).filter(Boolean);
+      if(!v.length) return;
+      const a = attGet(); v.forEach(n => { if(a.indexOf(n) < 0) a.push(n); }); attSet(a); $('edbAttIn').value = '';
+    });
+    const _ai = $('edbAttIn'); if(_ai) _ai.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); $('edbAttAdd').click(); } });
+    const _ev = $('edbEvent'); if(_ev) _ev.addEventListener('change', attDraw);
+    on('edbAttSplit', async () => {
+      const ids = picked(), a = attGet();
+      if(!ids.length){ msg('분배할 건을 선택해 주세요.', true); return; }
+      if(!a.length){ msg('참석 설계사를 먼저 추가해 주세요.', true); return; }
+      const plan = {}; a.forEach(n => plan[n] = []);
+      ids.forEach((id, i) => plan[a[i % a.length]].push(id));
+      const lines = a.filter(n => plan[n].length).map(n => n + ' ' + plan[n].length + '건');
+      if(!confirm(ids.length + '건을 아래처럼 골고루 배분할까요?\n\n' + lines.join('\n'))) return;
+      msg('처리 중…'); let done = 0, failN = [];
+      for(const n of a){
+        if(!plan[n].length) continue;
+        try{ const r = await call({action:'assign', ids: plan[n], fc: n}); if(r.ok) done += r.count || plan[n].length; else failN.push(n + '(' + (r.error || '실패') + ')'); }
+        catch(e){ failN.push(n + '(네트워크 오류)'); }
+      }
+      msg(done + '건 배분 완료' + (failN.length ? ' · 실패: ' + failN.join(', ') : ''), !!failN.length);
+      window.edbLoad();
+    });
+    attDraw();
     on('edbAssign', () => assign(null));
     on('edbUnassign', () => assign(''));
     const all = $('edbAll'); if(all) all.addEventListener('change', () => document.querySelectorAll('.edbChk').forEach(c => c.checked = all.checked));
