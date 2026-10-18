@@ -1,54 +1,54 @@
 {
-  "date": "2026-10-18",
-  "dateLabel": "2026.10.18(일)",
+  "date": "2026-10-19",
+  "dateLabel": "2026.10.19(월)",
   "weather": [
     {
       "city": "서울",
-      "min": 15,
-      "max": 22,
-      "code": 65
+      "min": 10,
+      "max": 18,
+      "code": 2
     },
     {
       "city": "부산",
-      "min": 19,
-      "max": 24,
-      "code": 63
+      "min": 18,
+      "max": 23,
+      "code": 65
     },
     {
       "city": "대구",
-      "min": 15,
-      "max": 25,
-      "code": 65
+      "min": 16,
+      "max": 21,
+      "code": 51
     },
     {
       "city": "인천",
-      "min": 15,
-      "max": 22,
-      "code": 63
+      "min": 10,
+      "max": 17,
+      "code": 3
     },
     {
       "city": "광주",
-      "min": 19,
-      "max": 24,
-      "code": 65
+      "min": 15,
+      "max": 20,
+      "code": 53
     },
     {
       "city": "대전",
-      "min": 16,
-      "max": 23,
-      "code": 63
+      "min": 12,
+      "max": 20,
+      "code": 3
     },
     {
       "city": "강릉",
       "min": 15,
-      "max": 22,
-      "code": 55
+      "max": 20,
+      "code": 3
     },
     {
       "city": "제주",
-      "min": 22,
-      "max": 27,
-      "code": 3
+      "min": 18,
+      "max": 23,
+      "code": 65
     }
   ],
   "market": [
@@ -66,8 +66,8 @@
     },
     {
       "label": "환율(USD)",
-      "value": "1,329.60",
-      "diff": "-11.35",
+      "value": "1,335.94",
+      "diff": "-5.01",
       "dir": "down"
     },
     {
@@ -78,8 +78,8 @@
     },
     {
       "label": "금(돈)",
-      "value": "670,245",
-      "diff": "-3,944",
+      "value": "673,441",
+      "diff": "-748",
       "dir": "down"
     }
   ],
@@ -87,79 +87,79 @@
   "news": [
     {
       "cat": "보험",
-      "title": "[이달의 신상품] 한화생명, ‘필요 종신보험’ 출시…생애자금 인출",
+      "title": "해킹 잇따르는데, 사이버보험 가입 ‘안 하나 못 하나’",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE56UTRETHFRR1JMd2RqUnc4ZzFBWVM1NTJhWFRFbTdWWWk4enl2emVteEdPLUFHMTl5ZlJyem83d0lGMGlob2ZmR0pocHRGbFNXQWVCLWdBRnhzV3NxUFpGdG9NVkd4QnFI?oc=5",
-      "host": "FETV"
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9TVTRxOGctajNmMXV3VE9nN3MwOWlCLU5seDR2TmplY3hsXy1sYjNPQmhOS0hnRGItQzRDRkFzVWdUbjd4a1FZV2lzY1U1c1p6c1JfWWRIb3VERnV5WE8zdU9vQ2d0Wmxod1Fj0gFvQVVfeXFMTnVRVkl1Szl2cWFzc3pmQ3ZGemZyOVMzRE1oNDAtVWY2Ym00ZUthckU1S3lGdXdpSkNOSUVYM2RHSjBUYWZJcXlLaDF2b0xxUXRMQlJpZk1JN1pvRXJ5dlJ0VDZzWFhNeVk0cVdvbXFZ?oc=5",
+      "host": "한국보험신문"
     },
     {
       "cat": "보험",
-      "title": "[롯데손보 M&A] \"보험 더 안 팔아도 1000억\"…신한금융의 롯데손보 인수 셈법 : 네이버 블로그",
+      "title": "[단독] 46만원 냈더니 1억 주던데요…보험료 연체자에 내준 보험금 2400억",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQem9GeXN2Z1V1OWM1bHFVMk9ocVFGd0NmUUZXM3dBeFhnaHpxMmpGYzdfRGc1bENuM3BiTi12RGs1alIyYmNBR0tqWFdHQnRMWm5QUzhScW1fdUdlT1pFN2NyZEgzV1FSaTB0ai02cDBUbmdfMGJuQzBOWUotb0ZDVXZoekg2ZXZ4T3QtdUVDbw?oc=5",
-      "host": "Naver Blog"
-    },
-    {
-      "cat": "보험",
-      "title": "“보험 어디서 들까?” 물어보니…AI가 꼽은 ‘1등 금융사’는 어디",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9oT1A3MHgyOUEwOVRNYmVwZDlxdzlIU0l3ZWV4ZC1QVlBKd0NzaGUwaUpMMmc2R1dJLXl6LU5zc0VsbUFLLWZvZ1BhRFlPMlM4TE5XSA?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1oeDdlWHFURi03WU9UUFJxakZvTEZuY0NQYUU0REJaZUFYd1NPUjBnUENzVkxfcjdPZWhtWkU1b3phc0FKMkxMejY0b18zOHl3NWlORnNn?oc=5",
       "host": "매일경제"
     },
     {
       "cat": "보험",
-      "title": "잘 팔리던 '700종신' 사라졌는데 오히려 기회?…불붙는 종신보험 판매전 - 머니투데이",
+      "title": "車보험 누수 줄이자...보험사·한방병원 머리 맞댄다",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5JRVNndWczaWdSa29nRWowaHBoWnVoVHB1TzFZRWNiU2pZNkdjTHBJZXBkcWtjWDg1VHlKWVN6TElMVW9SdWdmckN2RmdVMTNKY21tMXZZSXQ0U0gyVnpGUmpuSzJsVHMwdm9Ub3h0UjM0MFlmZXFYUtIBfkFVX3lxTE9uazZoMnpnM25KLVJxWnVXcm1iXzVLakY0ZjVCT3RDVXh2LVliY0lHaDBjREhqbEJkenplT0tDakhSWDlPLU1mc3A4QTRQUHRQUi1halhtWG9aOGZwVHVZM1BlX1d0VGw1dnViX3FaZ0ZBODhsT1plZWdIMjBVUQ?oc=5",
-      "host": "머니투데이"
+      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE84V0Jha1VmOGF5T0FMb3UtaTdsV3FEbVpwM1RWeFpVS3o1U0FwUFpFWFRoQjV6cGVLNkZaaElYMjdnX3B1cjdjVTRObmVrUHRUcmfSAVNBVV95cUxOc3ZNLTJDZ0tmeHpqSWU5eDRKRTMzTWdaeVVQX3pLa0RDaUJ5YkRaX1dRQ2lkaUIxY1lhLTVCSGNLUTRTRkwwdHpWVUlrLVZjVXc3Yw?oc=5",
+      "host": "서울경제"
     },
     {
       "cat": "보험",
-      "title": "보험사 기본자본 규제 코앞인데… 롯데·하나 등 기준 미달 - 조선비즈",
+      "title": "치매·간병보험 담보별 수익성 관리",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPTFhfeTJpNDRsS2VIMTNXaTYwVUp5Z2xyZHNZcktGYnFsMmxpM0gyQUtpZnZqX2g3M0JqcDI2ZlRYVkZGZ2h2eWlXM0QtbUVjcU95OU1kRUUyblJINS1yVHFycmh0VmFIM3N4Zkg4RmxfUkF4TlRsREpoaF9jT2RMQtIBlAFBVV95cUxQdG56YlhnYklQSFVjWnRIYVV2WkhnVjRyR21jQ3hCMVd5cmVMOVlsa3ZvaTlKTU9GWjhndGRrSzV5LUs0Qk1jb2N1eTg0alhueGFlYVphck00a01HT090T0x2cDNhSWVzUzR5LUdtNGt0WHJrWXpRaGhDbkx5Qk5mZHZrTW9OanlpQTZ0aHJiX0VRVmNU?oc=5",
-      "host": "Chosunbiz"
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9QdUowSThBeHdVRnA0NVhRLTFKcEVsX3hDMEhQbXdmZThJU1pZczVyeF9UYkpINU5YamZEVVVPWGJiZWtKMTVnRlJ5SHRaQ3hlM1dHbEN0Yk40V3c3S1hBb0tobTR0VFdlb1Fj?oc=5",
+      "host": "보험신보"
+    },
+    {
+      "cat": "보험",
+      "title": "[시론] 보험사기 방지와 소비자보호 사이의 균형",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE91NDhmRDlGT09rR0V6SFV0S0Q4UWF5amdZM0FpcXBDNUpmaDFvSXBNSmlqRXlzMGNkcnY5dGdsaVJIakM2MThpczgwLWgzLTRfcVVrN0FfMWlpNHhsTjJNaHV4Y2tURjJsUUVZ0gFvQVVfeXFMUEV1LUd6dmlXQndxVXZadUlMUVJVUUE3Z0Jaanpnclc3N2s1bWQ5N3JuOGFnRUU1OGh6VVRDZVA2T0paRXdXY1AtaGxhTU43U3VrRGJzQy1Kb1V2Y21yYk1vYjc3WC05aWd3YXZ3OHBN?oc=5",
+      "host": "한국보험신문"
     },
     {
       "cat": "경제",
-      "title": "[경제뭔데]분기에 100조 버는데 외국인은 왜 삼전닉스를 파는 걸까",
+      "title": "정부 \"우리 경제 견조한 경기회복세…민생부담·불확실성은 상존\"",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBkR2VRZ0RFWkoycmt4TVZkN1BKTHluclphZ0kzVFBvSUFHeWdxS09PT29SSUVWUTlHcTFpOWU2aWprRXpVVjUyVG5LNVZtWW9RYmVHaXN5ZXBFQdIBX0FVX3lxTE9ibTJWVVFxRVFibjNXbGZRcDdwMjlzVnNzLTJ3RWE4eXZ2VDlDWTJIWTFQUnhuVGFoZldSWnl4SU1TTVgybC1KVzI0UHFsMUVEd0I2cXhucmpJMlBzS0x3?oc=5",
-      "host": "경향신문"
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9rc0NfSmVqRDdOV3h5bjU2OEs1QXpaU0JWWFJ3UE4xRjM1YXNRUW9jckVMVlJLWEt1eWRiNWJMTTNDTlFDODUwcGZaXzJMdXY1ZW1aWHZMOWxwTFdTQTJxejFmSXFEQlF1M29aZA?oc=5",
+      "host": "정책브리핑"
     },
     {
       "cat": "경제",
-      "title": "시티, 금리가 주가 밸류에이션보다 경제에 더 큰 영향 미칠 수 있어",
+      "title": "[황병성 칼럼] 경제성장률의 착각",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE42MlhEOXlGU25UZEdETlNUWWpuaVpNR1R5b09kZTd2NXUtNTdMY0hHMkhOeE4wUDBOZFhQX29kNFNpTGpPZXlJZGpuQlJDMjNlRnVDanBLUVZzNk96SlVKNXNEZk0zRmo5X1E?oc=5",
-      "host": "Investing.com 한국어"
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1tVkhUdlNPZURrdXh5Z0VLOGhDckhDVEJJZ1Bpb2FtOGJENk1KYm41TFRPUF9OQ20taWQxdERIZUx6RVUzRnlWb2VmNTZsOWZrcVdhX3puYzdFTkZNVWpxMGpQTWxmUVBCMUE?oc=5",
+      "host": "철강금속신문"
     },
     {
       "cat": "경제",
-      "title": "AI로 경제 커져도 세수는 줄어든다?…IMF가 던진 '과세 딜레마' - 머니투데이",
+      "title": "중간선거앞 트럼프 지지율 잇단 최저치…경제정책 반대 70%",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1IcHAybk9zTWFXMTBQdS1STzhDYjcxRFUwdXU3aHJmRG5OZERQSlE0aTV0OUZEMi1ldTJVZk1TMTI0TklpeVBodmFxYllmYm9pZG1LRVlPbHh1b3JqYzJsbUhsLWxYTEJW0gFuQVVfeXFMUERSeGljSkFONVA0eXBRcmxEbFZMTldaMTZEdHktcV9paVlheXA1TC1Oam94VzVKUDZzTVVkUzlvNm5WdWhCRmc0OVYyTURLcHdiOGtiNjE1dlZnTWI3V0hDc3JBOHU4MWtqajFZZkE?oc=5",
-      "host": "머니투데이"
+      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5qbHBkTG1icVBkaGx6STdpanBqOC1pbWFIR2VxdDgwNU5BN21JWlpLbWtWby1xTE95WmJ4YTZKMUFOQ3lHNE5OMnNZNjN5SElEQkpqN0xCZllwZlXSAWBBVV95cUxQS25EY1Q4b256YUtxXzZhUnp5b2tIVVNzbk9xQXJQcld6ak5GWTNoazF5eW5CWGlBWnlqQzRtbF9KRE9CWnd1RWJyWGxGcVFqMDVDOHhfaTMta2xJa1MyVDY?oc=5",
+      "host": "연합뉴스"
     },
     {
       "cat": "경제",
-      "title": "“대구 경제 최악” “무리한 과세 왜 하나”…국감장 질타 잇따라",
+      "title": "[리셋 코리아] 한·일 관계, 경제안보 파트너십으로 발전해야",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE1iMVJmbWFkMl9DTEpON0stM3pJOUMyY3loY3VFZHVNNUkwalBMZ1VEY2RiOTdxYjd0Ym83WXRnTGVlQ3RvVFFOYU44VV9kTGpmVkt6TGpYSTRTcU43V1g3Um1VNjBUQkRLZlFBVFhpWQ?oc=5",
-      "host": "경북일보"
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5LaFJvajBMdzVJNUZnQ1d4QTZtRk42cnlwMV8wOFRyQnZzbGFkek1sdW5QQUdVYTAtV19hUTZRcEJXcTBHRm9rSmNYdGVwbGN3TWhPSFF3?oc=5",
+      "host": "중앙일보"
     },
     {
       "cat": "경제",
-      "title": "성남시 ‘대한민국 지역경제대상’ 지역혁신 부문 1위 > 뉴스",
+      "title": "[국제 경제 흐름 읽기] 고유가 버틴 세계경제⋯재정·AI 부채가 복병",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1sbzFiTlh3WHVGbHVMQ2c1YWRfSkZoTlJQSDRZdF80Rk4yek9kS0lNMVdoRldqNVF1S2dydjYyeWlDQ1NIN2hZZnAyRi13T013aGN4LXVsRmZJNllGUEhxcDZUREZ6V0NyNXRXSndZdTI?oc=5",
-      "host": "더코리아"
+      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5Qc0tRNnZHOE9RVFlsQUo5VGpGRDBseFZPekNWeUpIOXdpX0VKN3Q2c2R2TFpJaU10N1kwenN5d3pmRVRsdjZRVFI1bGozQm9fNGh6R2JHZ19fTXg0TUE?oc=5",
+      "host": "포커스온경제"
     }
   ],
   "quote": {
-    "text": "남을 아는 자는 지혜롭고 자신을 아는 자는 밝다",
-    "author": "노자"
+    "text": "준비하지 않으면 실패를 준비하는 것이다",
+    "author": "벤저민 프랭클린"
   },
   "source": "auto",
-  "updatedAt": "2026-10-17T21:20:06.974Z"
+  "updatedAt": "2026-10-18T21:20:07.074Z"
 }
