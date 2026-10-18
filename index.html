@@ -1605,7 +1605,7 @@ body.growon{ background:var(--g-navy); }
               <div class="cm-msg" id="edbGateMsg"></div>
             </div>
             <div id="edbMain" style="display:none;">
-            <div class="disease-notice">📂 행사 현장에서 고객이 동의한 DB입니다. 지사장은 <b id="edbBranch"></b> 지사 건과 산하 지점 건(조회만 가능, 배분은 해당 지점장)만 보입니다. 다른 지사(대표님 포함)의 DB는 볼 수 없습니다. 설계사를 지정해 배분하면 해당 설계사 텔레그램으로 알림이 가고, 설계사는 <b>내 DB 조회</b>에서 확인합니다.</div>
+            <div class="disease-notice">📂 행사 현장에서 고객이 동의한 DB입니다. <b id="edbBranch"></b> DB가 보입니다. 다른 지사·산하 지점 설계사에게도 배분할 수 있으며, 목록에서 고르면 <b>이름 (지사)</b> 형식으로 들어갑니다. 배분하면 해당 설계사 텔레그램으로 알림이 가고, 설계사는 <b>내 DB 조회</b>에서 확인합니다.</div>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; margin:10px 0; align-items:end;">
               <select id="edbEvent" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;"><option value="">전체 행사</option></select>
               <input type="date" id="edbFrom" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
@@ -1616,7 +1616,7 @@ body.growon{ background:var(--g-navy); }
             <div id="edbSummary" style="margin:8px 0;"></div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0;">
               <label style="font-size:12.5px;"><input type="checkbox" id="edbAll"> 전체 선택</label>
-              <input type="text" id="edbFc" list="edbFcList" placeholder="배분할 설계사 이름" autocomplete="off" style="flex:1; min-width:160px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+              <input type="text" id="edbFc" list="edbFcList" placeholder="배분할 설계사 (예: 홍길동 (광명))" autocomplete="off" style="flex:1; min-width:160px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
               <datalist id="edbFcList"></datalist>
               <button type="button" class="qna-new-btn" id="edbAssign" style="margin:0;">선택 건 배분</button>
               <button type="button" class="qna-new-btn" id="edbUnassign" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">배분 취소</button>
@@ -9791,7 +9791,7 @@ const limitCompareData = {};
       msg('불러오는 중…');
       call({action:'list', eventName:$('edbEvent').value, from:$('edbFrom').value, to:$('edbTo').value}).then(r => {
         if(!r.ok){ msg(r.error || '불러오지 못했습니다.', true); if(/코드/.test(r.error||'')){ setCode(''); showGate(true); } return; }
-        msg(''); showGate(false); $('edbBranch').textContent = r.branch; draw(r);
+        msg(''); showGate(false); $('edbBranch').textContent = r.all ? '전체 지사' : r.branch + ' 지사(산하 지점 포함)'; draw(r);
       }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
     };
     function picked(){ return Array.from(document.querySelectorAll('.edbChk:checked')).map(c => Number(c.value)); }
@@ -9816,7 +9816,7 @@ const limitCompareData = {};
       setCode(c);
       call({action:'list'}).then(r => {
         if(!r.ok){ setCode(''); gm.textContent = r.error || '확인하지 못했습니다.'; gm.style.color = 'red'; return; }
-        gm.textContent = ''; $('edbCode').value = ''; showGate(false); $('edbBranch').textContent = r.branch; draw(r);
+        gm.textContent = ''; $('edbCode').value = ''; showGate(false); $('edbBranch').textContent = r.all ? '전체 지사' : r.branch + ' 지사(산하 지점 포함)'; draw(r);
       }).catch(() => { setCode(''); gm.textContent = '네트워크 오류가 발생했습니다.'; gm.style.color = 'red'; });
     });
     on('edbLogout', () => { setCode(''); showGate(true); });
