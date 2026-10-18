@@ -1598,7 +1598,7 @@ body.growon{ background:var(--g-navy); }
           <!-- DB관리 (행사 동의 DB 리스트·설계사 배분) -->
           <div class="edu-panel" id="admin-eventdb">
             <div id="edbGate">
-              <div class="disease-notice">🔒 DB관리는 지사별로 분리되어 있습니다. 본인 지사의 <b>DB관리 코드</b>를 입력하세요. (관리자 로그인 코드와는 별개이며, 아래에서 직접 변경할 수 있습니다.)</div>
+              <div class="disease-notice">🔒 DB관리는 지사별로 분리되어 있습니다. 본인 지사의 <b>DB관리 코드</b>를 입력하세요. (코드 변경은 관리자센터 로그인 화면의 '인증번호(관리자 코드) 변경'에서 합니다.)</div>
               <div style="display:flex; gap:8px; max-width:360px; margin:10px 0;">
                 <input type="password" id="edbCode" placeholder="DB관리 코드" autocomplete="off" style="flex:1; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <button type="button" class="qna-new-btn" id="edbGateBtn" style="margin:0;">확인</button>
@@ -1628,7 +1628,6 @@ body.growon{ background:var(--g-navy); }
               <tbody id="edbRows"></tbody>
             </table></div>
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="qna-new-btn" id="edbChange" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">🔑 DB관리 코드 변경</button>
               <button type="button" class="qna-new-btn" id="edbLogout" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">잠그기</button>
             </div>
             </div>
@@ -8791,7 +8790,7 @@ const limitCompareData = {};
     const acct = ADMIN_ACCOUNTS[code];
     const fail = () => { msg.textContent = '인증번호가 올바르지 않습니다.'; msg.style.color = 'var(--orange-deep)'; };
     if(acct){
-      try{ sessionStorage.setItem('growAdminCode', code); }catch(e){}
+      try{ sessionStorage.setItem('growAdminCode', code); sessionStorage.removeItem('growDbCode'); }catch(e){}
       if(acct.role === 'admin'){ admShowPicker(); }
       else if(acct.role === 'masteradmin'){ admShowMasterPicker(); }
       return;
@@ -8801,7 +8800,7 @@ const limitCompareData = {};
     fetch(ADMIN_SRV, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'login', code: code }) })
       .then(r => r.json()).then(r => {
         if(!r || !r.ok){ fail(); return; }
-        try{ sessionStorage.setItem('growAdminCode', code); }catch(e){}
+        try{ sessionStorage.setItem('growAdminCode', code); sessionStorage.removeItem('growDbCode'); }catch(e){}
         msg.textContent = '';
         if(r.role === 'admin'){
           const m = ADMIN_MEMBERS.find(x => x.branch === r.branch) || { name: '', title: r.branch + '지사장', branch: r.branch };
@@ -8842,7 +8841,7 @@ const limitCompareData = {};
 
   const _ao = document.getElementById('admOut');
   if(_ao) _ao.addEventListener('click', () => {
-    ['growAdmin','growRole','growBranch','growName','growLabel','growCanManageEdu','growAdminCode'].forEach(k => sessionStorage.removeItem(k));
+    ['growAdmin','growRole','growBranch','growName','growLabel','growCanManageEdu','growAdminCode','growDbCode'].forEach(k => sessionStorage.removeItem(k));
     location.reload();
   });
 
@@ -9812,14 +9811,6 @@ const limitCompareData = {};
       }).catch(() => { setCode(''); gm.textContent = '네트워크 오류가 발생했습니다.'; gm.style.color = 'red'; });
     });
     on('edbLogout', () => { setCode(''); showGate(true); });
-    on('edbChange', () => {
-      const nw = prompt('새 DB관리 코드를 입력하세요 (영문·숫자 6~20자)');
-      if(!nw) return;
-      fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-code', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dbCode: code(), newCode: nw.trim()})}).then(r => r.json()).then(r => {
-        if(!r.ok){ msg(r.error || '변경하지 못했습니다.', true); return; }
-        setCode(nw.trim()); try{ if(sessionStorage.getItem('growAdminCode')) sessionStorage.setItem('growAdminCode', nw.trim()); }catch(e){} msg('DB관리 코드를 변경했습니다. 다음부터 새 코드로 들어오세요.');
-      }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
-    });
     on('edbAssign', () => assign(null));
     on('edbUnassign', () => assign(''));
     const all = $('edbAll'); if(all) all.addEventListener('change', () => document.querySelectorAll('.edbChk').forEach(c => c.checked = all.checked));
