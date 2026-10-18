@@ -9783,7 +9783,46 @@ const limitCompareData = {};
     function code(){ try{ return sessionStorage.getItem('growDbCode') || ''; }catch(e){ return ''; } }
     function setCode(c){ try{ if(c) sessionStorage.setItem('growDbCode', c); else sessionStorage.removeItem('growDbCode'); }catch(e){} }
     function showGate(on){ $('edbGate').style.display = on ? '' : 'none'; $('edbMain').style.display = on ? 'none' : ''; }
+    /* 로딩 중 표시와 완료 알림 (화면 위쪽에 고정) */
+    let busyN = 0;
+    function toastEl(){
+      let t = document.getElementById('edbToast');
+      if(!t){
+        t = document.createElement('div'); t.id = 'edbToast';
+        t.style.cssText = 'position:fixed; left:50%; top:22px; transform:translateX(-50%); z-index:9999; display:none; align-items:center; gap:10px; padding:12px 20px; border-radius:999px; font-size:14px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,.18); font-family:inherit; max-width:90vw;';
+        document.body.appendChild(t);
+        if(!document.getElementById('edbSpinCss')){ const st = document.createElement('style'); st.id = 'edbSpinCss'; st.textContent = '@keyframes edbSpin{to{transform:rotate(360deg)}} .edb-spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:edbSpin .8s linear infinite;flex:none}'; document.head.appendChild(st); }
+      }
+      return t;
+    }
+    function busy(text){
+      busyN++; const t = toastEl();
+      if(!t._done){
+        t.style.background = '#1F2A44'; t.style.color = '#fff';
+        t.innerHTML = '<span class="edb-spin"></span><span>' + escapeHtml(text || '불러오는 중…') + '</span>';
+        t.style.display = 'flex';
+      }
+      document.querySelectorAll('#edbMain button').forEach(b => { b.dataset.wasDis = b.disabled ? '1' : ''; b.disabled = true; });
+    }
+    function idle(){
+      busyN = Math.max(0, busyN - 1); if(busyN) return;
+      const t = toastEl(); if(!t._done) t.style.display = 'none';
+      document.querySelectorAll('#edbMain button').forEach(b => { b.disabled = b.dataset.wasDis === '1'; });
+    }
+    function notify(text, bad){
+      const t = toastEl(); clearTimeout(t._h); t._done = true;
+      t.style.background = bad ? '#B02A20' : '#12693F'; t.style.color = '#fff';
+      t.innerHTML = '<span>' + (bad ? '⚠️ ' : '✅ ') + escapeHtml(text) + '</span>';
+      t.style.display = 'flex';
+      t._h = setTimeout(() => { t._done = false; if(!busyN) t.style.display = 'none'; }, 3500);
+      msg(text, bad);
+    }
+    const LBL = { list: 'DB 불러오는 중…', assign: '배분 처리 중…', delete: '삭제 중…' };
     function call(body){
+      busy(LBL[body.action] || '처리 중…');
+      return fetchRaw(body).finally(idle);
+    }
+    function fetchRaw(body){
       return fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({dbCode: code()}, body))}).then(r => r.json());
     }
     function msg(t, bad){ const m = $('edbMsg'); if(!m) return; m.textContent = t || ''; m.style.color = bad ? 'red' : ''; }
@@ -9811,13 +9850,12 @@ const limitCompareData = {};
       $('edbAll').checked = false;
       $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="11" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
-    window.edbLoad = function(){
+    window.edbLoad = function(after){
       if(!code()){ let ac = ''; try{ ac = sessionStorage.getItem('growAdminCode') || ''; }catch(e){} if(ac){ setCode(ac); } else { showGate(true); return; } }
-      msg('불러오는 중…');
       call({action:'list', eventName:$('edbEvent').value, from:$('edbFrom').value, to:$('edbTo').value}).then(r => {
         if(!r.ok){ msg(r.error || '불러오지 못했습니다.', true); if(/코드/.test(r.error||'')){ setCode(''); showGate(true); } return; }
-        msg(''); showGate(false); $('edbBranch').textContent = r.all ? '전체 지사' : r.branch + ' 지사(산하 지점 포함)'; draw(r);
-      }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
+        msg(typeof after === 'string' ? after : ''); showGate(false); $('edbBranch').textContent = r.all ? '전체 지사' : r.branch + ' 지사(산하 지점 포함)'; draw(r);
+      }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
     };
     function picked(){ return Array.from(document.querySelectorAll('.edbChk:checked')).map(c => Number(c.value)); }
     function assign(fc){
@@ -9827,10 +9865,10 @@ const limitCompareData = {};
       if(!confirm(fc ? ids.length + '건을 ' + fc + ' 설계사에게 배분할까요?' : ids.length + '건의 배분을 취소할까요?')) return;
       msg('처리 중…');
       call({action:'assign', ids, fc}).then(r => {
-        if(!r.ok){ msg(r.error || '처리하지 못했습니다.', true); return; }
-        msg(fc ? r.count + '건 배분 완료' + (r.alarmSent ? ' · 설계사에게 텔레그램 알림을 보냈습니다.' : '') : r.count + '건 배분 취소');
-        window.edbLoad();
-      }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
+        if(!r.ok){ notify(r.error || '처리하지 못했습니다.', true); return; }
+        const t = fc ? r.count + '건 배분 완료' + (r.alarmSent ? ' · 설계사에게 텔레그램 알림을 보냈습니다.' : '') : r.count + '건 배분 취소';
+        notify(t); window.edbLoad(t);
+      }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
     }
     const on = (id, fn) => { const e = $(id); if(e) e.addEventListener('click', fn); };
     on('edbLoad', () => window.edbLoad());
@@ -9879,8 +9917,8 @@ const limitCompareData = {};
         try{ const r = await call({action:'assign', ids: plan[n], fc: n}); if(r.ok) done += r.count || plan[n].length; else failN.push(n + '(' + (r.error || '실패') + ')'); }
         catch(e){ failN.push(n + '(네트워크 오류)'); }
       }
-      msg(done + '건 배분 완료' + (failN.length ? ' · 실패: ' + failN.join(', ') : ''), !!failN.length);
-      window.edbLoad();
+      const t = done + '건 배분 완료' + (failN.length ? ' · 실패: ' + failN.join(', ') : '');
+      notify(t, !!failN.length); window.edbLoad(t);
     });
     attDraw();
     /* 선택 건 삭제: DB관리 코드를 한 번 더 입력해야 삭제 */
@@ -9895,14 +9933,13 @@ const limitCompareData = {};
       const ids = picked(), cc = $('edbDelCode').value.trim();
       if(!ids.length){ msg('삭제할 건을 선택해 주세요.', true); return; }
       if(!cc){ msg('DB관리 코드를 다시 입력해 주세요.', true); return; }
-      msg('삭제 중…');
       call({action:'delete', ids, confirmCode: cc}).then(r => {
         $('edbDelCode').value = '';
-        if(!r.ok){ msg(r.error || '삭제하지 못했습니다.', true); return; }
+        if(!r.ok){ notify(r.error || '삭제하지 못했습니다.', true); return; }
         $('edbDelBox').style.display = 'none';
-        msg(r.count + '건 삭제 완료');
-        window.edbLoad();
-      }).catch(() => msg('네트워크 오류가 발생했습니다.', true));
+        const t = r.count + '건 삭제했습니다';
+        notify(t); window.edbLoad(t);
+      }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
     });
     const _dc = $('edbDelCode'); if(_dc) _dc.addEventListener('keydown', e => { if(e.key === 'Enter') $('edbDelOk').click(); });
     on('edbAssign', () => assign(null));
