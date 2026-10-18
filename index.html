@@ -1643,8 +1643,29 @@ body.growon{ background:var(--g-navy); }
               <button type="button" class="qna-new-btn" id="edbAttSplit" style="margin:10px 0 0;">선택 건을 참석 설계사에게 골고루 분배</button>
               <div style="font-size:11.5px; color:#888; margin-top:6px;">이름을 누르면 그 설계사에게 선택 건을 한 번에 배분합니다. ×는 참석 명단에서만 뺍니다.</div>
             </div>
+            <div id="edbKey" style="display:none; margin:4px 0 12px; padding:12px 14px; border:1px solid #C9D3E6; border-radius:10px; background:#F5F8FD;">
+              <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin-bottom:6px;">🔐 주민등록번호 열쇠 <span id="edbKeySt" style="font-weight:600; color:#666;"></span></div>
+              <div id="edbKeyMake" style="display:none;">
+                <div style="font-size:12px; color:#555; margin-bottom:8px;">열쇠를 만들면 행사 동의 화면에 주민등록번호 칸이 켜집니다. 열쇠 파일은 이 PC에만 저장되며, 파일과 비밀번호를 잃으면 수집한 주민등록번호를 볼 수 없습니다. 파일을 USB 등에 따로 백업해 두세요.</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <input type="password" id="edbKp1" placeholder="열쇠 비밀번호 (8자 이상)" autocomplete="new-password" style="flex:1; min-width:150px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                  <input type="password" id="edbKp2" placeholder="비밀번호 확인" autocomplete="new-password" style="flex:1; min-width:150px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                  <input type="password" id="edbKcode" placeholder="DB관리 코드 재입력" autocomplete="off" style="flex:1; min-width:150px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                  <button type="button" class="qna-new-btn" id="edbKmake" style="margin:0;">열쇠 만들고 수집 켜기</button>
+                </div>
+              </div>
+              <div id="edbKeyOpen" style="display:none;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                  <input type="file" id="edbKfile" accept=".json,application/json" style="font-size:12px;">
+                  <input type="password" id="edbKpw" placeholder="열쇠 비밀번호" autocomplete="off" style="flex:1; min-width:150px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                  <button type="button" class="qna-new-btn" id="edbKopen" style="margin:0;">주민번호 보기</button>
+                  <button type="button" class="qna-new-btn" id="edbKlock" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line); display:none;">다시 잠그기</button>
+                </div>
+                <div style="font-size:11.5px; color:#888; margin-top:6px;">열쇠는 이 화면에서만 쓰이고 서버로 보내지지 않습니다. 목록에는 뒷자리가 가려져 보이며, 누르면 10초간 전체가 보입니다. CSV에는 주민등록번호가 들어가지 않습니다.</div>
+              </div>
+            </div>
             <style>#edbTbl th,#edbTbl td{white-space:nowrap;padding:7px 8px;vertical-align:middle}#edbTbl td.memo{max-width:180px;overflow:hidden;text-overflow:ellipsis}</style><div style="overflow-x:auto;"><table id="edbTbl" style="width:100%; border-collapse:collapse; font-size:12.5px;">
-              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
+              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>주민등록번호</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
               <tbody id="edbRows"></tbody>
             </table></div>
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
@@ -9802,7 +9823,7 @@ const limitCompareData = {};
         t.innerHTML = '<span class="edb-spin"></span><span>' + escapeHtml(text || '불러오는 중…') + '</span>';
         t.style.display = 'flex';
       }
-      document.querySelectorAll('#edbMain button').forEach(b => { b.dataset.wasDis = b.disabled ? '1' : ''; b.disabled = true; });
+      if(busyN === 1) document.querySelectorAll('#edbMain button').forEach(b => { b.dataset.wasDis = b.disabled ? '1' : ''; b.disabled = true; });
     }
     function idle(){
       busyN = Math.max(0, busyN - 1); if(busyN) return;
@@ -9838,7 +9859,7 @@ const limitCompareData = {};
       bs.value = brs.indexOf(bcur) >= 0 ? bcur : '';
       bs.parentNode && (bs.style.display = brs.length > 1 || r.all ? '' : 'none');
       $('edbFcList').innerHTML = (r.fcs||[]).map(n => '<option value="' + escapeHtml(n) + '">').join('');
-      render();
+      render(); keyUi(); if(PRIV) decryptAll().then(render);
     }
     function render(){
       if(!LAST) return;
@@ -9847,9 +9868,82 @@ const limitCompareData = {};
       const sm = {}; ROWS.forEach(x => { const k = x.eventDate + '|' + x.eventName + '|' + x.kind; sm[k] = (sm[k] || 0) + 1; });
       const summary = Object.keys(sm).sort().reverse().map(k => { const p = k.split('|'); return { date: p[0], eventName: p[1], kind: p[2], count: sm[k] }; });
       $('edbSummary').innerHTML = '<b>총 ' + ROWS.length + '건</b>' + (bf ? ' <span style="color:#888; font-size:12.5px;">(' + escapeHtml(bf) + ')</span>' : '') + (summary.length ? '<div style="margin-top:6px; font-size:12.5px; line-height:1.8;">' + summary.map(x => escapeHtml(x.date) + ' · ' + escapeHtml(x.eventName) + ' · ' + escapeHtml(x.kind) + ' — <b>' + x.count + '건</b>').join('<br>') + '</div>' : '');
-      $('edbAll').checked = false;
-      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="11" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
+      $('edbAll').checked = false; keyUi();
+      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td>' + rrnCell(x) + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="12" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
+
+    /* ── 주민등록번호: 공개키로 고객 휴대폰에서 암호화된 값을 대표님 열쇠(브라우저 안)로만 풂 ── */
+    let PRIV = null; const DEC = {};
+    const b64 = u => btoa(String.fromCharCode.apply(null, new Uint8Array(u)));
+    const unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+    function pwKey(pw, salt){ return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']).then(k => crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:310000, hash:'SHA-256'}, k, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt'])); }
+    function rrnMask(v){ return v ? v.slice(0, 8) + '******' : ''; }
+    function rrnCell(x){
+      if(!x.rrnEnc) return '<span style="color:#aaa">-</span>';
+      const d = DEC[x.id];
+      if(!d) return '<span style="color:#888">🔒 암호화</span>';
+      const part = (lbl, v) => v ? '<span class="edbRrn" data-v="' + escapeHtml(v) + '" style="cursor:pointer; text-decoration:underline dotted;">' + (lbl ? lbl + ' ' : '') + escapeHtml(rrnMask(v)) + '</span>' : '';
+      return [part(x.childName ? '보호자' : '', d.p), part('자녀', d.c)].filter(Boolean).join(' / ');
+    }
+    function keyUi(){
+      const box = $('edbKey'); if(!LAST || !LAST.all){ box.style.display = 'none'; return; }
+      box.style.display = '';
+      $('edbKeyMake').style.display = LAST.hasKey ? 'none' : '';
+      $('edbKeyOpen').style.display = LAST.hasKey ? '' : 'none';
+      $('edbKlock').style.display = PRIV ? '' : 'none';
+      $('edbKeySt').textContent = !LAST.hasKey ? '· 미발급 (주민번호 수집 꺼짐)' : (PRIV ? '· 열림' : '· 발급됨 (수집 켜짐)');
+    }
+    function decryptAll(){
+      if(!PRIV || !LAST) return Promise.resolve();
+      return Promise.all((LAST.rows || []).filter(x => x.rrnEnc && x.rrnEnc.length > 10 && !DEC[x.id]).map(x =>
+        crypto.subtle.decrypt({name:'RSA-OAEP'}, PRIV, unb64(x.rrnEnc)).then(b => { DEC[x.id] = JSON.parse(new TextDecoder().decode(b)); }).catch(() => { DEC[x.id] = {p:'복호화 실패'}; })
+      ));
+    }
+    document.addEventListener('click', e => {
+      const el = e.target.closest && e.target.closest('.edbRrn'); if(!el) return;
+      const v = el.dataset.v, t = el.textContent, lbl = t.indexOf(' ') > 0 && !/^\d/.test(t) ? t.split(' ')[0] + ' ' : '';
+      el.textContent = lbl + v; clearTimeout(el._h); el._h = setTimeout(() => { el.textContent = lbl + rrnMask(v); }, 10000);
+    });
+    $('edbKmake').addEventListener('click', () => {
+      const p1 = $('edbKp1').value, p2 = $('edbKp2').value, cc = $('edbKcode').value.trim();
+      if(p1.length < 8){ notify('열쇠 비밀번호를 8자 이상 입력해 주세요.', true); return; }
+      if(p1 !== p2){ notify('비밀번호 확인이 일치하지 않습니다.', true); return; }
+      if(!cc){ notify('DB관리 코드를 다시 입력해 주세요.', true); return; }
+      if(!confirm('주민등록번호 열쇠를 만들고 행사 동의 화면의 주민번호 수집을 켭니다. 진행할까요?')) return;
+      busy('열쇠 만드는 중…');
+      let pubB64 = '', fileTxt = '';
+      crypto.subtle.generateKey({name:'RSA-OAEP', modulusLength:2048, publicExponent:new Uint8Array([1,0,1]), hash:'SHA-256'}, true, ['encrypt','decrypt']).then(kp =>
+        Promise.all([crypto.subtle.exportKey('spki', kp.publicKey), crypto.subtle.exportKey('pkcs8', kp.privateKey)]).then(([spki, pk8]) => {
+          pubB64 = b64(spki);
+          const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+          return pwKey(p1, salt).then(ak => crypto.subtle.encrypt({name:'AES-GCM', iv}, ak, pk8)).then(ct => {
+            fileTxt = JSON.stringify({ v:1, type:'daon-rrn-key', madeAt:new Date().toISOString(), salt:b64(salt), iv:b64(iv), key:b64(ct), pub:pubB64 });
+          });
+        })
+      ).then(() => fetchRaw({action:'setkey', pubkey:pubB64, confirmCode:cc})).then(r => {
+        if(!r.ok){ notify(r.error || '등록하지 못했습니다.', true); return; }
+        const a = document.createElement('a'); const d = new Date();
+        a.href = URL.createObjectURL(new Blob([fileTxt], {type:'application/json'}));
+        a.download = '다온_주민번호열쇠_' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        $('edbKp1').value = $('edbKp2').value = $('edbKcode').value = '';
+        notify('열쇠를 만들었습니다. 내려받은 열쇠 파일을 꼭 백업해 두세요. 이제 행사 동의 화면에서 주민등록번호를 받습니다.');
+        window.edbLoad();
+      }).catch(() => notify('열쇠를 만들지 못했습니다. 다시 시도해 주세요.', true)).finally(idle);
+    });
+    $('edbKopen').addEventListener('click', () => {
+      const f = $('edbKfile').files[0], pw = $('edbKpw').value;
+      if(!f){ notify('열쇠 파일을 선택해 주세요.', true); return; }
+      if(!pw){ notify('열쇠 비밀번호를 입력해 주세요.', true); return; }
+      busy('주민번호 여는 중…');
+      f.text().then(t => {
+        const k = JSON.parse(t); if(k.type !== 'daon-rrn-key') throw new Error('file');
+        return pwKey(pw, unb64(k.salt)).then(ak => crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(k.iv)}, ak, unb64(k.key)))
+          .then(pk8 => crypto.subtle.importKey('pkcs8', pk8, {name:'RSA-OAEP', hash:'SHA-256'}, false, ['decrypt']));
+      }).then(k => { PRIV = k; $('edbKpw').value = ''; return decryptAll(); }).then(() => { render(); notify('주민등록번호를 열었습니다.'); })
+        .catch(() => notify('열쇠 파일 또는 비밀번호가 올바르지 않습니다.', true)).finally(idle);
+    });
+    $('edbKlock').addEventListener('click', () => { PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]); render(); notify('주민등록번호를 다시 잠갔습니다.'); });
     window.edbLoad = function(after){
       if(!code()){ let ac = ''; try{ ac = sessionStorage.getItem('growAdminCode') || ''; }catch(e){} if(ac){ setCode(ac); } else { showGate(true); return; } }
       call({action:'list', eventName:$('edbEvent').value, from:$('edbFrom').value, to:$('edbTo').value}).then(r => {
@@ -9884,7 +9978,7 @@ const limitCompareData = {};
         gm.textContent = ''; $('edbCode').value = ''; showGate(false); $('edbBranch').textContent = r.all ? '전체 지사' : r.branch + ' 지사(산하 지점 포함)'; draw(r);
       }).catch(() => { setCode(''); gm.textContent = '네트워크 오류가 발생했습니다.'; gm.style.color = 'red'; });
     });
-    on('edbLogout', () => { setCode(''); showGate(true); });
+    on('edbLogout', () => { setCode(''); PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]); showGate(true); });
     /* 행사 참석 설계사: 행사(선택된 행사명)별로 이 기기에 저장 */
     const attKey = () => 'growEdbAtt:' + ($('edbEvent').value || '전체');
     function attGet(){ try{ return JSON.parse(localStorage.getItem(attKey()) || '[]'); }catch(e){ return []; } }
