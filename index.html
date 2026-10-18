@@ -1606,8 +1606,9 @@ body.growon{ background:var(--g-navy); }
             </div>
             <div id="edbMain" style="display:none;">
             <div class="disease-notice">📂 행사 현장에서 고객이 동의한 DB입니다. <b id="edbBranch"></b> DB가 보입니다. 다른 지사·산하 지점 설계사에게도 배분할 수 있으며, 목록에서 고르면 <b>이름 (지사)</b> 형식으로 들어갑니다. 배분하면 해당 설계사 텔레그램으로 알림이 가고, 설계사는 <b>내 DB 조회</b>에서 확인합니다.</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; margin:10px 0; align-items:end;">
+            <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr auto; gap:8px; margin:10px 0; align-items:end;">
               <select id="edbEvent" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;"><option value="">전체 행사</option></select>
+              <select id="edbBr" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;"><option value="">전체 지사</option></select>
               <input type="date" id="edbFrom" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
               <input type="date" id="edbTo" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
               <button type="button" class="qna-new-btn" id="edbLoad" style="margin:0;">조회</button>
@@ -1621,7 +1622,7 @@ body.growon{ background:var(--g-navy); }
               <button type="button" class="qna-new-btn" id="edbAssign" style="margin:0;">선택 건 배분</button>
               <button type="button" class="qna-new-btn" id="edbUnassign" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">배분 취소</button>
               <button type="button" class="qna-new-btn" id="edbDel" style="margin:0; background:#fff; color:#B02A20; border:1px solid #E7B9AC;">🗑️ 선택 건 삭제</button>
-              <button type="button" class="qna-new-btn" id="edbCsv" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">CSV 저장</button>
+              <button type="button" class="qna-new-btn" id="edbCsv" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">CSV 저장 (선택 건만, 없으면 전체)</button>
             </div>
             <div id="edbDelBox" style="display:none; margin:4px 0 12px; padding:12px 14px; border:1px solid #E7B9AC; border-radius:10px; background:#FFF6F3;">
               <div style="font-size:13px; font-weight:700; color:#B02A20; margin-bottom:6px;" id="edbDelTxt"></div>
@@ -9786,13 +9787,27 @@ const limitCompareData = {};
       return fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({dbCode: code()}, body))}).then(r => r.json());
     }
     function msg(t, bad){ const m = $('edbMsg'); if(!m) return; m.textContent = t || ''; m.style.color = bad ? 'red' : ''; }
+    let LAST = null;
     function draw(r){
-      ROWS = r.rows || [];
+      LAST = r;
       const sel = $('edbEvent'), cur = sel.value;
       sel.innerHTML = '<option value="">전체 행사</option>' + (r.events||[]).map(e => '<option>' + escapeHtml(e) + '</option>').join('');
       sel.value = cur;
+      const bs = $('edbBr'), bcur = bs.value;
+      const brs = Array.from(new Set((r.rows||[]).map(x => x.branch || '미지정'))).sort();
+      bs.innerHTML = '<option value="">전체 지사</option>' + brs.map(x => '<option>' + escapeHtml(x) + '</option>').join('');
+      bs.value = brs.indexOf(bcur) >= 0 ? bcur : '';
+      bs.parentNode && (bs.style.display = brs.length > 1 || r.all ? '' : 'none');
       $('edbFcList').innerHTML = (r.fcs||[]).map(n => '<option value="' + escapeHtml(n) + '">').join('');
-      $('edbSummary').innerHTML = '<b>총 ' + r.total + '건</b>' + ((r.summary||[]).length ? '<div style="margin-top:6px; font-size:12.5px; line-height:1.8;">' + r.summary.map(x => escapeHtml(x.date) + ' · ' + escapeHtml(x.eventName) + ' · ' + escapeHtml(x.kind) + ' — <b>' + x.count + '건</b>').join('<br>') + '</div>' : '');
+      render();
+    }
+    function render(){
+      if(!LAST) return;
+      const bf = $('edbBr').value;
+      ROWS = (LAST.rows || []).filter(x => !bf || (x.branch || '미지정') === bf);
+      const sm = {}; ROWS.forEach(x => { const k = x.eventDate + '|' + x.eventName + '|' + x.kind; sm[k] = (sm[k] || 0) + 1; });
+      const summary = Object.keys(sm).sort().reverse().map(k => { const p = k.split('|'); return { date: p[0], eventName: p[1], kind: p[2], count: sm[k] }; });
+      $('edbSummary').innerHTML = '<b>총 ' + ROWS.length + '건</b>' + (bf ? ' <span style="color:#888; font-size:12.5px;">(' + escapeHtml(bf) + ')</span>' : '') + (summary.length ? '<div style="margin-top:6px; font-size:12.5px; line-height:1.8;">' + summary.map(x => escapeHtml(x.date) + ' · ' + escapeHtml(x.eventName) + ' · ' + escapeHtml(x.kind) + ' — <b>' + x.count + '건</b>').join('<br>') + '</div>' : '');
       $('edbAll').checked = false;
       $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="11" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
@@ -9819,6 +9834,8 @@ const limitCompareData = {};
     }
     const on = (id, fn) => { const e = $(id); if(e) e.addEventListener('click', fn); };
     on('edbLoad', () => window.edbLoad());
+    const _es = $('edbEvent'); if(_es) _es.addEventListener('change', () => window.edbLoad());
+    const _bs = $('edbBr'); if(_bs) _bs.addEventListener('change', render);
     on('edbGateBtn', () => {
       const c = $('edbCode').value.trim(), gm = $('edbGateMsg');
       if(!c){ gm.textContent = '코드를 입력해 주세요.'; gm.style.color = 'red'; return; }
@@ -9892,11 +9909,12 @@ const limitCompareData = {};
     on('edbUnassign', () => assign(''));
     const all = $('edbAll'); if(all) all.addEventListener('change', () => document.querySelectorAll('.edbChk').forEach(c => c.checked = all.checked));
     on('edbCsv', () => {
-      if(!ROWS.length) return;
+      const chk = picked(); const OUT = chk.length ? ROWS.filter(x => chk.indexOf(Number(x.id)) >= 0) : ROWS;
+      if(!OUT.length){ msg('저장할 건이 없습니다.', true); return; }
       const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-      const lines = [['날짜','행사','체험','지사','성명','생년월일','자녀','자녀생년월일','연락처','반려동물정보','담당설계사'].map(q).join(',')].concat(ROWS.map(x => [x.eventDate,x.eventName,x.kind,x.branch,x.personName,x.personBirth,x.childName,x.childBirth,x.phone,x.petInfo,x.assignedFc].map(q).join(',')));
+      const lines = [['날짜','행사','체험','지사','성명','생년월일','자녀','자녀생년월일','연락처','반려동물정보','담당설계사'].map(q).join(',')].concat(OUT.map(x => [x.eventDate,x.eventName,x.kind,x.branch,x.personName,x.personBirth,x.childName,x.childBirth,x.phone,x.petInfo,x.assignedFc].map(q).join(',')));
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'}));
-      a.download = '행사DB_' + new Date().toISOString().slice(0,10) + '.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      a.download = ['행사DB', $('edbEvent').value, $('edbBr').value, chk.length ? '선택' + OUT.length + '건' : '', new Date().toISOString().slice(0,10)].filter(Boolean).join('_').replace(/[\\/:*?"<>|\s]+/g, '') + '.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
     });
     /* 탭은 관리자·지사장 로그인에서만 표시(교육본부장·지점장 제외) */
     window.edbShowTab = function(){
