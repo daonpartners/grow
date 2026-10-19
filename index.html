@@ -9969,12 +9969,43 @@ const limitCompareData = {};
       el.textContent = l + v; clearTimeout(el._h); el._h = setTimeout(() => { el.textContent = l + rrnKit.mask(v); }, 10000);
     });
     function rrnCell(x){
+      if(!x.rrnAny && x.manual) return PRIV ? '<button type="button" class="edbRrnIn" data-id="' + x.id + '" style="border:1px solid #C9D3E6; background:#F5F8FD; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer;">✏️ 입력</button>' : '<span style="color:#aaa" title="열람 비밀번호로 열면 입력할 수 있습니다">미입력</span>';
       if(!x.rrnAny) return '<span style="color:#aaa">-</span>';
       if(!x.rrn) return '<span style="color:#8A6300" title="주민번호를 가진 다른 지사장이 열면 자동으로 전달됩니다">⏳ 전달 대기</span>';
       const d = DEC[x.id];
       if(!d) return '<span style="color:#888">🔒 잠김</span>';
       return rrnKit.cell(d, !!x.childName);
     }
+    /* 이번 1회: 새 동의서 이전 행사 DB에 주민번호 직접 입력 (입력 즉시 이 화면에서 열람권자별로 잠가 저장) */
+    function rrnModal(x){
+      const yy = b => /^\d{4}-\d{2}-\d{2}$/.test(b || '') ? b.slice(2,4) + b.slice(5,7) + b.slice(8,10) : '';
+      const ok = (b, back) => { const y = +String(b).slice(0,4), g = back.charAt(0); return /^\d{7}$/.test(back) && (y < 2000 ? /[1256]/.test(g) : /[3478]/.test(g)); };
+      const row = (id, lbl, b) => '<label style="display:block; font-size:12.5px; font-weight:700; margin:10px 0 4px;">' + lbl + '</label><div style="display:flex; gap:6px; align-items:center;"><input value="' + yy(b) + '" readonly style="width:90px; padding:9px; border:1px solid var(--line); border-radius:8px; background:#f4f4f4; text-align:center;"><span>-</span><input type="password" id="' + id + '" inputmode="numeric" maxlength="7" placeholder="뒤 7자리" autocomplete="off" style="flex:1; padding:9px; border:1px solid var(--line); border-radius:8px;"></div>';
+      const w = document.createElement('div');
+      w.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:9998; display:flex; align-items:center; justify-content:center; padding:16px;';
+      w.innerHTML = '<div style="background:#fff; border-radius:14px; padding:18px; width:100%; max-width:360px; font-family:inherit;"><div style="font-weight:800; font-size:15px;">주민등록번호 입력</div><div style="font-size:12.5px; color:#666; margin-top:4px;">' + escapeHtml(x.personName) + ' · ' + escapeHtml(x.eventName) + '</div>' + row('rmP', x.childName ? '보호자 ' + escapeHtml(x.personName) : '본인 ' + escapeHtml(x.personName), x.personBirth) + (x.childName ? row('rmC', '자녀 ' + escapeHtml(x.childName), x.childBirth) : '') + '<div id="rmErr" style="color:#B02A20; font-size:12.5px; font-weight:700; margin-top:8px;"></div><div style="display:flex; gap:8px; margin-top:12px;"><button type="button" id="rmOk" class="qna-new-btn" style="margin:0; flex:1;">잠가서 저장</button><button type="button" id="rmNo" class="qna-new-btn" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">취소</button></div><div style="font-size:11.5px; color:#888; margin-top:8px;">저장하면 다온·담당 지사장 열쇠로 잠겨 저장되고, 배분 시 설계사에게 전달됩니다.</div></div>';
+      document.body.appendChild(w);
+      const close = () => { w.remove(); };
+      w.querySelector('#rmNo').addEventListener('click', close);
+      w.querySelectorAll('input[type=password]').forEach(i => i.addEventListener('input', () => { i.value = i.value.replace(/[^0-9]/g, '').slice(0, 7); }));
+      w.querySelector('#rmP').focus();
+      w.querySelector('#rmOk').addEventListener('click', () => {
+        const e = w.querySelector('#rmErr'), pb = w.querySelector('#rmP').value, cb = x.childName ? w.querySelector('#rmC').value : '';
+        if(!ok(x.personBirth, pb)){ e.textContent = (x.childName ? '보호자' : '본인') + ' 주민번호 뒤 7자리를 확인해 주세요.'; return; }
+        if(x.childName && !ok(x.childBirth, cb)){ e.textContent = '자녀 주민번호 뒤 7자리를 확인해 주세요.'; return; }
+        const d = { p: yy(x.personBirth) + '-' + pb }; if(x.childName) d.c = yy(x.childBirth) + '-' + cb;
+        const pubs = LAST.pubs || {}, box = {};
+        busy('잠가서 저장 중…');
+        Promise.all((x.manual || []).filter(o => pubs[o]).map(o => rrnKit.enc(pubs[o], d).then(ct => { box[o] = ct; })))
+          .then(() => fetchRaw({action:'setrrn', items:[{id:x.id, box}]}))
+          .then(r => { if(!r.ok){ e.textContent = r.error || '저장하지 못했습니다.'; return; } close(); notify(x.personName + ' 주민번호를 저장했습니다.'); window.edbLoad(); })
+          .catch(() => { e.textContent = '저장하지 못했습니다. 다시 시도해 주세요.'; }).finally(idle);
+      });
+    }
+    document.addEventListener('click', e => {
+      const b = e.target.closest && e.target.closest('.edbRrnIn'); if(!b || !LAST) return;
+      const x = (LAST.rows || []).find(r => String(r.id) === b.dataset.id); if(x) rrnModal(x);
+    });
     function keyUi(){
       const box = $('edbKey'); if(!LAST){ box.style.display = 'none'; return; }
       box.style.display = '';
