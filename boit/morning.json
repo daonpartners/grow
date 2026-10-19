@@ -1,85 +1,85 @@
 {
-  "date": "2026-10-19",
-  "dateLabel": "2026.10.19(월)",
+  "date": "2026-10-20",
+  "dateLabel": "2026.10.20(화)",
   "weather": [
     {
       "city": "서울",
       "min": 10,
-      "max": 18,
-      "code": 2
-    },
-    {
-      "city": "부산",
-      "min": 18,
-      "max": 23,
-      "code": 65
-    },
-    {
-      "city": "대구",
-      "min": 16,
-      "max": 21,
-      "code": 51
-    },
-    {
-      "city": "인천",
-      "min": 10,
-      "max": 17,
-      "code": 3
-    },
-    {
-      "city": "광주",
-      "min": 15,
       "max": 20,
       "code": 53
     },
     {
+      "city": "부산",
+      "min": 14,
+      "max": 19,
+      "code": 65
+    },
+    {
+      "city": "대구",
+      "min": 13,
+      "max": 18,
+      "code": 63
+    },
+    {
+      "city": "인천",
+      "min": 10,
+      "max": 19,
+      "code": 53
+    },
+    {
+      "city": "광주",
+      "min": 13,
+      "max": 18,
+      "code": 63
+    },
+    {
       "city": "대전",
-      "min": 12,
-      "max": 20,
-      "code": 3
+      "min": 11,
+      "max": 21,
+      "code": 55
     },
     {
       "city": "강릉",
-      "min": 15,
+      "min": 13,
       "max": 20,
-      "code": 3
+      "code": 53
     },
     {
       "city": "제주",
-      "min": 18,
-      "max": 23,
-      "code": 65
+      "min": 17,
+      "max": 24,
+      "code": 61
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "5,668.05",
-      "diff": "+113.83",
+      "value": "5,768.01",
+      "diff": "+213.79",
       "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "794.78",
-      "diff": "+33.96",
+      "value": "808.89",
+      "diff": "+48.07",
       "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,335.94",
-      "diff": "-5.01",
+      "value": "1,332.35",
+      "diff": "-1.08",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "99.0",
-      "diff": "+1.0",
-      "dir": "up"
+      "value": "98.2",
+      "diff": "-3.2",
+      "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "673,441",
-      "diff": "-748",
+      "value": "668,291",
+      "diff": "-3,885",
       "dir": "down"
     }
   ],
@@ -87,79 +87,79 @@
   "news": [
     {
       "cat": "보험",
-      "title": "해킹 잇따르는데, 사이버보험 가입 ‘안 하나 못 하나’",
+      "title": "취약 어르신 65만 명에 낙상사고 치료비·치매배상보험 무료 제공",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9TVTRxOGctajNmMXV3VE9nN3MwOWlCLU5seDR2TmplY3hsXy1sYjNPQmhOS0hnRGItQzRDRkFzVWdUbjd4a1FZV2lzY1U1c1p6c1JfWWRIb3VERnV5WE8zdU9vQ2d0Wmxod1Fj0gFvQVVfeXFMTnVRVkl1Szl2cWFzc3pmQ3ZGemZyOVMzRE1oNDAtVWY2Ym00ZUthckU1S3lGdXdpSkNOSUVYM2RHSjBUYWZJcXlLaDF2b0xxUXRMQlJpZk1JN1pvRXJ5dlJ0VDZzWFhNeVk0cVdvbXFZ?oc=5",
-      "host": "한국보험신문"
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5vZzdXWDRVMDMtOFNKQmNHS3NkRGE1WHRGRVdBZ1M2NjdRd1BpZkd6TGJRek81a210WWNTYmRwdVYtMm52aWxlMEtkWHJFT0tNOTVYb1VGeGN0MUxfdDdSX1VfNmJfa0F4Tk4xYQ?oc=5",
+      "host": "대한민국 정책브리핑"
     },
     {
       "cat": "보험",
-      "title": "[단독] 46만원 냈더니 1억 주던데요…보험료 연체자에 내준 보험금 2400억",
+      "title": "65만명 취약어르신 낙상사고 치료비, 치매배상책임보험 무료 제공",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1oeDdlWHFURi03WU9UUFJxakZvTEZuY0NQYUU0REJaZUFYd1NPUjBnUENzVkxfcjdPZWhtWkU1b3phc0FKMkxMejY0b18zOHl3NWlORnNn?oc=5",
-      "host": "매일경제"
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5lcGYtNkRiWGdDMDkxVEkxdDA0ZFZCcWVpcTZNaFFDRm44cFdaVnNGVHdweXFtM0VFUHBEMFQzWGFReGdlVElheGItNHJOWEl2VXhrM0hQcGpGODNtS19ubV9hNFpDS01NUncw?oc=5",
+      "host": "한국의약통신"
     },
     {
       "cat": "보험",
-      "title": "車보험 누수 줄이자...보험사·한방병원 머리 맞댄다",
+      "title": "수리비 비싼 전기차 올해 75% 급증…보험업계 속탄다",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE84V0Jha1VmOGF5T0FMb3UtaTdsV3FEbVpwM1RWeFpVS3o1U0FwUFpFWFRoQjV6cGVLNkZaaElYMjdnX3B1cjdjVTRObmVrUHRUcmfSAVNBVV95cUxOc3ZNLTJDZ0tmeHpqSWU5eDRKRTMzTWdaeVVQX3pLa0RDaUJ5YkRaX1dRQ2lkaUIxY1lhLTVCSGNLUTRTRkwwdHpWVUlrLVZjVXc3Yw?oc=5",
-      "host": "서울경제"
-    },
-    {
-      "cat": "보험",
-      "title": "치매·간병보험 담보별 수익성 관리",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9QdUowSThBeHdVRnA0NVhRLTFKcEVsX3hDMEhQbXdmZThJU1pZczVyeF9UYkpINU5YamZEVVVPWGJiZWtKMTVnRlJ5SHRaQ3hlM1dHbEN0Yk40V3c3S1hBb0tobTR0VFdlb1Fj?oc=5",
-      "host": "보험신보"
-    },
-    {
-      "cat": "보험",
-      "title": "[시론] 보험사기 방지와 소비자보호 사이의 균형",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE91NDhmRDlGT09rR0V6SFV0S0Q4UWF5amdZM0FpcXBDNUpmaDFvSXBNSmlqRXlzMGNkcnY5dGdsaVJIakM2MThpczgwLWgzLTRfcVVrN0FfMWlpNHhsTjJNaHV4Y2tURjJsUUVZ0gFvQVVfeXFMUEV1LUd6dmlXQndxVXZadUlMUVJVUUE3Z0Jaanpnclc3N2s1bWQ5N3JuOGFnRUU1OGh6VVRDZVA2T0paRXdXY1AtaGxhTU43U3VrRGJzQy1Kb1V2Y21yYk1vYjc3WC05aWd3YXZ3OHBN?oc=5",
-      "host": "한국보험신문"
-    },
-    {
-      "cat": "경제",
-      "title": "정부 \"우리 경제 견조한 경기회복세…민생부담·불확실성은 상존\"",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9rc0NfSmVqRDdOV3h5bjU2OEs1QXpaU0JWWFJ3UE4xRjM1YXNRUW9jckVMVlJLWEt1eWRiNWJMTTNDTlFDODUwcGZaXzJMdXY1ZW1aWHZMOWxwTFdTQTJxejFmSXFEQlF1M29aZA?oc=5",
-      "host": "정책브리핑"
-    },
-    {
-      "cat": "경제",
-      "title": "[황병성 칼럼] 경제성장률의 착각",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1tVkhUdlNPZURrdXh5Z0VLOGhDckhDVEJJZ1Bpb2FtOGJENk1KYm41TFRPUF9OQ20taWQxdERIZUx6RVUzRnlWb2VmNTZsOWZrcVdhX3puYzdFTkZNVWpxMGpQTWxmUVBCMUE?oc=5",
-      "host": "철강금속신문"
-    },
-    {
-      "cat": "경제",
-      "title": "중간선거앞 트럼프 지지율 잇단 최저치…경제정책 반대 70%",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5qbHBkTG1icVBkaGx6STdpanBqOC1pbWFIR2VxdDgwNU5BN21JWlpLbWtWby1xTE95WmJ4YTZKMUFOQ3lHNE5OMnNZNjN5SElEQkpqN0xCZllwZlXSAWBBVV95cUxQS25EY1Q4b256YUtxXzZhUnp5b2tIVVNzbk9xQXJQcld6ak5GWTNoazF5eW5CWGlBWnlqQzRtbF9KRE9CWnd1RWJyWGxGcVFqMDVDOHhfaTMta2xJa1MyVDY?oc=5",
-      "host": "연합뉴스"
-    },
-    {
-      "cat": "경제",
-      "title": "[리셋 코리아] 한·일 관계, 경제안보 파트너십으로 발전해야",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5LaFJvajBMdzVJNUZnQ1d4QTZtRk42cnlwMV8wOFRyQnZzbGFkek1sdW5QQUdVYTAtV19hUTZRcEJXcTBHRm9rSmNYdGVwbGN3TWhPSFF3?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBOVTBOUTlYTF9wRGVrdGd0ZTRIeUNrUGlPZkt6Rl9jSFpVc1F1OWgzOTlTYjh3OUpEMVdld3hvZEppTEdzcW5xblc1MVVuN3hLVEF2N093?oc=5",
       "host": "중앙일보"
     },
     {
-      "cat": "경제",
-      "title": "[국제 경제 흐름 읽기] 고유가 버틴 세계경제⋯재정·AI 부채가 복병",
+      "cat": "보험",
+      "title": "\"평생 보장보다 가성비\"…종신보험 지고 정기보험 뜬다",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5Qc0tRNnZHOE9RVFlsQUo5VGpGRDBseFZPekNWeUpIOXdpX0VKN3Q2c2R2TFpJaU10N1kwenN5d3pmRVRsdjZRVFI1bGozQm9fNGh6R2JHZ19fTXg0TUE?oc=5",
-      "host": "포커스온경제"
+      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5iTnhXRkltR3VzendQQTllSG5IcVJBU0ducVR1bFJrQVdLS01FenV2V29mb3pQTnMyVWtfLXpQa215M3RpelM1LVZvSFI1Q0RGelFkUEhrNVl1U2tVN2RnOA?oc=5",
+      "host": "뉴스1"
+    },
+    {
+      "cat": "보험",
+      "title": "여성보험, 틈새시장 넘어 새 성장동력으로…생·손보사 특화 경쟁 확대",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9Sdk9WbDYza1ZpeHhtN2JKSnE1WU5icWt1TEJmN3I0b0dRNjI2dWhSSVZSeno0cVRfbi1TVVJwVjBWWC1tUFo0Y1d0dk1BR29wc3JjQXBUcERFT0oxWTZJallHUkxyUXZ4X3Qw?oc=5",
+      "host": "라이센스뉴스"
+    },
+    {
+      "cat": "경제",
+      "title": "[GAM] 순환매 장세 본격화 ① AI 반도체서 빠진 돈 '구경제'로 향했다",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE11N2pFaGF6T1Bub3ZHYU9XbU9UWmc0bndHVXlmWGctb3hvNEJPU2NLOF9CTkN2OXBYWDJ3eGFfUWhjQ0pGYzl5MURyVWVzX1NYa2Y1RFNRM25qVlNQ?oc=5",
+      "host": "뉴스핌"
+    },
+    {
+      "cat": "경제",
+      "title": "[亞증시-종합] 반도체주 약세·경제 지표 호조에 엇갈림",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFA1N2xMc196MG5RUVFMNTVmVm1XRnlJRXEwdVRfcWZ0aGRITDdLVkZCaDQxTUd5RU5NRG90WjQzMC1meV91WUlZTFNKTEtfUmhUMzVfd3FGTUdRQzBNUV96bU1yTVJ2UzRnMXFxaU1hVXc?oc=5",
+      "host": "연합인포맥스"
+    },
+    {
+      "cat": "경제",
+      "title": "[언중언]공감의 경제",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9JMnNpWHViTWMzZzJqOGl1RTF1OHJlWlhjUTFsUlZ2YXo5VG5Od0FCNE9XcEVaam5QdDFDNlRhMEtVdGFpZjQ0c0tYZHBrTUE1UEkweE5HZndTcEE?oc=5",
+      "host": "강원일보"
+    },
+    {
+      "cat": "경제",
+      "title": "\"中 '투스피드 K자형 경제' 직면… '산업혁명 5.0'이 성장판 바꾼다\"",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPQUxXSkNpLW5RU0x5d2lGTVppS0EzUVVMZ0hEcjBaaUwzY2NIakV3LVAwbTc1TzBaZ1ZDRHhHdS1oS0VLTS02MnFKT3ljUXpmVEtuNThmNmhnM3pPWTNfS0FRNUdEWHp0bTlyVEZvUjJPUy1WaWRnUnEyTncyOFpwSTNNWW1YUVRL?oc=5",
+      "host": "글로벌이코노믹"
+    },
+    {
+      "cat": "경제",
+      "title": "AI 붐에 수출 증대 … 중국 경제 성장세 가속화",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBtNUZqQWFQc3g0WllieGV3dUJ6VUpVcmNfR2RsY3ZxNlo5TGRTTFBNRlBhQjhHLVdCaEdfSXM4bUpEaGpsY3RPRTBqQVM2ek1IMDV4LUtyNWcxXzJoRXfSAWNBVV95cUxQX2FDdGRvdHBNeTJOWXk5YWtxekYzZHdjTFBRbEhERURFek9YRTBkam96WGZVUlo3RTRKRGptZGlid1pucTZDMWRDMEdpcGpMTk9sWURmLWZ0QWVsNGZ4Z0pwY3M?oc=5",
+      "host": "BBC"
     }
   ],
   "quote": {
-    "text": "준비하지 않으면 실패를 준비하는 것이다",
+    "text": "오늘 할 수 있는 일을 내일로 미루지 마라",
     "author": "벤저민 프랭클린"
   },
   "source": "auto",
-  "updatedAt": "2026-10-18T21:20:07.074Z"
+  "updatedAt": "2026-10-19T21:20:08.497Z"
 }
