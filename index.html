@@ -1687,7 +1687,7 @@ body.growon{ background:var(--g-navy); }
               </div>
             </div>
             <style>#edbTbl th,#edbTbl td{white-space:nowrap;padding:7px 8px;vertical-align:middle}#edbTbl td.memo{max-width:180px;overflow:hidden;text-overflow:ellipsis}</style><div style="overflow-x:auto;"><table id="edbTbl" style="width:100%; border-collapse:collapse; font-size:12.5px;">
-              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>주민등록번호</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
+              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>주소</th><th>주민등록번호</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
               <tbody id="edbRows"></tbody>
             </table></div>
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
@@ -9934,7 +9934,7 @@ const limitCompareData = {};
       const summary = Object.keys(sm).sort().reverse().map(k => { const p = k.split('|'); return { date: p[0], eventName: p[1], kind: p[2], count: sm[k] }; });
       $('edbSummary').innerHTML = '<b>총 ' + ROWS.length + '건</b>' + (bf ? ' <span style="color:#888; font-size:12.5px;">(' + escapeHtml(bf) + ')</span>' : '') + (summary.length ? '<div style="margin-top:6px; font-size:12.5px; line-height:1.8;">' + summary.map(x => escapeHtml(x.date) + ' · ' + escapeHtml(x.eventName) + ' · ' + escapeHtml(x.kind) + ' — <b>' + x.count + '건</b>').join('<br>') + '</div>' : '');
       $('edbAll').checked = false; keyUi();
-      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td>' + rrnCell(x) + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="12" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
+      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.address || '') + '">' + (x.address ? escapeHtml(x.address) : (x.infoEdit ? '<button type="button" class="edbRrnIn" data-id="' + x.id + '" style="border:1px solid #C9D3E6; background:#F5F8FD; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer;">✏️ 입력</button>' : '-')) + '</td><td>' + rrnCell(x) + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="13" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
 
     /* ── 주민등록번호: 사람별 열쇠. 개인키는 본인 비밀번호로 잠겨 서버에 있고, 이 화면 안에서만 풂 ── */
@@ -9980,25 +9980,44 @@ const limitCompareData = {};
     function rrnModal(x){
       const yy = b => /^\d{4}-\d{2}-\d{2}$/.test(b || '') ? b.slice(2,4) + b.slice(5,7) + b.slice(8,10) : '';
       const ok = (b, back) => { const y = +String(b).slice(0,4), g = back.charAt(0); return /^\d{7}$/.test(back) && (y < 2000 ? /[1256]/.test(g) : /[3478]/.test(g)); };
-      const row = (id, lbl, b) => '<label style="display:block; font-size:12.5px; font-weight:700; margin:10px 0 4px;">' + lbl + '</label><div style="display:flex; gap:6px; align-items:center;"><input value="' + yy(b) + '" readonly style="width:90px; padding:9px; border:1px solid var(--line); border-radius:8px; background:#f4f4f4; text-align:center;"><span>-</span><input type="password" id="' + id + '" inputmode="numeric" maxlength="7" placeholder="뒤 7자리" autocomplete="off" style="flex:1; padding:9px; border:1px solid var(--line); border-radius:8px;"></div>';
+      const inS = 'width:100%; box-sizing:border-box; padding:9px; border:1px solid var(--line); border-radius:8px; font-family:inherit;';
+      const lab = t => '<label style="display:block; font-size:12.5px; font-weight:700; margin:10px 0 4px;">' + t + '</label>';
+      const row = (id, lbl, b) => lab(lbl) + '<div style="display:flex; gap:6px; align-items:center;"><input value="' + yy(b) + '" readonly style="width:90px; padding:9px; border:1px solid var(--line); border-radius:8px; background:#f4f4f4; text-align:center;"><span>-</span><input type="password" id="' + id + '" inputmode="numeric" maxlength="7" placeholder="뒤 7자리" autocomplete="off" style="flex:1; padding:9px; border:1px solid var(--line); border-radius:8px;"></div>';
+      const needPh = !x.phone && x.infoEdit, needAd = !x.address && x.infoEdit, needR = !x.rrnAny && x.manual && !!PRIV;
+      const who = x.childName ? '보호자 ' : '';
+      let body = '';
+      if(needPh) body += lab(who + '연락처') + '<input id="rmPh" type="tel" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" style="' + inS + '">';
+      if(needAd) body += lab(who + '주소') + '<input id="rmAd" maxlength="120" placeholder="예) 경기도 화성시 동탄대로 00, 101동 1001호" style="' + inS + '">';
+      if(needR) body += row('rmP', (x.childName ? '보호자 ' : '본인 ') + escapeHtml(x.personName) + ' 주민등록번호', x.personBirth) + (x.childName ? row('rmC', '자녀 ' + escapeHtml(x.childName) + ' 주민등록번호', x.childBirth) : '');
+      else if(!x.rrnAny && x.manual) body += '<div style="font-size:12px; color:#8A6300; margin-top:10px;">주민등록번호는 열람 비밀번호로 연 뒤에 입력할 수 있습니다.</div>';
       const w = document.createElement('div');
       w.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:9998; display:flex; align-items:center; justify-content:center; padding:16px;';
-      w.innerHTML = '<div style="background:#fff; border-radius:14px; padding:18px; width:100%; max-width:360px; font-family:inherit;"><div style="font-weight:800; font-size:15px;">주민등록번호 입력</div><div style="font-size:12.5px; color:#666; margin-top:4px;">' + escapeHtml(x.personName) + ' · ' + escapeHtml(x.eventName) + '</div>' + row('rmP', x.childName ? '보호자 ' + escapeHtml(x.personName) : '본인 ' + escapeHtml(x.personName), x.personBirth) + (x.childName ? row('rmC', '자녀 ' + escapeHtml(x.childName), x.childBirth) : '') + '<div id="rmErr" style="color:#B02A20; font-size:12.5px; font-weight:700; margin-top:8px;"></div><div style="display:flex; gap:8px; margin-top:12px;"><button type="button" id="rmOk" class="qna-new-btn" style="margin:0; flex:1;">잠가서 저장</button><button type="button" id="rmNo" class="qna-new-btn" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">취소</button></div><div style="font-size:11.5px; color:#888; margin-top:8px;">저장하면 다온·담당 지사장 열쇠로 잠겨 저장되고, 배분 시 설계사에게 전달됩니다.</div></div>';
+      w.innerHTML = '<div style="background:#fff; border-radius:14px; padding:18px; width:100%; max-width:380px; font-family:inherit;"><div style="font-weight:800; font-size:15px;">고객 정보 입력</div><div style="font-size:12.5px; color:#666; margin-top:4px;">' + escapeHtml(x.personName) + ' · ' + escapeHtml(x.eventName) + ' · 비어 있는 항목만 입력됩니다</div>' + body + '<div id="rmErr" style="color:#B02A20; font-size:12.5px; font-weight:700; margin-top:8px;"></div><div style="display:flex; gap:8px; margin-top:12px;"><button type="button" id="rmOk" class="qna-new-btn" style="margin:0; flex:1;">저장</button><button type="button" id="rmNo" class="qna-new-btn" style="margin:0; width:auto; flex:0 0 auto; background:#fff; color:var(--navy-2); border:1px solid var(--line);">취소</button></div>' + (needR ? '<div style="font-size:11.5px; color:#888; margin-top:8px;">주민등록번호는 다온·담당 지사장 열쇠로 잠겨 저장되고, 배분 시 설계사에게 전달됩니다.</div>' : '') + '</div>';
       document.body.appendChild(w);
+      const q = id => w.querySelector('#' + id);
       const close = () => { w.remove(); };
-      w.querySelector('#rmNo').addEventListener('click', close);
+      q('rmNo').addEventListener('click', close);
       w.querySelectorAll('input[type=password]').forEach(i => i.addEventListener('input', () => { i.value = i.value.replace(/[^0-9]/g, '').slice(0, 7); }));
-      w.querySelector('#rmP').focus();
-      w.querySelector('#rmOk').addEventListener('click', () => {
-        const e = w.querySelector('#rmErr'), pb = w.querySelector('#rmP').value, cb = x.childName ? w.querySelector('#rmC').value : '';
-        if(!ok(x.personBirth, pb)){ e.textContent = (x.childName ? '보호자' : '본인') + ' 주민번호 뒤 7자리를 확인해 주세요.'; return; }
-        if(x.childName && !ok(x.childBirth, cb)){ e.textContent = '자녀 주민번호 뒤 7자리를 확인해 주세요.'; return; }
-        const d = { p: yy(x.personBirth) + '-' + pb }; if(x.childName) d.c = yy(x.childBirth) + '-' + cb;
+      const f0 = w.querySelector('input:not([readonly])'); if(f0) f0.focus();
+      q('rmOk').addEventListener('click', () => {
+        const e = q('rmErr'), item = { id: x.id };
+        if(needPh){ const v = q('rmPh').value.replace(/[^0-9]/g, ''); if(v){ if(!/^01\d{8,9}$/.test(v)){ e.textContent = '연락처를 확인해 주세요.'; return; } item.phone = v; } }
+        if(needAd){ const v = q('rmAd').value.replace(/\s+/g, ' ').trim(); if(v){ if(v.length < 6){ e.textContent = '주소를 끝까지 입력해 주세요.'; return; } item.address = v; } }
+        let d = null;
+        if(needR){
+          const pb = q('rmP').value, cb = x.childName ? q('rmC').value : '';
+          if(pb || cb){
+            if(!ok(x.personBirth, pb)){ e.textContent = (x.childName ? '보호자' : '본인') + ' 주민번호 뒤 7자리를 확인해 주세요.'; return; }
+            if(x.childName && !ok(x.childBirth, cb)){ e.textContent = '자녀 주민번호 뒤 7자리를 확인해 주세요.'; return; }
+            d = { p: yy(x.personBirth) + '-' + pb }; if(x.childName) d.c = yy(x.childBirth) + '-' + cb;
+          }
+        }
+        if(!item.phone && !item.address && !d){ e.textContent = '입력한 내용이 없습니다.'; return; }
         const pubs = LAST.pubs || {}, box = {};
-        busy('잠가서 저장 중…');
-        Promise.all((x.manual || []).filter(o => pubs[o]).map(o => rrnKit.enc(pubs[o], d).then(ct => { box[o] = ct; })))
-          .then(() => fetchRaw({action:'setrrn', items:[{id:x.id, box}]}))
-          .then(r => { if(!r.ok){ e.textContent = r.error || '저장하지 못했습니다.'; return; } close(); notify(x.personName + ' 주민번호를 저장했습니다.'); window.edbLoad(); })
+        busy('저장 중…');
+        Promise.all(d ? (x.manual || []).filter(o => pubs[o]).map(o => rrnKit.enc(pubs[o], d).then(ct => { box[o] = ct; })) : [])
+          .then(() => { if(d) item.box = box; return fetchRaw({action:'setrrn', items:[item]}); })
+          .then(r => { if(!r.ok){ e.textContent = r.error || '저장하지 못했습니다.'; return; } close(); notify(x.personName + ' 정보를 저장했습니다.'); window.edbLoad(); })
           .catch(() => { e.textContent = '저장하지 못했습니다. 다시 시도해 주세요.'; }).finally(idle);
       });
     }
@@ -10157,7 +10176,7 @@ const limitCompareData = {};
       const chk = picked(); const OUT = chk.length ? ROWS.filter(x => chk.indexOf(Number(x.id)) >= 0) : ROWS;
       if(!OUT.length){ msg('저장할 건이 없습니다.', true); return; }
       const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-      const lines = [['날짜','행사','체험','지사','성명','생년월일','자녀','자녀생년월일','연락처','반려동물정보','담당설계사'].map(q).join(',')].concat(OUT.map(x => [x.eventDate,x.eventName,x.kind,x.branch,x.personName,x.personBirth,x.childName,x.childBirth,x.phone,x.petInfo,x.assignedFc].map(q).join(',')));
+      const lines = [['날짜','행사','체험','지사','성명','생년월일','자녀','자녀생년월일','연락처','주소','반려동물정보','담당설계사'].map(q).join(',')].concat(OUT.map(x => [x.eventDate,x.eventName,x.kind,x.branch,x.personName,x.personBirth,x.childName,x.childBirth,x.phone,x.address,x.petInfo,x.assignedFc].map(q).join(',')));
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'}));
       a.download = ['행사DB', $('edbEvent').value, $('edbBr').value, chk.length ? '선택' + OUT.length + '건' : '', new Date().toISOString().slice(0,10)].filter(Boolean).join('_').replace(/[\\/:*?"<>|\s]+/g, '') + '.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
     });
