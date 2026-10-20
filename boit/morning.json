@@ -1,85 +1,85 @@
 {
-  "date": "2026-10-20",
-  "dateLabel": "2026.10.20(화)",
+  "date": "2026-10-21",
+  "dateLabel": "2026.10.21(수)",
   "weather": [
     {
       "city": "서울",
-      "min": 10,
-      "max": 20,
-      "code": 53
+      "min": 8,
+      "max": 15,
+      "code": 3
     },
     {
       "city": "부산",
-      "min": 14,
-      "max": 19,
-      "code": 65
+      "min": 11,
+      "max": 21,
+      "code": 63
     },
     {
       "city": "대구",
-      "min": 13,
-      "max": 18,
-      "code": 63
-    },
-    {
-      "city": "인천",
       "min": 10,
-      "max": 19,
-      "code": 53
-    },
-    {
-      "city": "광주",
-      "min": 13,
       "max": 18,
-      "code": 63
-    },
-    {
-      "city": "대전",
-      "min": 11,
-      "max": 21,
       "code": 55
     },
     {
-      "city": "강릉",
-      "min": 13,
-      "max": 20,
+      "city": "인천",
+      "min": 9,
+      "max": 16,
+      "code": 51
+    },
+    {
+      "city": "광주",
+      "min": 11,
+      "max": 18,
       "code": 53
     },
     {
+      "city": "대전",
+      "min": 8,
+      "max": 17,
+      "code": 3
+    },
+    {
+      "city": "강릉",
+      "min": 8,
+      "max": 19,
+      "code": 3
+    },
+    {
       "city": "제주",
-      "min": 17,
-      "max": 24,
-      "code": 61
+      "min": 16,
+      "max": 20,
+      "code": 63
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "5,768.01",
-      "diff": "+213.79",
-      "dir": "up"
+      "value": "5,552.74",
+      "diff": "-115.31",
+      "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "808.89",
-      "diff": "+48.07",
-      "dir": "up"
+      "value": "781.97",
+      "diff": "-12.81",
+      "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,332.35",
-      "diff": "-1.08",
+      "value": "1,326.18",
+      "diff": "-3.82",
       "dir": "down"
     },
     {
       "label": "국제유가($/배럴)",
       "value": "98.2",
-      "diff": "-3.2",
+      "diff": "-5.5",
       "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "668,291",
-      "diff": "-3,885",
+      "value": "662,350",
+      "diff": "-4,730",
       "dir": "down"
     }
   ],
@@ -87,79 +87,79 @@
   "news": [
     {
       "cat": "보험",
-      "title": "취약 어르신 65만 명에 낙상사고 치료비·치매배상보험 무료 제공",
+      "title": "“더덕 농가 42%, 23억 피해…재해보험 7년째 미이행”",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5vZzdXWDRVMDMtOFNKQmNHS3NkRGE1WHRGRVdBZ1M2NjdRd1BpZkd6TGJRek81a210WWNTYmRwdVYtMm52aWxlMEtkWHJFT0tNOTVYb1VGeGN0MUxfdDdSX1VfNmJfa0F4Tk4xYQ?oc=5",
-      "host": "대한민국 정책브리핑"
+      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE00QjRBcHVjQXMzSkp3TUwzQ3hVN1Q0eVZqX3BEcXRTWEVXZ1VnaG9BeUZtSHFZVUhnWnlicWt0eXl1WkJCNFRwdXFzenpOWlI0Q09rcXJtdVlMaXlQdVlKTHgwX2Vsdw?oc=5",
+      "host": "KBS 뉴스"
     },
     {
       "cat": "보험",
-      "title": "65만명 취약어르신 낙상사고 치료비, 치매배상책임보험 무료 제공",
+      "title": "보험 거절했더니 매일 전화·카톡…설계사 고모에 지친 예비 엄마",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5lcGYtNkRiWGdDMDkxVEkxdDA0ZFZCcWVpcTZNaFFDRm44cFdaVnNGVHdweXFtM0VFUHBEMFQzWGFReGdlVElheGItNHJOWEl2VXhrM0hQcGpGODNtS19ubV9hNFpDS01NUncw?oc=5",
-      "host": "한국의약통신"
-    },
-    {
-      "cat": "보험",
-      "title": "수리비 비싼 전기차 올해 75% 급증…보험업계 속탄다",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBOVTBOUTlYTF9wRGVrdGd0ZTRIeUNrUGlPZkt6Rl9jSFpVc1F1OWgzOTlTYjh3OUpEMVdld3hvZEppTEdzcW5xblc1MVVuN3hLVEF2N093?oc=5",
-      "host": "중앙일보"
-    },
-    {
-      "cat": "보험",
-      "title": "\"평생 보장보다 가성비\"…종신보험 지고 정기보험 뜬다",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5iTnhXRkltR3VzendQQTllSG5IcVJBU0ducVR1bFJrQVdLS01FenV2V29mb3pQTnMyVWtfLXpQa215M3RpelM1LVZvSFI1Q0RGelFkUEhrNVl1U2tVN2RnOA?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE9rdHVpdTQyUUU3dnY4S3hUUEdDVXhnc0ZweTlpUWJkLVBXbnhkYWpjQ2NZaTVmNTE1WVFLUnlMSDlYM3hvcVU1VVVINEZtSDQ3S0lORC0zWXJHSEFxeGNLS2N3?oc=5",
       "host": "뉴스1"
     },
     {
       "cat": "보험",
-      "title": "여성보험, 틈새시장 넘어 새 성장동력으로…생·손보사 특화 경쟁 확대",
+      "title": "GA 설계사 ‘120% 환수' 국감 2주 만에 폐지…보험업계 “GA-설계사 계약, 보험사 통제·개입 어려운 상황”",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9Sdk9WbDYza1ZpeHhtN2JKSnE1WU5icWt1TEJmN3I0b0dRNjI2dWhSSVZSeno0cVRfbi1TVVJwVjBWWC1tUFo0Y1d0dk1BR29wc3JjQXBUcERFT0oxWTZJallHUkxyUXZ4X3Qw?oc=5",
-      "host": "라이센스뉴스"
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9KektwV2ZOZzR5RWpXN3JJZEp0MFNPU21mN3VROHJ4QmdUZEttZ1p2Z1VCYmpqaXZNZzh4Y2RDTGlJREVQSFMxdk11Ui00QlpweV9zck5QMGw0cUUxNWU1bEdEeXcwUnJN?oc=5",
+      "host": "녹색경제신문"
+    },
+    {
+      "cat": "보험",
+      "title": "“정부·지자체 보험료 지원”…마늘·양파 ‘수입안정보험’ 판매 개시",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBNOWp0TzQtSEJ4d2FibUlPenBwRHk0YU9iQlZ2Z2FFbUFhOHFmN2Vaa2tjV05IdW03bjJnLTBiSGlSNGNZLUtsMDlQTUgyUXNYbnBhbXJhWndmQQ?oc=5",
+      "host": "농민신문"
+    },
+    {
+      "cat": "보험",
+      "title": "\"책임보험 윤곽도 없는데 대불제도 폐지 안 된다\"",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9rS0dnWDZGWDBHaEFaazhTTGVlMEJRTWQ1S3BXWlQtd20yNWt0Q1B2cjRfTUdkX09NODZlUWoyNnY1QnRFSFBYNGVpUWE4M1gyNDh5cTRINFZCc1JXZ05zM0kwd0JxaTFIMXR2ZS1HS0FSZw?oc=5",
+      "host": "의협신문"
     },
     {
       "cat": "경제",
-      "title": "[GAM] 순환매 장세 본격화 ① AI 반도체서 빠진 돈 '구경제'로 향했다",
+      "title": "경제6단체 \"초광역특구법안 환영…노동 특례 필요\"",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE11N2pFaGF6T1Bub3ZHYU9XbU9UWmc0bndHVXlmWGctb3hvNEJPU2NLOF9CTkN2OXBYWDJ3eGFfUWhjQ0pGYzl5MURyVWVzX1NYa2Y1RFNRM25qVlNQ?oc=5",
-      "host": "뉴스핌"
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBwNjJ4Y2tPcklNM201dVpzdlh3aktnSGlKN3RLbUpTVzhfNmRKM2xkSU9Zc3lvODhPZUdhVHYxanN4VTQ3SV8zWFh3UzhvbE1vU2xERUljbGZwVmpDYkFCcEpaWWo4Y2s?oc=5",
+      "host": "연합뉴스TV"
     },
     {
       "cat": "경제",
-      "title": "[亞증시-종합] 반도체주 약세·경제 지표 호조에 엇갈림",
+      "title": "■10월 21일 수 경제 캘린더",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFA1N2xMc196MG5RUVFMNTVmVm1XRnlJRXEwdVRfcWZ0aGRITDdLVkZCaDQxTUd5RU5NRG90WjQzMC1meV91WUlZTFNKTEtfUmhUMzVfd3FGTUdRQzBNUV96bU1yTVJ2UzRnMXFxaU1hVXc?oc=5",
-      "host": "연합인포맥스"
+      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5LT01LZGNLNFk4WHVyckRiM1laWmFLRkt0a3lpWlVWUmZXWVR3RERWQjh4R0hobFpEa2gyVGY2OFl2YU9OV0R6VW1fRHNzRmJsWEFmUkhJOWNsT1BmQ3c?oc=5",
+      "host": "YTN"
     },
     {
       "cat": "경제",
-      "title": "[언중언]공감의 경제",
+      "title": "트럼프 대통령 집권 하에 미국 경제는 실제로 어떤 상황인가?",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9JMnNpWHViTWMzZzJqOGl1RTF1OHJlWlhjUTFsUlZ2YXo5VG5Od0FCNE9XcEVaam5QdDFDNlRhMEtVdGFpZjQ0c0tYZHBrTUE1UEkweE5HZndTcEE?oc=5",
-      "host": "강원일보"
-    },
-    {
-      "cat": "경제",
-      "title": "\"中 '투스피드 K자형 경제' 직면… '산업혁명 5.0'이 성장판 바꾼다\"",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPQUxXSkNpLW5RU0x5d2lGTVppS0EzUVVMZ0hEcjBaaUwzY2NIakV3LVAwbTc1TzBaZ1ZDRHhHdS1oS0VLTS02MnFKT3ljUXpmVEtuNThmNmhnM3pPWTNfS0FRNUdEWHp0bTlyVEZvUjJPUy1WaWRnUnEyTncyOFpwSTNNWW1YUVRL?oc=5",
-      "host": "글로벌이코노믹"
-    },
-    {
-      "cat": "경제",
-      "title": "AI 붐에 수출 증대 … 중국 경제 성장세 가속화",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBtNUZqQWFQc3g0WllieGV3dUJ6VUpVcmNfR2RsY3ZxNlo5TGRTTFBNRlBhQjhHLVdCaEdfSXM4bUpEaGpsY3RPRTBqQVM2ek1IMDV4LUtyNWcxXzJoRXfSAWNBVV95cUxQX2FDdGRvdHBNeTJOWXk5YWtxekYzZHdjTFBRbEhERURFek9YRTBkam96WGZVUlo3RTRKRGptZGlid1pucTZDMWRDMEdpcGpMTk9sWURmLWZ0QWVsNGZ4Z0pwY3M?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBVUmtrX1pNa2FEeWhvc2RodmFVTG9GN1ZwVnVDTHUtaGs3S0hNQ2k0Mm15TWtod09xUmI5YVZnc2RZcDBuSW95U19lQ1RMQ3duNDhrOVAyV0lVTkE4cmfSAWNBVV95cUxOdnlvVWUtd1NqY0toQmd2SjVkRzM5UWxfQ0RWOFNXb2M1ZlRxZTdId3pmYlg1V29sYmFXNlk3NE5ZWGxqWDZNOWVwWnVEVUl3aEg2eVY1Y2prWm0wMThHeExSUzg?oc=5",
       "host": "BBC"
+    },
+    {
+      "cat": "경제",
+      "title": "李대통령 “한국 경제 기초체력 극적 반전, 40여년만의 일”",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBCNnh6akxnTGF1b3kzUVlTYVRqbkh5U1BFUFhnaDUtckdGVWNFam5tMHpqRlhIWWdOWmpuV2ZaX1VaRE9EVlM5Z3VPUWUzTHQzdlZqakp3?oc=5",
+      "host": "중앙일보"
+    },
+    {
+      "cat": "경제",
+      "title": "경기자활기업협회 \"사회연대경제, 당사자 조직이 주도해야\"",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE4wTUdaTjdXVUctYUQyMzZXLU44d1hpZktzZnBPT3RDckI2WldvOTRSLU1XY1dJdWk2SjNRUXdGZVNMeG5EMldZanNRRXRYenRrTmtSdHNNb0hhMEZocE5VU1hGTndLQQ?oc=5",
+      "host": "이로운넷"
     }
   ],
   "quote": {
-    "text": "오늘 할 수 있는 일을 내일로 미루지 마라",
-    "author": "벤저민 프랭클린"
+    "text": "하루라도 책을 읽지 않으면 입안에 가시가 돋는다",
+    "author": "안중근"
   },
   "source": "auto",
-  "updatedAt": "2026-10-19T21:20:08.497Z"
+  "updatedAt": "2026-10-20T21:20:07.045Z"
 }
