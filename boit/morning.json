@@ -1,165 +1,165 @@
 {
-  "date": "2026-10-21",
-  "dateLabel": "2026.10.21(수)",
+  "date": "2026-10-22",
+  "dateLabel": "2026.10.22(목)",
   "weather": [
     {
       "city": "서울",
-      "min": 8,
-      "max": 15,
-      "code": 3
+      "min": 4,
+      "max": 14,
+      "code": 0
     },
     {
       "city": "부산",
-      "min": 11,
-      "max": 21,
-      "code": 63
+      "min": 8,
+      "max": 17,
+      "code": 1
     },
     {
       "city": "대구",
-      "min": 10,
-      "max": 18,
-      "code": 55
+      "min": 6,
+      "max": 16,
+      "code": 1
     },
     {
       "city": "인천",
-      "min": 9,
-      "max": 16,
-      "code": 51
+      "min": 5,
+      "max": 13,
+      "code": 0
     },
     {
       "city": "광주",
-      "min": 11,
-      "max": 18,
-      "code": 53
+      "min": 8,
+      "max": 17,
+      "code": 1
     },
     {
       "city": "대전",
-      "min": 8,
-      "max": 17,
-      "code": 3
+      "min": 4,
+      "max": 14,
+      "code": 1
     },
     {
       "city": "강릉",
-      "min": 8,
-      "max": 19,
-      "code": 3
+      "min": 6,
+      "max": 14,
+      "code": 0
     },
     {
       "city": "제주",
-      "min": 16,
-      "max": 20,
-      "code": 63
+      "min": 14,
+      "max": 16,
+      "code": 2
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "5,552.74",
-      "diff": "-115.31",
+      "value": "5,735.66",
+      "diff": "-32.35",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "781.97",
-      "diff": "-12.81",
+      "value": "792.76",
+      "diff": "-16.13",
       "dir": "down"
     },
     {
       "label": "환율(USD)",
-      "value": "1,326.18",
-      "diff": "-3.82",
-      "dir": "down"
+      "value": "1,325.85",
+      "diff": "+1.91",
+      "dir": "up"
     },
     {
       "label": "국제유가($/배럴)",
-      "value": "98.2",
-      "diff": "-5.5",
+      "value": "97.7",
+      "diff": "-4.1",
       "dir": "down"
     },
     {
       "label": "금(돈)",
-      "value": "662,350",
-      "diff": "-4,730",
-      "dir": "down"
+      "value": "664,902",
+      "diff": "+3,655",
+      "dir": "up"
     }
   ],
   "trends": [],
   "news": [
     {
       "cat": "보험",
-      "title": "“더덕 농가 42%, 23억 피해…재해보험 7년째 미이행”",
+      "title": "이천 마장농협, 중대재해 배상책임보험 가입",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE00QjRBcHVjQXMzSkp3TUwzQ3hVN1Q0eVZqX3BEcXRTWEVXZ1VnaG9BeUZtSHFZVUhnWnlicWt0eXl1WkJCNFRwdXFzenpOWlI0Q09rcXJtdVlMaXlQdVlKTHgwX2Vsdw?oc=5",
-      "host": "KBS 뉴스"
-    },
-    {
-      "cat": "보험",
-      "title": "보험 거절했더니 매일 전화·카톡…설계사 고모에 지친 예비 엄마",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE9rdHVpdTQyUUU3dnY4S3hUUEdDVXhnc0ZweTlpUWJkLVBXbnhkYWpjQ2NZaTVmNTE1WVFLUnlMSDlYM3hvcVU1VVVINEZtSDQ3S0lORC0zWXJHSEFxeGNLS2N3?oc=5",
-      "host": "뉴스1"
-    },
-    {
-      "cat": "보험",
-      "title": "GA 설계사 ‘120% 환수' 국감 2주 만에 폐지…보험업계 “GA-설계사 계약, 보험사 통제·개입 어려운 상황”",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9KektwV2ZOZzR5RWpXN3JJZEp0MFNPU21mN3VROHJ4QmdUZEttZ1p2Z1VCYmpqaXZNZzh4Y2RDTGlJREVQSFMxdk11Ui00QlpweV9zck5QMGw0cUUxNWU1bEdEeXcwUnJN?oc=5",
-      "host": "녹색경제신문"
-    },
-    {
-      "cat": "보험",
-      "title": "“정부·지자체 보험료 지원”…마늘·양파 ‘수입안정보험’ 판매 개시",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBNOWp0TzQtSEJ4d2FibUlPenBwRHk0YU9iQlZ2Z2FFbUFhOHFmN2Vaa2tjV05IdW03bjJnLTBiSGlSNGNZLUtsMDlQTUgyUXNYbnBhbXJhWndmQQ?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBVUFQ0NUdhYWpRSFdQc0FYTW41eGw0TnVDRHF1STctRnZiVEh5NWdOX0ItQjU3S3pkXzJUVXBYWVRLaU1VUFBPNkt5LTVVaDlEbVRRM0lyNXBWdw?oc=5",
       "host": "농민신문"
     },
     {
       "cat": "보험",
-      "title": "\"책임보험 윤곽도 없는데 대불제도 폐지 안 된다\"",
+      "title": "DB손해보험, 중소기업 사이버위험 대응 강화",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9rS0dnWDZGWDBHaEFaazhTTGVlMEJRTWQ1S3BXWlQtd20yNWt0Q1B2cjRfTUdkX09NODZlUWoyNnY1QnRFSFBYNGVpUWE4M1gyNDh5cTRINFZCc1JXZ05zM0kwd0JxaTFIMXR2ZS1HS0FSZw?oc=5",
-      "host": "의협신문"
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBQeTVnRzU0Q0dvN3NFS2pHd3c2VGkweDFQY1pwUkpPckw4eGFhdlZiZ2NGZVpabDBQamEzdnJKZW1nb3U2WmVyM1V4YW9ZRjhOakFpekduQktOVl9TNloyWGdjRkwwbjRHNFNZ0gFvQVVfeXFMT3EzSmZjbEZjSmZSY2xSOVRTTnpsOW1LWWlmbmpFZ00yX1hESzBVYXVwc0ltaFhodmhPUkVQSEJvM2NuTkJiMkY0YUlId2ZHWlU3c2lCMFlGQVJ6MlM1REpqbzBHS1dkeG9vSWZnaktz?oc=5",
+      "host": "한국보험신문"
+    },
+    {
+      "cat": "보험",
+      "title": "DB손보, 중소기업 사이버보험 시장 공략",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE8xd3g2bTVGTV9GRkZyOERnalQ1cEZNeXlLbWQySVBXV1Zlbk5FUVBhUm1DZ0JNdzVhTXA2Ym4wZVFvamRLYzF1X2QyblJ1amw4YWplYVNTcFJDb2hsTW95QV9hUjdJeTZ5ODgw?oc=5",
+      "host": "라이센스뉴스"
+    },
+    {
+      "cat": "보험",
+      "title": "낙상 치료비부터 무료 치매보험까지…취약 어르신 65만 명 지원 - 전체 | 카드/한컷 | 멀티미디어",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOWjU0MXJaczFTMWJYNnpxaFRYWG91ZmFxTHJtdU05bktzQ3ZvVGQ5eURLaVFZaGppemVvTVRtbDRqR3BJVzllMVhqenc4OGdSNEhJbzYtbkphejNwRUdUVWxjOUxRbDFBdm5adUdScWRPUHpuYkpFLVlWR2U2QWM3Q29ob1NEbmhhM0t3?oc=5",
+      "host": "대한민국 정책브리핑"
+    },
+    {
+      "cat": "보험",
+      "title": "진료도 안 받았는데 보험 임플란트 무단 등록?",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5zakNIZk9wZ09JTjNjaTVUQTVGM2U0UTBjb0ItclQwVVBHUXo5NTEtZ2pZek9mbTJUcWpvdjhETUhjTVZEbWJXWGN3d1ZHa2hCWmN5Vi15aTY0dTZTYWVKS1c2REkzYnlk?oc=5",
+      "host": "치의신보"
     },
     {
       "cat": "경제",
-      "title": "경제6단체 \"초광역특구법안 환영…노동 특례 필요\"",
+      "title": "■10월 22일 (목) 경제 캘린더",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBwNjJ4Y2tPcklNM201dVpzdlh3aktnSGlKN3RLbUpTVzhfNmRKM2xkSU9Zc3lvODhPZUdhVHYxanN4VTQ3SV8zWFh3UzhvbE1vU2xERUljbGZwVmpDYkFCcEpaWWo4Y2s?oc=5",
-      "host": "연합뉴스TV"
-    },
-    {
-      "cat": "경제",
-      "title": "■10월 21일 수 경제 캘린더",
-      "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5LT01LZGNLNFk4WHVyckRiM1laWmFLRkt0a3lpWlVWUmZXWVR3RERWQjh4R0hobFpEa2gyVGY2OFl2YU9OV0R6VW1fRHNzRmJsWEFmUkhJOWNsT1BmQ3c?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1qNW1RTUpFQW1DMFVzNVRmWlV5WW5OYU52c21xM041bHBIeXhVdkk2bV9nMGlzNUxPQUxsdXZya3hTclpfUHBGNFp1RTV4eGVxdzFuekQ0S3ZNRUJUd3c?oc=5",
       "host": "YTN"
     },
     {
       "cat": "경제",
-      "title": "트럼프 대통령 집권 하에 미국 경제는 실제로 어떤 상황인가?",
+      "title": "인천시, 강화북단 6.05㎢ 평화경제특구 개발계획 수립",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBVUmtrX1pNa2FEeWhvc2RodmFVTG9GN1ZwVnVDTHUtaGs3S0hNQ2k0Mm15TWtod09xUmI5YVZnc2RZcDBuSW95U19lQ1RMQ3duNDhrOVAyV0lVTkE4cmfSAWNBVV95cUxOdnlvVWUtd1NqY0toQmd2SjVkRzM5UWxfQ0RWOFNXb2M1ZlRxZTdId3pmYlg1V29sYmFXNlk3NE5ZWGxqWDZNOWVwWnVEVUl3aEg2eVY1Y2prWm0wMThHeExSUzg?oc=5",
-      "host": "BBC"
+      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1QSzJHM1ZackxSQ18wZDMtX0FMTWdpdmdnakMxbFd4c0pGZi03YzNLeDE0TXlqX2lzTEhxdWV1T0RXb045TlZhc0x3dDdjdXdMYUY5a01nTzgyQW8?oc=5",
+      "host": "경기일보"
     },
     {
       "cat": "경제",
-      "title": "李대통령 “한국 경제 기초체력 극적 반전, 40여년만의 일”",
+      "title": "한국, 올해 경제 규모 세계 12위…구매력 기준은 13위",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBCNnh6akxnTGF1b3kzUVlTYVRqbkh5U1BFUFhnaDUtckdGVWNFam5tMHpqRlhIWWdOWmpuV2ZaX1VaRE9EVlM5Z3VPUWUzTHQzdlZqakp3?oc=5",
-      "host": "중앙일보"
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOZzdNVjNMR2tFV3NIRXZFT3dMOTVKSTN1dEhjX0ROdHVZdnhPczRfSmd0RzFEamRvdFNZNGQ2RzY1NTBVbDdwRVo3eTE4VXRCNjFTWUI2WWYzcmZfSlRKbVhtUDRVYm03bGg2TndfM2hSeG8tY1RwX3l1alVMSVRVVXhCTzJndnpU?oc=5",
+      "host": "글로벌이코노믹"
     },
     {
       "cat": "경제",
-      "title": "경기자활기업협회 \"사회연대경제, 당사자 조직이 주도해야\"",
+      "title": "[경제포커스] ‘투자는 지루해야 한다’는 새뮤얼슨의 고언",
       "summary": "",
-      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE4wTUdaTjdXVUctYUQyMzZXLU44d1hpZktzZnBPT3RDckI2WldvOTRSLU1XY1dJdWk2SjNRUXdGZVNMeG5EMldZanNRRXRYenRrTmtSdHNNb0hhMEZocE5VU1hGTndLQQ?oc=5",
-      "host": "이로운넷"
+      "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNUEk3N0FsdExNRVJYdXlnTWtLaTdmNlNNX2d0S3pyVkpHcmtEVjJvcDV4TUtJc3VtMFVuVktzV3R2Ym5pbm0yUG9QQjF2VjlyVlhxV2VXeFJMY0s3NEMtTERKb0h2ck5JeTJvSkZtZ05Od1ZVamljWmx4N0JSUG9wWHFOQ01NSzJtUnktaQ?oc=5",
+      "host": "조선일보"
+    },
+    {
+      "cat": "경제",
+      "title": "OECD 사무총장, 재경차관 만나 \"올해 韓 경제전망 긍정적\"",
+      "summary": "",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBMMDQ4UGV5dFc4ZERlXzYyTklDMUxzXzNwUC1rYXRsRVJ3ZXJFR0MzYjdKWmxsTkQ1ckVoY2k4NFQxdUw2MzBXU0tzdzl4UjduX3dCaWVfdktwMmJIQmhuanZoc3VoOGpQcVltaGpJOXI?oc=5",
+      "host": "연합인포맥스"
     }
   ],
   "quote": {
-    "text": "하루라도 책을 읽지 않으면 입안에 가시가 돋는다",
-    "author": "안중근"
+    "text": "먼저 자신을 다스린 뒤에 남을 다스린다",
+    "author": "대학"
   },
   "source": "auto",
-  "updatedAt": "2026-10-20T21:20:07.045Z"
+  "updatedAt": "2026-10-21T21:20:07.022Z"
 }
