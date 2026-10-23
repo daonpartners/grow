@@ -2078,6 +2078,105 @@ function ctrCompanyBlocks(g,num,idx,total){
       '<div style="display:grid;grid-template-columns:'+CTR_COLS+';background:#2B3346;color:#fff;font-size:12px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 4px;text-align:center">구분</div><div style="padding:6px 10px">담보명</div><div style="padding:6px 12px;text-align:right">가입금액</div></div>'+
       '<div class="bl" style="gap:0">'+c.items.map(row).join('')+'</div></div>');
   });
+  out=out.concat(ctrNoteBlocks(g));
+  return out;
+}
+/* ---------- 회사별 화면 하단: 실손의료비 세대 정리 · 운전자보험 가입 시기별 해당 여부 ---------- */
+function ymd(s){ var m=String(s||'').match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/); return m?(+m[1])*10000+(+m[2])*100+(+m[3]):0; }
+var SILSON_GEN=[
+  {to:20090930,gen:'1세대',name:'표준화 이전',period:'~2009.9',
+   rate:'입원·통원 100% (손해보험 기준, 생명보험은 80%)',inSelf:'없음',outSelf:'1회 5천원 공제 (외래+처방 합산)',outLim:'10만·30만원 등 (회사·상품별)',renew:'3년 또는 5년 갱신 (80세·100세 만기)',
+   notes:['보장 비율이 가장 높아 병원 이용이 잦으면 유지가 유리하고, 갱신 때 보험료 인상 폭이 큽니다.','정신과·치과(질병)·항문질환 등 보상하지 않는 범위가 넓습니다.','2009.8.1~9.30 가입분은 첫 갱신 후 표준화 실손 보장으로 바뀝니다.']},
+  {to:20130331,gen:'2세대',name:'표준화 실손',period:'2009.10~2013.3',
+   rate:'90% (자기부담 10%)',inSelf:'10% (연 200만원 초과분은 보상)',outSelf:'외래 의원 1만·병원 1.5만·종합병원 2만원, 처방 8천원 공제',outLim:'외래 25만 + 처방 5만원',renew:'3년 갱신, 100세 만기',
+   notes:['치매, 항문질환·치과(급여)를 보상합니다.','정신질환은 보상하지 않습니다.']},
+  {to:20150831,gen:'2세대',name:'표준화 1차 개정',period:'2013.4~2015.8',
+   rate:'선택형: 급여 90%·비급여 80% / 표준형: 80%',inSelf:'선택형 급여 10%+비급여 20%, 표준형 20% (연 200만원 초과분은 보상)',outSelf:'의원 1만·병원 1.5만·종합병원 2만원과 의료비 20% 중 큰 금액',outLim:'외래 25만 + 처방 5만원',renew:'1년 갱신, 15년마다 재가입',
+   notes:['재가입 때 그 시점의 실손 약관으로 바뀝니다.']},
+  {to:20170331,gen:'2세대',name:'표준화 2·3차 개정',period:'2015.9~2017.3',
+   rate:'급여 90%·비급여 80%',inSelf:'급여 10%+비급여 20% (연 200만원 초과분은 보상)',outSelf:'의원 1만·병원 1.5만·종합병원 2만원과 급여 10%+비급여 20% 중 큰 금액',outLim:'외래 25만 + 처방 5만원',renew:'1년 갱신, 15년마다 재가입',
+   notes:['2016.1 이후 가입분은 우울증·공황장애 등 일부 정신질환을 급여 부분만 보상합니다.','재가입 때 그 시점의 실손 약관으로 바뀝니다.']},
+  {to:20210630,gen:'3세대',name:'착한실손',period:'2017.4~2021.6',
+   rate:'기본형 급여 90%·비급여 80%, 비급여 3대 특약 70%',inSelf:'급여 10%+비급여 20% (연 200만원 초과분은 보상)',outSelf:'의원 1만·병원 1.5만·종합병원 2만원과 급여 10%+비급여 20% 중 큰 금액 / 특약은 1회 2만원과 30% 중 큰 금액',outLim:'외래 25만 + 처방 5만원 (연 180회)',renew:'1년 갱신, 15년마다 재가입',
+   notes:['비급여 3대 특약 한도: 도수·체외충격파·증식치료 연 350만원(50회), 비급여 주사 연 250만원(50회), 비급여 MRI 연 300만원','직전 2년간 비급여 보험금을 받지 않으면 갱신 때 보험료 10% 할인']},
+  {to:20260505,gen:'4세대',name:'4세대 실손',period:'2021.7~2026.5',
+   rate:'급여 80%·비급여 70%',inSelf:'급여 20%·비급여 30% (급여는 연 200만원 초과분 보상)',outSelf:'급여: 1만원(의원·병원)·2만원(상급·종합병원)과 20% 중 큰 금액 / 비급여: 3만원과 30% 중 큰 금액',outLim:'회당 20만원 (비급여 연 100회)',renew:'1년 갱신, 5년마다 재가입',
+   notes:['비급여 보험금을 받은 금액에 따라 다음 해 비급여 보험료가 할인·할증됩니다.','도수·주사·MRI 등 비급여는 특약으로 나뉘어 있습니다.']},
+  {to:99999999,gen:'5세대',name:'5세대 실손',period:'2026.5.6~',
+   rate:'급여 80% 수준 (외래는 건강보험 본인부담률에 연동)',inSelf:'비중증 비급여 50%',outSelf:'약관 확인',outLim:'약관 확인',renew:'약관 확인',
+   notes:['비중증 비급여는 자기부담 50%, 연 1,000만원 한도(입원 회당 300만원)로 줄었습니다.','중증 비급여 위주로 보장하는 구조입니다.']}
+];
+var SILSON_SP=[
+  {re:/유병/,gen:'유병력자 실손',rate:'급여·비급여 70%',inSelf:'30%와 최소 10만원 중 큰 금액 (연 200만원 초과분 보상)',outSelf:'30%와 최소 2만원 중 큰 금액',outLim:'회당 20만원 (처방조제비는 보상 안 함)',renew:'1년 갱신, 3년마다 재가입',notes:['비급여 3대(도수·주사·MRI)는 보상하지 않습니다.']},
+  {re:/노후/,gen:'노후 실손',rate:'급여 80%·비급여 70% (공제 후)',inSelf:'입원당 30만원 공제',outSelf:'통원당 3만원 공제',outLim:'회당 100만원 (입원·통원 합산 연 1억원)',renew:'약관 확인',notes:['요양병원 의료비는 비급여 50%만 보상합니다.']}
+];
+function isSilsonCtr(c){ return c.items.some(function(it){ return /의료비|실손/.test(it.name)&&/입원|통원|외래|처방|비급여|질병|상해|급여/.test(it.name)&&!/벌금|처리지원|변호사/.test(it.name); })&&(c.items.some(function(it){return it.kind==='실손';})||/실손|의료비/.test(c.prod)); }
+function silsonGen(c){
+  var sp=SILSON_SP.filter(function(x){return x.re.test(c.prod);})[0]; if(sp) return sp;
+  var d=ymd(c.from); if(!d) return null;
+  return SILSON_GEN.filter(function(g){return d<=g.to;})[0];
+}
+/* 운전자보험: 보험사별 약관 개정 시기 (YY.MM, 괄호는 소급적용 시점) · X 미판매 · ALL 전 계약 소급 */
+var DRV_CO=['메리츠','한화','DB','삼성','KB','현대','롯데','흥국','하나','농협','MG'];
+function drvCoIdx(co){ var R=[/메리츠/,/한화/,/DB|동부/,/삼성/,/KB|LIG/,/현대/,/롯데/,/흥국/,/하나/,/농협|NH/,/MG|예별/]; for(var i=0;i<R.length;i++) if(R[i].test(co)) return i; return -1; }
+var DRV_ROWS=[
+  {g:'tx',grp:'처리지원금',t:'중대법규위반 6주(42일) 미만 사고',v:'21.02 20.07 20.04 21.03 21.02 21.03 20.10 20.10 22.07 22.10 20.08'},
+  {g:'tx',grp:'처리지원금',t:'일반사고 중상해(상해 1~3급) 불송치·불기소',v:'09.10 10.01 09.10 09.10 09.10 09.10 09.10 09.10 11.04 10.02 09.10'},
+  {g:'tx',grp:'처리지원금',t:'일반사고 중상해(상해 4~14급) 불송치·불기소',v:'24.01 23.08 23.11 24.01 23.12 23.10 24.02 24.01 24.04 X 24.02'},
+  {g:'tx',grp:'처리지원금',t:'공탁금 50% 선지급',v:'22.10 23.01(22.04) 22.10 23.01(22.04) 23.01 22.11 22.11 23.01 22.10 24.07 23.01(22.10)'},
+  {g:'tx',grp:'처리지원금',t:'공탁금 100% 선지급',v:'24.09 24.10 24.09 24.11 24.08 24.07 24.09 24.08 24.10 X X'},
+  {g:'fine',grp:'벌금',t:'스쿨존 어린이 치사상 대인벌금 3,000만원',v:'20.04 20.04 20.04 20.04 20.04 20.04 20.04 20.04 20.04 20.04 20.04'},
+  {g:'fine',grp:'벌금',t:'벌금 선지급',v:'21.08 21.07 21.04 ALL 23.09 21.08 23.08 21.08 23.09 X 22.05'},
+  {g:'fobj',grp:'벌금',t:'대물벌금 500만원',v:'18.10 18.10 18.01 18.12 18.09 18.11 19.04 18.12 19.11 20.08 19.01'},
+  {g:'law',grp:'변호사비',t:'경찰조사 단계 보장 (사망·중대법규위반, 불송치·불기소)',v:'23.02 23.02 22.10 24.01 23.02 23.02 23.02 23.03 23.02 23.04 23.02'},
+  {g:'law',grp:'변호사비',t:'경찰조사 단계 보장 (중상해 1~3급)',v:'23.04 23.05 23.07 24.01 23.09(23.06) 23.06 23.06 24.01(23.03) 23.09(23.02) X 23.07(23.02)'},
+  {g:'law',grp:'변호사비',t:'약식명령 후 정식재판 청구',v:'21.08 21.10 21.08 21.09 21.09 21.09 21.10 21.11 22.07 22.10 22.10'},
+  {g:'law',grp:'변호사비',t:'변호사비 50% 선지급',v:'23.07 23.08(23.01) 23.07 24.01 23.09 24.07 23.09 24.01 24.05 24.07 24.02'},
+  {g:'law',grp:'변호사비',t:'변호사비 70% 선지급',v:'24.09 24.10 24.09 24.11 24.08 24.07 24.09 24.08 24.10 26.04 X'},
+  {g:'law',grp:'변호사비',t:'심급별(1·2·3심) 변호사선임비용',v:'25.09 26.04 25.10 25.08 24.11 25.10 26.01 26.01 26.01 26.01 X'},
+  {g:'law',grp:'변호사비',t:'급발진 사고 변호사선임비용',v:'25.09 26.04 X X 24.11 X 25.04 25.02 25.01 26.04 X'}
+];
+function drvHas(c){ var n=c.items.map(function(i){return i.name;}).join('|'); return {tx:/처리지원|형사합의/.test(n),fine:/벌금/.test(n),fobj:/대물\s*벌금|벌금\(?대물/.test(n)||/벌금.*대물/.test(n),law:/변호사/.test(n)}; }
+function isDriverCtr(c){ var h=drvHas(c); return h.tx||h.fine||h.law; }
+function drvCheck(cell,d){
+  if(cell==='X') return {st:'na',txt:'판매 안 함'};
+  if(cell==='ALL') return {st:'ok',txt:'전 계약 소급'};
+  var m=cell.match(/^(\d{2})\.(\d{2})(?:\((\d{2})\.(\d{2})\))?$/); if(!m) return {st:'na',txt:cell};
+  var start=(2000+(+(m[3]||m[1])))*10000+(+(m[4]||m[2]))*100+1;
+  return {st:d>=start?'ok':'no',txt:m[3]?'20'+m[3]+'.'+m[4]+' 소급':'20'+m[1]+'.'+m[2]};
+}
+function ctrNoteBlocks(g){
+  var out=[];
+  g.list.forEach(function(c){
+    var d=ymd(c.from), prod=esc(ctrClean(c.prod)||c.prod);
+    if(isSilsonCtr(c)){
+      var s=silsonGen(c);
+      if(s){
+        var R=[['보장 비율',s.rate],['입원 자기부담',s.inSelf],['통원 자기부담',s.outSelf],['통원 한도',s.outLim],['갱신·재가입',s.renew]];
+        out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #2F7D4A">'+
+          '<div style="background:#2F7D4A;color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-size:16px;font-weight:900">실손의료비 · '+esc(s.gen)+(function(){ var L=[s.name&&s.name.indexOf(s.gen)<0?esc(s.name):'',s.period?esc(s.period)+' 가입':''].filter(Boolean); return L.length?' <span style="font-weight:700;font-size:13.5px;opacity:.9">('+L.join(', ')+')</span>':''; })()+'</div>'+
+          '<div style="font-size:12.5px;opacity:.9">'+prod+(c.from?' · '+esc(c.from)+' 가입':'')+'</div></div>'+
+          R.map(function(r,i){ return '<div style="display:grid;grid-template-columns:118px minmax(0,1fr);border-bottom:1px solid #DDE8DF;background:'+(i%2?'#F6FAF7':'#fff')+'"><div style="padding:6px 12px;font-size:12.5px;font-weight:800;color:#2F5A3A;border-right:1px solid #DDE8DF">'+r[0]+'</div><div style="padding:6px 12px;font-size:13px;line-height:1.45;color:var(--ink)">'+esc(r[1])+'</div></div>'; }).join('')+
+          '<div style="padding:7px 12px;font-size:12.5px;line-height:1.55;color:var(--ink2)"><b style="color:#2F5A3A">특이사항</b><br>'+s.notes.map(function(t){return '· '+esc(t);}).join('<br>')+'</div><div style="padding:6px 12px 9px;font-size:12.5px;font-weight:800;color:#B4472F">※ 정확한 보장 내용과 지급 조건은 약관을 확인하시기 바랍니다.</div></div>');
+      }
+    }
+    if(isDriverCtr(c)){
+      var ci=drvCoIdx(c.co), h=drvHas(c);
+      var rows=DRV_ROWS.filter(function(r){ return h[r.g]||(r.g==='fobj'&&h.fine); });
+      var head='<div style="background:#C2410C;color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-size:16px;font-weight:900">운전자보험 · 가입 시기별 보장 확인</div><div style="font-size:12.5px;opacity:.9">'+prod+(c.from?' · '+esc(c.from)+' 가입':'')+'</div></div>';
+      if(ci<0||!d){
+        out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #C2410C">'+head+'<div style="padding:9px 14px;font-size:13px;color:var(--ink2)">'+(ci<0?'이 보험사의 약관 개정 시기 자료가 없어 자동으로 판단하지 못했습니다. 약관으로 확인해 주세요.':'가입일이 없어 판단하지 못했습니다.')+'</div><div style="padding:6px 12px 9px;font-size:12.5px;font-weight:800;color:#B4472F">※ 정확한 보장 내용과 지급 조건은 약관을 확인하시기 바랍니다.</div></div>');
+        return;
+      }
+      var C='84px minmax(0,1fr) 118px 92px';
+      out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #C2410C">'+head+
+        '<div style="display:grid;grid-template-columns:'+C+';background:#FFF1E8;font-size:12px;font-weight:800;color:#9A3412"><div style="padding:5px 10px">담보</div><div style="padding:5px 10px">보장 내용</div><div style="padding:5px 10px;text-align:right">'+esc(DRV_CO[ci])+' 개정 시기</div><div style="padding:5px 10px;text-align:center">이 계약</div></div>'+
+        '<div class="bl" style="gap:0">'+rows.map(function(r,i){ var k=drvCheck(r.v.split(' ')[ci],d);
+          var badge=k.st==='ok'?'<span style="background:#2F7D4A;color:#fff;font-weight:800;font-size:12px;padding:2px 9px;border-radius:5px">해당</span>':(k.st==='no'?'<span style="background:#FDE7DF;color:#B4472F;font-weight:800;font-size:12px;padding:2px 9px;border-radius:5px">해당 없음</span>':'<span style="color:var(--muted);font-size:12px">판매 안 함</span>');
+          return '<div style="display:grid;grid-template-columns:'+C+';align-items:center;border-bottom:1px solid #E3E6EC;background:'+(i%2?'#F7F9FC':'#fff')+';font-size:13px"><div style="padding:6px 10px;font-size:12px;color:var(--muted);font-weight:700">'+esc(r.grp)+'</div><div style="padding:6px 10px;line-height:1.4;font-weight:'+(k.st==='ok'?'700':'400')+'">'+esc(r.t)+'</div><div style="padding:6px 10px;text-align:right;color:var(--ink2);font-size:12px">'+esc(k.st==='na'?'-':k.txt)+'</div><div style="padding:6px 10px;text-align:center">'+badge+'</div></div>'; }).join('')+'</div>'+
+        '<div style="padding:7px 12px;font-size:12px;line-height:1.55;color:var(--ink2)">· 가입일과 보험사 약관 개정 시기를 비교해 판단했습니다. “소급”은 그 시점 이후 가입한 계약에도 적용된다는 뜻입니다.<br>· <b>해당 없음</b>은 개정 전에 가입해 그 보장이 없을 가능성이 높다는 뜻이며, 실제 적용은 해당 계약의 약관 일자로 확인합니다.</div><div style="padding:6px 12px 9px;font-size:12.5px;font-weight:800;color:#B4472F">※ 정확한 보장 내용과 지급 조건은 약관을 확인하시기 바랍니다.</div></div>');
+    }
+  });
   return out;
 }
 function ctrSection(host,cov,a,num){
