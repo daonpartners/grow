@@ -1,7 +1,7 @@
 // 보잇 · 문자 발송 서버 기능 (Supabase Edge Function 'sms') — 솔라피(SOLAPI) 연동
 // 설계사 각자의 솔라피 계정으로 보냄 (설계사 본인 번호·본인 충전금). 운영계획 16번.
 //
-// 배포:  supabase functions deploy sms
+// 배포:  supabase functions deploy sms --no-verify-jwt   (로그인 확인은 함수 안에서 직접 함 · 2026-10-23 배포 v1)
 // 비밀값: supabase secrets set SMS_ENC_KEY=$(openssl rand -base64 32)  (필수 · 연결정보 암호화 열쇠, 한 번 정하면 바꾸지 말 것)
 //        supabase secrets set SOLAPI_CLIENT_ID=... SOLAPI_CLIENT_SECRET=... SOLAPI_REDIRECT_URI=https://grow.ai.kr/boit/sl.html
 //                                                                      ([솔라피 연결] 버튼용 · 앱 만든 뒤)
