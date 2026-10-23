@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>솔라피 연결</title>
+<style>body{margin:0;font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f6f7fb;color:#1c2333;display:grid;place-items:center;min-height:100vh}p{font-size:15px}</style>
+</head><body><p id="m">솔라피 연결을 마무리하는 중…</p>
+<script>
+/* 솔라피 [허용] 후 돌아오는 주소 (SOLAPI_REDIRECT_URI). 받은 code·state를 잠시 보관하고 보잇으로 돌아감 → 보잇이 서버에 넘겨 연결을 끝냄 */
+(function(){ var q=new URLSearchParams(location.search), code=q.get("code"), state=q.get("state"), err=q.get("error");
+  try{ if(code&&state) localStorage.setItem("boit_sl_cb",JSON.stringify({code:code,state:state,at:Date.now()})); }catch(e){}
+  if(err||!code){ document.getElementById("m").textContent="솔라피 연결이 취소되었습니다. 보잇으로 돌아갑니다."; }
+  setTimeout(function(){ location.replace("./"); }, err||!code?1500:200); })();
+</script></body></html>

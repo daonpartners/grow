@@ -690,7 +690,7 @@ tr.sel td{background:var(--accent-soft)}
           <div class="seg" id="cash-amts"><button class="btn" type="button" data-cash="10000">1만원</button><button class="btn" type="button" data-cash="30000">3만원</button><button class="btn" type="button" data-cash="50000">5만원</button><button class="btn" type="button" data-cash="100000">10만원</button></div>
           <p class="note" id="cash-msg" style="margin:0">시범 화면입니다. 실제 서비스에서는 결제창(PG)이 열리고, 충전금은 사용하지 않은 금액에 한해 환불규정에 따라 환불합니다.</p>
           <div class="tbl-wrap"><table><thead><tr><th>일시</th><th>내용</th><th>금액</th><th>잔액</th></tr></thead><tbody id="cash-body"></tbody></table></div></div>
-        <div class="panel" style="display:flex;flex-direction:column;gap:8px"><div class="row between"><h2>사업자 문자 (팝빌)</h2><button class="btn" type="button" data-pbgo>문자 설정으로</button></div><p class="note" id="bl-pb" style="margin:0"></p></div>
+        <div class="panel" style="display:flex;flex-direction:column;gap:8px"><div class="row between"><h2>내 번호로 문자 (솔라피)</h2><button class="btn" type="button" data-pbgo>문자 설정으로</button></div><p class="note" id="bl-pb" style="margin:0"></p></div>
         <div class="panel"><div class="row between"><h2>결제내역</h2><button class="btn primary" data-pre="pricing">이용권 연장·변경</button></div>
           <div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>결제일</th><th>이용권</th><th>기간</th><th>결제수단</th><th>금액</th><th>상태</th></tr></thead><tbody id="bl-body"></tbody></table></div></div>
       </div>
@@ -930,7 +930,7 @@ tr.sel td{background:var(--accent-soft)}
     <!-- SMS -->
     <section data-view="sms" hidden>
       <div><h1>문자발송</h1></div>
-      <div class="tabs" id="sv-tabs" style="margin-top:12px"><button class="btn" type="button" data-sv="kit" aria-pressed="true">문구·이미지 (누구나)</button><button class="btn" type="button" data-sv="biz" aria-pressed="false">사업자 문자 (팝빌)</button></div>
+      <div class="tabs" id="sv-tabs" style="margin-top:12px"><button class="btn" type="button" data-sv="kit" aria-pressed="true">문구·이미지 (누구나)</button><button class="btn" type="button" data-sv="biz" aria-pressed="false">내 번호로 문자 (솔라피)</button></div>
       <div data-svv="kit" style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
         <div class="panel" style="display:flex;flex-direction:column;gap:12px">
           <div class="fgrid"><div class="field"><label for="mk-cust">고객 (선택하면 이름이 들어갑니다)</label><input id="mk-cust" list="dl-cust" placeholder="이름 또는 전화번호 뒷자리" autocomplete="off"></div></div>
@@ -956,18 +956,38 @@ tr.sel td{background:var(--accent-soft)}
         </div>
       </div>
       <div data-svv="biz" hidden style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
-        <div class="hbox"><h3>사업자등록번호가 있는 회원만 사용</h3>문자는 각자 팝빌 회원(사업자)으로 가입해 팝빌에 직접 충전하고 씁니다. 보잇 팩스 충전금과는 따로 계산됩니다. 결제·환불·세금계산서는 팝빌이 처리합니다.</div>
+        <div class="hbox"><h3>내 휴대폰 번호로 보내는 문자 (솔라피)</h3>사업자가 아니어도 됩니다. 솔라피(SOLAPI)에 본인 명의로 가입·충전하고 보잇에 한 번 연결하면, 보잇에서 고객에게 내 번호로 문자가 나갑니다. 요금은 내 솔라피 잔액에서 빠지고 (단문 18원·장문 45원·사진 110원, VAT 별도), 보잇 요금·충전금과는 따로입니다.</div>
         <div class="pbst" id="pb-st"></div>
-        <form class="panel" id="f-pb" style="display:flex;flex-direction:column;gap:12px">
-          <h2 style="color:var(--accent)">사업자 정보</h2>
-          <div class="fgrid">
-            <div class="field"><label for="pb-no">사업자등록번호</label><input id="pb-no" inputmode="numeric" maxlength="12" placeholder="000-00-00000" autocomplete="off"></div>
-            <div class="field"><label for="pb-corp">상호</label><input id="pb-corp" autocomplete="off"></div>
-            <div class="field"><label for="pb-ceo">대표자</label><input id="pb-ceo" autocomplete="off"></div>
-            <div class="field"><label for="pb-snd">발신번호 (고객에게 보이는 번호)</label><input id="pb-snd" inputmode="tel" maxlength="13" placeholder="010-0000-0000" autocomplete="off"></div>
-          </div>
-          <div class="row"><button class="btn primary" type="submit" id="pb-join">팝빌 회원 연결</button><span class="note" id="pb-msg"></span></div>
-        </form>
+        <div class="panel" id="sl-connect" style="display:flex;flex-direction:column;gap:12px">
+          <h2 style="color:var(--accent)">솔라피 연결하기</h2>
+          <ol class="note" style="margin:0;padding-left:18px;line-height:1.8">
+            <li><a href="https://console.solapi.com/login" target="_blank" rel="noopener">솔라피</a> 가입 → 본인 실명인증</li>
+            <li>[발신번호]에서 내 휴대폰 번호 등록</li>
+            <li>[결제 및 잔액]에서 충전</li>
+            <li>아래 [솔라피 연결] 버튼 또는 API Key로 연결</li>
+          </ol>
+          <div class="row"><button class="btn primary" type="button" id="sl-oauth">솔라피 연결</button><button class="btn" type="button" id="sl-demo">(체험) 시범 연결</button></div>
+          <p class="note" id="sl-oauth-note" style="margin:0"></p>
+          <details><summary class="note" style="cursor:pointer">API Key로 연결하기</summary>
+            <form id="f-sl" style="display:flex;flex-direction:column;gap:10px;margin-top:10px" autocomplete="off">
+              <p class="note" style="margin:0">솔라피 [개발 › API Key]에서 새 키를 만들고 API Key와 API Secret을 붙여넣으세요. Secret은 만들 때 한 번만 보입니다. 붙여넣은 값은 보잇 서버에 암호화해 보관하고 화면에는 다시 보여주지 않습니다.</p>
+              <div class="fgrid">
+                <div class="field"><label for="sl-key">API Key</label><input id="sl-key" autocomplete="off" spellcheck="false"></div>
+                <div class="field"><label for="sl-secret">API Secret</label><input id="sl-secret" type="password" autocomplete="new-password" spellcheck="false"></div>
+              </div>
+              <div class="row"><button class="btn primary" type="submit">연결 테스트 후 저장</button><a class="btn" style="text-decoration:none;color:inherit" href="https://console.solapi.com/credentials" target="_blank" rel="noopener">API Key 만들러 가기</a></div>
+            </form>
+          </details>
+        </div>
+        <p class="note" id="sl-msg" style="margin:0"></p>
+        <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+          <h2 style="color:var(--accent)">하루 발송 한도</h2>
+          <div class="row" style="gap:10px;align-items:center"><label for="sl-acct" class="note">내 솔라피 계정</label><select id="sl-acct"><option value="개인">개인 (처음 50건)</option><option value="개인상향">개인 · 한도 올림 (최대 500건)</option><option value="사업자">사업자 (기본 1,000건)</option></select></div>
+          <p class="note" id="sl-limit" style="margin:0"></p>
+          <p class="note" style="margin:0">한도는 매일 오전 9시~9시 30분에 초기화됩니다. 한도를 넘는 건은 보잇이 다음 날 오전 9시 35분으로 예약해 보냅니다. 한도 올리기는 무료이며 발송 목적을 적어 솔라피에 요청합니다. 개인 계정은 최대 500건, 더 필요하면 사업자 인증이 필요합니다.</p>
+          <div class="row"><button class="btn" type="button" id="sl-ask">한도 증가 요청 문구 복사</button><a class="btn" style="text-decoration:none;color:inherit" href="https://console.solapi.com/quota" target="_blank" rel="noopener">솔라피 한도 화면 열기</a><span class="note" id="sl-askmsg"></span></div>
+        </div>
+        <div class="hbox"><h3>문자가 '실패'로 나올 때</h3>휴대폰 통신사의 무료 부가서비스 '번호도용문자 차단서비스'에 가입돼 있으면 인터넷 문자가 막힙니다 (실패 사유 3059). SKT 114 · KT 100 · LGU+ 101 또는 통신사 앱에서 해지하세요. 반영까지 최대 7일 걸릴 수 있습니다.</div>
         <div class="panel">
           <h2 style="color:var(--accent)">자동 발송 (연결 후 사용)</h2>
           <div class="grid3" style="margin-top:10px;grid-template-columns:repeat(2,minmax(0,1fr))" id="smsgrid">
@@ -977,7 +997,7 @@ tr.sel td{background:var(--accent-soft)}
             <div class="panel"><h2>면책·감액기간 종료 알림</h2><p class="note">계약별 종료일에 맞춰 설계사에게 먼저 알림 후 고객 발송. 기간은 계약 등록 때 해당 약관 기준으로 입력</p></div>
           </div>
         </div>
-        <div class="panel"><h2>팝빌 포인트 사용내역</h2><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>일시</th><th>내용</th><th>금액</th><th>잔액</th></tr></thead><tbody id="pb-log"></tbody></table></div></div>
+        <div class="panel"><h2>발송 기록</h2><p class="note" style="margin:4px 0 0">받는 번호·문자 내용은 보잇에 남기지 않습니다. 건별 결과는 솔라피 [발송 내역]에서 확인하세요.</p><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>일시</th><th>내용</th><th>결과</th></tr></thead><tbody id="pb-log"></tbody></table></div></div>
       </div>
     </section>
 
@@ -1388,7 +1408,7 @@ function checkPayReminders(){ const now=Date.now(), seen=new Set(), out=[];
   S.history.forEach(h=>{ if(!h.gid||h.ex||seen.has(h.gid)) return; seen.add(h.gid); const g=S.history.filter(x=>x.gid===h.gid);
     const base=g[0].alimAt||g[0].ts; if(!g.some(x=>x.res==="ok")||g.some(x=>x.paidAmt||x.replied)||g.some(x=>x.reminded)||!base||now-base<REMIND_DAYS*864e5) return;
     const v=VAULT[h.gid]||{}, ph=h.phone||(v.cl&&v.cl.phone)||(CUSTOMERS.find(x=>x.name===h.cust)||{}).phone||""; if(!phoneOk(ph)) return;
-    if(!pbReady()||pb().bal<SMS_PRICE.lms) return; pbLog(`지급 확인 재문자 자동 (${h.cust})`,-SMS_PRICE.lms);
+    if(!slAuto(`지급 확인 재문자 자동 (${h.cust})`,ph,`${h.cust}님, ${h.ins}에 청구하신 보험금 지급 안내 받으셨나요? 받으신 문자나 지급내역서를 캡처해 보내주시면 정리해 드리겠습니다. - ${ME.name||"담당 설계사"}`)) return;
     g.forEach(x=>x.reminded=now); const c=CUSTOMERS.find(x=>x.name===h.cust); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"보험금 지급 확인 재문자 (자동)"}); out.push(h.cust); });
   return out; }
 function purgeVault(){ checkPayReminders(); const now=Date.now();
@@ -1431,7 +1451,7 @@ document.addEventListener("click",e=>{
     const askT=`${h.cust}님, ${h.ins}에 청구하신 보험금 지급 안내 받으셨나요? 받으신 문자나 지급내역서를 캡처해 보내주시면 정리해 드리겠습니다. - ${ME.name||"담당 설계사"}`;
     if(!smsGate({cost:SMS_PRICE.lms,memo:`지급 확인 문자 (${h.cust})`,el:$("#hm-msg"),text:askT,phone:ph})) return;
     const c=CUSTOMERS.find(x=>x.name===h.cust); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"보험금 지급 결과 확인 요청"});
-    $("#hm-msg").textContent=`보냈습니다 (시범): "${h.cust}님, ${h.ins}에 청구하신 보험금 지급 안내 받으셨나요? 받으신 문자나 지급내역서를 캡처해 보내주시면 정리해 드리겠습니다. - ${ME.name||"담당 설계사"}"`; return; }
+    $("#hm-msg").textContent=sentNote(SMS_PRICE.lms); return; }
   const sg=e.target.closest("[data-hsign]"); if(sg){ const h=S.history[+sg.dataset.hsign]; S.history.filter(x=>x.gid===h.gid&&x.res==="signwait").forEach(x=>{x.res="ok"; x.ts=Date.now();}); renderHistory(); return; }
   if(e.target.closest("#hs-xls")){ const rows=histRows().map(({h})=>({발송일시:h.at,고객:h.cust,보험사:h.ins,수신팩스:h.fax,장수:h.pages,결과:{ok:"접수완료",bad:"전송실패",cancel:"전송취소",wait:"번호 입력 대기",signwait:"서명 대기"}[h.res]||h.res,지급금액:h.paidAmt||0,메모:h.memo||""})); saveXlsx(rows,`청구내역_${today()}.xlsx`,"청구내역").then(r=>{ $("#hs-stat").textContent=r==="ok"?"엑셀을 저장했습니다.":"이 화면에서는 저장할 수 없습니다."; }); return; }
   const vf=e.target.closest("[data-hvf]"); if(vf){ const ix=+vf.dataset.hvf, h=S.history[ix]; const i=INSURERS.find(x=>x.name===h.ins)||{};
@@ -1495,7 +1515,7 @@ const GUIDE=[
  ["전송실패가 떴거나 다시 보내야 할 때 (재청구)","전송실패·전송취소·발송 대기 건의 서류와 주민번호만 최대 7일 임시 보관합니다. 그 안에는 청구내역 → [재청구]로 다시 올리지 않고 그대로 보냅니다. 발송이 완료되거나 7일이 지나거나 [파일삭제]를 누르면 파기됩니다."],
  ["보험사 운영시간 밖에 보냈을 때","일부 보험사는 운영시간 안에만 팩스를 받아 밤·주말 발송이 실패할 수 있습니다. 보험사별 운영시간은 확인되는 대로 표시할 예정이며, 실패하면 청구내역에서 [재청구]하세요."],
  ["가상 팩스번호 보험사","일부 보험사는 고객이 콜센터에 전화해 받은 1회용 팩스번호로만 받습니다. [팩스번호] 단계에서 [고객에게 번호 요청 문자]를 보내고, 받은 번호를 입력하세요."],
- ["고객 서명","대면: 발송 화면에서 고객이 바로 서명. 비대면: 고객 휴대폰으로 서명 링크 문자를 보내고, 고객이 서명하면 발송할 수 있습니다(사업자 문자 연결 시 팝빌 포인트 차감, 아니면 문구를 복사해 내 휴대폰으로 보냄)."],
+ ["고객 서명","대면: 발송 화면에서 고객이 바로 서명. 비대면: 고객 휴대폰으로 서명 링크 문자를 보내고, 고객이 서명하면 발송할 수 있습니다(솔라피 연결 시 내 번호로 바로 발송, 아니면 문구를 복사해 내 휴대폰으로 보냄)."],
  ["서류 사진 요령","글자가 잘리지 않게 한 장씩 밝은 곳에서 찍으세요. PDF는 페이지별 이미지로 바뀌어 보내집니다. 영수증은 카드 전표·소득공제용 '진료비납입확인서'가 아니라 진료비 영수증(약제비 포함)을 올려야 합니다."],
 ];
 /* 청구접수 알림톡 · 보상카드 */
@@ -1522,15 +1542,16 @@ function renderAlim(){ const d=alimData(ALIM.gid), price=ALIM.ch==="kakao"?SMS_P
   <div class="field"><label>받는 사람</label><input id="al-phone" value="${esc(fmtPhone(d.phone))}" inputmode="tel" maxlength="13" placeholder="010-0000-0000"></div>
   <div class="smsprev"><span class="note">메시지 미리보기 · 보상카드 이미지가 함께 갑니다</span><div style="white-space:pre-wrap">${esc(alimText(d))}</div></div>
   ${cardHTML(d)}
-  <p class="note" style="margin:0">사업자 문자(팝빌) 연결 회원만 보낼 수 있습니다. 알림톡은 카카오 비즈니스 채널과 양식(템플릿) 심사를 마친 뒤 발송되며, 못 받는 고객은 문자로 대체합니다. ${pbSummary()}</p>
+  <p class="note" style="margin:0">알림톡은 다온파트너스 채널로 나가며 보잇 충전금에서 ${SMS_PRICE_KAKAO}원 차감됩니다 (팝빌 연결 전 시범). 문자는 솔라피 연결 시 내 번호로 나갑니다. 알림톡은 카카오 비즈니스 채널과 양식(템플릿) 심사를 마친 뒤 발송되며, 못 받는 고객은 문자로 대체합니다. ${pbSummary()}</p>
   <div class="row"><button class="btn primary" type="button" id="al-send">보내기</button><button class="btn" type="button" id="al-copy">문구 복사</button><button class="btn" type="button" id="al-save">카드 이미지 저장</button><span class="note" id="al-msg"></span></div>`); }
 document.addEventListener("click",async e=>{
   const ch=e.target.closest("[data-alch]"); if(ch){ ALIM.ch=ch.dataset.alch; renderAlim(); return; }
   if(e.target.closest("#al-send")){ const ph=$("#al-phone").value, d=alimData(ALIM.gid), price=ALIM.ch==="kakao"?SMS_PRICE_KAKAO:SMS_PRICE.lms;
     if(!phoneOk(ph)){ $("#al-msg").textContent="휴대폰번호를 확인하세요."; return; }
-    if(!smsGate({cost:price,memo:`청구접수 ${ALIM.ch==="kakao"?"알림톡":"문자"} (${d.name})`,el:$("#al-msg"),text:alimText(d),phone:ph})) return;
+    if(ALIM.ch==="kakao"){ if((ME.cash||0)<price){ $("#al-msg").innerHTML=`보잇 충전금이 부족합니다 (필요 ${price}원). <button class="btn" type="button" data-go-cash>충전금 충전</button>`; return; } cashLog(`청구접수 알림톡 (${d.name})`,-price); }
+    else if(!smsGate({cost:price,memo:`청구접수 문자 (${d.name})`,el:$("#al-msg"),text:alimText(d),phone:ph})) return;
     d.hs.forEach(h=>{h.alim=true; h.alimAt=Date.now();}); const c=CUSTOMERS.find(x=>x.name===d.name); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"청구접수 알림·보상카드"});
-    $("#al-msg").textContent=`보냈습니다 (시범: 실제 발송 없음) · 팝빌 포인트 ${price}원 차감.`; if(!$("[data-view=history]").hidden) renderHistory(); return; }
+    $("#al-msg").textContent=ALIM.ch==="kakao"?`알림톡 접수 (시범: 팝빌·카카오 채널 연결 전이라 실제 발송 없음) · 보잇 충전금 ${price}원 차감.`:sentNote(price); if(!$("[data-view=history]").hidden) renderHistory(); return; }
   if(e.target.closest("#al-copy")){ copyText(alimText(alimData(ALIM.gid)),$("#al-msg")); return; }
   if(e.target.closest("#al-save")){ const el=$("#rcard"); if(!window.html2canvas||!DL){ $("#al-msg").textContent="이 화면에서는 이미지 저장을 쓸 수 없습니다."; return; }
     try{ const cv=await html2canvas(el,{scale:2,backgroundColor:"#ffffff"}); const blob=await new Promise(r=>cv.toBlob(r,"image/png")); await DL.save({filename:`보상카드_${alimData(ALIM.gid).name}_${today()}.png`,data:blob}); $("#al-msg").textContent="저장했습니다."; }catch(err){ $("#al-msg").textContent="저장하지 못했습니다."; } return; }
@@ -1563,7 +1584,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#lk-send")){ const n=$("#lk-name").value.trim(), ph=$("#lk-phone").value; if(!n||!phoneOk(ph)){ $("#lk-msg").textContent="이름과 휴대폰번호를 확인하세요."; return; }
     if(!smsGate({cost:SMS_PRICE.lms,memo:`청구 링크 문자 (${n})`,el:$("#lk-msg"),text:$("#lk-prev").textContent,phone:ph})) return;
     const c=CUSTOMERS.find(x=>x.name===n&&digits(x.phone)===digits(ph)); if(c) ACTS.push({cust:c.id,date:today(),type:"문자",memo:"보험금 청구 링크 발송"});
-    $("#lk-msg").textContent="보냈습니다 (시범: 실제 발송 없음)."; return; }
+    $("#lk-msg").textContent=sentNote(SMS_PRICE.lms); return; }
   if(e.target.closest("#lk-demo")){ CC={on:true,type:"",signed:false}; infoDlg("고객 화면 (미리보기)",custClaimForm()); initCanvas($("#cc-cv"),()=>{CC.signed=true; $("#cc-signst").textContent="서명 완료";}); return; }
   const ct=e.target.closest("[data-cctype]"); if(ct){ CC.type=ct.dataset.cctype; document.querySelectorAll("[data-cctype]").forEach(b=>b.setAttribute("aria-pressed",b===ct)); return; }
   if(e.target.closest("#cc-signsim")){ CC.signed=true; $("#cc-signst").textContent="서명 완료"; return; }
@@ -2114,9 +2135,9 @@ $("#imp-go").onclick=()=>{
 /* ---- 회원 · 결제 · 마이페이지 ---- */
 const PLANS=[
   {id:"lite",name:"라이트",price:14900,tag:"청구 월 100장 이하",items:["고객·상담·활동·만기 관리","보장분석리포트·제안서·관리제안서","보장분석 PDF로 계약 등록 (고객 1명씩, 무제한)","보상청구 팩스 월 100장 포함 (넘으면 장당 150원)","손보 3 + 생보 3 동시 청구"]},
-  {id:"pro",name:"프로",price:29900,tag:"청구 월 100장 이상 · 고객 많은 설계사",items:["라이트 전체","보상청구 팩스 월 200장 포함 (넘으면 장당 150원, 제한 없음)","보장분석 PDF 여러 고객 한 번에 등록","만기 자동 안내 (자동차·화재·배상 D-30 문자 예약 · 사업자 문자 연결 시)"]},
+  {id:"pro",name:"프로",price:29900,tag:"청구 월 100장 이상 · 고객 많은 설계사",items:["라이트 전체","보상청구 팩스 월 200장 포함 (넘으면 장당 150원, 제한 없음)","보장분석 PDF 여러 고객 한 번에 등록","만기 자동 안내 (자동차·화재·배상 D-30 문자 예약 · 솔라피 연결 시)"]},
 ];
-const OVER="문자·알림톡은 요금제에 포함되지 않습니다. 사업자등록번호가 있는 회원이 팝빌에 직접 충전해 쓰며, 단가는 팝빌 요금을 따릅니다. 사업자가 아니어도 문자 문구 복사·문자용 이미지 다운로드는 쓸 수 있습니다. 포함 장수(라이트 100장 · 프로 200장)를 넘는 팩스도 제한 없이 보낼 수 있고, 넘는 장수만 1장 150원이 충전금에서 차감됩니다. 남은 팩스 장수는 다음 달로 넘어가지 않습니다.";
+const OVER="문자는 요금제에 포함되지 않습니다. 설계사 본인이 솔라피(개인도 가입 가능)에 충전해 내 번호로 보내며, 단가는 솔라피 요금을 따릅니다. 연결하지 않아도 문자 문구 복사·문자용 이미지 다운로드는 쓸 수 있습니다. 청구접수 알림톡은 보잇 충전금에서 차감됩니다. 포함 장수(라이트 100장 · 프로 200장)를 넘는 팩스도 제한 없이 보낼 수 있고, 넘는 장수만 1장 150원이 충전금에서 차감됩니다. 남은 팩스 장수는 다음 달로 넘어가지 않습니다.";
 const PERIODS=[{m:1,label:"1개월",rate:1}];
 const PAYM=["신용카드","계좌이체","간편결제"];
 const PAY={plan:"pro",m:1,method:"신용카드"};
@@ -2196,7 +2217,7 @@ $("#f-signup").addEventListener("submit",e=>{e.preventDefault();
 });
 
 /* 충전금 */
-const SMS_PRICE={sms:25,lms:55}, FAX_EXTRA=150;
+const SMS_PRICE={sms:20,lms:50}, FAX_EXTRA=150; // 문자: 솔라피 단문 18원·장문 45원(VAT 별도) → VAT 포함 추정치. 실제 차감은 설계사 솔라피 계정
 function cashLog(memo,amt){ ME.cash=(ME.cash||0)+amt; ME.cashLog.unshift({at:(d=>`${ymd(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`)(new Date()),memo,amt,bal:ME.cash}); }
 function renderCash(){ const b=$("#cash-body"); if(!b) return; b.innerHTML=ME.cashLog.length?ME.cashLog.map(x=>`<tr><td class="num">${x.at}</td><td>${esc(x.memo)}</td><td class="num">${x.amt>0?"+":""}${x.amt.toLocaleString()}원</td><td class="num">${x.bal.toLocaleString()}원</td></tr>`).join(""):'<tr><td colspan="4" class="empty">충전·사용 내역이 없습니다.</td></tr>'; }
 document.addEventListener("click",e=>{ const c=e.target.closest("[data-cash]"); if(!c) return; const v=+c.dataset.cash; cashLog("충전 (신용카드 · 시범)",v); ME.payments.unshift({at:today(),plan:"충전금",per:"–",method:"신용카드",amount:v,st:"완료"}); $("#cash-msg").textContent=`${v.toLocaleString()}원을 충전했습니다 (시범: 실제 결제 없음).`; renderMypage(); });
@@ -2530,7 +2551,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-renew]"); 
     if(!t){ $("#rn-msg").textContent="내용을 입력하세요."; return; } if(by>2000){ $("#rn-msg").textContent="2,000바이트를 넘었습니다."; return; } if(!phoneOk(ph)){ $("#rn-msg").textContent="휴대폰번호를 확인하세요."; return; }
     if(!smsGate({cost,memo:`${k.kind} 갱신 안내 (${custName(k.cust)})`,el:$("#rn-msg"),text:t,phone:ph})) return;
     k.renewSent=today(); ACTS.push({cust:k.cust,date:today(),type:"문자",memo:`${k.kind}보험 갱신 안내 (만기 ${k.end})`});
-    $("#rn-msg").textContent=`보냈습니다 · 팝빌 포인트 ${cost}원 차감 (시범: 실제 발송 없음). 활동관리에 기록했습니다.`; renderExp(k.kind==="자동차"?"auto":"liab"); return; }
+    $("#rn-msg").textContent=`${sentNote(cost)} · 활동관리에 기록했습니다.`; renderExp(k.kind==="자동차"?"auto":"liab"); return; }
 });
 document.addEventListener("input",e=>{ if(e.target.id==="rn-txt") updRenew(); if(e.target.id==="rn-to") e.target.value=fmtPhone(e.target.value); });
 
@@ -2679,10 +2700,10 @@ document.addEventListener("click",e=>{
     const later=$("#sms-when").value==="later"; if(later&&!$("#sms-at").value){ $("#sms-msg").textContent="예약 일시를 고르세요."; return; }
     const cost=smsCost();
     const gl=SMSST.list.map(r=>({nm:r.c.name,ph:r.c.phone||"",t:smsFinal(r)}));
-    if(!smsGate({cost,memo:`문자 ${SMSST.list.length}건 ${later?"예약":"발송"}`,el:$("#sms-msg"),text:gl[0].t,phone:gl[0].ph,list:gl.length>1?gl:null})) return;
+    if(!smsGate({cost,memo:`문자 ${SMSST.list.length}건 ${later?"예약":"발송"}`,el:$("#sms-msg"),text:gl[0].t,phone:gl[0].ph,list:gl.length>1?gl:null,at:later?$("#sms-at").value:null})) return;
     SMSST.list.forEach(r=>ACTS.push({cust:r.c.id,date:later?$("#sms-at").value.slice(0,10):today(),type:"문자",memo:smsFinal(r).slice(0,40)+"…"}));
-    $("#sms-msg").textContent=`${SMSST.list.length}명에게 ${later?"예약":"발송"} 처리했습니다 · 팝빌 포인트 ${cost.toLocaleString()}원 차감 (시범: 실제 발송 없음). 활동관리에 기록했습니다.`;
-    SEL[SMSST.key].clear(); refreshSel(SMSST.key); setTimeout(()=>{$("#sms-dlg").hidden=true;},1600); }
+    $("#sms-msg").textContent=`${SMSST.list.length}명 ${later?"예약":"발송"} · ${sentNote(cost)} · 활동관리에 기록했습니다.`;
+    SEL[SMSST.key].clear(); refreshSel(SMSST.key); setTimeout(()=>{$("#sms-dlg").hidden=true;},slLive()?4000:1600); }
 });
 document.addEventListener("click",e=>{ if(!e.target.closest("[data-go-cash]")) return; e.preventDefault(); $("#sms-dlg").hidden=true; MP="bill"; go("mypage"); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#sms-dlg").hidden) $("#sms-dlg").hidden=true; });
@@ -2775,7 +2796,7 @@ const BOIT_CLOUD={url:"https://lobdowpxujgiadrtxklb.supabase.co",key:"sb_publish
 const CLOUD={on:/(^|\.)grow\.ai\.kr$|(^|\.)boit\.ai\.kr$|github\.io$/.test(location.hostname),sb:null,user:null,last:"",busy:false};
 function nextCustId(){ return CUSTOMERS.reduce((m,c)=>Math.max(m,+c.id||0),0)+1; }
 function cloudSnap(){ return {v:1,customers:CUSTOMERS,contracts:CONTRACTS,consults:CONSULTS,acts:ACTS,history:S.history,keepDays:KEEP_DAYS,
-  me:{name:ME.name,phone:ME.phone,company:ME.company,branch:ME.branch,photo:ME.photo,plan:ME.plan,expires:ME.expires,payments:ME.payments,qna:ME.qna,cash:ME.cash||0,cashLog:ME.cashLog||[],pb:ME.pb||null,fresh:!!ME.fresh}}; }
+  me:{name:ME.name,phone:ME.phone,company:ME.company,branch:ME.branch,photo:ME.photo,plan:ME.plan,expires:ME.expires,payments:ME.payments,qna:ME.qna,cash:ME.cash||0,cashLog:ME.cashLog||[],pb:ME.pb||null,sl:ME.sl?{...ME.sl,senders:[]}:null,fresh:!!ME.fresh}}; }
 function cloudApply(d){ const put=(a,v)=>{ if(Array.isArray(v)) a.splice(0,a.length,...v); };
   put(CUSTOMERS,d.customers); put(CONTRACTS,d.contracts); put(CONSULTS,d.consults); put(ACTS,d.acts); if(Array.isArray(d.history)) S.history=d.history;
   if(d.me) Object.assign(ME,d.me); const dl=$("#dl-cust"); if(dl) dl.innerHTML=""; }
@@ -2790,7 +2811,7 @@ async function cloudLogin(user){ CLOUD.user=user; ME.demo=false; ME.email=user.e
   if(data&&data.data){ cloudApply(data.data); }
   else { const m=user.user_metadata||{}; Object.assign(ME,{name:m.name||ME.name||"",phone:m.phone||"",company:m.company||"",branch:m.branch||"",fresh:true,plan:"pro",expires:addDays(today(),30),
       payments:[{at:today(),plan:"시범 운영",per:"30일",method:"무료",amount:0,st:"무료"}],qna:[],cash:0,cashLog:[]}); cashLog("시범 충전금",10000); }
-  CLOUD.last=""; await cloudSave(true); return true; }
+  CLOUD.last=""; await cloudSave(true); if(window.slAfterLogin) setTimeout(()=>window.slAfterLogin(),0); return true; }
 async function cloudInit(){
   CLOUD.sb=window.supabase.createClient(BOIT_CLOUD.url,BOIT_CLOUD.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   CLOUD.sb.auth.onAuthStateChange((ev,session)=>{ if(ev==="PASSWORD_RECOVERY"&&session){ cloudLogin(session.user).then(()=>{ enterApp("mypage"); MP="pw"; renderMypage(); $("#pw-msg").textContent="새 비밀번호를 입력해 변경하세요."; }); } });
@@ -3396,60 +3417,109 @@ if(typeof go==="function"){ const _go=go; go=function(v){ _go(v); const w=S.view
 if(typeof cloudSnap==="function"){ const _s=cloudSnap; cloudSnap=function(){ const o=_s(); o.me.page=ME.page||null; o.quoteRates=QT.rates; return o; }; }
 if(typeof cloudApply==="function"){ const _a=cloudApply; cloudApply=function(d){ _a(d); if(d&&Array.isArray(d.quoteRates)) QT.rates=d.quoteRates; }; }
 
-/* ===== 문자: 사업자 문자(팝빌 연동회원 · 각자 충전) + 누구나 쓰는 문구·이미지 ===== */
-/* 실제 연결 시 서버(보잇)가 팝빌 API 호출: JoinMember(연동회원 가입) · GetChargeURL(충전 팝업) · GetBalance(잔액) · 발신번호 관리 팝업 · SendSMS/SendLMS.
-   팝빌 결제방식은 '연동회원 결제'(선불, 회원이 직접 충전·정산). 아래는 시범 화면이며 실제 발송·결제는 없음. 단가는 시범값(SMS_PRICE). */
-function pb(){ if(!ME.pb) ME.pb={on:false,biz:"",corp:"",ceo:"",sender:"",senderOk:false,bal:0,log:[]}; return ME.pb; }
-function pbReady(){ const p=pb(); return p.on&&p.senderOk; }
-function pbLog(memo,amt){ const p=pb(), d=new Date(); p.bal=(p.bal||0)+amt; p.log.unshift({at:`${ymd(d)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`,memo,amt,bal:p.bal}); }
-function pbSummary(){ const p=pb(); return !p.on?"사업자 문자 미연결 — 문구 복사·내 휴대폰 문자로 보내기는 가능":!p.senderOk?"사업자 문자: 발신번호 등록 대기":`팝빌 포인트 ${(p.bal||0).toLocaleString()}원`; }
+/* ===== 문자: 내 번호로 문자 (솔라피 · 설계사 각자 계정·각자 충전) + 누구나 쓰는 문구·이미지 — 운영계획 16번 ===== */
+/* 실제 발송은 서버 기능 'sms'(server/sms.ts)가 설계사 본인 솔라피 계정으로 보냄. 솔라피 열쇠·토큰은 서버에만 암호화 보관하고 화면에는 두지 않음.
+   로그인 전·체험(demo)에서는 시범 동작(실제 발송 없음). 단가 표시는 추정치(SMS_PRICE), 실제 차감은 솔라피 요금표 기준. */
+const SL_LIMIT={개인:50,개인상향:500,사업자:1000};
+function pb(){ if(!ME.sl) ME.sl={on:false,mode:"",sender:"",senders:[],bal:0,point:0,oauth:false,acct:"개인",limit:SL_LIMIT.개인,day:{d:"",n:0},log:[],checked:""}; return ME.sl; }
+const slLive=()=>!!(typeof CLOUD!=="undefined"&&CLOUD.on&&CLOUD.user&&!ME.demo&&CLOUD.sb);
+function pbReady(){ const p=pb(); return p.on&&!!p.sender; }
+function pbLog(memo,amt,extra){ const p=pb(), d=new Date(); if(!slLive()) p.bal=(p.bal||0)+amt; p.log.unshift({at:`${ymd(d)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`,memo,amt,bal:p.bal,...(extra||{})}); if(p.log.length>200) p.log.length=200; }
+function slToday(){ const p=pb(); if(p.day.d!==today()) p.day={d:today(),n:0}; return p.day; }
+const slLeft=()=>Math.max(0,(pb().limit||SL_LIMIT.개인)-slToday().n);
+function pbSummary(){ const p=pb(); return !p.on?"솔라피 미연결 — 문구 복사·내 휴대폰 문자로 보내기는 가능":!p.sender?"솔라피 연결됨 · 발신번호를 골라 주세요":`솔라피 잔액 ${(p.bal||0).toLocaleString()}원 · 오늘 남은 한도 약 ${slLeft()}건`; }
 const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent), isMobile=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 function smsHref(ph,t){ return `sms:${digits(ph||"")}${isIOS()?"&":"?"}body=${encodeURIComponent(t||"")}`; }
 function openSmsApp(ph,t,msgEl){ if(!isMobile()){ flash(msgEl,"휴대폰에서 누르면 문자앱이 열립니다. PC에서는 [문구 복사]를 쓰세요."); return; } location.href=smsHref(ph,t); }
-let GATE=null;
-/* 발송 전 확인: 사업자 문자 연결·발신번호 등록·포인트가 모두 되어야 true. 아니면 그 자리에 대신 쓸 버튼을 보여줌 */
-function smsGate({cost,memo,el,text,phone,list}){ const p=pb();
-  if(pbReady()&&(p.bal||0)>=cost){ pbLog(memo,-cost); return true; }
+/* 서버 기능 호출 */
+async function slCall(action,body){ if(!slLive()) return {error:"offline",message:"로그인한 회원만 실제로 보낼 수 있습니다."};
+  try{ const {data,error}=await CLOUD.sb.functions.invoke("sms",{body:{action,...(body||{})}});
+    if(error){ let j=null; try{ j=error.context&&await error.context.json(); }catch(e){} return j&&j.error?j:{error:"unavailable",message:"문자 서버 기능에 연결하지 못했습니다 (설치 전이거나 인터넷 문제)."}; }
+    return data||{}; }catch(e){ return {error:"unavailable",message:"문자 서버 기능에 연결하지 못했습니다."}; } }
+function slApply(r){ const p=pb(); if(!r||r.error&&r.error!=="send_failed") return;
+  p.oauth=!!r.oauth; p.on=!!r.connected; p.mode=r.mode||""; if(r.sender!==undefined) p.sender=r.sender?fmtPhone(r.sender):"";
+  if(typeof r.balance==="number") p.bal=r.balance+(r.point||0); if(Array.isArray(r.senders)) p.senders=r.senders.map(s=>({no:fmtPhone(s.no),expireAt:s.expireAt}));
+  if(!p.sender&&p.senders.length===1) slSetSender(p.senders[0].no); p.checked=new Date().toISOString(); }
+async function slRefresh(){ if(!slLive()) return; const r=await slCall("status"); if(r.error&&r.error!=="send_failed"){ SLMSG=r.message||""; } else { SLMSG=r.error?r.message:""; slApply(r); } if(S.view==="sms"&&SV==="biz") renderPb(); }
+async function slSetSender(no){ const p=pb(); p.sender=fmtPhone(no); if(slLive()){ const r=await slCall("set_sender",{sender:no}); if(r.error) SLMSG=r.message||"발신번호를 저장하지 못했습니다."; } }
+/* 결과 안내 (작은 알림) */
+function slToast(t,bad){ let b=$("#sl-toast"); if(!b){ b=document.createElement("div"); b.id="sl-toast"; b.setAttribute("role","status"); b.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:min(92vw,560px);padding:12px 16px;border-radius:12px;background:var(--text,#1c2333);color:var(--bg,#fff);font-size:14px;line-height:1.5;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.18)"; document.body.appendChild(b); }
+  b.textContent=t; b.style.background=bad?"#b42318":""; b.hidden=false; clearTimeout(slToast.t); slToast.t=setTimeout(()=>{b.hidden=true;},bad?9000:5000); }
+function sentNote(cost){ return slLive()?`솔라피로 보내는 중… (예상 ${cost.toLocaleString()}원, 실제 차감은 솔라피 요금)`:`시범: 실제 발송 없음 · 예상 ${cost.toLocaleString()}원`; }
+const tomorrow935=()=>{ const d=new Date(); d.setDate(d.getDate()+1); d.setHours(9,35,0,0); return d; };
+/* 실제 발송: 오늘 남은 한도만큼 바로, 넘는 건은 다음 날 오전 9시 35분 예약 (한도는 매일 9시~9시 30분 초기화) */
+async function slSend(rows,{memo,el,at}){ const p=pb(), msgs=rows.filter(r=>phoneOk(r.ph)&&r.t).map(r=>({to:digits(r.ph),text:r.t}));
+  if(!msgs.length){ flash(el,"보낼 번호가 없습니다."); return; }
+  const left=at?msgs.length:slLeft(), now=msgs.slice(0,left), later=msgs.slice(left), out={ok:0,fail:[],sch:0};
+  const run=async(list,when)=>{ for(let i=0;i<list.length;i+=1000){ const r=await slCall("send",{messages:list.slice(i,i+1000),at:when?when.toISOString():null});
+      if(r.error){ out.fail.push(...list.slice(i,i+1000).map(m=>({to:m.to,why:r.message||"보내지 못했습니다."}))); continue; }
+      if(when) out.sch+=r.accepted; else out.ok+=r.accepted; out.fail.push(...(r.failed||[])); } };
+  if(now.length) await run(now,at?new Date(at):null);
+  if(later.length) await run(later,tomorrow935());
+  if(!at) slToday().n+=out.ok;
+  const why=[...new Set(out.fail.map(f=>f.why))].slice(0,2).join(" / ");
+  const t=`${memo}: ${at?`예약 ${out.sch}건`:`접수 ${out.ok}건`}${!at&&out.sch?` · 한도 초과분 ${out.sch}건은 내일 오전 9시 35분 예약`:""}${out.fail.length?` · 실패 ${out.fail.length}건 (${why})`:""}`;
+  pbLog(memo,0,{n:msgs.length,ok:out.ok+out.sch,fail:out.fail.length}); flash(el,t); slToast(t,out.fail.length>0&&out.ok+out.sch===0);
+  if(typeof cloudSave==="function") cloudSave(true); slRefresh(); }
+let GATE=null, SLMSG="";
+/* 발송 전 확인: 솔라피 연결·발신번호·잔액이 되어야 보냄. 아니면 그 자리에 대신 쓸 버튼을 보여줌 */
+function smsGate({cost,memo,el,text,phone,list,at}){ const p=pb();
+  if(pbReady()&&(p.bal||0)>=cost){
+    if(slLive()) slSend(list?list.map(r=>({ph:r.ph,t:r.t})):[{ph:phone,t:text}],{memo,el,at}); else pbLog(memo,-cost);
+    return true; }
   GATE={text:text||"",phone:phone||""};
-  const why=!p.on?"문자 직접 발송은 사업자 문자(팝빌)를 연결한 사업자 회원만 쓸 수 있습니다.":!p.senderOk?"발신번호 등록이 끝나야 보낼 수 있습니다.":`팝빌 포인트가 부족합니다 (필요 ${cost.toLocaleString()}원 · 잔액 ${(p.bal||0).toLocaleString()}원).`;
-  const act=!p.on?["setup","사업자 문자 연결"]:!p.senderOk?["setup","발신번호 등록"]:["charge","팝빌에서 충전"];
+  const why=!p.on?"내 번호로 문자를 보내려면 솔라피를 연결하세요 (개인도 가입 가능).":!p.sender?"발신번호를 먼저 고르세요.":`솔라피 잔액이 부족합니다 (예상 ${cost.toLocaleString()}원 · 잔액 ${(p.bal||0).toLocaleString()}원).`;
+  const act=!p.on?["setup","솔라피 연결"]:!p.sender?["setup","발신번호 고르기"]:["charge","솔라피에서 충전"];
   if(el) el.innerHTML=`<span class="gate"><b>${why}</b><button class="btn" type="button" data-gate="copy">문구 복사</button>${list?"":phoneOk(phone||"")?`<button class="btn" type="button" data-gate="app">내 휴대폰 문자로 보내기</button>`:""}<button class="btn" type="button" data-gate="${act[0]}">${act[1]}</button>${list?`<span class="note" style="flex-basis:100%">받는 사람을 하나씩 눌러 내 휴대폰 문자로 보내세요 (휴대폰에서)</span><span class="gate-list">${list.map(r=>phoneOk(r.ph)?`<a href="${esc(smsHref(r.ph,r.t))}">${esc(r.nm)} <span class="num">${esc(fmtPhone(r.ph))}</span></a>`:`<a aria-disabled="true">${esc(r.nm)} <span class="note">번호 없음</span></a>`).join("")}</span>`:""}<span class="note" data-gatemsg style="flex-basis:100%"></span></span>`;
   return false; }
+/* 자동 재문자 (보험금 지급 확인) — 연결돼 있을 때만, 1건씩 */
+function slAuto(memo,ph,t){ if(!pbReady()||(pb().bal||0)<SMS_PRICE.lms) return false; if(slLive()) slSend([{ph,t}],{memo,el:null}); else pbLog(memo,-SMS_PRICE.lms); return true; }
 let SV="kit";
 function pbGo(){ $("#sms-dlg").hidden=true; $("#info-dlg").hidden=true; SV="biz"; go("sms"); }
-function pbChargeDlg(){ const p=pb(); infoDlg("팝빌 포인트 충전 (시범)",`<p class="note" style="margin:0">실제 서비스에서는 팝빌 충전 창이 열리고, 결제·환불·세금계산서는 팝빌에서 처리됩니다. 지금 잔액 ${(p.bal||0).toLocaleString()}원</p>
-  <div class="seg">${[10000,30000,50000,100000].map(v=>`<button class="btn" type="button" data-pbc="${v}">${v/10000}만원</button>`).join("")}</div><p class="note" id="pbc-msg" style="margin:0"></p>`); }
-function pbSenderDlg(){ const p=pb(); infoDlg("발신번호 등록 (시범)",`<p class="note" style="margin:0">문자는 미리 등록한 번호로만 보낼 수 있습니다 (전기통신사업법 제84조의2). 실제 서비스에서는 팝빌 발신번호 등록 창에서 번호 명의 확인을 거칩니다.</p>
-  <div class="hbox"><h3>등록할 번호</h3><b class="num">${esc(p.sender||"-")}</b></div>
-  <div class="row"><button class="btn primary" type="button" id="pbs-ok">(시범) 등록 완료 처리</button></div>`); }
-document.addEventListener("click",e=>{
+function pbChargeDlg(){ const p=pb(); infoDlg("솔라피 충전",`<p class="note" style="margin:0">문자 요금은 설계사 본인 솔라피 계정에서 빠집니다. 충전·환불·영수증은 솔라피에서 처리합니다. 지금 잔액 ${(p.bal||0).toLocaleString()}원</p>
+  <div class="row"><a class="btn primary" style="text-decoration:none" href="https://console.solapi.com/" target="_blank" rel="noopener">솔라피 충전 화면 열기</a>${slLive()?`<button class="btn" type="button" id="sl-re">충전 후 잔액 새로고침</button>`:`<button class="btn" type="button" data-pbc="10000">(시범) 1만원 충전</button>`}</div><p class="note" id="pbc-msg" style="margin:0"></p>`); }
+const SL_ASK=()=>`[하루 발송 한도 증가 요청]\n사용 목적: 보험설계사 고객 안내 문자 (보험금 청구 접수·서명 요청, 생일·명절 인사, 계약 만기·갱신 안내)\n발신번호: ${pb().sender||"(내 휴대폰 번호)"}\n예상 발송량: 하루 최대 ___건 (관리 고객 약 ___명)\n수신 대상: 본인이 관리하는 보험 계약 고객 (광고성 문자는 수신동의 고객에게만 (광고) 표기·수신거부 안내 포함)`;
+document.addEventListener("click",async e=>{
   const g=e.target.closest("[data-gate]"); if(g){ const m=g.closest(".gate").querySelector("[data-gatemsg]"), k=g.dataset.gate;
     if(k==="copy") copyText(GATE?GATE.text:"",m); else if(k==="app") openSmsApp(GATE.phone,GATE.text,m); else if(k==="setup") pbGo(); else if(k==="charge") pbChargeDlg(); return; }
   if(e.target.closest("[data-pbgo]")){ e.preventDefault(); pbGo(); return; }
-  const c=e.target.closest("[data-pbc]"); if(c){ const v=+c.dataset.pbc; pbLog("팝빌 포인트 충전 (시범)",v); $("#pbc-msg").textContent=`${v.toLocaleString()}원 충전했습니다 (시범: 실제 결제 없음). 잔액 ${pb().bal.toLocaleString()}원`; if(S.view==="sms") renderPb(); return; }
-  if(e.target.closest("#pbs-ok")){ pb().senderOk=true; $("#info-dlg").hidden=true; renderPb(); return; }
+  const c=e.target.closest("[data-pbc]"); if(c){ const v=+c.dataset.pbc; pbLog("솔라피 충전 (시범)",v); $("#pbc-msg").textContent=`${v.toLocaleString()}원 충전했습니다 (시범: 실제 결제 없음). 잔액 ${pb().bal.toLocaleString()}원`; if(S.view==="sms") renderPb(); return; }
+  if(e.target.closest("#sl-re")){ $("#pbc-msg").textContent="확인 중…"; await slRefresh(); $("#pbc-msg").textContent=`잔액 ${(pb().bal||0).toLocaleString()}원`; return; }
   const t=e.target.closest("[data-sv]"); if(t){ SV=t.dataset.sv; renderSmsView(); return; }
-  if(e.target.closest("#pb-sender")){ pbSenderDlg(); return; }
-  if(e.target.closest("#pb-charge")){ pbChargeDlg(); return; }
-  if(e.target.closest("#pb-off")){ ME.pb=null; renderPb(); $("#pb-msg").textContent="연결을 해제했습니다."; return; }
+  if(e.target.closest("#sl-charge")){ pbChargeDlg(); return; }
+  if(e.target.closest("#sl-oauth")){ const m=$("#sl-msg"); if(!slLive()) return flash(m,"로그인한 회원만 연결할 수 있습니다 (체험 화면에서는 아래 '시범 연결'을 누르세요).");
+    flash(m,"솔라피 연결 화면을 여는 중…"); const r=await slCall("oauth_url"); if(r.url){ location.href=r.url; } else flash(m,r.message||"연결 화면을 열지 못했습니다."); return; }
+  if(e.target.closest("#sl-demo")){ Object.assign(pb(),{on:true,mode:"demo",sender:ME.phone||"010-0000-0000",senders:[{no:ME.phone||"010-0000-0000",expireAt:null}],bal:pb().bal||3000}); renderPb(); flash($("#sl-msg"),"시범 연결했습니다 (실제 발송 없음)."); return; }
+  if(e.target.closest("#sl-off")){ if(slLive()){ const r=await slCall("disconnect"); if(r.error){ flash($("#sl-msg"),r.message||"해제하지 못했습니다."); return; } } const lg=pb().log; ME.sl=null; pb().log=lg; renderPb(); flash($("#sl-msg"),"연결을 해제했습니다."); return; }
+  if(e.target.closest("#sl-sync")){ flash($("#sl-msg"),"솔라피에서 확인 중…"); await slRefresh(); flash($("#sl-msg"),SLMSG||"최신 상태로 바꿨습니다."); return; }
+  if(e.target.closest("#sl-ask")){ copyText(SL_ASK(),$("#sl-askmsg")); return; }
 });
-/* 사업자등록번호 검증 (국세청 검증번호 규칙) */
-function bizOk(v){ const d=digits(v); if(d.length!==10) return false; const w=[1,3,7,1,3,7,1,3,5]; let sum=0; for(let i=0;i<9;i++) sum+=+d[i]*w[i]; sum+=Math.floor(+d[8]*5/10); return (10-sum%10)%10===+d[9]; }
-const fmtBiz=v=>{ const d=digits(v).slice(0,10); return d.length>5?`${d.slice(0,3)}-${d.slice(3,5)}-${d.slice(5)}`:d.length>3?`${d.slice(0,3)}-${d.slice(3)}`:d; };
-const telOk=v=>phoneOk(v)||/^0\d{8,10}$/.test(digits(v));
-function renderPb(){ const p=pb(), st=$("#pb-st"); if(!st) return;
-  st.innerHTML=`<div class="${p.on?"ok":""}"><h3>① 팝빌 회원</h3>${p.on?`<span class="pill ok">연결됨</span><span class="note">${esc(p.corp)} · <span class="num">${esc(p.biz)}</span></span><button class="btn" type="button" id="pb-off">연결 해제</button>`:`<span class="pill warn">미연결</span><span class="note">아래 사업자 정보를 넣고 연결</span>`}</div>
-  <div class="${p.senderOk?"ok":""}"><h3>② 발신번호</h3>${!p.on?`<span class="note">회원 연결 후 등록</span>`:p.senderOk?`<span class="pill ok">등록 완료</span><span class="num">${esc(p.sender)}</span>`:`<span class="pill warn">등록 대기</span><span class="num">${esc(p.sender)}</span><button class="btn primary" type="button" id="pb-sender">발신번호 등록</button>`}</div>
-  <div class="${p.on&&p.bal>0?"ok":""}"><h3>③ 팝빌 포인트</h3>${!p.on?`<span class="note">회원 연결 후 충전</span>`:`<b class="num" style="font-size:20px">${(p.bal||0).toLocaleString()}원</b><button class="btn primary" type="button" id="pb-charge">팝빌에서 충전</button><span class="note">시범 단가 단문 ${SMS_PRICE.sms}원 · 장문 ${SMS_PRICE.lms}원 (실제는 팝빌 요금)</span>`}</div>`;
-  if(p.on){ $("#pb-no").value=p.biz; $("#pb-corp").value=p.corp; $("#pb-ceo").value=p.ceo; $("#pb-snd").value=p.sender; } else if(!$("#pb-snd").value) $("#pb-snd").value=ME.phone||"";
-  $("#pb-join").textContent=p.on?"사업자 정보 저장":"팝빌 회원 연결";
-  $("#pb-log").innerHTML=p.log.length?p.log.map(x=>`<tr><td class="num">${x.at}</td><td>${esc(x.memo)}</td><td class="num">${x.amt>0?"+":""}${x.amt.toLocaleString()}원</td><td class="num">${x.bal.toLocaleString()}원</td></tr>`).join(""):'<tr><td colspan="4" class="empty">충전·사용 내역이 없습니다.</td></tr>'; }
-document.addEventListener("input",e=>{ if(e.target.id==="pb-no") e.target.value=fmtBiz(e.target.value); if(e.target.id==="pb-snd"&&phoneOk(e.target.value)) e.target.value=fmtPhone(e.target.value); });
-document.addEventListener("submit",e=>{ if(e.target.id!=="f-pb") return; e.preventDefault(); const m=$("#pb-msg"), no=$("#pb-no").value, corp=$("#pb-corp").value.trim(), ceo=$("#pb-ceo").value.trim(), snd=$("#pb-snd").value.trim();
-  if(!bizOk(no)) return flash(m,"사업자등록번호가 맞지 않습니다. 사업자등록증의 10자리를 확인하세요.");
-  if(!corp||!ceo) return flash(m,"상호와 대표자를 입력하세요."); if(!telOk(snd)) return flash(m,"발신번호를 확인하세요.");
-  const p=pb(), changed=p.sender!==snd; Object.assign(p,{on:true,biz:fmtBiz(no),corp,ceo,sender:snd}); if(changed) p.senderOk=false;
-  renderPb(); flash(m,p.senderOk?"저장했습니다.":"연결했습니다 (시범). 다음은 ② 발신번호 등록 → ③ 충전입니다."); });
+document.addEventListener("change",async e=>{
+  if(e.target.id==="sl-sender"){ await slSetSender(e.target.value); renderPb(); flash($("#sl-msg"),SLMSG||"발신번호를 바꿨습니다."); SLMSG=""; return; }
+  if(e.target.id==="sl-acct"){ const p=pb(); p.acct=e.target.value; p.limit=SL_LIMIT[p.acct]||SL_LIMIT.개인; renderPb(); return; }
+});
+document.addEventListener("submit",async e=>{ if(e.target.id!=="f-sl") return; e.preventDefault(); const m=$("#sl-msg"), k=$("#sl-key").value.trim(), s=$("#sl-secret").value.trim();
+  if(!k||!s) return flash(m,"API Key와 API Secret을 모두 붙여넣으세요.");
+  if(!slLive()) return flash(m,"로그인한 회원만 연결할 수 있습니다 (체험 화면에서는 '시범 연결'을 누르세요).");
+  flash(m,"솔라피에 확인하는 중…"); const r=await slCall("key_connect",{apiKey:k,apiSecret:s});
+  if(r.error) return flash(m,r.message||"연결하지 못했습니다.");
+  $("#sl-key").value=""; $("#sl-secret").value=""; slApply(r); renderPb(); cloudSave(true);
+  flash(m,pb().sender?"연결했습니다. 이제 내 번호로 문자를 보낼 수 있습니다.":"연결했습니다. 발신번호를 고르세요."); });
+/* 솔라피 [허용] 후 돌아온 경우 (sl.html이 code·state를 맡겨 둠) */
+async function slAfterLogin(){ let cb=null; try{ cb=JSON.parse(localStorage.getItem("boit_sl_cb")||"null"); localStorage.removeItem("boit_sl_cb"); }catch(e){}
+  if(cb&&cb.code&&Date.now()-cb.at<10*60e3){ const r=await slCall("oauth_finish",{code:cb.code,state:cb.state}); if(!r.error) slApply(r); SLMSG=r.error?(r.message||"솔라피 연결에 실패했습니다."):"솔라피를 연결했습니다."; setTimeout(()=>{ SV="biz"; go("sms"); slToast(SLMSG,!!r.error); },300); }
+  else slRefresh(); }
+function renderPb(){ const p=pb(), st=$("#pb-st"); if(!st) return; const live=slLive(), soon=s=>s.expireAt&&(new Date(s.expireAt)-Date.now())<30*864e5;
+  const exp=(p.senders||[]).filter(soon);
+  st.innerHTML=`<div class="${p.on?"ok":""}"><h3>① 솔라피 연결</h3>${p.on?`<span class="pill ok">연결됨</span><span class="note">${p.mode==="oauth"?"[솔라피 연결] 버튼으로 연결":p.mode==="key"?"API Key로 연결":"시범 연결"}</span><div class="row"><button class="btn" type="button" id="sl-sync">새로고침</button><button class="btn" type="button" id="sl-off">연결 해제</button></div>`:`<span class="pill warn">미연결</span><span class="note">아래 [솔라피 연결하기]에서 연결</span>`}</div>
+  <div class="${p.on&&p.sender?"ok":""}"><h3>② 발신번호</h3>${!p.on?`<span class="note">연결 후 선택</span>`:p.senders&&p.senders.length?`<select id="sl-sender" aria-label="발신번호"><option value="">고르세요</option>${p.senders.map(s=>`<option value="${esc(s.no)}"${s.no===p.sender?" selected":""}>${esc(s.no)}${s.expireAt?` (만료 ${esc(String(s.expireAt).slice(0,10))})`:""}</option>`).join("")}</select>`:`<span class="note">솔라피에 등록된 발신번호가 없습니다. 솔라피 [발신번호]에서 본인 휴대폰을 등록하세요.</span><a class="btn" style="text-decoration:none;color:inherit" href="https://console.solapi.com/senderids" target="_blank" rel="noopener">발신번호 등록하러 가기</a>`}${exp.length?`<span class="pill warn">만료 임박: ${exp.map(s=>esc(s.no)).join(", ")}</span><span class="note">솔라피에서 갱신하세요</span>`:""}</div>
+  <div class="${p.on&&p.bal>0?"ok":""}"><h3>③ 솔라피 잔액</h3>${!p.on?`<span class="note">연결 후 충전</span>`:`<b class="num" style="font-size:20px">${(p.bal||0).toLocaleString()}원</b><button class="btn primary" type="button" id="sl-charge">솔라피에서 충전</button><span class="note">예상 단가 단문 ${SMS_PRICE.sms}원 · 장문 ${SMS_PRICE.lms}원 (VAT 포함 추정 · 실제는 솔라피 요금)</span>`}</div>`;
+  $("#sl-connect").hidden=p.on;
+  $("#sl-oauth").disabled=live&&!p.oauth; $("#sl-oauth-note").textContent=live&&!p.oauth?"버튼 연결은 보잇 앱이 솔라피에 등록되면 열립니다. 지금은 아래 API Key로 연결하세요.":"";
+  $("#sl-demo").hidden=live;
+  $("#sl-acct").value=p.acct||"개인"; $("#sl-limit").textContent=`오늘 보낸 문자 ${slToday().n}건 · 남은 한도 약 ${slLeft()}건 (기준 ${p.limit}건)`;
+  if(SLMSG){ flash($("#sl-msg"),SLMSG); SLMSG=""; }
+  $("#pb-log").innerHTML=p.log.length?p.log.map(x=>`<tr><td class="num">${x.at}</td><td>${esc(x.memo)}</td><td class="num">${x.n!=null?`${x.ok}건 접수${x.fail?` · 실패 ${x.fail}`:""}`:`${x.amt>0?"+":""}${(x.amt||0).toLocaleString()}원`}</td></tr>`).join(""):'<tr><td colspan="3" class="empty">발송 기록이 없습니다.</td></tr>'; }
 
 /* 문구·이미지 키트 — 사업자가 아니어도 사용 */
 const KIT=[
@@ -3491,7 +3561,7 @@ document.addEventListener("click",async e=>{
 });
 document.addEventListener("input",e=>{ if(["mk-txt","mk-tt","mk-ln"].includes(e.target.id)) mkUpd(); });
 document.addEventListener("change",e=>{ if(e.target.id==="mk-cust"){ MK.cust=resolveCust(e.target.value); mkReset(); } });
-Object.assign(window,{pb,pbReady,pbLog,pbSummary,smsGate,openSmsApp,renderSmsView});
+Object.assign(window,{pb,pbReady,pbLog,pbSummary,smsGate,openSmsApp,renderSmsView,sentNote,slAuto,slLive,slAfterLogin,slRefresh});
 })();
 
 </script>
