@@ -670,6 +670,19 @@ function flowPages(host,headFn,blocks,a,fs){
     body.appendChild(el);
     if(!over()){onPage++;return;}
     var prev=el.previousElementSibling, keep=prev&&prev.classList.contains('keepnext')&&onPage>1;
+    // 설명 박스(stick)는 바로 위 카드의 마지막 줄 몇 개와 함께 다음 장으로 넘겨 같은 장에서 끝나게 함
+    if(el.classList.contains('stick')&&prev&&onPage>0){
+      body.removeChild(el);
+      var pl=prev.querySelector(':scope > .bl');
+      if(pl&&pl.children.length>4){
+        var mv=[]; while(mv.length<3&&pl.children.length>2){ mv.unshift(pl.lastElementChild); pl.removeChild(pl.lastElementChild); }
+        var rp=prev.cloneNode(true), rl=rp.querySelector(':scope > .bl'); rl.innerHTML=''; mv.forEach(function(m){rl.appendChild(m);});
+        var tt=rp.querySelector('.ctitle'); if(tt&&tt.lastChild&&!/이어서/.test(tt.textContent)) tt.lastChild.textContent=tt.lastChild.textContent+' (이어서)';
+        body=newPage(true); body.appendChild(rp); body.appendChild(el); onPage=2; return;
+      }
+      if(onPage>1){ body.removeChild(prev); body=newPage(true); body.appendChild(prev); body.appendChild(el); onPage=2; return; }
+      body=newPage(true); body.appendChild(el); onPage=1; return;
+    }
     // 카드 안의 항목을 나눠서 다음 장으로 이어 붙임
     var list=el.querySelector(':scope > .bl'), moved=[];
     if(list&&onPage>0){
@@ -1775,29 +1788,62 @@ function covTilesBlocks(c){
   if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.name)+' '+won(x.amt)+'</span>';}).join('')+'</div></div>');
   return out;
 }
-/* 보완 제안 + 요즘 치료 흐름(추가 검토)을 한 섹션으로: 치료 흐름 카드에 나오는 담보는 제안 목록에서 빼서 겹치지 않게 */
+/* 보완 제안 · 추가 검토: 진단비 → 치료비 → 수술비 → 간병인 → 치매 → 연금 순서의 기본 점검표 하나로 */
+var BASIC=[
+  {t:'진단비',d:'처음 진단받을 때 한 번에 받는 돈',items:[
+    {cat:'cancer',d:'일반암 진단 시 한 번에 지급'},{cat:'cancer_sim',d:'갑상선암 등 유사암 진단 시 지급'},
+    {tr:'multi',n:'통합암 진단비',d:'다른 부위에 암이 또 생기면 다시 지급'},{tr:'meta',n:'전이암 진단비',d:'암이 다른 곳으로 전이돼도 지급'},
+    {cat:'brain_all',d:'뇌출혈·뇌경색 등 뇌혈관질환 전체(I60~I69) 진단 시 지급'},{cat:'ihd',d:'협심증·심근경색 등 허혈성 심장질환 진단 시 지급'}]},
+  {t:'치료비',d:'치료받을 때마다 연간 한도로 받는 돈',hot:true,items:[
+    {tr:'cancer_main',d:'암 수술·항암약물·방사선 치료를 받을 때마다 지급',k:'암 치료는 수술 뒤에도 항암약물·방사선이 2~3년 이어지는 경우가 많습니다.'},{tr:'nonpay',d:'비급여 항암약물·방사선·로봇수술 치료 시 지급',k:'면역항암제(키트루다)를 비급여로 맞으면 1회 약 420만원, 1년 약 7,140만원입니다.'},
+    {tr:'circ',d:'뇌·심장 질환으로 중환자실·혈전용해·혈전제거·수술 치료 시 지급',k:'뇌·심장은 스텐트·재발 치료가 반복되는 경우가 많아 치료할 때마다 받는 구조가 필요합니다.'},{tr:'dem_drug',d:'레켐비 등 치매 표적치료제로 치료받을 때 지급',k:'레켐비는 한 달 약 180만원(체중 50kg 기준), 연간 3,500만원 수준으로 보도됐습니다.'}]},
+  {t:'수술비',d:'수술할 때마다 받는 돈',items:[
+    {cat:'surg_dis',d:'질병으로 수술받을 때마다 지급'},{cat:'surg_n',d:'수술 종류(1~5종)에 따라 지급, 내시경 용종 제거 등 포함'},{cat:'surg_inj',d:'사고로 수술받을 때 지급'}]},
+  {t:'간병인',d:'입원·요양 중 돌봄 비용',items:[
+    {tr:'care',n:'간병인 일당',d:'입원 중 간병인 비용을 하루 단위로 지급 (사용형·지원형)'},{tr:'home_care',n:'재가요양',d:'요양등급을 받아 방문요양·주야간보호 이용 시 지급'}]},
+  {t:'치매',d:'초기부터 중증까지 단계별 대비',items:[
+    {tr:'dementia',n:'치매 진단비',d:'경도인지장애·경증·중증 등 치매 단계별 진단 시 지급'},{cat:'ltc',d:'장기요양 등급 판정 시 지급'}]},
+  {t:'연금',d:'은퇴 뒤 매달 받는 노후 자금',items:[
+    {tr:'pension',n:'연금',d:'정해진 나이부터 매달 받는 노후 자금 (세법 요건 충족 시 보험차익 비과세)'}]}
+];
+function basicRow(c,it){
+  var r={name:'',amt:0,st:'없음',rec:null,core:false};
+  if(it.cat){ var x=covCat(c,it.cat); r.name=it.n||x.name; r.amt=x.amt; r.rec=x.rec; r.st=x.amt>0?(x.status==='부족'?'부족':'있음'):'없음'; r.cat=it.cat; }
+  else { var t=COV_TRENDS.filter(function(k){return k.k===it.tr;})[0]; if(!t) return null; if(c.trd&&c.trd[t.k]===false) return null;
+    var v=covTrend(c,t); r.name=it.n||t.title; r.amt=v.amt||0; r.st=v.has?'있음':(t.noData?'확인 필요':'없음'); r.core=!!t.core; r.cat=t.cat||''; r.extra=v.extra; r.src=TREND_SRC[t.k]; r.ask=it.k||''; }
+  return r;
+}
+var BST={'있음':'#2F7D4A','부족':'#C27C0E','없음':'#B4472F','확인 필요':'#8A8F98'};
 function covAdviseBlocks(c,o){
   o=o||{};
-  var covered={}; COV_TRENDS.forEach(function(t){ if(c.trd&&c.trd[t.k]) (TREND_CATS[t.k]||[]).forEach(function(k){covered[k]=1;}); });
-  var out=['<p class="lead">진단비·치료비·수술비·간병·실손 등 꼭 필요한 보장이 지금 보험에 있는지 점검하고, 요즘 치료 흐름에 맞춰 추가로 검토할 보장을 함께 정리했습니다. 실제 가입 여부와 금액은 건강상태·고지사항·보험료 부담을 함께 확인한 뒤 결정합니다.</p>'];
-  if(o.tiles!==false) out=out.concat(covTilesBlocks(c));
-  var props=(o.props||covPropList(c)).filter(function(p){return !covered[p.cat];}).slice(0,6);
-  if(props.length){
-    out.push('<div class="keepnext" style="font-size:19px;font-weight:800;color:var(--navy);margin-top:6px">이렇게 보완하시길 권합니다</div>');
-    props.forEach(function(p,i){
-      var gap=p.rec!=null&&p.rec>p.amt&&p.amt>0?'권장금액보다 '+won(p.rec-p.amt)+' ':'';
-      out.push('<div class="card" style="padding:11px 14px;gap:4px"><div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start">'+
-        '<div style="width:30px;height:30px;border-radius:50%;background:var(--warm);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">'+(i+1)+'</div>'+
-        '<div><div style="font-size:16.5px;font-weight:800">'+esc(p.name)+' '+(p.amt>0?'보완 검토':'추가 검토')+'</div>'+
-        '<div style="font-size:14px;line-height:1.55;color:var(--ink2);margin-top:2px">'+(p.areas&&p.areas.length?'<b>'+esc(p.areas.join('·'))+'</b> 영역에서 신호가 나왔는데, ':'')+'지금 '+esc(p.name)+jo(p.name,'이','가')+(p.amt>0?' '+won(p.amt)+jo(won(p.amt),'으로','로')+' '+gap+'부족합니다':' 없습니다')+'. '+whyTxt(p.cat)+'</div></div></div></div>');
-    });
-  }
-  var tr=COV_TRENDS.some(function(t){return c.trd&&c.trd[t.k];})?covTrendBlocks(c):[];
-  if(tr.length>1){
-    out.push('<div class="keepnext" style="margin-top:8px"><div style="font-size:19px;font-weight:800;color:var(--navy)">요즘 치료 흐름에 맞춰 함께 점검할 보장</div><div style="font-size:13.5px;line-height:1.55;color:var(--ink2);margin-top:2px">보험사들이 새로 내놓는 담보 흐름 기준입니다. <b style="color:#B4472F">없음</b>으로 표시된 항목이 추가 검토 대상입니다.</div></div>');
-    out=out.concat(tr.slice(1));
-  }
-  out.push('<div class="small" style="font-size:12.5px;line-height:1.6;color:#4A4A55">· 최근 검진 이상소견·진료·투약 이력이 있으면 새 보험 가입 시 고지 대상이 될 수 있습니다.</div>');
+  var amap={}; (o.areas||[]).forEach(function(x){ (amap[x.cat]=amap[x.cat]||[]).push(x.area); });
+  var steps=BASIC.map(function(g){ return {g:g,rows:g.items.map(function(it){var r=basicRow(c,it); if(r) r.d=it.d; return r;}).filter(Boolean)}; }).filter(function(x){return x.rows.length;});
+  var out=['<p class="lead">보험은 <b>진단비 → 치료비 → 수술비 → 간병인 → 치매 → 연금</b> 순서로 준비하는 것이 기본입니다. 이 순서대로 지금 가입한 보장을 점검했습니다. <b style="color:#B4472F">없음</b>·<b style="color:#C27C0E">부족</b>이 보완할 부분입니다.</p>'];
+  out.push('<div style="display:grid;grid-template-columns:repeat('+steps.length+',minmax(0,1fr));gap:6px">'+steps.map(function(x,i){
+    var ok=x.rows.filter(function(r){return r.st==='있음';}).length, n=x.rows.length, col=ok===n?'#2F7D4A':(ok?'#C27C0E':'#B4472F');
+    return '<div style="border:1px solid #E4DCD2;border-top:4px solid '+col+';border-radius:8px;padding:7px 8px;background:#fff;text-align:center"><div style="font-size:11.5px;color:var(--muted)">'+(i+1)+'단계</div><div style="font-size:15px;font-weight:900;color:var(--navy)">'+x.g.t+'</div><div style="font-size:13px;font-weight:800;color:'+col+'">'+ok+' / '+n+' 준비</div></div>';
+  }).join('')+'</div>');
+  var C='minmax(0,1.15fr) '+cw(104)+'px 76px minmax(0,1.5fr)';
+  steps.forEach(function(x,si){
+    var g=x.g;
+    out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border-color:#C9D0DC">'+
+      '<div class="ctitle" style="padding:8px 12px;background:'+(g.hot?'#1F2A44':'#F1F4F9')+';color:'+(g.hot?'#fff':'var(--navy)')+';border-bottom:1px solid #C9D0DC;font-size:'+fz(16)+'px;gap:10px"><span style="font-size:13px;font-weight:900;background:'+(g.hot?'#F3C9A8':'var(--navy)')+';color:'+(g.hot?'#1F2A44':'#fff')+';border-radius:5px;padding:1px 8px">'+(si+1)+'단계</span><span>'+g.t+' <span style="font-size:13px;font-weight:600;opacity:.85">· '+g.d+(g.hot?' · 요즘 대세':'')+'</span></span></div>'+
+      '<div style="display:grid;grid-template-columns:'+C+';background:#2B3346;color:#fff;font-size:12px;font-weight:700"><div style="padding:5px 10px">담보</div><div style="padding:5px 10px;text-align:right">지금 가입</div><div style="padding:5px 6px;text-align:center">판정</div><div style="padding:5px 10px">어떤 보장인가요</div></div>'+
+      '<div class="bl" style="gap:0">'+x.rows.map(function(r,k){
+        var sig=r.cat&&amap[r.cat]?'<div style="font-size:11.5px;font-weight:800;color:#D92D20;margin-top:2px">건강 신호 · '+esc(amap[r.cat].join('·'))+'</div>':'';
+        var gap=r.st==='부족'&&r.rec>r.amt?'<div style="font-size:11.5px;color:#C27C0E;font-weight:700">권장보다 '+won(r.rec-r.amt)+' 부족</div>':'';
+        return '<div style="display:grid;grid-template-columns:'+C+';align-items:center;border-bottom:1px solid #D9DEE7;background:'+(r.st==='있음'?(k%2?'#F5F7FB':'#fff'):'#FFF8F5')+'">'+
+          '<div style="padding:6px 10px;border-right:1px solid #E3E6EC"><div style="font-size:'+fz(13.5)+'px;font-weight:800;line-height:1.3">'+esc(r.name)+'</div>'+sig+'</div>'+
+          '<div style="padding:6px 10px;border-right:1px solid #E3E6EC;text-align:right"><div style="font-size:'+fz(14)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':'#B4472F')+'">'+(r.amt>0?won(r.amt):(r.st==='확인 필요'?'-':'없음'))+'</div>'+gap+'</div>'+
+          '<div style="padding:6px 4px;border-right:1px solid #E3E6EC;text-align:center"><span style="display:inline-block;font-size:11.5px;font-weight:800;padding:2px 7px;border-radius:5px;color:#fff;background:'+BST[r.st]+'">'+r.st+'</span></div>'+
+          '<div style="padding:6px 10px;font-size:'+fz(12.5)+'px;line-height:1.45;color:var(--ink2)">'+esc(r.d)+(r.ask?'<div style="margin-top:3px;font-weight:700;color:#8E3420">▶ '+esc(r.ask)+'</div>':'')+'</div></div>';
+      }).join('')+'</div></div>');
+  });
+  var need=[]; steps.forEach(function(x){ x.rows.forEach(function(r){ if(r.st==='없음'||r.st==='부족') need.push({r:r,t:x.g.t}); }); });
+  if(need.length) out.push('<div class="card" style="border:2px solid #B4472F;padding:12px 16px;gap:6px"><div style="font-size:17px;font-weight:900;color:#B4472F">이 순서로 보완하시길 권합니다</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:6px">'+need.slice(0,8).map(function(x,i){return '<span style="background:#FBE3D9;color:#8E3420;border-radius:999px;padding:5px 12px;font-size:13.5px;font-weight:800">'+(i+1)+'. '+esc(x.t)+' · '+esc(x.r.name)+(x.r.st==='부족'?' (부족)':'')+'</span>';}).join('')+'</div></div>');
+  var srcs=[]; steps.forEach(function(x){ x.rows.forEach(function(r){ if(r.src&&srcs.indexOf(r.src)<0) srcs.push(r.src); }); });
+  out.push('<div class="small" style="font-size:12px;line-height:1.6;color:#4A4A55">· 가입 여부와 금액은 '+esc(c.source||'보장분석 자료')+' 기준이며, 실제 지급은 각 계약의 약관에 따릅니다.<br>· 최근 검진 이상소견·진료·투약 이력이 있으면 새 보험 가입 시 고지 대상이 될 수 있습니다.'+(srcs.length?'<br>· 출처: '+esc(srcs.join(' / ')):'')+'</div>');
   return out;
 }
 /* n0: 시작 번호, o.scenario: 이럴 때 받는 금액 블록 함수, o.props: 제안 목록, o.tiles */
@@ -1807,7 +1853,7 @@ function covCoreSecs(c,n0,o){
     {head:covHead(N(0)+' · 통합 보장 현황','내 보험, 한눈에 보기'),maxK:1.05,blocks:function(){return covSummaryBlocks(c);}},
     {ctr:N(1)},
     {head:covHead(N(2)+' · 이럴 때 받는 금액','이 병에 걸리면 얼마를 받을까요'),fitOne:true,blocks:o.scenario||function(){return COV_SCN.some(function(s){return c.scn[s.k];})?covScenarioBlocks(c):[];}},
-    {head:covHead(N(3)+' · 보완 제안 · 추가 검토','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return covAdviseBlocks(c,{props:o.props?o.props():null,tiles:o.tiles});}}
+    {head:covHead(N(3)+' · 보완 제안 · 추가 검토','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return covAdviseBlocks(c,{areas:o.areas?o.areas():null});}}
   ];
 }
 function covSection(host,sec,a){
@@ -1934,7 +1980,7 @@ function dcChecks(c){ return c.areas.filter(function(a){return a.on;}).map(funct
 function dcMatchBlocks(c){
   var ch=dcChecks(c), out=[];
   var cnt={'잘 준비됨':0,'보완 필요':0,'비어 있음':0}; ch.forEach(function(x){cnt[x.verdict]++;});
-  out.push('<p class="lead">검사자료에서 신호가 나온 건강영역마다 꼭 필요한 보장이 지금 보험에 있는지 대조했습니다. 비어 있거나 부족한 보장의 보완 제안은 07 · 보완 제안 · 추가 검토에서 함께 정리했습니다.</p>');
+  out.push('<p class="lead">검사자료에서 신호가 나온 건강영역마다 꼭 필요한 보장이 지금 보험에 있는지 대조했습니다. 보장을 진단비부터 연금까지 순서대로 점검한 표는 07 · 보완 제안 · 추가 검토에 있습니다.</p>');
   out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">'+['잘 준비됨','보완 필요','비어 있음'].map(function(v){
     return '<div style="background:#fff;border:1px solid #E4DCD2;border-top:4px solid '+VERDICT_COL[v]+';border-radius:10px;padding:10px 14px"><div style="font-size:13px;color:var(--muted)">'+v+'</div><div style="font-size:24px;font-weight:800;color:'+VERDICT_COL[v]+'">'+cnt[v]+'개 영역</div></div>';
   }).join('')+'</div>');
@@ -2009,7 +2055,7 @@ function buildDiseaseCov(c,host){
     {head:disHead('02 · 영역별 상세','건강영역별 확인과 준비'),blocks:function(){return disAreaBlocks(c);}}
   ],a);
   [{head:covHead('03 · 건강 신호 × 내 보장','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return dcMatchBlocks(c);}}]
-    .concat(covCoreSecs(c.cov,4,{scenario:function(){return dcScenarioBlocks(c);},props:function(){return dcProposals(c);},tiles:false}))
+    .concat(covCoreSecs(c.cov,4,{scenario:function(){return dcScenarioBlocks(c);},areas:function(){ var L=[]; dcChecks(c).forEach(function(x){ x.must.forEach(function(m){ L.push({cat:m.cat,area:x.short}); }); }); return L; }}))
     .forEach(function(sec){ if(sec.ctr) ctrSection(host,c.cov,a,sec.ctr); else covSection(host,sec,a); });
   covSection(host,{head:covHead('08 · 마무리','보험, 지금 준비해야 하는 이유'),blocks:function(){return dcEndBlocks(c,a);},fitOne:true},a);
 }
@@ -2123,8 +2169,8 @@ function ctrCompanyBlocks(g,num,idx,total){
         '<div style="font-size:12.5px;color:var(--ink2);white-space:nowrap">'+(c.prem?'월 <b>'+c.prem.toLocaleString()+'원</b>':'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+' ~ '+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
       '<div style="display:grid;grid-template-columns:'+CTR_COLS+';background:#2B3346;color:#fff;font-size:12px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 4px;text-align:center">구분</div><div style="padding:6px 10px">담보명</div><div style="padding:6px 12px;text-align:right">가입금액</div></div>'+
       '<div class="bl" style="gap:0">'+c.items.map(row).join('')+'</div></div>');
+    out=out.concat(ctrNoteBlocks({list:[c]}));
   });
-  out=out.concat(ctrNoteBlocks(g));
   return out;
 }
 /* ---------- 회사별 화면 하단: 실손의료비 세대 정리 · 운전자보험 가입 시기별 해당 여부 ---------- */
@@ -2206,10 +2252,10 @@ function ctrNoteBlocks(g){
       var s=silsonGen(c);
       if(s){
         var R=[['보장 비율',s.rate],['입원 자기부담',s.inSelf],['통원 자기부담',s.outSelf],['통원 한도',s.outLim],['갱신·재가입',s.renew]];
-        out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #2F7D4A">'+
+        out.push('<div class="card stick" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #2F7D4A">'+
           '<div style="background:#2F7D4A;color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-size:16px;font-weight:900">실손의료비 · '+esc(s.gen)+(function(){ var L=[s.name&&s.name.indexOf(s.gen)<0?esc(s.name):'',s.period?esc(s.period)+' 가입':''].filter(Boolean); return L.length?' <span style="font-weight:700;font-size:13.5px;opacity:.9">('+L.join(', ')+')</span>':''; })()+'</div>'+
           '<div style="font-size:12.5px;opacity:.9">'+prod+(c.from?' · '+esc(c.from)+' 가입':'')+'</div></div>'+
-          R.map(function(r,i){ return '<div style="display:grid;grid-template-columns:118px minmax(0,1fr);border-bottom:1px solid #DDE8DF;background:'+(i%2?'#F6FAF7':'#fff')+'"><div style="padding:6px 12px;font-size:12.5px;font-weight:800;color:#2F5A3A;border-right:1px solid #DDE8DF">'+r[0]+'</div><div style="padding:6px 12px;font-size:13px;line-height:1.45;color:var(--ink)">'+esc(r[1])+'</div></div>'; }).join('')+
+          R.map(function(r,i){ return '<div style="display:grid;grid-template-columns:118px minmax(0,1fr);border-bottom:1px solid #DDE8DF;background:'+(i%2?'#F6FAF7':'#fff')+'"><div style="padding:4px 12px;font-size:12.5px;font-weight:800;color:#2F5A3A;border-right:1px solid #DDE8DF">'+r[0]+'</div><div style="padding:4px 12px;font-size:13px;line-height:1.4;color:var(--ink)">'+esc(r[1])+'</div></div>'; }).join('')+
           '<div style="padding:7px 12px;font-size:12.5px;line-height:1.55;color:var(--ink2)"><b style="color:#2F5A3A">특이사항</b><br>'+s.notes.map(function(t){return '· '+esc(t);}).join('<br>')+'</div><div style="padding:6px 12px 9px;font-size:12.5px;font-weight:800;color:#B4472F">※ 정확한 보장 내용과 지급 조건은 약관을 확인하시기 바랍니다.</div></div>');
       }
     }
@@ -2218,15 +2264,15 @@ function ctrNoteBlocks(g){
       var rows=DRV_ROWS.filter(function(r){ return h[r.g]||(r.g==='fobj'&&h.fine); });
       var head='<div style="background:#2F7D4A;color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-size:16px;font-weight:900">운전자보험 · 가입 시기별 보장 확인</div><div style="font-size:12.5px;opacity:.9">'+prod+(c.from?' · '+esc(c.from)+' 가입':'')+'</div></div>';
       if(ci<0||!d){
-        out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #2F7D4A">'+head+'<div style="padding:9px 14px;font-size:13px;color:var(--ink2)">'+(ci<0?'이 보험사의 약관 개정 시기 자료가 없어 자동으로 판단하지 못했습니다. 약관으로 확인해 주세요.':'가입일이 없어 판단하지 못했습니다.')+'</div><div style="padding:6px 12px 9px;font-size:12.5px;font-weight:800;color:#B4472F">※ 정확한 보장 내용과 지급 조건은 약관을 확인하시기 바랍니다.</div></div>');
+        out.push('<div class="card stick" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #2F7D4A">'+head+'<div style="padding:9px 14px;font-size:13px;color:var(--ink2)">'+(ci<0?'이 보험사의 약관 개정 시기 자료가 없어 자동으로 판단하지 못했습니다. 약관으로 확인해 주세요.':'가입일이 없어 판단하지 못했습니다.')+'</div><div style="padding:6px 12px 9px;font-size:12.5px;font-weight:800;color:#B4472F">※ 정확한 보장 내용과 지급 조건은 약관을 확인하시기 바랍니다.</div></div>');
         return;
       }
       var C='84px minmax(0,1fr) 118px 92px';
-      out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #2F7D4A">'+head+
+      out.push('<div class="card stick" style="flex:none;padding:0;gap:0;overflow:hidden;border:2px solid #2F7D4A">'+head+
         '<div style="display:grid;grid-template-columns:'+C+';background:#EAF4EC;font-size:12px;font-weight:800;color:#2F5A3A"><div style="padding:5px 10px">담보</div><div style="padding:5px 10px">보장 내용</div><div style="padding:5px 10px;text-align:right">'+esc(DRV_CO[ci])+' 개정 시기</div><div style="padding:5px 10px;text-align:center">이 계약</div></div>'+
-        '<div class="bl" style="gap:0">'+rows.map(function(r,i){ var k=drvCheck(r.v.split(' ')[ci],d);
+        '<div style="gap:0">'+rows.map(function(r,i){ var k=drvCheck(r.v.split(' ')[ci],d);
           var badge=k.st==='ok'?'<span style="background:#2F7D4A;color:#fff;font-weight:800;font-size:12px;padding:2px 9px;border-radius:5px">해당</span>':(k.st==='no'?'<span style="background:#FDE7DF;color:#B4472F;font-weight:800;font-size:12px;padding:2px 9px;border-radius:5px">해당 없음</span>':'<span style="color:var(--muted);font-size:12px">판매 안 함</span>');
-          return '<div style="display:grid;grid-template-columns:'+C+';align-items:center;border-bottom:1px solid #E3E6EC;background:'+(i%2?'#F7F9FC':'#fff')+';font-size:13px"><div style="padding:6px 10px;font-size:12px;color:var(--muted);font-weight:700">'+esc(r.grp)+'</div><div style="padding:6px 10px;line-height:1.4;font-weight:'+(k.st==='ok'?'700':'400')+'">'+esc(r.t)+'</div><div style="padding:6px 10px;text-align:right;color:var(--ink2);font-size:12px">'+esc(k.st==='na'?'-':k.txt)+'</div><div style="padding:6px 10px;text-align:center">'+badge+'</div></div>'; }).join('')+'</div>'+
+          return '<div style="display:grid;grid-template-columns:'+C+';align-items:center;border-bottom:1px solid #E3E6EC;background:'+(i%2?'#F7F9FC':'#fff')+';font-size:13px"><div style="padding:4px 10px;font-size:12px;color:var(--muted);font-weight:700">'+esc(r.grp)+'</div><div style="padding:4px 10px;line-height:1.4;font-weight:'+(k.st==='ok'?'700':'400')+'">'+esc(r.t)+'</div><div style="padding:4px 10px;text-align:right;color:var(--ink2);font-size:12px">'+esc(k.st==='na'?'-':k.txt)+'</div><div style="padding:4px 10px;text-align:center">'+badge+'</div></div>'; }).join('')+'</div>'+
         '<div style="padding:7px 12px;font-size:12px;line-height:1.55;color:var(--ink2)">· 가입일과 보험사 약관 개정 시기를 비교해 판단했습니다. “소급”은 그 시점 이후 가입한 계약에도 적용된다는 뜻입니다.<br>· <b>해당 없음</b>은 개정 전에 가입해 그 보장이 없을 가능성이 높다는 뜻이며, 실제 적용은 해당 계약의 약관 일자로 확인합니다.</div><div style="padding:6px 12px 9px;font-size:12.5px;font-weight:800;color:#B4472F">※ 정확한 보장 내용과 지급 조건은 약관을 확인하시기 바랍니다.</div></div>');
     }
   });
