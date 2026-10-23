@@ -1760,6 +1760,56 @@ function covEndBlocks(c,a){
   return out;
 }
 /* 번호 섹션마다 새 장에서 시작 · 장수가 늘지 않는 범위에서 글자를 키우고 · 빈 공간은 가운데 정렬 */
+/* 보장분석 공통 섹션: 단독 보장분석과 질병예측+보장분석이 같은 함수를 씀 (한쪽을 바꾸면 둘 다 바뀜) */
+var TREND_CATS={cancer_main:['cancer_main'],nonpay:['cancer_nonpay'],circ:['circ_tx'],dem_drug:['dem_drug'],care:['care'],surgery:['surg_dis','surg_n','surg_inj','surg_injn'],dementia:['dementia_mild','dementia_severe']};
+function covPropList(c){
+  var ck=COV_KEYS.map(function(k){return covCat(c,k);});
+  return ck.filter(function(x){return x.amt<=0||x.status==='부족';}).sort(function(x,y){return ((x.amt<=0?0:1)-(y.amt<=0?0:1))||COV_KEYS.indexOf(x.cat)-COV_KEYS.indexOf(y.cat);})
+    .map(function(x){return {cat:x.cat,name:x.name,amt:x.amt,rec:x.rec,status:x.amt>0?'부족':'없음',areas:[]};});
+}
+function covTilesBlocks(c){
+  var ck=COV_KEYS.map(function(k){return covCat(c,k);});
+  var none=ck.filter(function(x){return x.amt<=0;}), weak=ck.filter(function(x){return x.amt>0&&x.status==='부족';}), ok=ck.filter(function(x){return x.amt>0&&x.status!=='부족';});
+  var out=['<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">'+[['잘 준비됨',ok.length,'#2F7D4A'],['보완 필요',weak.length,'#C27C0E'],['비어 있음',none.length,'#B4472F']].map(function(v){
+    return '<div style="background:#fff;border:1px solid #E4DCD2;border-top:4px solid '+v[2]+';border-radius:10px;padding:10px 14px"><div style="font-size:13px;color:var(--muted)">'+v[0]+'</div><div style="font-size:24px;font-weight:800;color:'+v[2]+'">'+v[1]+'개 담보</div></div>';}).join('')+'</div>'];
+  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.name)+' '+won(x.amt)+'</span>';}).join('')+'</div></div>');
+  return out;
+}
+/* 보완 제안 + 요즘 치료 흐름(추가 검토)을 한 섹션으로: 치료 흐름 카드에 나오는 담보는 제안 목록에서 빼서 겹치지 않게 */
+function covAdviseBlocks(c,o){
+  o=o||{};
+  var covered={}; COV_TRENDS.forEach(function(t){ if(c.trd&&c.trd[t.k]) (TREND_CATS[t.k]||[]).forEach(function(k){covered[k]=1;}); });
+  var out=['<p class="lead">진단비·치료비·수술비·간병·실손 등 꼭 필요한 보장이 지금 보험에 있는지 점검하고, 요즘 치료 흐름에 맞춰 추가로 검토할 보장을 함께 정리했습니다. 실제 가입 여부와 금액은 건강상태·고지사항·보험료 부담을 함께 확인한 뒤 결정합니다.</p>'];
+  if(o.tiles!==false) out=out.concat(covTilesBlocks(c));
+  var props=(o.props||covPropList(c)).filter(function(p){return !covered[p.cat];}).slice(0,6);
+  if(props.length){
+    out.push('<div class="keepnext" style="font-size:19px;font-weight:800;color:var(--navy);margin-top:6px">이렇게 보완하시길 권합니다</div>');
+    props.forEach(function(p,i){
+      var gap=p.rec!=null&&p.rec>p.amt&&p.amt>0?'권장금액보다 '+won(p.rec-p.amt)+' ':'';
+      out.push('<div class="card" style="padding:11px 14px;gap:4px"><div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start">'+
+        '<div style="width:30px;height:30px;border-radius:50%;background:var(--warm);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">'+(i+1)+'</div>'+
+        '<div><div style="font-size:16.5px;font-weight:800">'+esc(p.name)+' '+(p.amt>0?'보완 검토':'추가 검토')+'</div>'+
+        '<div style="font-size:14px;line-height:1.55;color:var(--ink2);margin-top:2px">'+(p.areas&&p.areas.length?'<b>'+esc(p.areas.join('·'))+'</b> 영역에서 신호가 나왔는데, ':'')+'지금 '+esc(p.name)+jo(p.name,'이','가')+(p.amt>0?' '+won(p.amt)+jo(won(p.amt),'으로','로')+' '+gap+'부족합니다':' 없습니다')+'. '+whyTxt(p.cat)+'</div></div></div></div>');
+    });
+  }
+  var tr=COV_TRENDS.some(function(t){return c.trd&&c.trd[t.k];})?covTrendBlocks(c):[];
+  if(tr.length>1){
+    out.push('<div class="keepnext" style="margin-top:8px"><div style="font-size:19px;font-weight:800;color:var(--navy)">요즘 치료 흐름에 맞춰 함께 점검할 보장</div><div style="font-size:13.5px;line-height:1.55;color:var(--ink2);margin-top:2px">보험사들이 새로 내놓는 담보 흐름 기준입니다. <b style="color:#B4472F">없음</b>으로 표시된 항목이 추가 검토 대상입니다.</div></div>');
+    out=out.concat(tr.slice(1));
+  }
+  out.push('<div class="small" style="font-size:12.5px;line-height:1.6;color:#4A4A55">· 최근 검진 이상소견·진료·투약 이력이 있으면 새 보험 가입 시 고지 대상이 될 수 있습니다.</div>');
+  return out;
+}
+/* n0: 시작 번호, o.scenario: 이럴 때 받는 금액 블록 함수, o.props: 제안 목록, o.tiles */
+function covCoreSecs(c,n0,o){
+  o=o||{}; var N=function(k){ return ('0'+(n0+k)).slice(-2); };
+  return [
+    {head:covHead(N(0)+' · 통합 보장 현황','내 보험, 한눈에 보기'),maxK:1.05,blocks:function(){return covSummaryBlocks(c);}},
+    {ctr:N(1)},
+    {head:covHead(N(2)+' · 이럴 때 받는 금액','이 병에 걸리면 얼마를 받을까요'),fitOne:true,blocks:o.scenario||function(){return COV_SCN.some(function(s){return c.scn[s.k];})?covScenarioBlocks(c):[];}},
+    {head:covHead(N(3)+' · 보완 제안 · 추가 검토','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return covAdviseBlocks(c,{props:o.props?o.props():null,tiles:o.tiles});}}
+  ];
+}
 function covSection(host,sec,a){
   if(!sec.blocks().length) return;
   var hf=function(cont){return cont?sec.head(true):'';};
@@ -1796,14 +1846,9 @@ function buildCoverage(c,host){
     sub:esc([c.age?c.age+'세':'',c.gender||''].filter(Boolean).join(' · ')),
     meta:[['분석 기준일',c.date],['정상 계약',c.contracts!=null?c.contracts+'건':''],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'']]});
   host.appendChild(t.firstChild);
-  var secs=[
-    {head:covHead('01 · 통합 보장 현황','내 보험, 한눈에 보기'),maxK:1.05,blocks:function(){return covSummaryBlocks(c);}},
-    {head:covHead('02 · 보완 제안','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return covPropBlocks(c);}},
-    {ctr:'03'},
-    {head:covHead('04 · 이럴 때 받는 금액','이 병에 걸리면 얼마를 받을까요'),fitOne:true,blocks:function(){return COV_SCN.some(function(s){return c.scn[s.k];})?covScenarioBlocks(c):[];}},
-    {head:covHead('05 · 요즘 치료 흐름','추가로 검토할 보장'),blocks:function(){return COV_TRENDS.some(function(t){return c.trd[t.k];})?covTrendBlocks(c):[];}},
-    {head:covHead('06 · 마무리','보험, 지금 준비해야 하는 이유'),blocks:function(){return covEndCta(c,a);},fitOne:true}
-  ];
+  var secs=covCoreSecs(c,1).concat([
+    {head:covHead('05 · 마무리','보험, 지금 준비해야 하는 이유'),blocks:function(){return covEndCta(c,a);},fitOne:true}
+  ]);
   secs.forEach(function(sec){ if(sec.ctr) ctrSection(host,c,a,sec.ctr); else covSection(host,sec,a); });
   COV_K=1;
 }
@@ -1889,7 +1934,7 @@ function dcChecks(c){ return c.areas.filter(function(a){return a.on;}).map(funct
 function dcMatchBlocks(c){
   var ch=dcChecks(c), out=[];
   var cnt={'잘 준비됨':0,'보완 필요':0,'비어 있음':0}; ch.forEach(function(x){cnt[x.verdict]++;});
-  out.push('<p class="lead">검사자료에서 신호가 나온 건강영역마다 꼭 필요한 보장이 지금 보험에 있는지 대조하고, 비어 있거나 부족한 보장을 보완 순서대로 정리했습니다. 실제 가입 여부와 금액은 건강상태·고지사항·보험료 부담을 함께 확인한 뒤 결정합니다.</p>');
+  out.push('<p class="lead">검사자료에서 신호가 나온 건강영역마다 꼭 필요한 보장이 지금 보험에 있는지 대조했습니다. 비어 있거나 부족한 보장의 보완 제안은 07 · 보완 제안 · 추가 검토에서 함께 정리했습니다.</p>');
   out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">'+['잘 준비됨','보완 필요','비어 있음'].map(function(v){
     return '<div style="background:#fff;border:1px solid #E4DCD2;border-top:4px solid '+VERDICT_COL[v]+';border-radius:10px;padding:10px 14px"><div style="font-size:13px;color:var(--muted)">'+v+'</div><div style="font-size:24px;font-weight:800;color:'+VERDICT_COL[v]+'">'+cnt[v]+'개 영역</div></div>';
   }).join('')+'</div>');
@@ -1963,13 +2008,9 @@ function buildDiseaseCov(c,host){
     {head:disHead('01 · 한눈에 보기','검사자료 핵심 요약'),blocks:function(){return disSummaryBlocks(c);}},
     {head:disHead('02 · 영역별 상세','건강영역별 확인과 준비'),blocks:function(){return disAreaBlocks(c);}}
   ],a);
-  [
-    {head:covHead('03 · 보완 제안','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return dcMatchBlocks(c).concat(dcProposalBlocks(c));}},
-    {head:covHead('04 · 통합 보장 현황','내 보험, 한눈에 보기'),maxK:1.05,blocks:function(){return covSummaryBlocks(c.cov);}},
-    {ctr:'05'},
-    {head:covHead('06 · 이럴 때 받는 금액','이 병에 걸리면 얼마를 받을까요'),fitOne:true,blocks:function(){return dcScenarioBlocks(c);}},
-    {head:covHead('07 · 요즘 치료 흐름','추가로 검토할 보장'),blocks:function(){return covTrendBlocks(c.cov);}}
-  ].forEach(function(sec){ if(sec.ctr) ctrSection(host,c.cov,a,sec.ctr); else covSection(host,sec,a); });
+  [{head:covHead('03 · 건강 신호 × 내 보장','필요한 보장, 지금 있을까요'),noBalance:true,blocks:function(){return dcMatchBlocks(c);}}]
+    .concat(covCoreSecs(c.cov,4,{scenario:function(){return dcScenarioBlocks(c);},props:function(){return dcProposals(c);},tiles:false}))
+    .forEach(function(sec){ if(sec.ctr) ctrSection(host,c.cov,a,sec.ctr); else covSection(host,sec,a); });
   covSection(host,{head:covHead('08 · 마무리','보험, 지금 준비해야 하는 이유'),blocks:function(){return dcEndBlocks(c,a);},fitOne:true},a);
 }
 function dcNameMatch(a,b){
