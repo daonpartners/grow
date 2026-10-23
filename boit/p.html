@@ -62,7 +62,7 @@ function vcard(d){ const tel=String(d.phone||"").replace(/[^\d+]/g,"");
   try{ const sb=supabase.createClient(BOIT_CLOUD.url,BOIT_CLOUD.key,{auth:{persistSession:false}});
     const r=await sb.from("boit_pages").select("data").eq("slug",u).maybeSingle(); if(r.error) throw r.error; d=r.data&&r.data.data; }catch(e){}
   if(!d){ app.innerHTML='<p class="msg">페이지를 찾을 수 없습니다.</p>'; return; }
-  if(d.showNews){ for(const u of ["morning.json","../dailynews/latest.json"]){ try{ const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"}); if(!r.ok) continue; const j=await r.json(); if(!news||(j.date||"")>(news.date||"")) news=j; }catch(e){} } }
+  if(d.showNews){ for(const u of ["morning.json","https://grow.ai.kr/boit/morning.json","../dailynews/latest.json"]){ try{ const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"}); if(!r.ok) continue; const j=await r.json(); if(!news||(j.date||"")>(news.date||"")) news=j; }catch(e){} } }
   document.title=`${d.name||""} ${d.title||""}`.trim()||document.title;
   app.innerHTML=hpHTML(d,news);
   app.addEventListener("click",e=>{ const a=e.target.closest('[data-hpact="연락처 저장"]'); if(!a) return; e.preventDefault();

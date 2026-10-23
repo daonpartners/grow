@@ -3009,7 +3009,7 @@ const MN={data:null,theme:"paper",err:""};
 const MN_THEMES=[["paper","신문",""],["t-blue","블루",""],["t-green","그린",""],["t-dark","다크",""]];
 async function mnLoad(){
   if(MN.data||MN.err) return;
-  for(const u of ["morning.json","../dailynews/latest.json"]){ try{ const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"}); if(!r.ok) continue; const j=await r.json(); if(!MN.data||(j.date||"")>(MN.data.date||"")) MN.data=j; }catch(e){} }
+  for(const u of ["morning.json","https://grow.ai.kr/boit/morning.json","../dailynews/latest.json"]){ try{ const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"}); if(!r.ok) continue; const j=await r.json(); if(!MN.data||(j.date||"")>(MN.data.date||"")) MN.data=j; }catch(e){} }
   if(!MN.data) MN.err="뉴스 자료를 불러오지 못했습니다. (grow.ai.kr/boit 주소에서 열어야 불러옵니다)";
 }
 function mnText(){ const d=MN.data; if(!d) return ""; const L=[];
