@@ -1651,22 +1651,27 @@ function covSummaryBlocks(c){
     '<div style="background:var(--navy);color:#fff;border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:5px"><div style="font-size:'+fz(15)+'px;font-weight:800;color:#F3C9A8">왜 연간 치료비 담보가 대세일까요?</div>'+
     '<div style="font-size:'+fz(13.5)+'px;line-height:1.6"><b>진단비</b>는 한 번 받으면 끝입니다. <b>실손의료비</b>는 5세대 실손에서 보장이 줄었고, 당일 수술과 의료기술의 발달로 빠르고 좋은 치료가 대부분 통원으로 이뤄지지만, 실손은 <b>통원 한도(25만~30만원)</b> 안에서만 보장합니다.</div>'+
     '<div style="font-size:'+fz(14.5)+'px;font-weight:800;line-height:1.5;color:#FFE3CF">그래서 치료를 받을 때마다 연간 한도로 치료비를 보장하는 새 담보가 대세입니다.</div></div></div>');
-  var cards=[];
+  // 엑셀처럼: 구분마다 표 하나, 담보를 한 줄씩 아래로
+  var SC='40px minmax(0,1fr) '+cw(112)+'px '+cw(104)+'px '+cw(104)+'px '+cw(66)+'px';
+  var cell='padding:'+fz(6)+'px 10px;border-right:1px solid #E3E6EC';
   COV_GROUPS.forEach(function(g){
     var rs=c.rows.filter(function(r){return r.on&&!r.hidden&&COV_GROUP[r.cat]===g;});
     if(!rs.length) return;
-    cards.push({n:rs.length,html:'<div class="card" style="padding:10px 12px;gap:2px"><div class="ctitle" style="font-size:'+fz(15.5)+'px">'+g+'</div>'+
-      '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(88)+'px '+cw(60)+'px '+cw(40)+'px;gap:6px;font-size:'+fz(10.5)+'px;color:var(--muted)"><div></div><div style="text-align:right">가입</div><div style="text-align:right">권장</div><div></div></div>'+
-      rs.map(function(r){
-        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) '+cw(88)+'px '+cw(60)+'px '+cw(40)+'px;gap:5px;align-items:center;padding:3px 0;border-top:1px solid #F0EAE3">'+
-          '<div style="font-size:'+fz(13)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+'</div>'+
-          '<div style="text-align:right;font-size:'+fz(13.5)+'px;font-weight:800;white-space:nowrap">'+won(r.amt)+'</div>'+
-          '<div style="text-align:right;font-size:'+fz(12)+'px;color:var(--ink2);white-space:nowrap">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
-          '<div style="text-align:right">'+(r.status?'<span style="display:inline-block;font-size:'+fz(10.5)+'px;font-weight:800;padding:2px 6px;border-radius:12px;color:#fff;background:'+ST_COL[r.status]+'">'+r.status+'</span>':'')+'</div></div>';
-      }).join('')+'</div>'});
+    var nb=rs.filter(function(r){return r.status==='부족';}).length, nm=rs.filter(function(r){return r.status==='미가입';}).length;
+    out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden;border-color:#C9D0DC">'+
+      '<div class="ctitle" style="padding:8px 12px;background:#F1F4F9;border-bottom:1px solid #C9D0DC;font-size:'+fz(16)+'px;justify-content:space-between"><span>'+g+'</span><span style="font-size:'+fz(12.5)+'px;font-weight:700;color:var(--ink2)">담보 '+rs.length+'개'+(nb?' · <b style="color:'+ST_COL['부족']+'">부족 '+nb+'</b>':'')+(nm?' · <b style="color:'+ST_COL['미가입']+'">미가입 '+nm+'</b>':'')+'</span></div>'+
+      '<div style="display:grid;grid-template-columns:'+SC+';background:#2B3346;color:#fff;font-size:'+fz(12)+'px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 10px">담보</div><div style="padding:6px 10px;text-align:right">가입금액</div><div style="padding:6px 10px;text-align:right">권장금액</div><div style="padding:6px 10px;text-align:right">부족 금액</div><div style="padding:6px 6px;text-align:center">판정</div></div>'+
+      '<div class="bl" style="gap:0">'+rs.map(function(r,k){
+        var gap=r.rec!=null&&r.rec>r.amt?won(r.rec-r.amt):'-';
+        return '<div style="display:grid;grid-template-columns:'+SC+';align-items:center;border-bottom:1px solid #D9DEE7;background:'+(k%2?'#F5F7FB':'#fff')+'">'+
+          '<div style="'+cell+';text-align:center;color:#7B8190;font-size:'+fz(12)+'px">'+(k+1)+'</div>'+
+          '<div style="'+cell+';font-size:'+fz(13.5)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+'</div>'+
+          '<div style="'+cell+';text-align:right;font-size:'+fz(14.5)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':'#B4472F')+'">'+won(r.amt)+'</div>'+
+          '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;color:var(--ink2);white-space:nowrap">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
+          '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;font-weight:700;white-space:nowrap;color:'+(gap==='-'?'#9AA0AA':'#B4472F')+'">'+gap+'</div>'+
+          '<div style="padding:'+fz(6)+'px 6px;text-align:center">'+(r.status?'<span style="display:inline-block;font-size:'+fz(11.5)+'px;font-weight:800;padding:2px 8px;border-radius:5px;color:#fff;background:'+ST_COL[r.status]+'">'+r.status+'</span>':'')+'</div></div>';
+      }).join('')+'</div></div>');
   });
-  // 두 칸씩 배치 (긴 묶음끼리, 짧은 묶음끼리 짝지어 빈칸 최소화)
-  for(var i=0;i<cards.length;i+=2){ out.push('<div class="two" style="gap:10px;align-items:start">'+cards[i].html+(cards[i+1]?cards[i+1].html:'<div></div>')+'</div>'); }
   out.push('<div class="small">권장금액과 충분·부족 판정은 원 자료('+esc(c.source||'보장분석')+')의 기준을 그대로 옮긴 것입니다.</div>');
   return out;
 }
