@@ -2136,7 +2136,14 @@ var DRV_ROWS=[
   {g:'law',grp:'변호사비',t:'심급별(1·2·3심) 변호사선임비용',v:'25.09 26.04 25.10 25.08 24.11 25.10 26.01 26.01 26.01 26.01 X'},
   {g:'law',grp:'변호사비',t:'급발진 사고 변호사선임비용',v:'25.09 26.04 X X 24.11 X 25.04 25.02 25.01 26.04 X'}
 ];
-function drvHas(c){ var n=c.items.map(function(i){return i.name;}).join('|'); return {tx:/처리지원|형사합의/.test(n),fine:/벌금/.test(n),fobj:/대물\s*벌금|벌금\(?대물/.test(n)||/벌금.*대물/.test(n),law:/변호사/.test(n)}; }
+function drvHas(c){
+  var drvProd=/운전자/.test(c.prod), H={tx:false,fine:false,fobj:false,law:false};
+  c.items.forEach(function(it){ var n=it.name; if(/화재|가전|주택|일상생활|가족/.test(n)) return;
+    var car=drvProd||/자동차|운전|교통|스쿨존/.test(n);
+    if(/처리지원금|형사합의/.test(n)) H.tx=true;
+    if(/벌금/.test(n)&&(car||/대인|대물/.test(n))){ H.fine=true; if(/대물/.test(n)) H.fobj=true; }
+    if(/변호사/.test(n)&&car) H.law=true; });
+  return H; }
 function isDriverCtr(c){ var h=drvHas(c); return h.tx||h.fine||h.law; }
 function drvCheck(cell,d){
   if(cell==='X') return {st:'na',txt:'판매 안 함'};
