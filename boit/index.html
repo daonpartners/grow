@@ -525,6 +525,17 @@ tr.sel td{background:var(--accent-soft)}
 .pre-top{flex-wrap:nowrap}.top-act{flex-wrap:nowrap;gap:4px}.top-act .btn{white-space:nowrap}@media (max-width:420px){.top-act [data-pre="pricing"]{display:none}}
 @media (max-width:900px){.lp-hero{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:640px){.pre-top{padding-inline:12px}.pre-top .brand .bt b span{display:none}.top-act .lp-link{padding-inline:6px;font-size:14px}.ls-step{font-size:12px}.pre-top .brand small{display:none}.pre-top .btn.primary{padding:9px 12px;font-size:14px}.lp-points li{font-size:16px}.btn.lp-big{width:100%}.lp-cta{flex-direction:column;align-items:stretch}.lp-try{text-align:center}}
+/* 로그인·회원가입 화면 (2026-10-23): 가운데 정렬, 큰 글씨·큰 입력칸 */
+.pre [data-pre-view="login"],.pre [data-pre-view="signup"]{padding:clamp(24px,5vw,56px) 16px}
+.pre form.auth{width:100%;max-width:520px;margin:0 auto!important;padding:clamp(24px,4vw,40px);gap:18px;border-radius:16px;box-shadow:0 12px 36px rgba(18,61,53,.08)}
+.pre form.auth h1{font-size:28px;margin:0 0 4px}
+.pre form.auth .field label{font-size:15px;font-weight:600;color:var(--fg)}
+.pre form.auth input:not([type=checkbox]){font-size:17px;padding:13px 14px;min-height:50px;border-radius:10px}
+.pre form.auth .checks label{font-size:15.5px;gap:10px;display:flex;align-items:center}
+.pre form.auth input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent)}
+.pre form.auth button[type=submit]{font-size:18px;font-weight:700;padding:15px;border-radius:12px}
+.pre form.auth .note{font-size:15px}
+.pre form.auth #su-cert{font-size:15px;padding-inline:16px}
 </style>
 
 <datalist id="dl-cust"></datalist>
@@ -630,6 +641,7 @@ tr.sel td{background:var(--accent-soft)}
   <section data-pre-view="signup" hidden>
     <form class="panel auth" id="f-signup">
       <h1>회원가입</h1>
+      <p class="note" style="margin:-8px 0 4px">이메일과 비밀번호로 1분이면 가입됩니다. 시범 기간에는 무료입니다.</p>
       <div class="field"><label for="su-email">이메일 (아이디)</label><input id="su-email" type="email" autocomplete="off"></div>
       <div class="field"><label for="su-name">이름</label><input id="su-name" autocomplete="off"></div>
       <div class="field"><label for="su-phone">휴대폰번호</label><div class="row" style="flex-wrap:nowrap"><input id="su-phone" inputmode="tel" maxlength="13" autocomplete="off" style="flex:1;min-width:0"><button class="btn" type="button" id="su-cert">인증</button></div></div>
