@@ -970,7 +970,7 @@ tr.sel td{background:var(--accent-soft)}
           <p class="note" id="sl-oauth-note" style="margin:0"></p>
           <details><summary class="note" style="cursor:pointer">API Key로 연결하기</summary>
             <form id="f-sl" style="display:flex;flex-direction:column;gap:10px;margin-top:10px" autocomplete="off">
-              <p class="note" style="margin:0">솔라피 [개발 › API Key]에서 새 키를 만들고 API Key와 API Secret을 붙여넣으세요. Secret은 만들 때 한 번만 보입니다. 붙여넣은 값은 보잇 서버에 암호화해 보관하고 화면에는 다시 보여주지 않습니다.</p>
+              <p class="note" style="margin:0">솔라피 [개발 › API Key]에서 새 키를 만들 때 <b>라우트 범위를 모든 IP(0.0.0.0/0)</b>로 고르고(내 사무실 IP 1개로 두면 보잇 서버에서 연결이 안 됩니다), 만료 기간은 '만료일 없음'으로 두세요. 만든 API Key와 API Secret을 붙여넣으세요. Secret은 만들 때 한 번만 보입니다. 붙여넣은 값은 보잇 서버에 암호화해 보관하고 화면에는 다시 보여주지 않습니다.</p>
               <div class="fgrid">
                 <div class="field"><label for="sl-key">API Key</label><input id="sl-key" autocomplete="off" spellcheck="false"></div>
                 <div class="field"><label for="sl-secret">API Secret</label><input id="sl-secret" type="password" autocomplete="new-password" spellcheck="false"></div>
