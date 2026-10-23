@@ -474,6 +474,57 @@ tr.sel td{background:var(--accent-soft)}
 .ds-q h3{margin:0 0 6px;font-size:15px}
 .ds-q.hit{border-color:var(--warn);background:var(--warn-soft)}
 .ds-t{font-size:12.5px}
+/* 첫 화면 (2026-10-23 개편): 흰 바탕 + 초록은 포인트만, 큰 글씨, 가입 버튼 1개 강조 */
+.pre-top{background:var(--surface);color:var(--fg);border-bottom:1px solid var(--line)}
+.pre-top .brand b{color:var(--fg)} .pre-top .brand small{color:var(--muted)} .pre-top .brand .logo{background:var(--accent);color:var(--accent-fg)} .pre-top .brand b span{color:var(--accent)}
+.pre-top .btn{background:transparent;color:var(--fg);border-color:transparent;font-size:15px}
+.pre-top .btn.lp-link:hover{background:var(--accent-soft)}
+.pre-top .btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);padding:10px 18px;font-weight:600}
+.lp-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center;max-width:1200px;margin:0 auto;padding-block:clamp(36px,6vw,80px);padding-inline:clamp(16px,4vw,48px)}
+.lp-tag{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:14px;padding:5px 12px;border-radius:999px}
+.lp-copy h1{font-size:clamp(30px,4.2vw,46px);line-height:1.28;letter-spacing:-.015em;margin:16px 0 20px;color:var(--fg)}
+.lp-copy h1 em{font-style:normal;color:var(--accent)}
+.lp-points{list-style:none;margin:0 0 28px;padding:0;display:flex;flex-direction:column;gap:12px}
+.lp-points li{position:relative;padding-left:32px;font-size:17px;line-height:1.55;color:var(--fg)}
+.lp-points li::before{content:"✓";position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-size:13px;font-weight:700;display:grid;place-items:center}
+.lp-points b{color:var(--accent)}
+.lp-cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.btn.lp-big{font-size:18px;font-weight:700;padding:16px 30px;border-radius:12px}
+.lp-try{font-size:16px;color:var(--fg);text-decoration:underline;text-underline-offset:4px;background:none;border:0;cursor:pointer;padding:8px 2px}
+.lp-fine{margin:14px 0 0;font-size:14px;color:var(--muted)}
+.lp-shot{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 48px rgba(18,61,53,.14);overflow:hidden}
+.ls-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.ls-bar i{width:10px;height:10px;border-radius:50%;background:var(--line)} .ls-bar span{margin-left:8px}
+.ls-body{padding:18px;display:flex;flex-direction:column;gap:14px}
+.ls-step{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.ls-step b{width:22px;height:22px;border-radius:50%;background:var(--line);color:var(--fg);display:inline-grid;place-items:center;font-size:12px;margin-left:6px}
+.ls-step b:first-child{margin-left:0} .ls-step b.on{background:var(--accent);color:var(--accent-fg)}
+.ls-card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.ls-row{display:flex;gap:12px;align-items:flex-start;font-size:14px}
+.ls-k{flex:0 0 46px;color:var(--muted)}
+.ls-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ls-chips em{font-style:normal;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px}
+.ls-chips em.ok{background:var(--accent-soft);border-color:transparent;color:var(--accent);font-weight:600}
+.ls-send{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.ls-send b{background:var(--accent);color:var(--accent-fg);padding:9px 14px;border-radius:10px;font-size:14px}
+.ls-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ls-mini div{background:var(--bg);border-radius:10px;padding:10px;display:flex;flex-direction:column}
+.ls-mini small{font-size:12px;color:var(--muted)} .ls-mini b{font-size:20px;color:var(--fg)}
+.lp-h2{font-size:clamp(22px,2.6vw,28px);margin:8px 0 0;text-align:center}
+.feat .feat-card{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;transition:border-color .15s,box-shadow .15s}
+.feat .feat-card:hover{border-color:var(--accent);box-shadow:0 8px 24px rgba(18,61,53,.10)}
+.feat .feat-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.feat .fi{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center}
+.feat .fi svg{width:24px;height:24px;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.feat .feat-card h3{font-size:19px;margin:6px 0 0;color:var(--fg)}
+.feat .feat-card p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted)}
+.feat .fgo{margin-top:auto;padding-top:6px;color:var(--accent);font-weight:600;font-size:15px}
+.lp-end{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;background:var(--accent-soft);border-radius:16px;padding:clamp(20px,3vw,32px)}
+.lp-end h2{font-size:clamp(20px,2.4vw,26px);margin:0 0 4px} .lp-end p{margin:0;font-size:16px;color:var(--muted)}
+.pre{word-break:keep-all;overflow-wrap:break-word}
+.pre-top{flex-wrap:nowrap}.top-act{flex-wrap:nowrap;gap:4px}.top-act .btn{white-space:nowrap}@media (max-width:420px){.top-act [data-pre="pricing"]{display:none}}
+@media (max-width:900px){.lp-hero{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.pre-top{padding-inline:12px}.pre-top .brand .bt b span{display:none}.top-act .lp-link{padding-inline:6px;font-size:14px}.ls-step{font-size:12px}.pre-top .brand small{display:none}.pre-top .btn.primary{padding:9px 12px;font-size:14px}.lp-points li{font-size:16px}.btn.lp-big{width:100%}.lp-cta{flex-direction:column;align-items:stretch}.lp-try{text-align:center}}
 </style>
 
 <datalist id="dl-cust"></datalist>
@@ -497,22 +548,47 @@ tr.sel td{background:var(--accent-soft)}
 <div id="pre" class="pre">
   <header class="pre-top">
     <button class="brand" data-pre="landing" aria-label="보잇 첫 화면"><span class="logo">B</span><span class="bt"><b>보잇<span>BOIT</span></b><small>고객을 잇고, 영업을 돕다</small></span></button>
-    <div class="row"><button class="btn" data-demo="home">체험하기</button><button class="btn" data-pre="pricing">이용요금</button><button class="btn primary" data-pre="login">로그인</button></div>
+    <div class="row top-act"><button class="btn lp-link" data-pre="pricing">이용요금</button><button class="btn lp-link" data-pre="login">로그인</button><button class="btn primary" data-pre="signup">무료로 시작하기</button></div>
   </header>
 
   <section data-pre-view="landing">
-    <div class="hero">
-      <h1>고객관리부터 <em>보상청구</em>까지,<br>설계사 업무를 한 곳에서</h1>
-      <p>고객·계약·상담 기록을 한 화면에 모으고, 보험금 청구서류는 보험사 여러 곳에 팩스로 한 번에 보냅니다.</p>
-      <div class="row"><button class="btn primary" data-demo="home">가입 없이 체험하기</button><button class="btn ghost" data-pre="pricing">이용권 결제하기</button><button class="btn ghost" data-pre="login">로그인</button></div>
-      <p style="margin:14px 0 0;font-size:13px">체험 모드는 예시 고객 300명으로 모든 메뉴를 그대로 눌러 볼 수 있습니다.</p>
+    <div class="lp-hero">
+      <div class="lp-copy">
+        <span class="lp-tag">보험설계사 업무 앱</span>
+        <h1>보험금 청구부터 고객관리까지,<br><em>한 번에 끝내세요</em></h1>
+        <ul class="lp-points">
+          <li><b>생명·손해보험사 43곳</b> 청구서를 자동으로 작성하고 팩스로 한 번에 보냅니다</li>
+          <li>고객·계약·상담 기록을 <b>이름 하나로</b> 모두 찾습니다</li>
+          <li>보장분석 PDF를 올리면 <b>계약이 자동 등록</b>됩니다</li>
+        </ul>
+        <div class="lp-cta"><button class="btn primary lp-big" data-pre="signup">무료로 시작하기</button><button class="lnk lp-try" type="button" data-demo="home">가입 없이 둘러보기 →</button></div>
+        <p class="lp-fine">시범 운영 기간에는 무료입니다 · 카드 등록 없이 가입</p>
+      </div>
+      <div class="lp-shot" aria-hidden="true">
+        <div class="ls-bar"><i></i><i></i><i></i><span>보잇 · 보상청구</span></div>
+        <div class="ls-body">
+          <div class="ls-step"><b>1</b> 고객 정보 <b class="on">2</b> 서류 올리기 <b>3</b> 보험사 선택 <b>4</b> 발송</div>
+          <div class="ls-card">
+            <div class="ls-row"><span class="ls-k">고객</span><span>김○○ · 실손 통원</span></div>
+            <div class="ls-row"><span class="ls-k">서류</span><span class="ls-chips"><em>진료비영수증</em><em>세부내역서</em><em>처방전</em></span></div>
+            <div class="ls-row"><span class="ls-k">보험사</span><span class="ls-chips"><em class="ok">DB손해보험 ✓</em><em class="ok">KB손해보험 ✓</em><em class="ok">신한라이프 ✓</em></span></div>
+          </div>
+          <div class="ls-send"><span>청구서 3장 자동 작성 완료</span><b>3곳에 팩스 보내기</b></div>
+          <div class="ls-mini"><div><small>이번 달 청구</small><b>27건</b></div><div><small>오늘 생일 고객</small><b>3명</b></div><div><small>만기 30일 이내</small><b>5건</b></div></div>
+        </div>
+      </div>
     </div>
     <div class="wrap">
+      <h2 class="lp-h2">설계사가 매일 하는 일, 보잇 하나로</h2>
       <div class="feat">
-        <div class="panel feat-card"><h2>고객관리</h2><p class="note" style="margin:0">고객 이름 하나로 계약·상담·활동·청구 이력 전체 조회. 증권 사진·PDF 자동 읽기, 엑셀 일괄 등록.</p><button class="btn" data-demo="customers" style="margin-top:10px">고객관리 체험하기</button></div>
-        <div class="panel feat-card"><h2>영업</h2><p class="note" style="margin:0">보장분석리포트, 전후 비교 제안서, 카드이미지와 생일·명절·월초 자동 문자.</p><button class="btn" data-demo="proposal" style="margin-top:10px">영업 체험하기</button></div>
-        <div class="panel feat-card"><h2>보상청구</h2><p class="note" style="margin:0">고객 정보와 서류를 한 번 올리면 보험사 최대 3곳에 팩스 동시 발송, 결과 알림.</p><button class="btn" data-demo="claim" style="margin-top:10px">보상청구 체험하기</button></div>
-        <div class="panel feat-card"><h2>사후관리</h2><p class="note" style="margin:0">청구 결과에서 비어 있는 담보를 찾아 보완 상담으로 연결.</p><button class="btn" data-demo="aftercare" style="margin-top:10px">사후관리 체험하기</button></div>
+        <button class="panel feat-card" type="button" data-demo="claim"><span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span><h3>보상청구</h3><p>서류 한 번 올리면 보험사 여러 곳에 동시 청구</p><span class="fgo">둘러보기 →</span></button>
+        <button class="panel feat-card" type="button" data-demo="customers"><span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2 .8 3 2.8 3 6"/></svg></span><h3>고객관리</h3><p>계약·상담·활동·청구 이력을 한 화면에</p><span class="fgo">둘러보기 →</span></button>
+        <button class="panel feat-card" type="button" data-demo="proposal"><span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><h3>영업자료</h3><p>보장분석 리포트·전후 비교 제안서 바로 출력</p><span class="fgo">둘러보기 →</span></button>
+        <button class="panel feat-card" type="button" data-demo="sms"><span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></span><h3>문자·안부</h3><p>생일·명절·만기 문자를 내 번호로 보내기</p><span class="fgo">둘러보기 →</span></button>
+      </div>
+      <div class="lp-end">
+        <div><h2>지금 무료로 시작해 보세요</h2><p>가입은 이메일만 있으면 1분이면 끝납니다.</p></div>
+        <button class="btn primary lp-big" data-pre="signup">무료로 시작하기</button>
       </div>
     </div>
   </section>
