@@ -1528,7 +1528,7 @@ body.growon{ background:var(--g-navy); }
             <div id="fcKeyMake" style="display:none;">
               <div style="font-size:12px; color:#555; margin-bottom:8px;">본인만 아는 <b>열람 비밀번호</b>를 한 번 만들어 두세요. 배정받은 고객의 주민등록번호는 이 비밀번호로만 열립니다. 잊으면 지사장에게 초기화를 요청하세요.</div>
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="password" id="fcKp1" placeholder="열람 비밀번호 (8자 이상)" autocomplete="new-password" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                <input type="password" id="fcKp1" placeholder="열람 비밀번호 (8자 이상, 숫자·영소문자·특수문자)" autocomplete="new-password" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <input type="password" id="fcKp2" placeholder="비밀번호 확인" autocomplete="new-password" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <button type="button" id="fcKmake" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-weight:800; cursor:pointer;">만들기</button>
                 <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem2"> 이 기기 기억(7일)</label>
@@ -1702,7 +1702,7 @@ body.growon{ background:var(--g-navy); }
               <div class="eb-row">
                 <span class="eb-lb">🔐 주민번호 <span id="edbKeySt" style="font-weight:600; color:#666;"></span></span>
                 <span id="edbKeyMake" class="eb-row" style="display:none;">
-                  <input type="password" id="edbKp1" class="eb-in" placeholder="새 비밀번호 (8자 이상)" autocomplete="new-password" style="width:170px;">
+                  <input type="password" id="edbKp1" class="eb-in" placeholder="새 비밀번호 (8자+숫자·영소문자·특수문자)" autocomplete="new-password" style="width:170px;">
                   <input type="password" id="edbKp2" class="eb-in" placeholder="비밀번호 확인" autocomplete="new-password" style="width:140px;">
                   <button type="button" class="eb-btn pri" id="edbKmake">비밀번호 만들기</button>
                   <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem2"> 이 기기 기억(7일)</label>
@@ -3152,6 +3152,8 @@ body.growon{ background:var(--g-navy); }
 <span id="todayDate" style="display:none"></span>
 
 <script>
+  /* 새 비밀번호 규칙(설계사 로그인·주민번호 열람): 8자 이상 + 숫자·영소문자·특수문자 포함 (2026-10-27) */
+  window.growPwBad = function(p){ p = String(p || ''); if(p.length < 8) return '비밀번호를 8자 이상 입력해 주세요.'; if(!/[0-9]/.test(p) || !/[a-z]/.test(p) || !/[^A-Za-z0-9]/.test(p)) return '비밀번호는 숫자·영소문자·특수문자(예: ! @ # $ % *)를 모두 넣어 주세요.'; if(/(.)\1{3,}/.test(p)) return '같은 글자를 4번 이상 반복할 수 없습니다.'; return ''; };
 
   // ================= 모바일 사이드바 토글 (필요시) =================
   // (현재 데스크톱 우선, 모바일에서는 사이드바 숨김 상태 기본)
@@ -9142,7 +9144,7 @@ const limitCompareData = {};
     const mk = document.getElementById('fcKmake'), op = document.getElementById('fcKopen');
     if(mk) mk.addEventListener('click', () => {
       const p1 = document.getElementById('fcKp1').value, p2 = document.getElementById('fcKp2').value;
-      if(p1.length < 8) return fcKeyMsg('비밀번호를 8자 이상 입력해 주세요.', true);
+      if(window.growPwBad(p1)) return fcKeyMsg(window.growPwBad(p1), true);
       if(p1 !== p2) return fcKeyMsg('비밀번호 확인이 일치하지 않습니다.', true);
       if(!FC_CRED) return;
       mk.disabled = true; fcKeyMsg('만드는 중…'); let made = null;
@@ -9200,7 +9202,7 @@ const limitCompareData = {};
     const [d2, d1] = await Promise.all([fcPost(FC_API, { action:'fcview', sabun: sb, ver }), fcPost(FC_LOOKUP, { sabun: sb, ver })]);
     if(d2 && d2.needPw){
       document.getElementById('fcPwNew').style.display = '';
-      document.getElementById('fcPwNewTxt').innerHTML = '<b>' + escapeHtml(d2.name) + '</b>님(' + escapeHtml(d2.branch) + '), 처음 오셨습니다. 위 칸에 사용할 비밀번호(8자 이상)를 넣고, 아래에 한 번 더 넣어 주세요. 이 비밀번호로 고객 주민번호도 열립니다. <b>잊으면 지사장에게 초기화를 요청</b>해야 합니다.';
+      document.getElementById('fcPwNewTxt').innerHTML = '<b>' + escapeHtml(d2.name) + '</b>님(' + escapeHtml(d2.branch) + '), 처음 오셨습니다. 위 칸에 사용할 비밀번호(8자 이상, 숫자·영소문자·특수문자 포함)를 넣고, 아래에 한 번 더 넣어 주세요. 이 비밀번호로 고객 주민번호도 열립니다. <b>잊으면 지사장에게 초기화를 요청</b>해야 합니다.';
       fcAutoSet(null); fcMsg(''); return false;
     }
     if(!d2 || !d2.success){ fcMsg((d2 && d2.message) || '네트워크 오류가 발생했습니다.', true); fcAutoSet(null); return d2 || false; }
@@ -9231,7 +9233,7 @@ const limitCompareData = {};
     try{
       if(first){
         const pw2 = document.getElementById('fcPw2').value;
-        if(pw.length < 8){ fcMsg('비밀번호를 8자 이상 입력해 주세요.', true); return; }
+        if(window.growPwBad(pw)){ fcMsg(window.growPwBad(pw), true); return; }
         if(pw !== pw2){ fcMsg('비밀번호 확인이 일치하지 않습니다.', true); return; }
         fcBusy(true, '비밀번호 만드는 중…');
         const ver = await fcVer(sb, pw);
@@ -10311,7 +10313,7 @@ const limitCompareData = {};
     }
     $('edbKmake').addEventListener('click', () => {
       const p1 = $('edbKp1').value, p2 = $('edbKp2').value, cc = code();
-      if(p1.length < 8){ notify('열람 비밀번호를 8자 이상 입력해 주세요.', true); return; }
+      if(window.growPwBad(p1)){ notify(window.growPwBad(p1), true); return; }
       if(p1 !== p2){ notify('비밀번호 확인이 일치하지 않습니다.', true); return; }
       if(!cc){ notify('로그인이 풀렸습니다. DB관리에 다시 들어와 주세요.', true); return; }
       busy('열쇠 만드는 중…'); let made = null;
