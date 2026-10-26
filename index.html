@@ -1685,9 +1685,14 @@ body.growon{ background:var(--g-navy); }
                 <button type="button" class="eb-btn red" id="edbDel">🗑️ 삭제</button>
               </div>
               <div class="eb-row eb-sec" style="margin-top:10px; padding-top:10px;">
-                <span class="eb-lb">③ 배분할 담당자</span>
+                <span class="eb-lb">③ 배분할 사람</span>
+                <select id="edbPick1" class="eb-in" style="min-width:220px;"><option value="">지사장·지점장·설계사 선택</option></select>
+                <button type="button" class="eb-btn pri" id="edbPick1Go">배분</button>
+              </div>
+              <div class="eb-row" style="margin-top:8px;">
+                <span style="font-size:12px; color:#888;">자주 쓰는 담당자</span>
                 <div id="edbAttList" class="eb-row"></div>
-                <button type="button" class="eb-btn" id="edbAttToggle">＋ 담당자 추가</button>
+                <button type="button" class="eb-btn" id="edbAttToggle" style="font-size:12px;">＋ 목록에 없는 사람 추가</button>
               </div>
               <div id="edbAtt" class="eb-row" style="display:none; margin-top:8px;">
                 <input type="text" id="edbAttName" class="eb-in" placeholder="이름" autocomplete="off" style="width:120px;">
@@ -10017,7 +10022,7 @@ const limitCompareData = {};
       bs.value = brs.indexOf(bcur) >= 0 ? bcur : '';
       bs.parentNode && (bs.style.display = brs.length > 1 || r.all ? '' : 'none');
       $('edbFcList').innerHTML = (r.fcs||[]).map(n => '<option value="' + escapeHtml(n) + '">').join('');
-      render(); afterLoad(); regDraw();
+      render(); afterLoad(); regDraw(); pickDraw();
     }
     /* 행사(날짜+행사명)별로 묶어서 표시. 묶음 머리줄 체크로 그 행사 전체 선택 */
     function edbGroup(rows, rowHtml){
@@ -10201,6 +10206,17 @@ const limitCompareData = {};
       $('edbKeyOn').style.display = 'none'; $('edbKeyOpen').style.display = 'none'; $('edbKeyMake').style.display = ''; $('edbKeySt').textContent = '· 새 비밀번호 입력';
     });
     /* 설계사 등록(사번)·비밀번호 초기화·삭제 */
+    /* 배분 대상 선택: 지사장·지점장 전체 + 등록된 설계사 (행사마다 바로 골라 배분) */
+    function pickDraw(){
+      const sel = $('edbPick1'); if(!sel || !LAST) return;
+      const cur = sel.value, H = LAST.headList || [], F = LAST.fcReg || [];
+      const opt = (v, t) => '<option value="' + escapeHtml(v) + '">' + escapeHtml(t) + '</option>';
+      sel.innerHTML = '<option value="">지사장·지점장·설계사 선택</option>' +
+        (H.length ? '<optgroup label="지사장·지점장">' + H.map(h => opt(h.name + ' (' + h.branch + ')', h.name + ' · ' + h.branch + (h.parent ? ' 지점장' : ' 지사장'))).join('') + '</optgroup>' : '') +
+        (F.length ? '<optgroup label="등록된 설계사">' + F.map(f => opt(f.name + ' (' + f.branch + ')', f.name + ' · ' + f.branch + ' 설계사')).join('') + '</optgroup>' : '');
+      if(cur) sel.value = cur;
+    }
+    $('edbPick1Go').addEventListener('click', () => { const v = $('edbPick1').value; if(!v){ notify('배분할 사람을 골라 주세요.', true); return; } assign(v); });
     function regDraw(){
       const sel = $('edbRegBr'); if(!sel || !LAST) return;
       const cur = sel.value, brs = LAST.regBranches || [LAST.branch];
@@ -10269,10 +10285,9 @@ const limitCompareData = {};
     function attDraw(){
       const box = $('edbAttList'); if(!box) return;
       const a = attGet();
-      box.innerHTML = a.length ? a.map((n, i) => '<span class="eb-chip"><b>' + escapeHtml(n) + '</b><button type="button" class="eb-btn pri edbAttOne" data-n="' + escapeHtml(n) + '">배분</button><button type="button" class="edbAttDel" data-i="' + i + '" title="목록에서 빼기" style="border:0; background:none; color:#999; cursor:pointer; font-size:15px; padding:0 6px;">×</button></span>').join('') : '<span style="font-size:12.5px; color:#888;">아직 없습니다. [＋ 담당자 추가]로 넣어 주세요.</span>';
+      box.innerHTML = a.length ? a.map((n, i) => '<span class="eb-chip"><b>' + escapeHtml(n) + '</b><button type="button" class="eb-btn pri edbAttOne" data-n="' + escapeHtml(n) + '">배분</button><button type="button" class="edbAttDel" data-i="' + i + '" title="목록에서 빼기" style="border:0; background:none; color:#999; cursor:pointer; font-size:15px; padding:0 6px;">×</button></span>').join('') : '<span style="font-size:12px; color:#aaa;">없음</span>';
       box.querySelectorAll('.edbAttDel').forEach(b => b.addEventListener('click', () => { const a2 = attGet(); if(!confirm(a2[Number(b.dataset.i)] + '을(를) 담당자 목록에서 뺄까요? (배분된 DB는 그대로입니다)')) return; a2.splice(Number(b.dataset.i), 1); attSet(a2); }));
       box.querySelectorAll('.edbAttOne').forEach(b => b.addEventListener('click', () => assign(b.dataset.n)));
-      if(!a.length) $('edbAtt').style.display = '';
     }
     on('edbAttToggle', () => { const f = $('edbAtt'); f.style.display = f.style.display === 'none' ? '' : 'none'; if(f.style.display === '') $('edbAttName').focus(); });
     on('edbAttAdd', () => {
