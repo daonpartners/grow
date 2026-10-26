@@ -866,6 +866,18 @@
   .limit-table.lt-annuity td{white-space:normal;}
 
   .limit-slide-img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:10px; margin-top:6px;}
+  /* 저장은 그로우사업부 소속만: 길게 누르기·끌어놓기 저장 막음 */
+  .limit-slide-img, .st-page-img{-webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-user-drag:none;}
+  .st-page-img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:10px; margin-top:8px; background:#fff;}
+  .gm-gate{position:fixed; inset:0; background:rgba(15,23,42,.55); z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px;}
+  .gm-card{background:#fff; border-radius:14px; width:100%; max-width:380px; padding:22px 20px; box-shadow:0 20px 50px rgba(0,0,0,.25);}
+  .gm-card h3{margin:0 0 8px; font-size:17px; color:var(--navy-2);}
+  .gm-card p{margin:0 0 14px; font-size:12.5px; line-height:1.6; color:var(--slate);}
+  .gm-card input{width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:14px; margin-bottom:8px;}
+  .gm-card .gm-row{display:flex; gap:8px; margin-top:6px;}
+  .gm-card button{flex:1; padding:11px 0; border-radius:9px; border:0; font-weight:800; font-size:13.5px; cursor:pointer; font-family:inherit;}
+  .gm-ok{background:var(--orange-deep); color:#fff;} .gm-no{background:#eef0f4; color:var(--navy-2);}
+  .gm-msg{font-size:12px; color:#c0392b; min-height:16px; margin-top:6px;}
   /* 데스크톱: 장표 한 장이 화면 안에 통째로 들어오도록 높이를 맞춤. 이미지를 클릭하면 원본 크기로 확대 */
   @media (min-width:900px){
     .limit-slide-img{width:auto; max-width:100%; max-height:56vh; margin:6px auto 0; cursor:zoom-in;}
@@ -4112,16 +4124,38 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('strategyDetailMeta').textContent = p.date || '';
     const gallery = document.getElementById('strategyDetailGallery');
     if(p.images && p.images.length){
-      gallery.style.display = 'grid';
-      gallery.innerHTML = p.images.map(src => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">`).join('');
+      /* 자료 쪽 이미지는 잘리지 않게 원본 비율 그대로 세로로 나열 (새 창 열기 대신 화면 안에서 보기) */
+      gallery.style.display = 'block';
+      gallery.innerHTML = p.images.map(src => `<img class="st-page-img" src="${src}" loading="lazy" alt="" draggable="false">`).join('');
     } else {
       gallery.style.display = 'none';
       gallery.innerHTML = '';
     }
     document.getElementById('strategyDetailContent').textContent = p.content || '';
-    document.getElementById('strategyDetailLinkWrap').innerHTML = p.link
-      ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:13px; font-weight:800; color:#fff; background:var(--orange-deep); padding:11px 0; border-radius:9px; text-decoration:none; display:block; text-align:center;">⬇️ 파일 다운로드</a>`
-      : '';
+    const stBtn = 'font-size:13px; font-weight:800; color:#fff; background:var(--orange-deep); padding:11px 0; border-radius:9px; border:0; width:100%; display:block; text-align:center; cursor:pointer; font-family:inherit; margin-top:8px;';
+    const lw = document.getElementById('strategyDetailLinkWrap');
+    lw.innerHTML = (p.images && p.images.length ? `<button type="button" id="stImgSave" style="${stBtn}">⬇️ 이미지 저장 (${p.images.length}장)</button>` : '')
+      + (p.link ? `<button type="button" id="stFileDl" style="${stBtn}">⬇️ 파일 다운로드</button>` : '')
+      + ((p.images && p.images.length) || p.link ? '<div style="font-size:11px; color:var(--slate); text-align:center; margin-top:6px;">저장은 미래에셋금융서비스 그로우사업부 소속만 가능합니다</div>' : '');
+    const _sis = document.getElementById('stImgSave');
+    if(_sis) _sis.addEventListener('click', async () => {
+      if(!(await window.growRequireMember())) return;
+      _sis.disabled = true; const t0 = _sis.textContent;
+      try{
+        for(let i = 0; i < p.images.length; i++){
+          _sis.textContent = `저장 중... (${i+1}/${p.images.length})`;
+          const blob = await (await fetch(p.images[i])).blob();
+          const a = document.createElement('a');
+          a.download = String(p.title || '영업전략').replace(/[\\/:*?"<>|]/g, '') + (p.images.length > 1 ? '_' + (i+1) : '') + (/png/.test(blob.type) ? '.png' : '.jpg');
+          a.href = URL.createObjectURL(blob); a.click();
+          setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+          await new Promise(r => setTimeout(r, 250));
+        }
+      }catch(e){ alert('저장에 실패했습니다.'); }
+      _sis.disabled = false; _sis.textContent = t0;
+    });
+    const _sfd = document.getElementById('stFileDl');
+    if(_sfd) _sfd.addEventListener('click', async () => { if(await window.growRequireMember()) window.open(p.link, '_blank', 'noopener'); });
     document.getElementById('strategyDetailModalBackdrop').classList.add('open');
   }
   document.getElementById('strategyDetailModalClose').addEventListener('click', () => document.getElementById('strategyDetailModalBackdrop').classList.remove('open'));
@@ -5938,8 +5972,10 @@ const limitCompareData = {};
     if(/암\s*주요/.test(l)) return [0, 0];
     if(/암\s*통합/.test(l)) return [1, 0];
     if(/암\s*비급여/.test(l)) return [2, 0];
+    if(/암\s*(복합|통원)|항암/.test(l)) return [2, 1];
     if(/유방암/.test(l)) return [3, 0];
     if(/2대질환|뇌\s*[·.]?\s*심|순환계|뇌졸중|심근경색|협심증/.test(l)) return [4, 0];
+    if(/치단비|3대\s*진단/.test(l)) return [4, 1];
     if(/수술비|수술/.test(l)) return [5, 0];
     if(/일당|간병/.test(l)) return [6, 0];
     if(/재가|치매|장기요양|요양/.test(l)) return [7, 0];
@@ -6269,8 +6305,16 @@ const limitCompareData = {};
       const bMin = Math.min(...byCat[b].map(r => r.sortOrder||0));
       return bMin - aMin; // 최신 게시물이 위로
     });
+    /* 월별 자료(제목에 "(10월기준)" 등): 인수한도 게시판에는 가장 최근 달만 표시. 지난 달 자료는 데이터는 그대로 두고 목록에서만 숨김 */
+    const monthOf = k => { const r = byCat[k][0]; if((r.section || 'limit_compare') !== 'limit_compare') return 0; const m = String(r.catLabel || '').match(/\(\s*(\d{1,2})\s*월\s*기준\s*\)/); return m ? Number(m[1]) : 0; };
+    const months = Array.from(new Set(Object.keys(byCat).map(monthOf).filter(Boolean)));
+    const wrap = months.includes(12) && months.includes(1);
+    const mval = m => (wrap && m <= 6) ? m + 12 : m;
+    const latestMonth = months.length ? Math.max(...months.map(mval)) : 0;
     uploadedKeys.forEach(catKey => {
       if(LIMIT_BUILTIN_KEYS.includes(catKey)) return; // built-in 장표와 겹치면 건드리지 않음
+      const mo = monthOf(catKey);
+      if(mo && mval(mo) < latestMonth) return;
       const rowsForCat = byCat[catKey].sort((a,b) => (a.sortOrder||0) - (b.sortOrder||0));
       const images = rowsForCat.map(r => ({ imgId: r.imgId, src: (r.staticUrl && !r.hasImage) ? r.staticUrl : `${LIMIT_IMAGE_URL}?id=${encodeURIComponent(r.imgId)}`, pageTitle: r.pageTitle || null, mime: r.mime || 'image/png' }));
       const section = rowsForCat[0].section || 'limit_compare';
@@ -6430,7 +6474,8 @@ const limitCompareData = {};
       ${bodyHtml}</body></html>`;
   }
   const _lpo = document.getElementById('limitPopoutBtn');
-  if(_lpo) _lpo.addEventListener('click', () => {
+  if(_lpo) _lpo.addEventListener('click', async () => {
+    if(!(await window.growRequireMember())) return;
     const w = window.open('', '_blank');
     if(!w) return;
     w.document.write(limitStandaloneHtml());
@@ -6448,6 +6493,7 @@ const limitCompareData = {};
   }
   const _lsv = document.getElementById('limitSaveBtn');
   if(_lsv) _lsv.addEventListener('click', async () => {
+    if(!(await window.growRequireMember())) return;
     _lsv.disabled = true;
     const orig = _lsv.textContent;
     try{
@@ -10774,6 +10820,81 @@ const limitCompareData = {};
 
   syncGrowLayout(); renderHome(); showView('home');
 
+
+  // ================= 그로우사업부 소속 확인 (이미지·자료 저장 권한) =================
+  // 보기는 누구나, 저장(다운로드·새창 인쇄·길게 눌러 저장)은 그로우사업부 소속만.
+  // 소속 확인 = 관리자센터 로그인(지사장·관리자) 또는 '내 DB 조회'와 같은 미래에셋 사번 + 비밀번호(지사장이 등록한 설계사).
+  (function(){
+    const API = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
+    const OK = 'growMemberOk';
+    const ok = () => { try{ return sessionStorage.getItem('growAdmin') === '1' || sessionStorage.getItem(OK) === '1'; }catch(e){ return false; } };
+    async function ver(sb, pw){
+      const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
+      const bits = await crypto.subtle.deriveBits({ name:'PBKDF2', salt: new TextEncoder().encode('grow-fc-login|' + sb), iterations: 200000, hash:'SHA-256' }, k, 256);
+      return btoa(String.fromCharCode.apply(null, new Uint8Array(bits)));
+    }
+    async function check(sb, v){
+      let d = null;
+      try{ d = await (await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'fcview', sabun: sb, ver: v }) })).json(); }catch(e){}
+      if(d && d.success){ try{ sessionStorage.setItem(OK, '1'); }catch(e){} return { ok:true }; }
+      return { ok:false, needPw: !!(d && d.needPw), msg: (d && d.message) || '네트워크 오류가 발생했습니다.' };
+    }
+    function saved(){
+      let a = null;
+      try{ a = JSON.parse(sessionStorage.getItem('fcAuth') || 'null'); }catch(e){}
+      if(!a){ try{ const v = JSON.parse(localStorage.getItem('growFcAuto') || 'null'); if(v && v.sabun && v.ver && Date.now() - v.at < 30 * 86400000) a = v; }catch(e){} }
+      return a && a.sabun && a.ver ? a : null;
+    }
+    function gate(){
+      return new Promise(resolve => {
+        const el = document.createElement('div');
+        el.className = 'gm-gate';
+        el.innerHTML = '<div class="gm-card"><h3>🔒 그로우사업부 소속 확인</h3>'
+          + '<p>이미지·자료 저장은 <b>미래에셋금융서비스 그로우사업부 소속</b>만 가능합니다.<br>\'내 DB 조회\'와 같은 <b>미래에셋 사번·비밀번호</b>를 입력하세요. 지사장은 관리자센터에 로그인한 상태면 바로 저장됩니다.</p>'
+          + '<input type="text" inputmode="numeric" class="gm-sb" placeholder="미래에셋 사번" autocomplete="username">'
+          + '<input type="password" class="gm-pw" placeholder="비밀번호" autocomplete="current-password">'
+          + '<div class="gm-msg"></div><div class="gm-row"><button type="button" class="gm-no">취소</button><button type="button" class="gm-ok">확인</button></div></div>';
+        document.body.appendChild(el);
+        const $ = c => el.querySelector(c);
+        const msg = t => { $('.gm-msg').textContent = t || ''; };
+        const done = v => { el.remove(); resolve(v); };
+        $('.gm-no').onclick = () => done(false);
+        el.addEventListener('click', e => { if(e.target === el) done(false); });
+        const go = async () => {
+          const sb = $('.gm-sb').value.replace(/[^0-9]/g, ''), pw = $('.gm-pw').value;
+          if(!/^\d{5,12}$/.test(sb)){ msg('사번을 숫자로 정확히 입력해 주세요.'); return; }
+          if(!pw){ msg('비밀번호를 입력해 주세요.'); return; }
+          $('.gm-ok').disabled = true; $('.gm-ok').textContent = '확인 중…'; msg('');
+          let r;
+          try{ r = await check(sb, await ver(sb, pw)); }catch(e){ r = { ok:false, msg:'오류가 발생했습니다.' }; }
+          $('.gm-ok').disabled = false; $('.gm-ok').textContent = '확인';
+          if(r.ok) return done(true);
+          msg(r.needPw ? '처음이시면 \'내 DB 조회\'에서 비밀번호를 먼저 정해 주세요.' : r.msg);
+        };
+        $('.gm-ok').onclick = go;
+        [$('.gm-sb'), $('.gm-pw')].forEach(i => i.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); go(); } }));
+        $('.gm-sb').focus();
+      });
+    }
+    window.growMemberOk = ok;
+    window.growRequireMember = async function(){
+      if(ok()) return true;
+      const a = saved();
+      if(a){ const r = await check(a.sabun, a.ver); if(r.ok) return true; }
+      return gate();
+    };
+    /* 길게 누르기·오른쪽 클릭·끌어놓기로 자료 이미지를 저장하지 못하게 (소속 확인 전) */
+    const isDoc = t => t && t.tagName === 'IMG' && !!t.closest('#limitModalBody, #strategyDetailGallery');
+    document.addEventListener('contextmenu', e => { if(isDoc(e.target) && !ok()) e.preventDefault(); }, true);
+    document.addEventListener('dragstart', e => { if(isDoc(e.target) && !ok()) e.preventDefault(); }, true);
+    /* 인수한도 게시판의 PDF 첨부 다운로드도 소속 확인 */
+    document.addEventListener('click', async e => {
+      const a = e.target.closest && e.target.closest('.limit-pdf-dlbtn');
+      if(!a || ok()) return;
+      e.preventDefault(); e.stopPropagation();
+      if(await window.growRequireMember()) window.open(a.href, '_blank', 'noopener');
+    }, true);
+  })();
 </script>
 <script src="/assets/datefix.js"></script>
 </body>
