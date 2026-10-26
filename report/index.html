@@ -316,6 +316,8 @@ async function parsePdf(file){
     if(hm){sec=SEC[hm[1]];buckets[block][sec]=[];continue;}
     if(sec) buckets[block][sec].push(line);
   }
+  /* 주성향과 보조성향이 같은 유형이면 결과지에 설명이 한 번만 나옴 → 같은 내용을 보조성향에도 씀 */
+  if(c.main&&c.sub&&c.main===c.sub&&!buckets.sub.__set) buckets.sub=buckets.main;
   ['main','sub'].forEach(function(b){
     Object.keys(SEC).forEach(function(k){
       var key=SEC[k],ls=buckets[b][key];
@@ -427,7 +429,7 @@ var JOB_KEY={
 function jobKeyIdx(type,job){ var ks=JOB_KEY[type]||[]; for(var i=0;i<ks.length;i++){ if(job.indexOf(ks[i])>=0) return i; } return -1; }
 function rankJobs(c){
   var norm=function(j){return j.replace(/\s+/g,'');};
-  var m=c.sections.main['직업']||[], s=c.sections.sub['직업']||[];
+  var m=c.sections.main['직업']||[], s=sameType(c)?[]:(c.sections.sub['직업']||[]);
   var sn={}; s.forEach(function(j){sn[norm(j)]=1;});
   var both=[], qm=[], qs=[], seen={};
   var push=function(arr,j,type,pos,why){ var k=jobKeyIdx(type,j); arr.push({job:j,why:why,k:k<0?99:k,pos:pos}); };
@@ -453,7 +455,7 @@ function jobBlock(c){
         '<div style="font-size:16px;font-weight:'+(i<3?800:600)+'">'+esc(x.job)+'</div>'+
         '<div style="font-size:12px;font-weight:700;color:'+col(x)+';white-space:nowrap">'+esc(x.why)+'</div></div>';
     }).join('')+'</div>'+
-    '<div style="font-size:12.5px;color:var(--muted);line-height:1.55">순위 기준: 두 성향에 모두 나온 직업을 먼저 두고, 이어서 주성향('+esc(c.main)+')과 보조성향('+esc(c.sub)+') 직업을 3:2 비율로 번갈아 배치했습니다. 각 성향 안에서는 그 성향의 대표 특징과 맞는 직업이 앞섭니다. 원 결과지의 직업군 '+((c.sections.main['직업']||[]).length+(c.sections.sub['직업']||[]).length)+'개 중 상위 10개입니다.</div></div>';
+    '<div style="font-size:12.5px;color:var(--muted);line-height:1.55">'+(sameType(c)?'순위 기준: '+esc(c.main)+'의 대표 특징과 맞는 직업을 앞에 두었습니다. 원 결과지의 직업군 '+(c.sections.main['직업']||[]).length+'개 중 상위 10개입니다.':'순위 기준: 두 성향에 모두 나온 직업을 먼저 두고, 이어서 주성향('+esc(c.main)+')과 보조성향('+esc(c.sub)+') 직업을 3:2 비율로 번갈아 배치했습니다. 각 성향 안에서는 그 성향의 대표 특징과 맞는 직업이 앞섭니다. 원 결과지의 직업군 '+((c.sections.main['직업']||[]).length+(c.sections.sub['직업']||[]).length)+'개 중 상위 10개입니다.')+'</div></div>';
 }
 
 
@@ -496,7 +498,7 @@ function kidJobBlock(c,r){
             '<div style="font-size:12px;font-weight:700;color:'+col(x)+';white-space:nowrap">'+esc(x.why)+'</div></div>';
         }).join('')+'</div>';
     }).join('')+'</div>'+
-    '<div style="font-size:12.5px;color:var(--muted);line-height:1.55">순위 기준: 두 성향에 모두 나온 직업을 먼저 두고, 주성향('+esc(c.main)+')과 보조성향('+esc(c.sub)+') 직업을 3:2 비율로 번갈아 배치. 진로 분야 묶음과 직업 설명은 이해를 돕기 위한 참고입니다.</div></div>';
+    '<div style="font-size:12.5px;color:var(--muted);line-height:1.55">'+(sameType(c)?'순위 기준: '+esc(c.main)+'의 대표 특징과 맞는 직업을 앞에 배치.':'순위 기준: 두 성향에 모두 나온 직업을 먼저 두고, 주성향('+esc(c.main)+')과 보조성향('+esc(c.sub)+') 직업을 3:2 비율로 번갈아 배치.')+' 진로 분야 묶음과 직업 설명은 이해를 돕기 위한 참고입니다.</div></div>';
 }
 
 /* ---------- 리포트 HTML ---------- */
@@ -571,6 +573,7 @@ function summaryPage(c,a){
   '</div>'+foot(a)+'</div>';
 }
 
+function sameType(c){ return !!(c.main&&c.main===c.sub); }
 function typeBlocks(c,b){
   var s=c.sections[b],col=b==='main'?'var(--warm)':'var(--blue)',child=isChild(c);
   return [
@@ -584,15 +587,17 @@ function typeBlocks(c,b){
 }
 function typeHead(c,b,cont){
   var isMain=b==='main',col=isMain?'var(--warm)':'var(--blue)',child=isChild(c);
-  var k=isMain?('02 · 겉으로 보이는 '+(child?'모습':'나')+' (주성향)'):('03 · 속에 있는 '+(child?'모습':'나')+' (보조성향)');
+  var sm=sameType(c);
+  var k=isMain?(sm?'02 · 겉과 속이 같은 '+(child?'모습':'나')+' (주성향 = 보조성향)':'02 · 겉으로 보이는 '+(child?'모습':'나')+' (주성향)'):('03 · 속에 있는 '+(child?'모습':'나')+' (보조성향)');
   return '<div style="display:flex;flex-direction:column;gap:8px"><div class="kicker" style="color:'+col+'">'+k+(cont?' · 이어서':'')+'</div>'+
-    (cont?'':'<h2 class="h2" style="color:'+col+'">'+esc(isMain?c.main:c.sub)+'</h2><p class="lead">'+(isMain?'대인관계·사회활동·행동처럼 겉으로 드러나는 모습입니다.':'생각하는 방식과 결정을 내리는 기준처럼 마음속에 있는 모습입니다.')+'</p>')+'</div>';
+    (cont?'':'<h2 class="h2" style="color:'+col+'">'+esc(isMain?c.main:c.sub)+'</h2><p class="lead">'+(isMain?(sm?'주성향과 보조성향이 같은 유형이라, 겉으로 드러나는 행동과 마음속 생각하는 방식이 한결같습니다.':'대인관계·사회활동·행동처럼 겉으로 드러나는 모습입니다.'):'생각하는 방식과 결정을 내리는 기준처럼 마음속에 있는 모습입니다.')+'</p>')+'</div>';
 }
 
 function bothBlocks(c){
   var m=c.sections.main,s=c.sections.sub,child=isChild(c);
   function pair(title,k){
     if(!(m[k]||[]).length&&!(s[k]||[]).length) return '';
+    if(sameType(c)) return '<div class="card"><div class="ctitle"><span class="dot" style="background:var(--navy)"></span>'+title+'</div>'+bullets(m[k]||[])+'</div>';
     return '<div class="card"><div class="ctitle"><span class="dot" style="background:var(--navy)"></span>'+title+'</div><div class="two">'+
       '<div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:14px;font-weight:700;color:var(--warm2)">'+esc(c.main)+'</div>'+bullets(m[k]||[])+'</div>'+
       '<div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:14px;font-weight:700;color:var(--blue)">'+esc(c.sub)+'</div>'+bullets(s[k]||[])+'</div></div></div>';
@@ -611,14 +616,14 @@ function bothBlocks(c){
 function bothHead(c){
   return function(cont){
     var child=isChild(c);
-    return '<div style="display:flex;flex-direction:column;gap:8px"><div class="kicker" style="color:var(--navy)">04 · 두 모습을 함께 보면'+(cont?' · 이어서':'')+'</div>'+(cont?'':'<h2 class="h2" style="color:var(--navy)">'+(child?'공부할 때와 대화할 때':'일할 때와 대화할 때')+'</h2>')+'</div>';
+    return '<div style="display:flex;flex-direction:column;gap:8px"><div class="kicker" style="color:var(--navy)">'+(sameType(c)?'03 · 생활 속에서 보면':'04 · 두 모습을 함께 보면')+''+(cont?' · 이어서':'')+'</div>'+(cont?'':'<h2 class="h2" style="color:var(--navy)">'+(child?'공부할 때와 대화할 때':'일할 때와 대화할 때')+'</h2>')+'</div>';
   };
 }
 
 function insHead(c){
   return function(cont){
     var child=isChild(c);
-    return '<div style="display:flex;flex-direction:column;gap:8px"><div class="kicker" style="color:var(--warm)">05 · '+(child?'우리 아이를 지키는 대비 점검':'나를 지키는 대비 점검')+(cont?' · 이어서':'')+'</div>'+
+    return '<div style="display:flex;flex-direction:column;gap:8px"><div class="kicker" style="color:var(--warm)">'+(sameType(c)?'04':'05')+' · '+(child?'우리 아이를 지키는 대비 점검':'나를 지키는 대비 점검')+(cont?' · 이어서':'')+'</div>'+
       (cont?'':'<h2 class="h2" style="color:var(--navy);font-size:31px">'+(child?'아이 성향에서 시작하는 생활·미래 대비 체크':'내 성향에서 시작하는 생활 대비 체크')+'</h2>'+
       '<p class="lead">'+(child?'아이의 성격과 생활 습관을 돌아보면 어떤 상황을 더 자주 마주하는지 보이고, 성향에 맞는 진로를 준비하려면 교육자금도 미리 챙겨야 합니다. 해당하는 질문에 체크하시고 담당 설계사와 함께 확인해 보세요.':'성격과 생활 습관을 돌아보면, 내가 어떤 상황을 더 자주 마주하는지 보입니다. 해당하는 질문에 체크하시고, 담당 설계사와 현재 가입한 보장을 함께 확인해 보세요.')+'</p>')+'</div>';
   };
@@ -2559,10 +2564,12 @@ function buildFp(c,host){
   window.PAGE_CLS='fp'; window.FLOW_FS=13.5;
   try{ chainFlow(host,[
     {head:function(cont){return typeHead(c,'main',cont);},blocks:function(){return typeBlocks(c,'main');}},
-    {head:function(cont){return typeHead(c,'sub',cont);},blocks:function(){return typeBlocks(c,'sub');}},
+  ].concat(sameType(c)?[]:[
+    {head:function(cont){return typeHead(c,'sub',cont);},blocks:function(){return typeBlocks(c,'sub');}}
+  ]).concat([
     {head:bothHead(c),blocks:function(){return bothBlocks(c);}},
     {head:insHead(c),blocks:function(){return insBlocks(c,a);}}
-  ],a); } finally { window.PAGE_CLS=''; window.FLOW_FS=0; }
+  ]),a); } finally { window.PAGE_CLS=''; window.FLOW_FS=0; }
 }
 function editFp(c){
   return '<div class="grid2"><label class="f">고객 이름<input data-f="name" value="'+esc(c.name||'')+'"></label><label class="f">검사일<input data-f="evalDate" value="'+esc(c.evalDate||'')+'"></label></div>'+
