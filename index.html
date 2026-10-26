@@ -1681,6 +1681,7 @@ body.growon{ background:var(--g-navy); }
                 <span id="edbPick" style="font-size:12.5px; color:#666;"></span>
                 <label style="font-size:12.5px; cursor:pointer; margin-left:6px;"><input type="checkbox" id="edbOnlyNew"> 미배분만 보기</label>
                 <span style="flex:1 1 auto;"></span>
+                <button type="button" class="eb-btn pri" id="edbAddOpen">＋ 수기 DB 추가</button>
                 <button type="button" class="eb-btn" id="edbRefresh">🔄 새로고침</button>
                 <button type="button" class="eb-btn" id="edbUnassign">배분 취소</button>
                 <button type="button" class="eb-btn" id="edbCsv" title="선택 건만, 선택이 없으면 전체">CSV 저장</button>
@@ -1703,6 +1704,34 @@ body.growon{ background:var(--g-navy); }
                 <span class="eb-help" style="margin:0;">다른 지사는 지사장만, 설계사는 우리 지사·산하 지점 소속만 추가됩니다. 한 번 추가하면 이 기기에 남습니다.</span>
               </div>
               <datalist id="edbFcList"></datalist>
+            </div>
+            <div id="edbAdd" class="eb-card" style="display:none; border-color:#C9D3E6; background:#F8FAFD;">
+              <div class="eb-lb" style="margin-bottom:4px;">＋ 수기 DB 추가 <span style="font-weight:500; color:#888; font-size:12px;">— 현장에서 서면 동의서를 받은 고객만 입력하세요</span></div>
+              <div class="eb-row">
+                <input type="text" id="adEv" class="eb-in" list="adEvList" placeholder="행사명" style="width:160px;"><datalist id="adEvList"></datalist>
+                <input type="date" id="adDt" class="eb-in" title="행사일">
+                <select id="adKind" class="eb-in"><option value="qm">양자공명 건강체험</option><option value="fp">자녀 지문검사</option><option value="pet">펫행사</option></select>
+                <select id="adBr" class="eb-in" title="DB가 들어갈 지사"></select>
+              </div>
+              <div class="eb-row" style="margin-top:8px;">
+                <input type="text" id="adNm" class="eb-in" placeholder="성명 (자녀검사는 보호자)" style="width:150px;">
+                <input type="text" id="adBd" class="eb-in" placeholder="생년월일 19800101" inputmode="numeric" style="width:150px;">
+                <input type="text" id="adPh" class="eb-in" placeholder="연락처" inputmode="numeric" style="width:140px;">
+                <input type="text" id="adAd" class="eb-in" placeholder="주소" style="flex:1; min-width:180px;">
+              </div>
+              <div class="eb-row" id="adChildRow" style="margin-top:8px; display:none;">
+                <input type="text" id="adCn" class="eb-in" placeholder="자녀 성명" style="width:150px;">
+                <input type="text" id="adCb" class="eb-in" placeholder="자녀 생년월일 20180101" inputmode="numeric" style="width:170px;">
+                <input type="password" id="adCr" class="eb-in" placeholder="자녀 주민번호 뒤 7자리 (선택)" inputmode="numeric" maxlength="7" style="width:200px;">
+              </div>
+              <div class="eb-row" style="margin-top:8px;">
+                <input type="password" id="adPr" class="eb-in" placeholder="주민번호 뒤 7자리 (선택)" inputmode="numeric" maxlength="7" style="width:200px;">
+                <input type="text" id="adPet" class="eb-in" placeholder="반려동물 정보 (펫행사)" style="flex:1; min-width:180px; display:none;">
+                <span style="flex:1 1 auto;"></span>
+                <button type="button" class="eb-btn pri" id="adSave">저장</button>
+                <button type="button" class="eb-btn" id="adClose">닫기</button>
+              </div>
+              <div class="eb-help">주민번호는 이 화면에서 바로 잠가(암호화) 저장되며, 다온·해당 지사장만 열 수 있습니다. 수기 입력 건은 텔레그램 알림을 보내지 않습니다.</div>
             </div>
             <div id="edbDelBox" class="eb-card" style="display:none; border-color:#E7B9AC; background:#FFF6F3;">
               <div style="font-size:13px; font-weight:700; color:#B02A20; margin-bottom:6px;" id="edbDelTxt"></div>
@@ -10294,6 +10323,55 @@ const limitCompareData = {};
       box.querySelectorAll('.edbAttOne').forEach(b => b.addEventListener('click', () => assign(b.dataset.n)));
     }
     on('edbRefresh', () => window.edbLoad('목록을 새로 불러왔습니다.'));
+    /* 수기 DB 추가: 고객 동의 화면과 같은 접수 경로로 저장(수기 표시·입력한 행사일 사용·알림 없음). 주민번호는 열람권자 열쇠로 이 화면에서 잠금 */
+    const LEAD_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-lead';
+    const adDate = v => { const n = String(v || '').replace(/[^0-9]/g, ''); return n.length === 8 ? n.slice(0, 4) + '-' + n.slice(4, 6) + '-' + n.slice(6) : ''; };
+    const adRrnOk = (bd, back) => { const y = +bd.slice(0, 4), g = back.charAt(0); if(!/^\d{7}$/.test(back)) return false; return y < 2000 ? /[1256]/.test(g) : /[3478]/.test(g); };
+    function adKindUi(){ const k = $('adKind').value; $('adChildRow').style.display = k === 'fp' ? '' : 'none'; $('adPet').style.display = k === 'pet' ? '' : 'none'; }
+    on('edbAddOpen', () => {
+      const f = $('edbAdd'); f.style.display = f.style.display === 'none' ? '' : 'none'; if(f.style.display === 'none') return;
+      $('adEvList').innerHTML = ((LAST && LAST.events) || []).map(e => '<option value="' + escapeHtml(e) + '">').join('');
+      const brs = (LAST && LAST.regBranches) || [LAST ? LAST.branch : ''];
+      $('adBr').innerHTML = brs.map(b => '<option>' + escapeHtml(b) + '</option>').join('');
+      if(!$('adDt').value){ const d = new Date(Date.now() + 9 * 3600 * 1000); $('adDt').value = d.toISOString().slice(0, 10); }
+      if(!$('adEv').value && $('edbEvent').value) $('adEv').value = $('edbEvent').value;
+      adKindUi(); $('adNm').focus();
+    });
+    on('adClose', () => { $('edbAdd').style.display = 'none'; });
+    $('adKind').addEventListener('change', adKindUi);
+    on('adSave', async () => {
+      const k = $('adKind').value, ev = $('adEv').value.trim(), dt = $('adDt').value, br = $('adBr').value;
+      const nm = $('adNm').value.trim(), bd = adDate($('adBd').value), ph = $('adPh').value.replace(/[^0-9]/g, ''), ad = $('adAd').value.trim();
+      const cn = k === 'fp' ? $('adCn').value.trim() : '', cb = k === 'fp' ? adDate($('adCb').value) : '';
+      const pr = $('adPr').value.trim(), cr = k === 'fp' ? $('adCr').value.trim() : '';
+      if(!ev){ notify('행사명을 입력해 주세요.', true); return; }
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(dt)){ notify('행사일을 골라 주세요.', true); return; }
+      if(!nm || !bd){ notify('성명과 생년월일(8자리)을 입력해 주세요.', true); return; }
+      if(!/^01\d{8,9}$/.test(ph)){ notify('연락처를 확인해 주세요.', true); return; }
+      if(k === 'fp' && (!cn || !cb)){ notify('자녀 성명과 생년월일을 입력해 주세요.', true); return; }
+      if(pr && !adRrnOk(bd, pr)){ notify('주민번호 뒤 7자리를 확인해 주세요.', true); return; }
+      if(cr && !adRrnOk(cb, cr)){ notify('자녀 주민번호 뒤 7자리를 확인해 주세요.', true); return; }
+      busy('저장 중…');
+      try{
+        const yy = d => d.slice(2, 4) + d.slice(5, 7) + d.slice(8, 10);
+        const R = {}; if(pr) R.p = yy(bd) + '-' + pr; if(cr) R.c = yy(cb) + '-' + cr;
+        let rrnEnc = '';
+        if(R.p || R.c){
+          const kr = await fetchRaw({ action: 'pubkey', branch: br });
+          const keys = ((kr && kr.keys) || []).filter(x => /^head:/.test(x.owner));
+          if(!keys.length){ idle(); notify('주민번호를 잠글 열쇠가 없어 저장하지 않았습니다. 다온 주민번호 비밀번호가 있는지 확인해 주세요.', true); return; }
+          const box = {}; await Promise.all(keys.map(x => rrnKit.enc(x.pub, R).then(ct => { box[x.owner] = ct; }))); rrnEnc = JSON.stringify(box);
+        }
+        const body = { manual: true, kind: k, eventName: ev, eventDate: dt, branch: br, personName: nm, personBirth: bd, phone: ph, address: ad, childName: cn, childBirth: cb, petInfo: k === 'pet' ? $('adPet').value.trim() : '', rrnEnc, note: (rrnEnc ? '주민등록번호 수집 동의(암호화). ' : '') + (k === 'fp' ? '법정대리인 동의(보호자+자녀).' : '') };
+        const r = await fetch(LEAD_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        idle();
+        if(!r.ok){ notify('저장하지 못했습니다. 다시 시도해 주세요.', true); return; }
+        ['adNm','adBd','adPh','adAd','adCn','adCb','adPr','adCr','adPet'].forEach(id => { $(id).value = ''; });
+        notify(nm + ' 고객을 추가했습니다.');
+        setTimeout(() => window.edbLoad(nm + ' 고객을 추가했습니다.'), 2500);
+        $('adNm').focus();
+      }catch(e){ idle(); notify('저장하지 못했습니다. 다시 시도해 주세요.', true); }
+    });
     const _on = $('edbOnlyNew'); if(_on) _on.addEventListener('change', () => render());
     on('edbAttToggle', () => { const f = $('edbAtt'); f.style.display = f.style.display === 'none' ? '' : 'none'; if(f.style.display === '') $('edbAttName').focus(); });
     on('edbAttAdd', () => {
