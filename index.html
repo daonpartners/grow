@@ -1625,85 +1625,113 @@ body.growon{ background:var(--g-navy); }
               <div class="cm-msg" id="edbGateMsg"></div>
             </div>
             <div id="edbMain" style="display:none;">
-            <div class="disease-notice">📂 행사 현장에서 고객이 동의한 DB입니다. <b id="edbBranch"></b> DB가 보입니다. 다른 지사·산하 지점 설계사에게도 배분할 수 있으며, 목록에서 고르면 <b>이름 (지사)</b> 형식으로 들어갑니다. 배분하면 해당 설계사 텔레그램으로 알림이 가고, 설계사는 <b>내 DB 조회</b>에서 확인합니다.</div>
-            <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr auto; gap:8px; margin:10px 0; align-items:end;">
-              <select id="edbEvent" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;"><option value="">전체 행사</option></select>
-              <select id="edbBr" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;"><option value="">전체 지사</option></select>
-              <input type="date" id="edbFrom" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-              <input type="date" id="edbTo" style="padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-              <button type="button" class="qna-new-btn" id="edbLoad" style="margin:0;">조회</button>
+            <style>
+#edbMain .eb-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px 14px;margin:10px 0}
+#edbMain .eb-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#edbMain .eb-in{padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;max-width:100%;box-sizing:border-box}
+#edbMain .eb-btn{width:auto;margin:0;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy-2);font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
+#edbMain .eb-btn.pri{background:var(--navy-2);color:#fff;border-color:var(--navy-2)}
+#edbMain .eb-btn.red{color:#B02A20;border-color:#E7B9AC}
+#edbMain .eb-lb{font-size:13px;font-weight:800;color:var(--navy-2)}
+#edbMain .eb-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #C9D3E6;background:#F5F8FD;border-radius:999px;padding:3px 4px 3px 12px;font-size:12.5px}
+#edbMain .eb-chip .eb-btn{padding:5px 10px;border-radius:999px}
+#edbMain tr.eb-grp td{background:#EEF2F8;font-weight:800;color:var(--navy-2);padding:8px}
+#edbMain details>summary{cursor:pointer;font-weight:800;color:var(--navy-2);font-size:13px;list-style:none}
+#edbMain details>summary::-webkit-details-marker{display:none}
+#edbMain .eb-sec{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+#edbMain .eb-help{font-size:11.5px;color:#888;margin-top:6px}
+#edbMain .eb-filter{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr auto;gap:8px;margin:10px 0;align-items:center}
+@media(max-width:700px){#edbMain .eb-filter{grid-template-columns:1fr 1fr}#edbMain .eb-filter #edbEvent{grid-column:1/-1}}
+            </style>
+            <div class="disease-notice" style="font-size:12.5px;">📂 <b id="edbBranch"></b> 행사 동의 DB · <b>① 행사 고르기 → ② 고객 체크 → ③ 담당자 [배분]</b> 순서로 쓰세요. 배분받은 사람에게 텔레그램 알림이 가고, <b>내 DB 조회</b>에서 확인합니다.</div>
+            <div class="eb-filter">
+              <select id="edbEvent" class="eb-in"><option value="">전체 행사</option></select>
+              <select id="edbBr" class="eb-in"><option value="">전체 지사</option></select>
+              <input type="date" id="edbFrom" class="eb-in" title="시작일">
+              <input type="date" id="edbTo" class="eb-in" title="종료일">
+              <button type="button" class="eb-btn pri" id="edbLoad">조회</button>
             </div>
             <div class="cm-msg" id="edbMsg"></div>
-            <div id="edbSummary" style="margin:8px 0;"></div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0;">
-              <label style="font-size:12.5px;"><input type="checkbox" id="edbAll"> 전체 선택</label>
+            <div id="edbSummary" style="margin:6px 0;"></div>
+
+            <div id="edbKey" class="eb-card" style="display:none; background:#F5F8FD; border-color:#C9D3E6;">
+              <div class="eb-row">
+                <span class="eb-lb">🔐 주민번호 <span id="edbKeySt" style="font-weight:600; color:#666;"></span></span>
+                <span id="edbKeyMake" class="eb-row" style="display:none;">
+                  <input type="password" id="edbKp1" class="eb-in" placeholder="새 비밀번호 (8자 이상)" autocomplete="new-password" style="width:170px;">
+                  <input type="password" id="edbKp2" class="eb-in" placeholder="비밀번호 확인" autocomplete="new-password" style="width:140px;">
+                  <input type="password" id="edbKcode" class="eb-in" placeholder="DB관리 코드" autocomplete="off" style="width:130px;">
+                  <button type="button" class="eb-btn pri" id="edbKmake">비밀번호 만들기</button>
+                </span>
+                <span id="edbKeyOpen" class="eb-row" style="display:none;">
+                  <input type="password" id="edbKpw" class="eb-in" placeholder="주민번호 비밀번호" autocomplete="off" style="width:190px;">
+                  <button type="button" class="eb-btn pri" id="edbKopen">열기</button>
+                  <button type="button" class="eb-btn" id="edbKlock" style="display:none;">잠그기</button>
+                </span>
+              </div>
+              <div id="edbKeyPend" style="font-size:12px; color:#8A6300; margin-top:6px; display:none;"></div>
+              <div class="eb-help">처음 한 번 비밀번호를 만들고, 들어올 때마다 입력해 [열기]를 누르면 목록에 주민번호가 보입니다(번호를 누르면 10초간 전체 표시). 열면 배분받은 사람에게도 자동으로 전달됩니다. 비밀번호는 서버에 저장되지 않아 잊으면 찾을 수 없습니다.</div>
+            </div>
+
+            <div id="edbAct" class="eb-card">
+              <div class="eb-row">
+                <label style="font-size:12.5px; font-weight:700; cursor:pointer;"><input type="checkbox" id="edbAll"> 전체 선택</label>
+                <span id="edbPick" style="font-size:12.5px; color:#666;"></span>
+                <span style="flex:1 1 auto;"></span>
+                <button type="button" class="eb-btn" id="edbUnassign">배분 취소</button>
+                <button type="button" class="eb-btn" id="edbCsv" title="선택 건만, 선택이 없으면 전체">CSV 저장</button>
+                <button type="button" class="eb-btn red" id="edbDel">🗑️ 삭제</button>
+              </div>
+              <div class="eb-row eb-sec" style="margin-top:10px; padding-top:10px;">
+                <span class="eb-lb">③ 배분할 담당자</span>
+                <div id="edbAttList" class="eb-row"></div>
+                <button type="button" class="eb-btn" id="edbAttToggle">＋ 담당자 추가</button>
+              </div>
+              <div id="edbAtt" class="eb-row" style="display:none; margin-top:8px;">
+                <input type="text" id="edbAttName" class="eb-in" placeholder="이름" autocomplete="off" style="width:120px;">
+                <input type="password" id="edbAttCode" class="eb-in" placeholder="그 사람 지사의 등록코드" autocomplete="off" style="width:190px;">
+                <button type="button" class="eb-btn pri" id="edbAttAdd">추가</button>
+                <span class="eb-help" style="margin:0;">다른 지사는 지사장만, 설계사는 우리 지사·산하 지점 소속만 추가됩니다. 한 번 추가하면 이 기기에 남습니다.</span>
+              </div>
               <datalist id="edbFcList"></datalist>
-              <button type="button" class="qna-new-btn" id="edbUnassign" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">배분 취소</button>
-              <button type="button" class="qna-new-btn" id="edbDel" style="margin:0; background:#fff; color:#B02A20; border:1px solid #E7B9AC;">🗑️ 선택 건 삭제</button>
-              <button type="button" class="qna-new-btn" id="edbCsv" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">CSV 저장 (선택 건만, 없으면 전체)</button>
             </div>
-            <div id="edbDelBox" style="display:none; margin:4px 0 12px; padding:12px 14px; border:1px solid #E7B9AC; border-radius:10px; background:#FFF6F3;">
+            <div id="edbDelBox" class="eb-card" style="display:none; border-color:#E7B9AC; background:#FFF6F3;">
               <div style="font-size:13px; font-weight:700; color:#B02A20; margin-bottom:6px;" id="edbDelTxt"></div>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="password" id="edbDelCode" placeholder="DB관리 코드를 한 번 더 입력" autocomplete="off" style="flex:1; min-width:180px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                <button type="button" class="qna-new-btn" id="edbDelOk" style="margin:0; background:#B02A20; color:#fff; border:0;">삭제 확인</button>
-                <button type="button" class="qna-new-btn" id="edbDelNo" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">취소</button>
+              <div class="eb-row">
+                <input type="password" id="edbDelCode" class="eb-in" placeholder="DB관리 코드 한 번 더" autocomplete="off" style="width:180px;">
+                <button type="button" class="eb-btn" id="edbDelOk" style="background:#B02A20; color:#fff; border-color:#B02A20;">삭제 확인</button>
+                <button type="button" class="eb-btn" id="edbDelNo">취소</button>
               </div>
-              <div style="font-size:11.5px; color:#888; margin-top:6px;">삭제한 고객 DB는 되돌릴 수 없습니다.</div>
-            </div>
-            <div id="edbAtt" style="margin:4px 0 12px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:#FAFAF7;">
-              <div style="font-size:13px; font-weight:700; margin-bottom:6px;">👥 이 행사 참석자 <span style="font-weight:400; color:#888;">(지사장·설계사 · 행사마다 입력 · 이 기기에 저장)</span></div>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="text" id="edbAttName" placeholder="이름" autocomplete="off" style="flex:1; min-width:110px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                <input type="password" id="edbAttCode" placeholder="지사 조회코드 (내 DB 조회용 코드)" autocomplete="off" style="flex:2; min-width:170px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                <button type="button" class="qna-new-btn" id="edbAttAdd" style="margin:0;">참석자 추가</button>
-              </div>
-              <div id="edbAttList" style="display:flex; flex-direction:column; gap:6px; margin-top:10px;"></div>
-              <div style="font-size:11.5px; color:#888; margin-top:6px;">이름과 그 사람의 지사 조회코드(예: 광명 설계사는 광명 조회코드)를 넣으면 지사가 확인되어 추가됩니다. 다른 지사는 지사장만 추가할 수 있고, 설계사는 본인 지사(산하 지점 포함) 소속만 추가할 수 있습니다. 목록에서 DB를 선택한 뒤 참석자의 <b>[선택 건 배분]</b>을 누르세요.</div>
-            </div>
-            <div id="edbKey" style="display:none; margin:4px 0 12px; padding:12px 14px; border:1px solid #C9D3E6; border-radius:10px; background:#F5F8FD;">
-              <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin-bottom:6px;">🔐 주민등록번호 열람 <span id="edbKeySt" style="font-weight:600; color:#666;"></span></div>
-              <div id="edbKeyMake" style="display:none;">
-                <div style="font-size:12px; color:#555; margin-bottom:8px;">지사장님 본인만 아는 <b>열람 비밀번호</b>를 만드세요. 이후 행사에서 받은 주민등록번호는 이 비밀번호로만 열립니다. 비밀번호는 서버에 저장되지 않아 잊으면 찾을 수 없습니다.</div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <input type="password" id="edbKp1" placeholder="열람 비밀번호 (8자 이상)" autocomplete="new-password" style="flex:1; min-width:140px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                  <input type="password" id="edbKp2" placeholder="비밀번호 확인" autocomplete="new-password" style="flex:1; min-width:140px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                  <input type="password" id="edbKcode" placeholder="DB관리 코드 재입력" autocomplete="off" style="flex:1; min-width:140px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                  <button type="button" class="qna-new-btn" id="edbKmake" style="margin:0;">열람 비밀번호 만들기</button>
-                </div>
-              </div>
-              <div id="edbKeyOpen" style="display:none;">
-                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                  <input type="password" id="edbKpw" placeholder="열람 비밀번호" autocomplete="off" style="flex:1; min-width:140px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                  <button type="button" class="qna-new-btn" id="edbKopen" style="margin:0;">주민번호 보기</button>
-                  <button type="button" class="qna-new-btn" id="edbKlock" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line); display:none;">다시 잠그기</button>
-                  <button type="button" class="qna-new-btn" id="edbKreset" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line); font-size:12px;">비밀번호 재설정</button>
-                </div>
-                <div id="edbKeyPend" style="font-size:12.5px; color:#8A6300; margin-top:8px; display:none;"></div>
-                <div style="font-size:11.5px; color:#888; margin-top:6px;">비밀번호로 열면 목록에 뒷자리가 가려져 보이고, 누르면 10초간 전체가 보입니다. 열려 있는 동안 배분받은 설계사·담당 지사장에게 주민번호가 자동으로 (그 사람 열쇠로 잠가서) 전달됩니다. CSV에는 들어가지 않습니다.</div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px dashed #C9D3E6;">
-                  <input type="text" id="edbKfc" list="edbFcList" placeholder="비밀번호를 잊은 설계사 (예: 홍길동 (광명))" autocomplete="off" style="flex:1; min-width:140px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                  <button type="button" class="qna-new-btn" id="edbKfcReset" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line); font-size:12px;">설계사 비밀번호 초기화</button>
-                </div>
-              </div>
-            </div>
-            <div id="edbPc" style="margin:10px 0; padding:12px 14px; border:1px solid #C9D3E6; border-radius:10px; background:#F5F8FD;">
-              <div style="font-weight:800; color:var(--navy-2); margin-bottom:4px;">🔑 설계사 개인 조회코드</div>
-              <div style="font-size:12px; color:#555; margin-bottom:8px;">설계사마다 본인 전용 코드를 발급해 직접 전달하세요. 설계사는 이 코드로만 <b>내 DB 조회</b>에 들어가며, 다른 설계사 코드로는 서로의 DB를 볼 수 없습니다.</div>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="text" id="edbPcFc" list="edbFcList" placeholder="설계사 (예: 홍길동 (광명가온지점))" autocomplete="off" style="flex:1; min-width:140px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
-                <button type="button" class="qna-new-btn" id="edbPcGet" style="margin:0;">발급·확인</button>
-                <button type="button" class="qna-new-btn" id="edbPcNew" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line); font-size:12px;">새 코드로 바꾸기</button>
-              </div>
-              <div id="edbPcOut" style="font-size:13px; margin-top:8px;"></div>
+              <div class="eb-help">삭제한 고객 DB는 되돌릴 수 없습니다.</div>
             </div>
             <style>#edbTbl th,#edbTbl td{white-space:nowrap;padding:7px 8px;vertical-align:middle}#edbTbl td.memo{max-width:180px;overflow:hidden;text-overflow:ellipsis}</style><div style="overflow-x:auto;"><table id="edbTbl" style="width:100%; border-collapse:collapse; font-size:12.5px;">
               <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>주소</th><th>주민등록번호</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
               <tbody id="edbRows"></tbody>
             </table></div>
-            <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="qna-new-btn" id="edbLogout" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line);">잠그기</button>
-            </div>
+            <details id="edbTools" class="eb-card">
+              <summary>⚙️ 관리 도구 <span style="font-weight:500; color:#888; font-size:12px;">— 설계사 조회코드 발급 · 비밀번호 재설정 (필요할 때만)</span></summary>
+              <div class="eb-sec">
+                <div class="eb-lb" style="margin-bottom:4px;">🔑 설계사 개인 조회코드</div>
+                <div class="eb-row">
+                  <input type="text" id="edbPcFc" class="eb-in" list="edbFcList" placeholder="홍길동 (광명가온지점)" autocomplete="off" style="width:220px;">
+                  <button type="button" class="eb-btn pri" id="edbPcGet">발급·확인</button>
+                  <button type="button" class="eb-btn" id="edbPcNew">새 코드로 바꾸기</button>
+                </div>
+                <div id="edbPcOut" style="font-size:13px; margin-top:8px;"></div>
+                <div class="eb-help">설계사마다 본인 전용 코드를 발급해 본인에게만 전달하세요. 설계사는 이 코드로 <b>내 DB 조회</b>에 들어갑니다.</div>
+              </div>
+              <div class="eb-sec">
+                <div class="eb-lb" style="margin-bottom:4px;">🔐 주민번호 비밀번호</div>
+                <div class="eb-row">
+                  <button type="button" class="eb-btn" id="edbKreset">내 비밀번호 재설정</button>
+                  <input type="text" id="edbKfc" class="eb-in" list="edbFcList" placeholder="잊은 설계사: 홍길동 (광명)" autocomplete="off" style="width:220px;">
+                  <button type="button" class="eb-btn" id="edbKfcReset">설계사 비밀번호 초기화</button>
+                </div>
+              </div>
+              <div class="eb-sec">
+                <button type="button" class="eb-btn" id="edbLogout">DB관리 잠그기 (나가기)</button>
+              </div>
+            </details>
             </div>
           </div>
 
@@ -9937,15 +9965,32 @@ const limitCompareData = {};
       $('edbFcList').innerHTML = (r.fcs||[]).map(n => '<option value="' + escapeHtml(n) + '">').join('');
       render(); afterLoad();
     }
+    /* 행사(날짜+행사명)별로 묶어서 표시. 묶음 머리줄 체크로 그 행사 전체 선택 */
+    function edbGroup(rows, rowHtml){
+      if(!rows.length) return '';
+      const order = [], by = {};
+      rows.forEach(x => { const k = x.eventDate + '|' + x.eventName; if(!by[k]){ by[k] = []; order.push(k); } by[k].push(x); });
+      order.sort((a, c) => c.localeCompare(a));
+      return order.map(k => { const g = by[k], p = k.split('|'), ed = g.filter(x => !x.ro).length, un = g.filter(x => !x.assignedFc).length;
+        return '<tr class="eb-grp"><td>' + (ed ? '<input type="checkbox" class="edbGrp" data-g="' + escapeHtml(k) + '" title="이 행사 전체 선택">' : '') + '</td><td colspan="12">📅 ' + escapeHtml(p[0]) + ' · ' + escapeHtml(p[1]) + ' — ' + g.length + '건 <span style="font-weight:600; color:#8A6300;">(미배분 ' + un + ')</span></td></tr>' + g.map(rowHtml).join(''); }).join('');
+    }
+    function pickUi(){ const n = document.querySelectorAll('.edbChk:checked').length; const e = $('edbPick'); if(e) e.innerHTML = n ? '<b style="color:var(--navy-2)">' + n + '건 선택됨</b>' : '고객을 체크하세요'; }
+    document.addEventListener('change', e => {
+      const t = e.target; if(!t || !t.classList) return;
+      if(t.classList.contains('edbGrp')) document.querySelectorAll('.edbChk').forEach(c => { if(c.dataset.g === t.dataset.g) c.checked = t.checked; });
+      if(t.id === 'edbAll') document.querySelectorAll('.edbGrp').forEach(c => { c.checked = t.checked; });
+      if(t.classList.contains('edbChk') || t.classList.contains('edbGrp') || t.id === 'edbAll') pickUi();
+    });
     function render(){
       if(!LAST) return;
       const bf = $('edbBr').value;
       ROWS = (LAST.rows || []).filter(x => !bf || (x.branch || '미지정') === bf);
       const sm = {}; ROWS.forEach(x => { const k = x.eventDate + '|' + x.eventName + '|' + x.kind; sm[k] = (sm[k] || 0) + 1; });
       const summary = Object.keys(sm).sort().reverse().map(k => { const p = k.split('|'); return { date: p[0], eventName: p[1], kind: p[2], count: sm[k] }; });
-      $('edbSummary').innerHTML = '<b>총 ' + ROWS.length + '건</b>' + (bf ? ' <span style="color:#888; font-size:12.5px;">(' + escapeHtml(bf) + ')</span>' : '') + (summary.length ? '<div style="margin-top:6px; font-size:12.5px; line-height:1.8;">' + summary.map(x => escapeHtml(x.date) + ' · ' + escapeHtml(x.eventName) + ' · ' + escapeHtml(x.kind) + ' — <b>' + x.count + '건</b>').join('<br>') + '</div>' : '');
-      $('edbAll').checked = false; keyUi();
-      $('edbRows').innerHTML = ROWS.map(x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.address || '') + '">' + (x.address ? escapeHtml(x.address) : (x.infoEdit ? '<button type="button" class="edbRrnIn" data-id="' + x.id + '" style="border:1px solid #C9D3E6; background:#F5F8FD; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer;">✏️ 입력</button>' : '-')) + '</td><td>' + rrnCell(x) + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>').join('') || '<tr><td colspan="13" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
+      $('edbSummary').innerHTML = '<b>총 ' + ROWS.length + '건</b>' + (bf ? ' <span style="color:#888; font-size:12.5px;">(' + escapeHtml(bf) + ')</span>' : '') + ' <span style="font-size:12.5px; color:#666;">· 행사 ' + summary.map(x => x.date + x.eventName).filter((v, k, a) => a.indexOf(v) === k).length + '개 · 미배분 <b style="color:#8A6300">' + ROWS.filter(x => !x.assignedFc).length + '건</b></span>';
+      $('edbAll').checked = false; keyUi(); setTimeout(pickUi, 0);
+      const gk = x => escapeHtml(x.eventDate + '|' + x.eventName);
+      $('edbRows').innerHTML = edbGroup(ROWS, x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" data-g="' + gk(x) + '" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td><td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.address || '') + '">' + (x.address ? escapeHtml(x.address) : (x.infoEdit ? '<button type="button" class="edbRrnIn" data-id="' + x.id + '" style="border:1px solid #C9D3E6; background:#F5F8FD; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer;">✏️ 입력</button>' : '-')) + '</td><td>' + rrnCell(x) + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td><td>' + (x.assignedFc ? '<b>' + escapeHtml(x.assignedFc) + '</b> <span style="color:#888">' + escapeHtml(x.assignedAt) + '</span>' : '<span style="color:#aaa">미배분</span>') + '</td></tr>') || '<tr><td colspan="13" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
 
     /* ── 주민등록번호: 사람별 열쇠. 개인키는 본인 비밀번호로 잠겨 서버에 있고, 이 화면 안에서만 풂 ── */
@@ -10148,17 +10193,20 @@ const limitCompareData = {};
       }).catch(() => { setCode(''); gm.textContent = '네트워크 오류가 발생했습니다.'; gm.style.color = 'red'; });
     });
     on('edbLogout', () => { setCode(''); PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]); showGate(true); });
-    /* 행사 참석 설계사: 행사(선택된 행사명)별로 이 기기에 저장 */
-    const attKey = () => 'growEdbAtt:' + ($('edbEvent').value || '전체');
-    function attGet(){ try{ return JSON.parse(localStorage.getItem(attKey()) || '[]'); }catch(e){ return []; } }
-    function attSet(a){ try{ localStorage.setItem(attKey(), JSON.stringify(a)); }catch(e){} attDraw(); }
+    /* 배분할 담당자: 이 기기에 하나의 목록으로 저장 (예전 행사별 목록은 합침) */
+    const ATT_KEY = 'growEdbAtt';
+    (function(){ try{ if(localStorage.getItem(ATT_KEY)) return; const m = []; Object.keys(localStorage).forEach(k => { if(k.indexOf('growEdbAtt:') === 0){ try{ JSON.parse(localStorage.getItem(k) || '[]').forEach(n => { if(m.indexOf(n) < 0) m.push(n); }); }catch(e){} } }); localStorage.setItem(ATT_KEY, JSON.stringify(m)); }catch(e){} })();
+    function attGet(){ try{ return JSON.parse(localStorage.getItem(ATT_KEY) || '[]'); }catch(e){ return []; } }
+    function attSet(a){ try{ localStorage.setItem(ATT_KEY, JSON.stringify(a)); }catch(e){} attDraw(); }
     function attDraw(){
       const box = $('edbAttList'); if(!box) return;
       const a = attGet();
-      box.innerHTML = a.length ? a.map((n, i) => '<div style="display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:7px 8px 7px 12px;"><b style="flex:1 1 auto; min-width:0; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeHtml(n) + '</b><button type="button" class="qna-new-btn edbAttOne" data-n="' + escapeHtml(n) + '" style="margin:0; padding:7px 14px; font-size:12.5px; width:auto; flex:0 0 auto; white-space:nowrap;">선택 건 배분</button><button type="button" class="edbAttDel" data-i="' + i + '" title="참석 명단에서 빼기" style="border:0; background:none; cursor:pointer; color:#999; font-size:15px; padding:0 4px;">×</button></div>').join('') : '<span style="font-size:12px; color:#999;">아직 추가한 참석자가 없습니다.</span>';
-      box.querySelectorAll('.edbAttDel').forEach(b => b.addEventListener('click', () => { const a2 = attGet(); a2.splice(Number(b.dataset.i), 1); attSet(a2); }));
+      box.innerHTML = a.length ? a.map((n, i) => '<span class="eb-chip"><b>' + escapeHtml(n) + '</b><button type="button" class="eb-btn pri edbAttOne" data-n="' + escapeHtml(n) + '">배분</button><button type="button" class="edbAttDel" data-i="' + i + '" title="목록에서 빼기" style="border:0; background:none; color:#999; cursor:pointer; font-size:15px; padding:0 6px;">×</button></span>').join('') : '<span style="font-size:12.5px; color:#888;">아직 없습니다. [＋ 담당자 추가]로 넣어 주세요.</span>';
+      box.querySelectorAll('.edbAttDel').forEach(b => b.addEventListener('click', () => { const a2 = attGet(); if(!confirm(a2[Number(b.dataset.i)] + '을(를) 담당자 목록에서 뺄까요? (배분된 DB는 그대로입니다)')) return; a2.splice(Number(b.dataset.i), 1); attSet(a2); }));
       box.querySelectorAll('.edbAttOne').forEach(b => b.addEventListener('click', () => assign(b.dataset.n)));
+      if(!a.length) $('edbAtt').style.display = '';
     }
+    on('edbAttToggle', () => { const f = $('edbAtt'); f.style.display = f.style.display === 'none' ? '' : 'none'; if(f.style.display === '') $('edbAttName').focus(); });
     on('edbAttAdd', () => {
       const name = $('edbAttName').value.trim(), fcCode = $('edbAttCode').value.trim();
       if(!name || !fcCode){ notify('이름과 지사 조회코드를 모두 입력해 주세요.', true); return; }
@@ -10170,7 +10218,7 @@ const limitCompareData = {};
       }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
     });
     const _ai = $('edbAttCode'); if(_ai) _ai.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); $('edbAttAdd').click(); } });
-    const _ev = $('edbEvent'); if(_ev) _ev.addEventListener('change', attDraw);
+    const _ev = $('edbEvent'); if(_ev) _ev.addEventListener('change', () => window.edbLoad());
     attDraw();
     /* 선택 건 삭제: DB관리 코드를 한 번 더 입력해야 삭제 */
     on('edbDel', () => {
