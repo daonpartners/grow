@@ -1502,6 +1502,7 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div id="fcGate">
+          <div id="fcResetNotice" style="display:none; margin-bottom:10px; padding:11px 13px; border:1px solid #F2C94C; background:#FFF8E1; border-radius:10px; font-size:13px; line-height:1.65; color:#5C4300;">🔒 <b>보안 강화 안내 (10/27)</b><br>기존 설계사 비밀번호가 <b>초기화</b>되었습니다. 사번을 넣고 <b>들어가기</b>를 누르면 새 비밀번호를 만들 수 있습니다.<br>새 비밀번호는 <b>8자 이상, 숫자·영소문자·특수문자</b>(예: ! @ # $ % *)를 모두 넣어야 합니다. 사번과 같은 비밀번호는 쓰지 마세요.<br>배정 고객 주민번호는 지사장이 DB관리를 한 번 열면 다시 보입니다.</div>
           <div class="qna-notice">👤 <b>미래에셋 사번</b>과 본인 비밀번호로 들어갑니다. 본인에게 배정된 고객만 보이며, 같은 비밀번호로 고객 주민등록번호도 열립니다.<br>처음이라면 사번만 넣고 [들어가기]를 누르세요. 비밀번호를 정하는 칸이 나옵니다. (사번은 소속 지사장이 먼저 등록해야 합니다)</div>
           <div class="qna-form open" style="max-width:360px;">
             <input type="text" id="fcSabun" inputmode="numeric" placeholder="미래에셋 사번 (숫자)" autocomplete="username">
@@ -9202,7 +9203,7 @@ const limitCompareData = {};
     const [d2, d1] = await Promise.all([fcPost(FC_API, { action:'fcview', sabun: sb, ver }), fcPost(FC_LOOKUP, { sabun: sb, ver })]);
     if(d2 && d2.needPw){
       document.getElementById('fcPwNew').style.display = '';
-      document.getElementById('fcPwNewTxt').innerHTML = '<b>' + escapeHtml(d2.name) + '</b>님(' + escapeHtml(d2.branch) + '), 처음 오셨습니다. 위 칸에 사용할 비밀번호(8자 이상, 숫자·영소문자·특수문자 포함)를 넣고, 아래에 한 번 더 넣어 주세요. 이 비밀번호로 고객 주민번호도 열립니다. <b>잊으면 지사장에게 초기화를 요청</b>해야 합니다.';
+      document.getElementById('fcPwNewTxt').innerHTML = '<b>' + escapeHtml(d2.name) + '</b>님(' + escapeHtml(d2.branch) + '), 처음 오셨거나 보안 강화로 비밀번호가 초기화되었습니다. 위 칸에 새 비밀번호(8자 이상, 숫자·영소문자·특수문자 포함)를 넣고, 아래에 한 번 더 넣어 주세요. 이 비밀번호로 고객 주민번호도 열립니다. <b>잊으면 지사장에게 초기화를 요청</b>해야 합니다.';
       fcAutoSet(null); fcMsg(''); return false;
     }
     if(!d2 || !d2.success){ fcMsg((d2 && d2.message) || '네트워크 오류가 발생했습니다.', true); fcAutoSet(null); return d2 || false; }
@@ -9271,6 +9272,7 @@ const limitCompareData = {};
     fcMsg('');
   });
 
+  (function(){ const n = document.getElementById('fcResetNotice'); if(n && Date.now() < new Date('2026-11-10T23:59:59+09:00').getTime()) n.style.display = ''; })();
   /* 이 탭에서 이미 들어왔거나, 이 기기 기억(7일)이 켜져 있으면 자동 입장 */
   (function fcAutoRestore(){
     let a = null; try{ a = JSON.parse(sessionStorage.getItem('fcAuth') || 'null'); }catch(e){}
