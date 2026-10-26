@@ -1513,6 +1513,8 @@ function covNormalize(c){
   }
   if(!main){ var mv=covLineSum(c,/암\s*주요치료|암주요치료|암\s*통합치료/,/비급여/); c.rows.push({on:true,cat:'cancer_main',name:'암 주요치료비',amt:mv,rec:null,status:mv?'':'미가입'}); }
   if(!c.rows.some(function(r){return r.cat==='circ_tx';})){ var cv=covLineSum(c,/순환계|2대질환|2대질병/); c.rows.push({on:true,cat:'circ_tx',name:'2대질환(순환계) 주요치료비',amt:cv,rec:null,status:cv?'':'미가입'}); }
+  /* 뇌혈관질환 진단비: 원본 권장표에 행이 없어도 계약별 담보에서 합산해 항상 표시 (미가입이면 미가입으로) */
+  if(!c.rows.some(function(r){return r.cat==='brain_all';})){ var bv=covLineSum(c,/뇌혈관/,/수술|치료비|산정특례|입원|간병/); var bi=c.rows.findIndex(function(r){return COV_GROUP[r.cat]==='뇌·심장 진단';}); var br={on:true,cat:'brain_all',name:'뇌혈관질환 진단비',amt:bv,rec:null,status:bv?'':'미가입'}; if(bi<0) c.rows.push(br); else c.rows.splice(bi,0,br); }
   if(!c.rows.some(function(r){return r.cat==='dem_drug';})){ var dv=covLineSum(c,/(치매|알츠하이머|레켐비).*(약물|치료비)/); c.rows.push({on:true,cat:'dem_drug',name:'치매 표적약물치료비',amt:dv,rec:null,status:dv?'':'미가입'}); }
   // 뇌혈관·허혈성 수술비: 순환계 치료비가 있으면 그 안의 수술 보장으로 채움
   var circ=c.rows.filter(function(r){return r.cat==='circ_tx'&&r.amt>0;})[0];
