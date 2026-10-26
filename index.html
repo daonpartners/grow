@@ -1491,15 +1491,18 @@ body.growon{ background:var(--g-navy); }
                 <input type="password" id="fcKp1" placeholder="열람 비밀번호 (8자 이상)" autocomplete="new-password" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <input type="password" id="fcKp2" placeholder="비밀번호 확인" autocomplete="new-password" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <button type="button" id="fcKmake" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-weight:800; cursor:pointer;">만들기</button>
+                <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem2" checked> 이 기기 기억(30일)</label>
               </div>
             </div>
             <div id="fcKeyOpen" style="display:none;">
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <input type="password" id="fcKpw" placeholder="열람 비밀번호" autocomplete="off" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <button type="button" id="fcKopen" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-weight:800; cursor:pointer;">주민번호 보기</button>
+                <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem" checked> 이 기기 기억(30일)</label>
               </div>
               <div style="font-size:11.5px; color:#888; margin-top:6px;">뒷자리가 가려져 보이며, 누르면 10초간 전체가 보입니다. 다른 사람에게 보내거나 캡처하지 마세요.</div>
             </div>
+            <div id="fcKeyOn" style="display:none; font-size:12px; color:#555;">✅ 이 기기에서 열려 있습니다. 여러 사람이 쓰는 기기라면 <button type="button" id="fcKforget" style="border:1px solid var(--line); background:#fff; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer;">잠그기 (이 기기 기억 해제)</button></div>
             <div class="qna-form-msg" id="fcKeyMsg" style="margin-top:6px;"></div>
           </div>
           <div id="fcList"></div>
@@ -1662,15 +1665,20 @@ body.growon{ background:var(--g-navy); }
                   <input type="password" id="edbKp2" class="eb-in" placeholder="비밀번호 확인" autocomplete="new-password" style="width:140px;">
                   <input type="password" id="edbKcode" class="eb-in" placeholder="DB관리 코드" autocomplete="off" style="width:130px;">
                   <button type="button" class="eb-btn pri" id="edbKmake">비밀번호 만들기</button>
+                  <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem2" checked> 이 기기 기억(30일)</label>
                 </span>
                 <span id="edbKeyOpen" class="eb-row" style="display:none;">
                   <input type="password" id="edbKpw" class="eb-in" placeholder="주민번호 비밀번호" autocomplete="off" style="width:190px;">
                   <button type="button" class="eb-btn pri" id="edbKopen">열기</button>
-                  <button type="button" class="eb-btn" id="edbKlock" style="display:none;">잠그기</button>
+                  <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem" checked> 이 기기 기억(30일)</label>
+                </span>
+                <span id="edbKeyOn" class="eb-row" style="display:none;">
+                  <span style="font-size:12.5px; color:#1a7f37; font-weight:700;">✅ 이 기기에서 열려 있음</span>
+                  <button type="button" class="eb-btn" id="edbKlock">잠그기 (이 기기 기억 해제)</button>
                 </span>
               </div>
               <div id="edbKeyPend" style="font-size:12px; color:#8A6300; margin-top:6px; display:none;"></div>
-              <div class="eb-help">처음 한 번 비밀번호를 만들고, 들어올 때마다 입력해 [열기]를 누르면 목록에 주민번호가 보입니다(번호를 누르면 10초간 전체 표시). 열면 배분받은 사람에게도 자동으로 전달됩니다. 비밀번호는 서버에 저장되지 않아 잊으면 찾을 수 없습니다.</div>
+              <div class="eb-help" id="edbKeyHelp">처음 한 번 비밀번호를 넣으면 이 기기에서는 30일간 로그인만 해도 주민번호가 보입니다(번호를 누르면 10초간 전체 표시). 여러 사람이 쓰는 PC에서는 "이 기기 기억"을 끄세요. 비밀번호는 서버에 저장되지 않아 잊으면 찾을 수 없습니다.</div>
             </div>
 
             <div id="edbAct" class="eb-card">
@@ -8975,7 +8983,25 @@ const limitCompareData = {};
   }
 
   /* 배정 고객 주민번호: 본인 열람 비밀번호로만 풂 (rrnKit은 관리자센터 스크립트에 있음) */
+  /* 주민번호 열쇠를 이 기기에 기억(30일): 풀린 개인키를 꺼낼 수 없는 형태로 브라우저 저장소(IndexedDB)에 보관.
+     비밀번호를 재설정하면(공개키가 바뀌면) 기억한 열쇠는 자동으로 버림 */
+  window.rrnMem = (function(){
+    const TTL = 30 * 86400000;
+    function db(){ return new Promise((res, rej) => { try{ const r = indexedDB.open('growRrn', 1); r.onupgradeneeded = () => r.result.createObjectStore('k'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }catch(e){ rej(e); } }); }
+    function tx(mode, fn){ return db().then(d => new Promise((res, rej) => { const t = d.transaction('k', mode); const q = fn(t.objectStore('k')); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); })); }
+    const api = {
+      save(id, pub, key){
+        const put = k => tx('readwrite', st => st.put({ pub, key: k, at: Date.now() }, id));
+        const k0 = key && key.extractable ? crypto.subtle.exportKey('pkcs8', key).then(b => crypto.subtle.importKey('pkcs8', b, {name:'RSA-OAEP', hash:'SHA-256'}, false, ['decrypt'])) : Promise.resolve(key);
+        return k0.then(put).catch(() => {});
+      },
+      load(id, pub){ return tx('readonly', st => st.get(id)).then(v => { if(!v || v.pub !== pub || Date.now() - v.at > TTL){ if(v) api.drop(id); return null; } return v.key; }).catch(() => null); },
+      drop(id){ return tx('readwrite', st => st.delete(id)).catch(() => {}); }
+    };
+    return api;
+  })();
   let FC_PRIV = null, FC_KEY = null, FC_LIST = [], FC_CRED = null;
+  const fcMemId = () => FC_CRED ? 'fc:' + FC_CRED.branch + '|' + String(FC_CRED.name || '').replace(/\s+/g, '') : '';
   function fcRrnRow(c){
     if(c.rrn === undefined) return '';
     if(!c.rrn) return c.rrnPending ? '<div class="fc-card-row" style="color:#8A6300;">🪪 주민번호: 전달 대기 (지사장이 열람하면 자동 전달)</div>' : '';
@@ -8988,6 +9014,7 @@ const limitCompareData = {};
     document.getElementById('fcKeyMake').style.display = FC_KEY ? 'none' : '';
     document.getElementById('fcKeyOpen').style.display = FC_KEY && !FC_PRIV ? '' : 'none';
     document.getElementById('fcKeySt').textContent = !FC_KEY ? '· 비밀번호 미등록' : (FC_PRIV ? '· 열림' : '· 잠김');
+    const on = document.getElementById('fcKeyOn'); if(on) on.style.display = FC_PRIV ? '' : 'none';
   }
   function fcKeyMsg(t, bad){ const m = document.getElementById('fcKeyMsg'); m.textContent = t || ''; m.style.color = bad ? 'red' : ''; }
   function fcDecrypt(){
@@ -9003,15 +9030,17 @@ const limitCompareData = {};
       if(!FC_CRED) return;
       mk.disabled = true; fcKeyMsg('만드는 중…'); let made = null;
       window.rrnKit.make(p1).then(k => { made = k; return fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'fcsetkey', pubkey:k.pub, wrapped:k.wrapped}, FC_CRED)) }).then(r => r.json()); })
-        .then(r => { if(!r || !r.ok){ fcKeyMsg((r && r.error) || '만들지 못했습니다.', true); return; } FC_KEY = { pub: made.pub, wrapped: made.wrapped }; FC_PRIV = made.priv; document.getElementById('fcKp1').value = document.getElementById('fcKp2').value = ''; fcKeyMsg('만들었습니다. 지사장이 DB관리에서 열람하면 배정 고객의 주민번호가 전달됩니다.'); fcKeyUi(); })
+        .then(r => { if(!r || !r.ok){ fcKeyMsg((r && r.error) || '만들지 못했습니다.', true); return; } FC_KEY = { pub: made.pub, wrapped: made.wrapped }; FC_PRIV = made.priv; if(document.getElementById('fcKmem2').checked) window.rrnMem.save(fcMemId(), made.pub, made.priv); document.getElementById('fcKp1').value = document.getElementById('fcKp2').value = ''; fcKeyMsg('만들었습니다. 지사장이 DB관리에서 열람하면 배정 고객의 주민번호가 전달됩니다.'); fcKeyUi(); })
         .catch(() => fcKeyMsg('만들지 못했습니다. 다시 시도해 주세요.', true)).finally(() => { mk.disabled = false; });
     });
     if(op) op.addEventListener('click', () => {
       const pw = document.getElementById('fcKpw').value; if(!pw || !FC_KEY) return fcKeyMsg('비밀번호를 입력해 주세요.', true);
       op.disabled = true; fcKeyMsg('여는 중…');
-      window.rrnKit.open(FC_KEY.wrapped, pw).then(k => { FC_PRIV = k; document.getElementById('fcKpw').value = ''; fcKeyMsg(''); return fcDecrypt(); })
+      window.rrnKit.open(FC_KEY.wrapped, pw).then(k => { FC_PRIV = k; if(document.getElementById('fcKmem').checked) window.rrnMem.save(fcMemId(), FC_KEY.pub, k); document.getElementById('fcKpw').value = ''; fcKeyMsg(''); return fcDecrypt(); })
         .catch(() => fcKeyMsg('비밀번호가 올바르지 않습니다.', true)).finally(() => { op.disabled = false; });
     });
+    const fg = document.getElementById('fcKforget');
+    if(fg) fg.addEventListener('click', () => { window.rrnMem.drop(fcMemId()); FC_PRIV = null; FC_LIST.forEach(c => { delete c._d; }); fcRenderList(FC_LIST); fcKeyUi(); fcKeyMsg('잠갔습니다. 다음에는 비밀번호를 다시 입력해야 합니다.'); });
   })();
 
   function fcRenderList(customers){
@@ -9064,7 +9093,8 @@ const limitCompareData = {};
         document.getElementById('fcWho').textContent = branch + '지사 · ' + name + '님';
         document.getElementById('fcCount').textContent = '· 배정 ' + list.length + '건';
         FC_CRED = { branch, name, code }; FC_KEY = ok2 ? (d2.myKey || null) : null; FC_LIST = list;
-        fcRenderList(list); fcKeyUi(); if(FC_PRIV) fcDecrypt();
+        FC_PRIV = null; fcRenderList(list); fcKeyUi();
+        if(FC_KEY) window.rrnMem.load(fcMemId(), FC_KEY.pub).then(k => { if(k && !FC_PRIV){ FC_PRIV = k; fcDecrypt(); } });
       } else {
         msg.textContent = (d1 && d1.message) || (d2 && d2.message) || '조회에 실패했습니다.'; msg.style.color = 'red';
       }
@@ -10086,8 +10116,8 @@ const limitCompareData = {};
       box.style.display = '';
       const has = !!LAST.myKey;
       $('edbKeyMake').style.display = has ? 'none' : '';
-      $('edbKeyOpen').style.display = has ? '' : 'none';
-      $('edbKlock').style.display = PRIV ? '' : 'none';
+      $('edbKeyOpen').style.display = has && !PRIV ? '' : 'none';
+      $('edbKeyOn').style.display = has && PRIV ? '' : 'none';
       $('edbKeySt').textContent = !has ? '· 비밀번호 미등록' : (PRIV ? '· 열림' : '· 잠김');
       const pend = (LAST.rows || []).filter(x => x.rrn && x.miss && x.miss.length).length;
       const pe = $('edbKeyPend');
@@ -10111,7 +10141,12 @@ const limitCompareData = {};
         return 0;
       }).catch(() => 0);
     }
-    function afterLoad(){ keyUi(); if(PRIV) decryptAll().then(() => { render(); return forward(); }); }
+    const memId = () => LAST && LAST.branch ? 'head:' + LAST.branch : '';
+    function afterLoad(){
+      keyUi();
+      if(PRIV){ decryptAll().then(() => { render(); return forward(); }); return; }
+      if(LAST && LAST.myKey && memId()) window.rrnMem.load(memId(), LAST.myKey.pub).then(k => { if(k && !PRIV){ PRIV = k; decryptAll().then(() => { render(); return forward(); }); } });
+    }
     $('edbKmake').addEventListener('click', () => {
       const p1 = $('edbKp1').value, p2 = $('edbKp2').value, cc = $('edbKcode').value.trim();
       if(p1.length < 8){ notify('열람 비밀번호를 8자 이상 입력해 주세요.', true); return; }
@@ -10120,7 +10155,7 @@ const limitCompareData = {};
       busy('열쇠 만드는 중…'); let made = null;
       rrnKit.make(p1).then(k => { made = k; return fetchRaw({action:'setkey', pubkey:k.pub, wrapped:k.wrapped, confirmCode:cc, replace: $('edbKmake').dataset.replace === '1'}); }).then(r => {
         if(!r.ok){ notify(r.error || '등록하지 못했습니다.', true); return; }
-        PRIV = made.priv; $('edbKmake').dataset.replace = '';
+        PRIV = made.priv; $('edbKmake').dataset.replace = ''; if($('edbKmem2').checked && memId()) window.rrnMem.save(memId(), made.pub, made.priv);
         $('edbKp1').value = $('edbKp2').value = $('edbKcode').value = '';
         notify('열람 비밀번호를 만들었습니다. 이제 지사 행사에서 받는 주민등록번호를 볼 수 있습니다.');
         window.edbLoad();
@@ -10131,15 +10166,15 @@ const limitCompareData = {};
       if(!pw){ notify('열람 비밀번호를 입력해 주세요.', true); return; }
       if(!LAST || !LAST.myKey){ notify('먼저 열람 비밀번호를 만들어 주세요.', true); return; }
       busy('주민번호 여는 중…');
-      rrnKit.open(LAST.myKey.wrapped, pw).then(k => { PRIV = k; $('edbKpw').value = ''; return decryptAll(); })
+      rrnKit.open(LAST.myKey.wrapped, pw).then(k => { PRIV = k; $('edbKpw').value = ''; if($('edbKmem').checked && memId()) window.rrnMem.save(memId(), LAST.myKey.pub, k); return decryptAll(); })
         .then(() => { render(); notify('주민등록번호를 열었습니다.'); return forward(); })
         .catch(() => notify('비밀번호가 올바르지 않습니다.', true)).finally(idle);
     });
-    $('edbKlock').addEventListener('click', () => { PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]); render(); notify('주민등록번호를 다시 잠갔습니다.'); });
+    $('edbKlock').addEventListener('click', () => { if(memId()) window.rrnMem.drop(memId()); PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]); render(); notify('잠갔습니다. 이 기기 기억도 해제했습니다.'); });
     $('edbKreset').addEventListener('click', () => {
       if(!confirm('비밀번호를 재설정하면 지금까지 받은 주민번호는 이 계정에서 잠깁니다.\n같은 번호를 가진 다른 열람권자(다온·상위 지사장)가 열면 새 비밀번호로 다시 전달됩니다.\n다른 열람권자가 없는 번호는 복구할 수 없습니다. 진행할까요?')) return;
-      $('edbKmake').dataset.replace = '1'; PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]);
-      $('edbKeyOpen').style.display = 'none'; $('edbKeyMake').style.display = ''; $('edbKeySt').textContent = '· 새 비밀번호 입력';
+      $('edbKmake').dataset.replace = '1'; if(memId()) window.rrnMem.drop(memId()); PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]);
+      $('edbKeyOn').style.display = 'none'; $('edbKeyOpen').style.display = 'none'; $('edbKeyMake').style.display = ''; $('edbKeySt').textContent = '· 새 비밀번호 입력';
     });
     function pcIssue(renew){
       const fc = $('edbPcFc').value.trim();
