@@ -1737,11 +1737,8 @@ function stBadge(s){ return s?'<span style="display:inline-block;min-width:52px;
 /* 조사: 마지막 글자에 받침이 있으면 a, 없으면 b (으로/로는 ㄹ받침도 b) */
 function jo(w,a,b){ w=String(w||'').replace(/\s*\([^()]*\)\s*$/,'').trim(); var ch=w.charCodeAt(w.length-1);
   if(!(ch>=0xAC00&&ch<=0xD7A3)) return b; var f=(ch-0xAC00)%28; if(!f) return b; if(a==='으로'&&f===8) return b; return a; }
-function covSummaryBlocks(c){
-  var out=[], cnt={'충분':0,'부족':0,'미가입':0};
-  c.rows.forEach(function(r){ if(r.on&&cnt[r.status]!=null) cnt[r.status]++; });
-  var tiles=[['계약',(c.contracts!=null?c.contracts+'건':'-')],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'-'],['충분',cnt['충분']+'개'],['부족',cnt['부족']+'개'],['미가입',cnt['미가입']+'개']];
-  out.push('<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">'+tiles.map(function(t,i){var col=i>=2?ST_COL[t[0]]:'var(--navy)';return '<div style="background:#fff;border:1px solid #E4DCD2;border-radius:10px;padding:8px 12px"><div style="font-size:'+fz(12)+'px;color:var(--muted)">'+t[0]+'</div><div style="font-size:'+(String(t[1]).length>8?16:20)+'px;font-weight:800;color:'+col+';margin-top:2px;white-space:nowrap;letter-spacing:-.02em">'+t[1]+'</div></div>';}).join('')+'</div>');
+function core4Card(c){
+  var out=[];
   out.push('<div class="card" style="border:2px solid var(--navy);padding:12px 14px;gap:8px"><div class="ctitle" style="font-size:'+fz(19)+'px"><span style="font-size:'+fz(12)+'px;font-weight:800;color:#fff;background:var(--navy);border-radius:6px;padding:2px 8px">요즘 대세</span>꼭 확인할 치료비 4가지</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">'+CORE4.map(function(k){
       var amt=c.rows.filter(function(r){return r.on&&r.cat===k.cat;}).reduce(function(a,r){return a+(r.amt||0);},0);
@@ -1750,6 +1747,13 @@ function covSummaryBlocks(c){
     '<div style="background:var(--navy);color:#fff;border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:5px"><div style="font-size:'+fz(15)+'px;font-weight:800;color:#F3C9A8">왜 연간 치료비 담보가 대세일까요?</div>'+
     '<div style="font-size:'+fz(13.5)+'px;line-height:1.6"><b>진단비</b>는 한 번 받으면 끝입니다. <b>실손의료비</b>는 5세대 실손에서 보장이 줄었고, 당일 수술과 의료기술의 발달로 빠르고 좋은 치료가 대부분 통원으로 이뤄지지만, 실손은 <b>통원 한도(25만~30만원)</b> 안에서만 보장합니다.</div>'+
     '<div style="font-size:'+fz(14.5)+'px;font-weight:800;line-height:1.5;color:#FFE3CF">그래서 치료를 받을 때마다 연간 한도로 치료비를 보장하는 새 담보가 대세입니다.</div></div></div>');
+  return out[0];
+}
+function covSummaryBlocks(c){
+  var out=[], cnt={'충분':0,'부족':0,'미가입':0};
+  c.rows.forEach(function(r){ if(r.on&&cnt[r.status]!=null) cnt[r.status]++; });
+  var tiles=[['계약',(c.contracts!=null?c.contracts+'건':'-')],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'-'],['충분',cnt['충분']+'개'],['부족',cnt['부족']+'개'],['미가입',cnt['미가입']+'개']];
+  out.push('<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">'+tiles.map(function(t,i){var col=i>=2?ST_COL[t[0]]:'var(--navy)';return '<div style="background:#fff;border:1px solid #E4DCD2;border-radius:10px;padding:8px 12px"><div style="font-size:'+fz(12)+'px;color:var(--muted)">'+t[0]+'</div><div style="font-size:'+(String(t[1]).length>8?16:20)+'px;font-weight:800;color:'+col+';margin-top:2px;white-space:nowrap;letter-spacing:-.02em">'+t[1]+'</div></div>';}).join('')+'</div>');
   // 엑셀처럼: 구분마다 표 하나, 담보를 한 줄씩 아래로
   var SC='40px minmax(0,1fr) '+cw(112)+'px '+cw(104)+'px '+cw(104)+'px '+cw(66)+'px';
   var cell='padding:'+fz(6)+'px 10px;border-right:1px solid #E3E6EC';
@@ -1905,6 +1909,7 @@ function covAdviseBlocks(c,o){
   var amap={}; (o.areas||[]).forEach(function(x){ (amap[x.cat]=amap[x.cat]||[]).push(x.area); });
   var steps=BASIC.map(function(g){ return {g:g,rows:g.items.map(function(it){var r=basicRow(c,it); if(r) r.d=it.d; return r;}).filter(Boolean)}; }).filter(function(x){return x.rows.length;});
   var out=['<p class="lead">진단비·치료비·수술비·간병인·치매·연금 보장을 점검했습니다. <b style="color:#B4472F">없음</b>·<b style="color:#C27C0E">부족</b>이 보완할 부분입니다.</p>'];
+  out.push(core4Card(c));
   out.push('<div style="display:grid;grid-template-columns:repeat('+steps.length+',minmax(0,1fr));gap:6px">'+steps.map(function(x,i){
     var ok=x.rows.filter(function(r){return r.st==='있음';}).length, n=x.rows.length, col=ok===n?'#2F7D4A':(ok?'#C27C0E':'#B4472F');
     return '<div style="border:1px solid #E4DCD2;border-top:4px solid '+col+';border-radius:8px;padding:7px 8px;background:#fff;text-align:center"><div style="font-size:15px;font-weight:900;color:var(--navy)">'+x.g.t+'</div><div style="font-size:13px;font-weight:800;color:'+col+'">'+ok+' / '+n+' 준비</div></div>';
