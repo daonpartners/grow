@@ -1663,7 +1663,6 @@ body.growon{ background:var(--g-navy); }
                 <span id="edbKeyMake" class="eb-row" style="display:none;">
                   <input type="password" id="edbKp1" class="eb-in" placeholder="새 비밀번호 (8자 이상)" autocomplete="new-password" style="width:170px;">
                   <input type="password" id="edbKp2" class="eb-in" placeholder="비밀번호 확인" autocomplete="new-password" style="width:140px;">
-                  <input type="password" id="edbKcode" class="eb-in" placeholder="DB관리 코드" autocomplete="off" style="width:130px;">
                   <button type="button" class="eb-btn pri" id="edbKmake">비밀번호 만들기</button>
                   <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem2" checked> 이 기기 기억(30일)</label>
                 </span>
@@ -10148,15 +10147,15 @@ const limitCompareData = {};
       if(LAST && LAST.myKey && memId()) window.rrnMem.load(memId(), LAST.myKey.pub).then(k => { if(k && !PRIV){ PRIV = k; decryptAll().then(() => { render(); return forward(); }); } });
     }
     $('edbKmake').addEventListener('click', () => {
-      const p1 = $('edbKp1').value, p2 = $('edbKp2').value, cc = $('edbKcode').value.trim();
+      const p1 = $('edbKp1').value, p2 = $('edbKp2').value, cc = code();
       if(p1.length < 8){ notify('열람 비밀번호를 8자 이상 입력해 주세요.', true); return; }
       if(p1 !== p2){ notify('비밀번호 확인이 일치하지 않습니다.', true); return; }
-      if(!cc){ notify('DB관리 코드를 다시 입력해 주세요.', true); return; }
+      if(!cc){ notify('로그인이 풀렸습니다. DB관리에 다시 들어와 주세요.', true); return; }
       busy('열쇠 만드는 중…'); let made = null;
       rrnKit.make(p1).then(k => { made = k; return fetchRaw({action:'setkey', pubkey:k.pub, wrapped:k.wrapped, confirmCode:cc, replace: $('edbKmake').dataset.replace === '1'}); }).then(r => {
         if(!r.ok){ notify(r.error || '등록하지 못했습니다.', true); return; }
         PRIV = made.priv; $('edbKmake').dataset.replace = ''; if($('edbKmem2').checked && memId()) window.rrnMem.save(memId(), made.pub, made.priv);
-        $('edbKp1').value = $('edbKp2').value = $('edbKcode').value = '';
+        $('edbKp1').value = $('edbKp2').value = '';
         notify('열람 비밀번호를 만들었습니다. 이제 지사 행사에서 받는 주민등록번호를 볼 수 있습니다.');
         window.edbLoad();
       }).catch(() => notify('만들지 못했습니다. 다시 시도해 주세요.', true)).finally(idle);
