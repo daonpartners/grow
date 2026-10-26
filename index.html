@@ -1706,7 +1706,7 @@ body.growon{ background:var(--g-navy); }
             <div id="edbDelBox" class="eb-card" style="display:none; border-color:#E7B9AC; background:#FFF6F3;">
               <div style="font-size:13px; font-weight:700; color:#B02A20; margin-bottom:6px;" id="edbDelTxt"></div>
               <div class="eb-row">
-                <input type="password" id="edbDelCode" class="eb-in" placeholder="DB관리 코드 한 번 더" autocomplete="off" style="width:180px;">
+                <input type="text" id="edbDelCode" class="eb-in" placeholder="삭제 라고 입력" autocomplete="off" style="width:150px;">
                 <button type="button" class="eb-btn" id="edbDelOk" style="background:#B02A20; color:#fff; border-color:#B02A20;">삭제 확인</button>
                 <button type="button" class="eb-btn" id="edbDelNo">취소</button>
               </div>
@@ -10259,15 +10259,15 @@ const limitCompareData = {};
     on('edbDel', () => {
       const ids = picked();
       if(!ids.length){ msg('삭제할 건을 선택해 주세요.', true); return; }
-      $('edbDelTxt').textContent = '선택한 ' + ids.length + '건을 삭제합니다. 확인을 위해 DB관리 코드를 다시 입력하세요.';
+      $('edbDelTxt').textContent = '선택한 ' + ids.length + '건을 삭제합니다. 실수 방지를 위해 아래 칸에 "삭제" 두 글자를 입력하세요.';
       $('edbDelCode').value = ''; $('edbDelBox').style.display = ''; $('edbDelCode').focus();
     });
     on('edbDelNo', () => { $('edbDelBox').style.display = 'none'; $('edbDelCode').value = ''; });
     on('edbDelOk', () => {
       const ids = picked(), cc = $('edbDelCode').value.trim();
       if(!ids.length){ msg('삭제할 건을 선택해 주세요.', true); return; }
-      if(!cc){ msg('DB관리 코드를 다시 입력해 주세요.', true); return; }
-      call({action:'delete', ids, confirmCode: cc}).then(r => {
+      if(cc !== '삭제'){ msg('확인 칸에 "삭제"를 입력해 주세요.', true); return; }
+      call({action:'delete', ids, confirmCode: code()}).then(r => {
         $('edbDelCode').value = '';
         if(!r.ok){ notify(r.error || '삭제하지 못했습니다.', true); return; }
         $('edbDelBox').style.display = 'none';
