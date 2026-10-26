@@ -1457,22 +1457,17 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div id="fcGate">
-          <div class="qna-notice">👤 소속 지사장에게 받은 <b>본인 전용 조회코드</b>와 본인 이름을 입력하면, 본인에게 배정된 DB(고객)만 확인할 수 있습니다.<br>다른 FC의 정보는 볼 수 없습니다.</div>
+          <div class="qna-notice">👤 <b>미래에셋 사번</b>과 본인 비밀번호로 들어갑니다. 본인에게 배정된 고객만 보이며, 같은 비밀번호로 고객 주민등록번호도 열립니다.<br>처음이라면 사번만 넣고 [들어가기]를 누르세요. 비밀번호를 정하는 칸이 나옵니다. (사번은 소속 지사장이 먼저 등록해야 합니다)</div>
           <div class="qna-form open" style="max-width:360px;">
-            <select id="fcBranch">
-              <option value="">지사 선택</option>
-              <option value="광명">광명</option>
-              <option value="다온">다온</option>
-              <option value="도약">도약</option>
-              <option value="동행">동행</option>
-              <option value="혁신">혁신</option>
-              <option value="리치로드맵">리치로드맵</option>
-              <option value="광명가온지점">광명가온지점</option>
-            </select>
-            <input type="text" id="fcName" placeholder="본인 이름 (담당FC에 등록된 이름과 동일하게)" autocomplete="off">
-            <input type="password" id="fcCode" placeholder="개인 조회코드 (지사장에게 발급)" autocomplete="off">
+            <input type="text" id="fcSabun" inputmode="numeric" placeholder="미래에셋 사번 (숫자)" autocomplete="username">
+            <input type="password" id="fcPw" placeholder="비밀번호" autocomplete="current-password">
+            <div id="fcPwNew" style="display:none;">
+              <div id="fcPwNewTxt" style="font-size:12.5px; color:var(--navy-2); background:#F5F8FD; border:1px solid #C9D3E6; border-radius:8px; padding:9px 11px; margin-bottom:8px; line-height:1.6;"></div>
+              <input type="password" id="fcPw2" placeholder="비밀번호 확인 (한 번 더)" autocomplete="new-password" style="width:100%; box-sizing:border-box;">
+            </div>
+            <label style="font-size:12.5px; color:#555; display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="fcRemember" checked> 이 기기 기억(30일) — 다음부터 바로 들어갑니다</label>
             <div class="qna-form-msg" id="fcGateMsg"></div>
-            <button type="button" id="fcGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">조회하기</button>
+            <button type="button" id="fcGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">들어가기</button>
           </div>
         </div>
 
@@ -1496,7 +1491,7 @@ body.growon{ background:var(--g-navy); }
             </div>
             <div id="fcKeyOpen" style="display:none;">
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="password" id="fcKpw" placeholder="열람 비밀번호" autocomplete="off" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                <input type="password" id="fcKpw" placeholder="비밀번호 (로그인 비밀번호와 같음)" autocomplete="off" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <button type="button" id="fcKopen" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-weight:800; cursor:pointer;">주민번호 보기</button>
                 <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem" checked> 이 기기 기억(30일)</label>
               </div>
@@ -1718,21 +1713,20 @@ body.growon{ background:var(--g-navy); }
             <details id="edbTools" class="eb-card">
               <summary>⚙️ 관리 도구 <span style="font-weight:500; color:#888; font-size:12px;">— 설계사 조회코드 발급 · 비밀번호 재설정 (필요할 때만)</span></summary>
               <div class="eb-sec">
-                <div class="eb-lb" style="margin-bottom:4px;">🔑 설계사 개인 조회코드</div>
+                <div class="eb-lb" style="margin-bottom:4px;">👤 설계사 등록 (미래에셋 사번)</div>
                 <div class="eb-row">
-                  <input type="text" id="edbPcFc" class="eb-in" list="edbFcList" placeholder="홍길동 (광명가온지점)" autocomplete="off" style="width:220px;">
-                  <button type="button" class="eb-btn pri" id="edbPcGet">발급·확인</button>
-                  <button type="button" class="eb-btn" id="edbPcNew">새 코드로 바꾸기</button>
+                  <input type="text" id="edbRegName" class="eb-in" placeholder="이름" autocomplete="off" style="width:110px;">
+                  <select id="edbRegBr" class="eb-in" style="width:150px;"></select>
+                  <input type="text" id="edbRegSb" class="eb-in" inputmode="numeric" placeholder="미래에셋 사번" autocomplete="off" style="width:150px;">
+                  <button type="button" class="eb-btn pri" id="edbRegAdd">등록</button>
                 </div>
-                <div id="edbPcOut" style="font-size:13px; margin-top:8px;"></div>
-                <div class="eb-help">설계사마다 본인 전용 코드를 발급해 본인에게만 전달하세요. 설계사는 이 코드로 <b>내 DB 조회</b>에 들어갑니다.</div>
+                <div class="eb-help">등록된 설계사는 <b>내 DB 조회</b>에서 사번으로 들어가 처음 한 번 본인 비밀번호를 정합니다. 그 비밀번호로 배정 고객의 주민번호도 열립니다.</div>
+                <div id="edbRegList" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;"></div>
               </div>
               <div class="eb-sec">
                 <div class="eb-lb" style="margin-bottom:4px;">🔐 주민번호 비밀번호</div>
                 <div class="eb-row">
                   <button type="button" class="eb-btn" id="edbKreset">내 비밀번호 재설정</button>
-                  <input type="text" id="edbKfc" class="eb-in" list="edbFcList" placeholder="잊은 설계사: 홍길동 (광명)" autocomplete="off" style="width:220px;">
-                  <button type="button" class="eb-btn" id="edbKfcReset">설계사 비밀번호 초기화</button>
                 </div>
               </div>
               <div class="eb-sec">
@@ -9010,7 +9004,7 @@ const limitCompareData = {};
   function fcKeyUi(){
     const box = document.getElementById('fcKey'); if(!box) return;
     box.style.display = FC_CRED ? '' : 'none';
-    document.getElementById('fcKeyMake').style.display = FC_KEY ? 'none' : '';
+    document.getElementById('fcKeyMake').style.display = 'none';
     document.getElementById('fcKeyOpen').style.display = FC_KEY && !FC_PRIV ? '' : 'none';
     document.getElementById('fcKeySt').textContent = !FC_KEY ? '· 비밀번호 미등록' : (FC_PRIV ? '· 열림' : '· 잠김');
     const on = document.getElementById('fcKeyOn'); if(on) on.style.display = FC_PRIV ? '' : 'none';
@@ -9064,66 +9058,97 @@ const limitCompareData = {};
     `).join('');
   }
 
+  /* 설계사 입장: 미래에셋 사번 + 비밀번호. 비밀번호는 서버로 보내지 않고, 이 화면에서 만든 확인값(ver)만 보냄 */
+  const FC_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
+  const FC_AUTO = 'growFcAuto';
+  const fcPost = (url, body) => fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) }).then(r => r.json()).catch(() => null);
+  async function fcVer(sb, pw){
+    const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name:'PBKDF2', salt: new TextEncoder().encode('grow-fc-login|' + sb), iterations: 200000, hash:'SHA-256' }, k, 256);
+    return btoa(String.fromCharCode.apply(null, new Uint8Array(bits)));
+  }
+  function fcAutoGet(){ try{ const v = JSON.parse(localStorage.getItem(FC_AUTO) || 'null'); if(v && v.sabun && v.ver && Date.now() - v.at < 30 * 86400000) return v; }catch(e){} return null; }
+  function fcAutoSet(v){ try{ if(v) localStorage.setItem(FC_AUTO, JSON.stringify(Object.assign({ at: Date.now() }, v))); else localStorage.removeItem(FC_AUTO); }catch(e){} }
   const _fcgb = document.getElementById('fcGateBtn');
+  const fcMsg = (t, bad) => { const m = document.getElementById('fcGateMsg'); m.textContent = t || ''; m.style.color = bad ? 'red' : ''; };
+  function fcBusy(on, label){ _fcgb.disabled = on; _fcgb.textContent = on ? (label || '확인 중…') : (document.getElementById('fcPwNew').style.display === 'none' ? '들어가기' : '비밀번호 정하고 들어가기'); }
+  /* 서버 확인 → 목록 표시. pw가 있으면 주민번호 열쇠도 같은 비밀번호로 바로 엶 */
+  async function fcEnter(sb, ver, pw, remember){
+    const [d2, d1] = await Promise.all([fcPost(FC_API, { action:'fcview', sabun: sb, ver }), fcPost(FC_LOOKUP, { sabun: sb, ver })]);
+    if(d2 && d2.needPw){
+      document.getElementById('fcPwNew').style.display = '';
+      document.getElementById('fcPwNewTxt').innerHTML = '<b>' + escapeHtml(d2.name) + '</b>님(' + escapeHtml(d2.branch) + '), 처음 오셨습니다. 위 칸에 사용할 비밀번호(8자 이상)를 넣고, 아래에 한 번 더 넣어 주세요. 이 비밀번호로 고객 주민번호도 열립니다. <b>잊으면 지사장에게 초기화를 요청</b>해야 합니다.';
+      fcAutoSet(null); fcMsg(''); return false;
+    }
+    if(!d2 || !d2.success){ fcMsg((d2 && d2.message) || '네트워크 오류가 발생했습니다.', true); fcAutoSet(null); return d2 || false; }
+    fcMsg('');
+    const list = (d1 && d1.success ? d1.customers : []).concat(d2.customers || []);
+    try{ sessionStorage.setItem('fcAuth', JSON.stringify({ sabun: sb, ver })); }catch(e){}
+    if(remember) fcAutoSet({ sabun: sb, ver });
+    document.getElementById('fcGate').style.display = 'none';
+    document.getElementById('fcBody').style.display = 'block';
+    document.getElementById('fcWho').textContent = d2.branch + ' · ' + d2.name + '님';
+    document.getElementById('fcCount').textContent = '· 배정 ' + list.length + '건';
+    FC_CRED = { branch: d2.branch, name: d2.name, sabun: sb, ver }; FC_KEY = d2.myKey || null; FC_LIST = list;
+    FC_PRIV = null; fcRenderList(list); fcKeyUi();
+    if(FC_KEY){
+      if(pw){ window.rrnKit.open(FC_KEY.wrapped, pw).then(k => { FC_PRIV = k; if(remember) window.rrnMem.save(fcMemId(), FC_KEY.pub, k); return fcDecrypt(); }).catch(() => fcKeyUi()); }
+      else window.rrnMem.load(fcMemId(), FC_KEY.pub).then(k => { if(k && !FC_PRIV){ FC_PRIV = k; fcDecrypt(); } });
+    }
+    return true;
+  }
   if(_fcgb) _fcgb.addEventListener('click', async () => {
-    const branch = document.getElementById('fcBranch').value;
-    const name = document.getElementById('fcName').value.trim();
-    const code = document.getElementById('fcCode').value.trim();
-    const msg = document.getElementById('fcGateMsg');
-    if(!branch || !name || !code){
-      msg.textContent = '지사·이름·조회코드를 모두 입력해 주세요.'; msg.style.color = 'var(--orange-deep)';
-      return;
-    }
-    _fcgb.disabled = true; _fcgb.textContent = '조회 중…';
-    msg.textContent = ''; msg.style.color = '';
+    const sb = document.getElementById('fcSabun').value.replace(/[^0-9]/g, '');
+    const pw = document.getElementById('fcPw').value;
+    const first = document.getElementById('fcPwNew').style.display !== 'none';
+    const remember = document.getElementById('fcRemember').checked;
+    if(!/^\d{5,12}$/.test(sb)){ fcMsg('사번을 숫자로 정확히 입력해 주세요.', true); return; }
     try{
-      const reqBody = { branch, name, code };
-      const p1 = fetch(FC_LOOKUP, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(reqBody) }).then(r => r.json()).catch(() => null);
-      const p2 = fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'fcview'}, reqBody)) }).then(r => r.json()).catch(() => null);
-      const [d1, d2] = await Promise.all([p1, p2]);
-      const ok1 = d1 && d1.success, ok2 = d2 && d2.success;
-      if(ok1 || ok2){
-        const list = (ok1 ? d1.customers : []).concat(ok2 ? d2.customers : []);
-        sessionStorage.setItem('fcBranch', branch);
-        sessionStorage.setItem('fcName', name);
-        sessionStorage.setItem('fcCode', code);
-        document.getElementById('fcGate').style.display = 'none';
-        document.getElementById('fcBody').style.display = 'block';
-        document.getElementById('fcWho').textContent = branch + '지사 · ' + name + '님';
-        document.getElementById('fcCount').textContent = '· 배정 ' + list.length + '건';
-        FC_CRED = { branch, name, code }; FC_KEY = ok2 ? (d2.myKey || null) : null; FC_LIST = list;
-        FC_PRIV = null; fcRenderList(list); fcKeyUi();
-        if(FC_KEY) window.rrnMem.load(fcMemId(), FC_KEY.pub).then(k => { if(k && !FC_PRIV){ FC_PRIV = k; fcDecrypt(); } });
+      if(first){
+        const pw2 = document.getElementById('fcPw2').value;
+        if(pw.length < 8){ fcMsg('비밀번호를 8자 이상 입력해 주세요.', true); return; }
+        if(pw !== pw2){ fcMsg('비밀번호 확인이 일치하지 않습니다.', true); return; }
+        fcBusy(true, '비밀번호 만드는 중…');
+        const ver = await fcVer(sb, pw);
+        const k = await window.rrnKit.make(pw);
+        const r = await fcPost(FC_API, { action:'fcsetpw', sabun: sb, ver, pubkey: k.pub, wrapped: k.wrapped });
+        if(!r || !r.ok){ fcMsg((r && r.error) || '만들지 못했습니다. 다시 시도해 주세요.', true); fcBusy(false); return; }
+        document.getElementById('fcPwNew').style.display = 'none'; document.getElementById('fcPw2').value = '';
+        fcBusy(true, '들어가는 중…');
+        await fcEnter(sb, ver, pw, remember);
       } else {
-        msg.textContent = (d1 && d1.message) || (d2 && d2.message) || '조회에 실패했습니다.'; msg.style.color = 'red';
+        if(!pw){
+          fcBusy(true);
+          const r0 = await fcEnter(sb, '', '', false);  /* 처음인지 확인만 (비밀번호 칸 안내) */
+          if(r0 && r0.message && /비밀번호/.test(r0.message)) fcMsg('비밀번호를 입력해 주세요.', true);
+        } else {
+          fcBusy(true);
+          await fcEnter(sb, await fcVer(sb, pw), pw, remember);
+        }
       }
-    } catch(e){
-      msg.textContent = '네트워크 오류가 발생했습니다.'; msg.style.color = 'red';
-    }
-    _fcgb.disabled = false; _fcgb.textContent = '조회하기';
+      document.getElementById('fcPw').value = '';
+    }catch(e){ fcMsg('오류가 발생했습니다. 다시 시도해 주세요.', true); }
+    fcBusy(false);
   });
+  ['fcSabun','fcPw','fcPw2'].forEach(id => { const e = document.getElementById(id); if(e) e.addEventListener('keydown', ev => { if(ev.key === 'Enter'){ ev.preventDefault(); _fcgb.click(); } }); });
+  const _fcsb = document.getElementById('fcSabun'); if(_fcsb) _fcsb.addEventListener('input', () => { document.getElementById('fcPwNew').style.display = 'none'; fcMsg(''); fcBusy(false); });
 
   const _fco = document.getElementById('fcOut');
   if(_fco) _fco.addEventListener('click', () => {
-    ['fcBranch','fcName','fcCode'].forEach(k => sessionStorage.removeItem(k));
+    try{ sessionStorage.removeItem('fcAuth'); }catch(e){}
+    fcAutoSet(null);
     FC_PRIV = null; FC_KEY = null; FC_LIST = []; FC_CRED = null; fcKeyUi();
     document.getElementById('fcBody').style.display = 'none';
     document.getElementById('fcGate').style.display = 'block';
-    document.getElementById('fcName').value = '';
-    document.getElementById('fcCode').value = '';
+    document.getElementById('fcPw').value = '';
+    fcMsg('');
   });
 
-  /* 이전에 조회 성공한 세션이 있으면 자동 재조회 (새로고침해도 유지) */
+  /* 이 탭에서 이미 들어왔거나, 이 기기 기억(30일)이 켜져 있으면 자동 입장 */
   (function fcAutoRestore(){
-    const b = sessionStorage.getItem('fcBranch');
-    const n = sessionStorage.getItem('fcName');
-    const c = sessionStorage.getItem('fcCode');
-    if(b && n && c && document.getElementById('fcGateBtn')){
-      document.getElementById('fcBranch').value = b;
-      document.getElementById('fcName').value = n;
-      document.getElementById('fcCode').value = c;
-      document.getElementById('fcGateBtn').click();
-    }
+    let a = null; try{ a = JSON.parse(sessionStorage.getItem('fcAuth') || 'null'); }catch(e){}
+    a = a || fcAutoGet();
+    if(a && a.sabun && a.ver && _fcgb){ document.getElementById('fcSabun').value = a.sabun; fcEnter(a.sabun, a.ver, '', !!fcAutoGet()); }
   })();
 
   if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')){
@@ -9992,7 +10017,7 @@ const limitCompareData = {};
       bs.value = brs.indexOf(bcur) >= 0 ? bcur : '';
       bs.parentNode && (bs.style.display = brs.length > 1 || r.all ? '' : 'none');
       $('edbFcList').innerHTML = (r.fcs||[]).map(n => '<option value="' + escapeHtml(n) + '">').join('');
-      render(); afterLoad();
+      render(); afterLoad(); regDraw();
     }
     /* 행사(날짜+행사명)별로 묶어서 표시. 묶음 머리줄 체크로 그 행사 전체 선택 */
     function edbGroup(rows, rowHtml){
@@ -10175,23 +10200,32 @@ const limitCompareData = {};
       $('edbKmake').dataset.replace = '1'; if(memId()) window.rrnMem.drop(memId()); PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]);
       $('edbKeyOn').style.display = 'none'; $('edbKeyOpen').style.display = 'none'; $('edbKeyMake').style.display = ''; $('edbKeySt').textContent = '· 새 비밀번호 입력';
     });
-    function pcIssue(renew){
-      const fc = $('edbPcFc').value.trim();
-      if(!fc){ notify('설계사를 "이름 (지사)" 형식으로 입력해 주세요.', true); return; }
-      if(renew && !confirm(fc + ' 설계사의 조회코드를 새로 바꿀까요? 예전 코드로는 더 이상 들어갈 수 없습니다.')) return;
-      $('edbPcOut').textContent = '처리 중…';
-      call({action:'fcissue', fc, renew: !!renew}).then(r => {
-        if(!r.ok){ $('edbPcOut').textContent = ''; notify(r.error || '발급하지 못했습니다.', true); return; }
-        $('edbPcOut').innerHTML = '<b>' + escapeHtml(r.label) + '</b> 조회코드: <code style="font-size:15px; font-weight:800; background:#fff; padding:2px 8px; border-radius:6px; border:1px solid var(--line); user-select:all;">' + escapeHtml(r.code) + '</code> ' + (r.existing ? '<span style="color:#888">(이미 발급된 코드)</span>' : '<span style="color:#1a7f37">(새로 발급)</span>') + '<div style="font-size:11.5px; color:#888; margin-top:4px;">설계사 본인에게만 전달하세요. 내 DB 조회 → 지사 선택 · 이름 · 이 코드 입력</div>';
-      }).catch(() => { $('edbPcOut').textContent = ''; notify('네트워크 오류가 발생했습니다.', true); });
+    /* 설계사 등록(사번)·비밀번호 초기화·삭제 */
+    function regDraw(){
+      const sel = $('edbRegBr'); if(!sel || !LAST) return;
+      const cur = sel.value, brs = LAST.regBranches || [LAST.branch];
+      sel.innerHTML = brs.map(x => '<option>' + escapeHtml(x) + '</option>').join(''); if(brs.indexOf(cur) >= 0) sel.value = cur;
+      const L = LAST.fcReg || [];
+      $('edbRegList').innerHTML = L.length ? L.map(x => '<div class="eb-row" style="font-size:12.5px; border:1px solid var(--line); border-radius:8px; padding:6px 10px; background:#fff;"><b>' + escapeHtml(x.name) + '</b><span style="color:#666;">' + escapeHtml(x.branch) + ' · 사번 ' + escapeHtml(x.sabun) + '</span>' + (x.hasPw ? '<span style="color:#1a7f37;">비밀번호 설정됨</span>' : '<span style="color:#8A6300;">첫 입장 전</span>') + '<span style="flex:1 1 auto;"></span>' + (x.hasPw ? '<button type="button" class="eb-btn edbRegReset" data-sb="' + escapeHtml(x.sabun) + '" data-n="' + escapeHtml(x.name) + '">비밀번호 초기화</button>' : '') + '<button type="button" class="eb-btn red edbRegDel" data-sb="' + escapeHtml(x.sabun) + '" data-n="' + escapeHtml(x.name) + '">삭제</button></div>').join('') : '<span style="font-size:12.5px; color:#888;">등록된 설계사가 없습니다.</span>';
+      $('edbRegList').querySelectorAll('.edbRegReset').forEach(b => b.addEventListener('click', () => {
+        if(!confirm(b.dataset.n + ' 설계사의 비밀번호를 초기화할까요?\n다음 입장 때 새 비밀번호를 정하고, 주민번호는 지사장님이 DB관리에 들어오면 다시 전달됩니다.')) return;
+        call({action:'resetfc', sabun: b.dataset.sb}).then(r => { if(!r.ok){ notify(r.error || '초기화하지 못했습니다.', true); return; } notify(b.dataset.n + ' 설계사 비밀번호를 초기화했습니다.'); window.edbLoad(); }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
+      }));
+      $('edbRegList').querySelectorAll('.edbRegDel').forEach(b => b.addEventListener('click', () => {
+        if(!confirm(b.dataset.n + ' 설계사 등록을 삭제할까요? (퇴사 등) 더 이상 내 DB 조회에 들어올 수 없습니다.')) return;
+        call({action:'fcunreg', sabun: b.dataset.sb}).then(r => { if(!r.ok){ notify(r.error || '삭제하지 못했습니다.', true); return; } notify(b.dataset.n + ' 설계사 등록을 삭제했습니다.'); window.edbLoad(); }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
+      }));
     }
-    $('edbPcGet').addEventListener('click', () => pcIssue(false));
-    $('edbPcNew').addEventListener('click', () => pcIssue(true));
-    $('edbKfcReset').addEventListener('click', () => {
-      const fc = $('edbKfc').value.trim();
-      if(!fc){ notify('설계사를 "이름 (지사)" 형식으로 입력해 주세요.', true); return; }
-      if(!confirm(fc + ' 설계사의 열람 비밀번호를 초기화할까요? 설계사가 새 비밀번호를 만들면, 지사장님이 열람할 때 주민번호가 다시 전달됩니다.')) return;
-      call({action:'resetfc', fc}).then(r => { if(!r.ok){ notify(r.error || '초기화하지 못했습니다.', true); return; } $('edbKfc').value = ''; notify(fc + ' 설계사 비밀번호를 초기화했습니다.'); window.edbLoad(); }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
+    $('edbRegAdd').addEventListener('click', () => {
+      const name = $('edbRegName').value.trim(), branch = $('edbRegBr').value, sabun = $('edbRegSb').value.replace(/[^0-9]/g, '');
+      if(!name){ notify('이름을 입력해 주세요.', true); return; }
+      if(!/^\d{5,12}$/.test(sabun)){ notify('사번을 숫자로 정확히 입력해 주세요.', true); return; }
+      call({action:'fcreg', name, branch, sabun}).then(r => {
+        if(!r.ok){ notify(r.error || '등록하지 못했습니다.', true); return; }
+        $('edbRegName').value = $('edbRegSb').value = '';
+        notify(r.label + (r.updated ? ' 정보를 고쳤습니다.' : ' 등록했습니다. 내 DB 조회에서 사번으로 들어가 비밀번호를 정하면 됩니다.'));
+        window.edbLoad();
+      }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
     });
     window.edbLoad = function(after){
       if(!code()){ let ac = ''; try{ ac = sessionStorage.getItem('growAdminCode') || ''; }catch(e){} if(ac){ setCode(ac); } else { showGate(true); return; } }
