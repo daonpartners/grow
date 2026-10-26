@@ -1570,6 +1570,18 @@ function covNormalize(c){
       r.status=cs.amt>0?(r.rec!=null?(cs.amt>=r.rec?'충분':'부족'):''):'포함';
     });
   }
+  /* 상위 진단비가 하위 질병을 포함: 뇌혈관질환(I60~I69) ⊃ 뇌졸중 ⊃ 뇌출혈(I60~I62), 허혈성심장질환(I20~I25) ⊃ 급성심근경색(I21~I23).
+     하위 담보가 0원이어도 상위 담보로 진단비가 나오므로 미가입으로 보지 않고, 진단 시 받는 합계를 보여준다 (표시용, 합산에는 넣지 않음) */
+  [['stroke',['brain_all'],'뇌졸중'],['brain_hem',['brain_all','stroke'],'뇌출혈'],['ami',['ihd'],'급성심근경색'],['cancer_high',['cancer'],'고액암']].forEach(function(n){
+    var ups=n[1].map(function(k){ return {k:k,amt:c.rows.filter(function(r){return r.on&&r.cat===k&&!r.viaUp;}).reduce(function(a,r){return a+(r.amt||0);},0)}; }).filter(function(x){return x.amt>0;});
+    if(!ups.length) return;
+    c.rows.forEach(function(r){
+      if(r.cat!==n[0]||r.amt>0) return;
+      var tot=ups.reduce(function(a,x){return a+x.amt;},0);
+      r.viaUp=true; r.upAmt=tot; r.status='포함';
+      r.note=ups.map(function(x){return COV_NAME[x.k].replace(/ 진단비$/,'')+' '+won(x.amt);}).join(' + ')+' — '+n[2]+'도 보장범위에 포함 (진단 시 합계)';
+    });
+  });
   var gi={}; COV_CATS.forEach(function(x,i){gi[x[0]]=i;});
   c.rows.sort(function(a,b){ var ga=COV_GROUPS.indexOf(COV_GROUP[a.cat]), gb=COV_GROUPS.indexOf(COV_GROUP[b.cat]); return ga-gb; });
 }
@@ -1769,8 +1781,8 @@ function covSummaryBlocks(c){
         var gap=r.rec!=null&&r.rec>r.amt&&!(r.viaCirc&&!r.amt)?won(r.rec-r.amt):'-';
         return '<div style="display:grid;grid-template-columns:'+SC+';align-items:center;border-bottom:1px solid #D9DEE7;background:'+(k%2?'#F5F7FB':'#fff')+'">'+
           '<div style="'+cell+';text-align:center;color:#7B8190;font-size:'+fz(12)+'px">'+(k+1)+'</div>'+
-          '<div style="'+cell+';font-size:'+fz(13.5)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+(r.viaCirc?'<div style="font-size:'+fz(11)+'px;font-weight:700;color:#0E7490;margin-top:1px">'+esc(r.note)+'</div>':'')+'</div>'+
-          '<div style="'+cell+';text-align:right;font-size:'+fz(14.5)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':(r.viaCirc?'#0E7490':'#B4472F'))+'">'+(r.amt>0||!r.viaCirc?won(r.amt):'포함')+'</div>'+
+          '<div style="'+cell+';font-size:'+fz(13.5)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+(r.viaCirc||r.viaUp?'<div style="font-size:'+fz(11)+'px;font-weight:700;color:#0E7490;margin-top:1px">'+esc(r.note)+'</div>':'')+'</div>'+
+          '<div style="'+cell+';text-align:right;font-size:'+fz(14.5)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':(r.viaCirc||r.viaUp?'#0E7490':'#B4472F'))+'">'+(r.viaUp&&!r.amt?won(r.upAmt):(r.amt>0||!r.viaCirc?won(r.amt):'포함'))+'</div>'+
           '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;color:var(--ink2);white-space:nowrap">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
           '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;font-weight:700;white-space:nowrap;color:'+(gap==='-'?'#9AA0AA':'#B4472F')+'">'+gap+'</div>'+
           '<div style="padding:'+fz(6)+'px 6px;text-align:center">'+(r.status?'<span style="display:inline-block;font-size:'+fz(11.5)+'px;font-weight:800;padding:2px 8px;border-radius:5px;color:#fff;background:'+ST_COL[r.status]+'">'+r.status+'</span>':'')+'</div></div>';
@@ -2189,7 +2201,7 @@ function covEndCta(c,a){
   var need=c.rows.filter(function(r){return r.on&&!r.hidden&&(r.status==='부족'||r.status==='미가입');});
   need.sort(function(x,y){ var o={'미가입':0,'부족':1}; return ((core(y)?1:0)-(core(x)?1:0))||(o[x.status]-o[y.status])||(((y.rec||0)-y.amt)-((x.rec||0)-x.amt)); });
   return endCtaBlocks(a,{gender:String(c.gender||''),sub:'비어 있는 보장을 확인한 지금이 채울 수 있는 가장 좋은 때입니다.',
-    result:'보장분석 결과 <b style="color:#B4472F">'+need.length+'개 담보</b>가 권장 기준보다 부족하거나 가입되어 있지 않습니다.'+(need.length?' 아래 보장부터 채우시길 권합니다.':''),
+    result:'보장분석 결과 <b style="color:#B4472F">'+need.length+'개 담보</b>가 '+(c.std37?'':'권장 기준보다 부족하거나 ')+'가입되어 있지 않습니다.'+(need.length?' 아래 보장부터 채우시길 권합니다.':''),
     chips:need.slice(0,4).map(function(r){return r.name+' · '+(r.status==='미가입'?'없음':'부족');}),
     note:'본 리포트는 '+esc(c.source||'보장분석 자료')+'('+esc(c.date||'')+' 기준)를 정리한 것으로 실제 가입내용과 다를 수 있으며, 실제 지급은 각 계약의 약관에 따릅니다.'});
 }
