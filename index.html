@@ -8786,9 +8786,10 @@ const limitCompareData = {};
   function applyAdminRole(){
     const isAdmin = admRole === 'admin';
     const isMaster = admRole === 'masteradmin';
+    const isBr = /지점장$/.test(admLabel || '');
     const badge = document.getElementById('admBadge');
     if(badge){
-      badge.textContent = isAdmin ? '관리자' : (isMaster ? admLabel : '지사장');
+      badge.textContent = isAdmin ? '관리자' : (isMaster ? admLabel : (isBr ? '지점장' : '지사장'));
       badge.className = 'adm-badge' + (isAdmin ? '' : ' mgr');
     }
     const who = document.getElementById('admWho');
@@ -8796,7 +8797,7 @@ const limitCompareData = {};
     const role = document.getElementById('admRole');
     if(role) role.textContent = isAdmin
       ? '· ' + admLabel + ' · DB 게시물 등록 및 전체 관리 권한'
-      : (isMaster ? '· ' + admLabel + ' · 회의자료·행사신청·DB신청·앨범 및 교육·영업·자료·업무지원센터 관리 권한' : '· ' + admBranch + '지사 명의로 DB 신청 가능');
+      : (isMaster ? '· ' + admLabel + ' · 회의자료·행사신청·DB신청·앨범 및 교육·영업·자료·업무지원센터 관리 권한' : '· ' + admBranch + (isBr ? '' : '지사') + ' 명의로 DB 신청 가능');
 
     const newBtn = document.getElementById('dbbNewBtn');
     const newForm = document.getElementById('dbbNewForm');
