@@ -1510,7 +1510,7 @@ body.growon{ background:var(--g-navy); }
               <div id="fcPwNewTxt" style="font-size:12.5px; color:var(--navy-2); background:#F5F8FD; border:1px solid #C9D3E6; border-radius:8px; padding:9px 11px; margin-bottom:8px; line-height:1.6;"></div>
               <input type="password" id="fcPw2" placeholder="비밀번호 확인 (한 번 더)" autocomplete="new-password" style="width:100%; box-sizing:border-box;">
             </div>
-            <label style="font-size:12.5px; color:#555; display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="fcRemember" checked> 이 기기 기억(30일) — 다음부터 바로 들어갑니다</label>
+            <label style="font-size:12.5px; color:#555; display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="fcRemember"> 이 기기 기억(7일) — 다음부터 바로 들어갑니다</label>
             <div class="qna-form-msg" id="fcGateMsg"></div>
             <button type="button" id="fcGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">들어가기</button>
           </div>
@@ -1531,14 +1531,14 @@ body.growon{ background:var(--g-navy); }
                 <input type="password" id="fcKp1" placeholder="열람 비밀번호 (8자 이상)" autocomplete="new-password" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <input type="password" id="fcKp2" placeholder="비밀번호 확인" autocomplete="new-password" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <button type="button" id="fcKmake" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-weight:800; cursor:pointer;">만들기</button>
-                <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem2" checked> 이 기기 기억(30일)</label>
+                <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem2"> 이 기기 기억(7일)</label>
               </div>
             </div>
             <div id="fcKeyOpen" style="display:none;">
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <input type="password" id="fcKpw" placeholder="비밀번호 (로그인 비밀번호와 같음)" autocomplete="off" style="flex:1; min-width:130px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
                 <button type="button" id="fcKopen" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-weight:800; cursor:pointer;">주민번호 보기</button>
-                <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem" checked> 이 기기 기억(30일)</label>
+                <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="fcKmem"> 이 기기 기억(7일)</label>
               </div>
               <div style="font-size:11.5px; color:#888; margin-top:6px;">뒷자리가 가려져 보이며, 누르면 10초간 전체가 보입니다. 다른 사람에게 보내거나 캡처하지 마세요.</div>
             </div>
@@ -1568,7 +1568,7 @@ body.growon{ background:var(--g-navy); }
               <a href="#" id="admChgToggle" style="font-size:12.5px; color:var(--navy-2); text-decoration:underline;">🔑 인증번호(관리자 코드) 변경</a>
               <div id="admChgBox" style="display:none; margin-top:8px; padding:12px; border:1px solid var(--line); border-radius:10px; background:#fff;">
                 <input type="password" id="admChgCur" placeholder="현재 인증번호" autocomplete="off" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; margin-bottom:6px;">
-                <input type="password" id="admChgNew" placeholder="새 인증번호 (영문·숫자 6~20자)" autocomplete="off" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; margin-bottom:6px;">
+                <input type="password" id="admChgNew" placeholder="새 인증번호 (8자 이상, 숫자·영소문자·특수문자 포함)" autocomplete="off" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; margin-bottom:6px;">
                 <input type="password" id="admChgNew2" placeholder="새 인증번호 한 번 더" autocomplete="off" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit; margin-bottom:8px;">
                 <button type="button" id="admChgBtn" style="width:100%; background:#fff; color:var(--navy-2); border:1px solid var(--line); border-radius:8px; padding:10px; font-size:13px; font-weight:800; cursor:pointer;">변경하기</button>
                 <div class="qna-form-msg" id="admChgMsg" style="margin-top:6px;"></div>
@@ -1705,12 +1705,12 @@ body.growon{ background:var(--g-navy); }
                   <input type="password" id="edbKp1" class="eb-in" placeholder="새 비밀번호 (8자 이상)" autocomplete="new-password" style="width:170px;">
                   <input type="password" id="edbKp2" class="eb-in" placeholder="비밀번호 확인" autocomplete="new-password" style="width:140px;">
                   <button type="button" class="eb-btn pri" id="edbKmake">비밀번호 만들기</button>
-                  <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem2" checked> 이 기기 기억(30일)</label>
+                  <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem2"> 이 기기 기억(7일)</label>
                 </span>
                 <span id="edbKeyOpen" class="eb-row" style="display:none;">
                   <input type="password" id="edbKpw" class="eb-in" placeholder="주민번호 비밀번호" autocomplete="off" style="width:190px;">
                   <button type="button" class="eb-btn pri" id="edbKopen">열기</button>
-                  <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem" checked> 이 기기 기억(30일)</label>
+                  <label style="font-size:12px; color:#555; display:inline-flex; align-items:center; gap:4px; cursor:pointer; white-space:nowrap;"><input type="checkbox" id="edbKmem"> 이 기기 기억(7일)</label>
                 </span>
                 <span id="edbKeyOn" class="eb-row" style="display:none;">
                   <span style="font-size:12.5px; color:#1a7f37; font-weight:700;">✅ 이 기기에서 열려 있음</span>
@@ -1718,7 +1718,7 @@ body.growon{ background:var(--g-navy); }
                 </span>
               </div>
               <div id="edbKeyPend" style="font-size:12px; color:#8A6300; margin-top:6px; display:none;"></div>
-              <div class="eb-help" id="edbKeyHelp">처음 한 번 비밀번호를 넣으면 이 기기에서는 30일간 로그인만 해도 주민번호가 보입니다(번호를 누르면 10초간 전체 표시). 여러 사람이 쓰는 PC에서는 "이 기기 기억"을 끄세요. 비밀번호는 서버에 저장되지 않아 잊으면 찾을 수 없습니다.</div>
+              <div class="eb-help" id="edbKeyHelp">처음 한 번 비밀번호를 넣으면 이 기기에서는 7일간 로그인만 해도 주민번호가 보입니다(번호를 누르면 10초간 전체 표시). 여러 사람이 쓰는 PC에서는 "이 기기 기억"을 끄세요. 비밀번호는 서버에 저장되지 않아 잊으면 찾을 수 없습니다.</div>
             </div>
 
             <div id="edbAct" class="eb-card">
@@ -8878,9 +8878,8 @@ const limitCompareData = {};
     { name: '김승준', title: '지점장', canManageEdu: true },
     { name: '성영진', title: '지점장', canManageEdu: true }
   ];
-  const ADMIN_ACCOUNTS = {
-    'master26':   { role: 'masteradmin' }
-  };
+  /* 공용(최상위) 코드는 홈페이지 소스에 두지 않고 서버(n8n)에서 확인 */
+  const ADMIN_ACCOUNTS = {};
   const ADMIN_SRV = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
 
   let admRole = '';
@@ -9019,7 +9018,9 @@ const limitCompareData = {};
     msg.textContent = '확인 중…'; msg.style.color = 'var(--slate)';
     fetch(ADMIN_SRV, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'login', code: code }) })
       .then(r => r.json()).then(r => {
+        if(r && r.error){ msg.textContent = r.error; msg.style.color = 'var(--orange-deep)'; return; }
         if(!r || !r.ok){ fail(); return; }
+        if(r.role === 'masteradmin'){ msg.textContent = ''; admShowMasterPicker(); return; }
         try{ sessionStorage.setItem('growAdminCode', code); sessionStorage.removeItem('growDbCode'); }catch(e){}
         msg.textContent = '';
         if(r.role === 'admin'){
@@ -9093,10 +9094,10 @@ const limitCompareData = {};
   }
 
   /* 배정 고객 주민번호: 본인 열람 비밀번호로만 풂 (rrnKit은 관리자센터 스크립트에 있음) */
-  /* 주민번호 열쇠를 이 기기에 기억(30일): 풀린 개인키를 꺼낼 수 없는 형태로 브라우저 저장소(IndexedDB)에 보관.
+  /* 주민번호 열쇠를 이 기기에 기억(7일): 풀린 개인키를 꺼낼 수 없는 형태로 브라우저 저장소(IndexedDB)에 보관.
      비밀번호를 재설정하면(공개키가 바뀌면) 기억한 열쇠는 자동으로 버림 */
   window.rrnMem = (function(){
-    const TTL = 30 * 86400000;
+    const TTL = 7 * 86400000;
     function db(){ return new Promise((res, rej) => { try{ const r = indexedDB.open('growRrn', 1); r.onupgradeneeded = () => r.result.createObjectStore('k'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }catch(e){ rej(e); } }); }
     function tx(mode, fn){ return db().then(d => new Promise((res, rej) => { const t = d.transaction('k', mode); const q = fn(t.objectStore('k')); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); })); }
     const api = {
@@ -9189,7 +9190,7 @@ const limitCompareData = {};
     const bits = await crypto.subtle.deriveBits({ name:'PBKDF2', salt: new TextEncoder().encode('grow-fc-login|' + sb), iterations: 200000, hash:'SHA-256' }, k, 256);
     return btoa(String.fromCharCode.apply(null, new Uint8Array(bits)));
   }
-  function fcAutoGet(){ try{ const v = JSON.parse(localStorage.getItem(FC_AUTO) || 'null'); if(v && v.sabun && v.ver && Date.now() - v.at < 30 * 86400000) return v; }catch(e){} return null; }
+  function fcAutoGet(){ try{ const v = JSON.parse(localStorage.getItem(FC_AUTO) || 'null'); if(v && v.sabun && v.ver && Date.now() - v.at < 7 * 86400000) return v; }catch(e){} return null; }
   function fcAutoSet(v){ try{ if(v) localStorage.setItem(FC_AUTO, JSON.stringify(Object.assign({ at: Date.now() }, v))); else localStorage.removeItem(FC_AUTO); }catch(e){} }
   const _fcgb = document.getElementById('fcGateBtn');
   const fcMsg = (t, bad) => { const m = document.getElementById('fcGateMsg'); m.textContent = t || ''; m.style.color = bad ? 'red' : ''; };
@@ -9268,7 +9269,7 @@ const limitCompareData = {};
     fcMsg('');
   });
 
-  /* 이 탭에서 이미 들어왔거나, 이 기기 기억(30일)이 켜져 있으면 자동 입장 */
+  /* 이 탭에서 이미 들어왔거나, 이 기기 기억(7일)이 켜져 있으면 자동 입장 */
   (function fcAutoRestore(){
     let a = null; try{ a = JSON.parse(sessionStorage.getItem('fcAuth') || 'null'); }catch(e){}
     a = a || fcAutoGet();
@@ -10881,7 +10882,7 @@ const limitCompareData = {};
     function saved(){
       let a = null;
       try{ a = JSON.parse(sessionStorage.getItem('fcAuth') || 'null'); }catch(e){}
-      if(!a){ try{ const v = JSON.parse(localStorage.getItem('growFcAuto') || 'null'); if(v && v.sabun && v.ver && Date.now() - v.at < 30 * 86400000) a = v; }catch(e){} }
+      if(!a){ try{ const v = JSON.parse(localStorage.getItem('growFcAuto') || 'null'); if(v && v.sabun && v.ver && Date.now() - v.at < 7 * 86400000) a = v; }catch(e){} }
       return a && a.sabun && a.ver ? a : null;
     }
     function gate(){
