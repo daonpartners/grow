@@ -1457,7 +1457,7 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div id="fcGate">
-          <div class="qna-notice">👤 소속 지사장에게 받은 <b>조회 코드</b>와 본인 이름을 입력하면, 본인에게 배정된 DB(고객)만 확인할 수 있습니다.<br>다른 FC의 정보는 볼 수 없습니다.</div>
+          <div class="qna-notice">👤 소속 지사장에게 받은 <b>본인 전용 조회코드</b>와 본인 이름을 입력하면, 본인에게 배정된 DB(고객)만 확인할 수 있습니다.<br>다른 FC의 정보는 볼 수 없습니다.</div>
           <div class="qna-form open" style="max-width:360px;">
             <select id="fcBranch">
               <option value="">지사 선택</option>
@@ -1470,7 +1470,7 @@ body.growon{ background:var(--g-navy); }
               <option value="광명가온지점">광명가온지점</option>
             </select>
             <input type="text" id="fcName" placeholder="본인 이름 (담당FC에 등록된 이름과 동일하게)" autocomplete="off">
-            <input type="password" id="fcCode" placeholder="지사 조회 코드" autocomplete="off">
+            <input type="password" id="fcCode" placeholder="개인 조회코드 (지사장에게 발급)" autocomplete="off">
             <div class="qna-form-msg" id="fcGateMsg"></div>
             <button type="button" id="fcGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">조회하기</button>
           </div>
@@ -1686,6 +1686,16 @@ body.growon{ background:var(--g-navy); }
                   <button type="button" class="qna-new-btn" id="edbKfcReset" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line); font-size:12px;">설계사 비밀번호 초기화</button>
                 </div>
               </div>
+            </div>
+            <div id="edbPc" style="margin:10px 0; padding:12px 14px; border:1px solid #C9D3E6; border-radius:10px; background:#F5F8FD;">
+              <div style="font-weight:800; color:var(--navy-2); margin-bottom:4px;">🔑 설계사 개인 조회코드</div>
+              <div style="font-size:12px; color:#555; margin-bottom:8px;">설계사마다 본인 전용 코드를 발급해 직접 전달하세요. 설계사는 이 코드로만 <b>내 DB 조회</b>에 들어가며, 다른 설계사 코드로는 서로의 DB를 볼 수 없습니다.</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="edbPcFc" list="edbFcList" placeholder="설계사 (예: 홍길동 (광명가온지점))" autocomplete="off" style="flex:1; min-width:140px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-family:inherit;">
+                <button type="button" class="qna-new-btn" id="edbPcGet" style="margin:0;">발급·확인</button>
+                <button type="button" class="qna-new-btn" id="edbPcNew" style="margin:0; background:#fff; color:var(--navy-2); border:1px solid var(--line); font-size:12px;">새 코드로 바꾸기</button>
+              </div>
+              <div id="edbPcOut" style="font-size:13px; margin-top:8px;"></div>
             </div>
             <style>#edbTbl th,#edbTbl td{white-space:nowrap;padding:7px 8px;vertical-align:middle}#edbTbl td.memo{max-width:180px;overflow:hidden;text-overflow:ellipsis}</style><div style="overflow-x:auto;"><table id="edbTbl" style="width:100%; border-collapse:collapse; font-size:12.5px;">
               <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>주소</th><th>주민등록번호</th><th>반려동물·메모</th><th>담당 설계사</th></tr></thead>
@@ -10086,6 +10096,18 @@ const limitCompareData = {};
       $('edbKmake').dataset.replace = '1'; PRIV = null; Object.keys(DEC).forEach(k => delete DEC[k]);
       $('edbKeyOpen').style.display = 'none'; $('edbKeyMake').style.display = ''; $('edbKeySt').textContent = '· 새 비밀번호 입력';
     });
+    function pcIssue(renew){
+      const fc = $('edbPcFc').value.trim();
+      if(!fc){ notify('설계사를 "이름 (지사)" 형식으로 입력해 주세요.', true); return; }
+      if(renew && !confirm(fc + ' 설계사의 조회코드를 새로 바꿀까요? 예전 코드로는 더 이상 들어갈 수 없습니다.')) return;
+      $('edbPcOut').textContent = '처리 중…';
+      call({action:'fcissue', fc, renew: !!renew}).then(r => {
+        if(!r.ok){ $('edbPcOut').textContent = ''; notify(r.error || '발급하지 못했습니다.', true); return; }
+        $('edbPcOut').innerHTML = '<b>' + escapeHtml(r.label) + '</b> 조회코드: <code style="font-size:15px; font-weight:800; background:#fff; padding:2px 8px; border-radius:6px; border:1px solid var(--line); user-select:all;">' + escapeHtml(r.code) + '</code> ' + (r.existing ? '<span style="color:#888">(이미 발급된 코드)</span>' : '<span style="color:#1a7f37">(새로 발급)</span>') + '<div style="font-size:11.5px; color:#888; margin-top:4px;">설계사 본인에게만 전달하세요. 내 DB 조회 → 지사 선택 · 이름 · 이 코드 입력</div>';
+      }).catch(() => { $('edbPcOut').textContent = ''; notify('네트워크 오류가 발생했습니다.', true); });
+    }
+    $('edbPcGet').addEventListener('click', () => pcIssue(false));
+    $('edbPcNew').addEventListener('click', () => pcIssue(true));
     $('edbKfcReset').addEventListener('click', () => {
       const fc = $('edbKfc').value.trim();
       if(!fc){ notify('설계사를 "이름 (지사)" 형식으로 입력해 주세요.', true); return; }
