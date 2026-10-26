@@ -720,6 +720,28 @@
   .fc-card-row b{color:var(--navy-2); font-weight:700;}
   .fc-tw{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--card);}
   .fc-tb{width:100%; border-collapse:collapse; font-size:12.5px; white-space:nowrap;}
+  /* 행사 DB 진행(터치)·체결 */
+  .pg-st{display:inline-block; padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:800; background:#EEF0F4; color:#5B6475;}
+  .pg-st.s1{background:#E8F1FF; color:#1a56c4;} .pg-st.s2{background:#FFF4DC; color:#8A6300;} .pg-st.s3{background:#EDE7FB; color:#6a3fc2;}
+  .pg-st.s4{background:#E3F6EA; color:#137a3a;} .pg-st.s5{background:#FDECEC; color:#B02A20;}
+  .pg-btn{border:1px solid #C9D3E6; background:#F5F8FD; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; margin-left:4px;}
+  .pg-ct{font-size:11.5px; line-height:1.5;} .pg-ct .ok{color:#137a3a; font-weight:800;} .pg-ct .no{color:#B02A20; font-weight:800; text-decoration:none;} .pg-ct .wait{color:#8A6300; font-weight:800;}
+  .pg-ct .rej{text-decoration:line-through; color:#999;}
+  .pg-modal{position:fixed; inset:0; background:rgba(15,23,42,.55); z-index:99998; display:flex; align-items:center; justify-content:center; padding:14px;}
+  .pg-card{background:#fff; border-radius:14px; width:100%; max-width:460px; max-height:90vh; overflow:auto; padding:20px 18px; box-shadow:0 20px 50px rgba(0,0,0,.25);}
+  .pg-card h3{margin:0 0 4px; font-size:16px; color:var(--navy-2);} .pg-card .sub{font-size:12px; color:var(--slate); margin-bottom:12px;}
+  .pg-card label{display:block; font-size:12px; font-weight:800; color:var(--navy-2); margin:10px 0 4px;}
+  .pg-card input, .pg-card select{width:100%; box-sizing:border-box; padding:9px 11px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13.5px;}
+  .pg-stages{display:flex; flex-wrap:wrap; gap:6px;} .pg-stages button{flex:1 1 30%; padding:9px 0; border:1px solid var(--line); background:#fff; border-radius:8px; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit; color:var(--navy-2);}
+  .pg-stages button.on{background:var(--navy-2); color:#fff; border-color:var(--navy-2);}
+  .pg-box{border:1px dashed #C9D3E6; border-radius:10px; padding:10px 12px; margin-top:12px; background:#F8FAFD;}
+  .pg-row2{display:flex; gap:8px;} .pg-row2 > *{flex:1;}
+  .pg-acts{display:flex; gap:8px; margin-top:16px;} .pg-acts button{flex:1; padding:11px 0; border-radius:9px; border:0; font-weight:800; font-size:13.5px; cursor:pointer; font-family:inherit;}
+  .pg-save{background:var(--orange-deep); color:#fff;} .pg-close{background:#eef0f4; color:var(--navy-2);}
+  .pg-msg{font-size:12px; color:#c0392b; min-height:16px; margin-top:8px;}
+  .pg-stat{display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:8px; margin:8px 0;}
+  .pg-stat div{background:#F5F8FD; border:1px solid #DCE3EF; border-radius:10px; padding:9px 11px;} .pg-stat b{display:block; font-size:17px; color:var(--navy-2);} .pg-stat span{font-size:11.5px; color:var(--slate);}
+  .pg-fct{width:100%; border-collapse:collapse; font-size:12px; margin-top:6px;} .pg-fct th,.pg-fct td{padding:6px 8px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap;} .pg-fct th:first-child,.pg-fct td:first-child{text-align:left;} .pg-fct th{color:var(--slate); font-weight:800; background:var(--canvas);}
   .fc-tb th{background:var(--canvas); color:var(--slate); font-weight:800; font-size:11.5px; text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); position:sticky; top:0;}
   .fc-tb td{padding:7px 10px; border-bottom:1px solid var(--line); color:var(--navy-2);}
   .fc-tb tr:last-child td{border-bottom:none;}
@@ -1674,6 +1696,7 @@ body.growon{ background:var(--g-navy); }
             </div>
             <div class="cm-msg" id="edbMsg"></div>
             <div id="edbSummary" style="margin:6px 0;"></div>
+            <div id="edbStat"></div>
 
             <div id="edbKey" class="eb-card" style="display:none; background:#F5F8FD; border-color:#C9D3E6;">
               <div class="eb-row">
@@ -1766,7 +1789,7 @@ body.growon{ background:var(--g-navy); }
               <div class="eb-help">삭제한 고객 DB는 되돌릴 수 없습니다.</div>
             </div>
             <style>#edbTbl th,#edbTbl td{white-space:nowrap;padding:7px 8px;vertical-align:middle}#edbTbl td.memo{max-width:180px;overflow:hidden;text-overflow:ellipsis}</style><div style="overflow-x:auto;"><table id="edbTbl" style="width:100%; border-collapse:collapse; font-size:12.5px;">
-              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>담당</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>주소</th><th>주민등록번호</th><th>반려동물·메모</th></tr></thead>
+              <thead><tr style="text-align:left; color:var(--ink-3,#666);"><th></th><th>날짜</th><th>행사</th><th>체험</th><th>지사</th><th>담당</th><th>진행</th><th>체결</th><th>성명</th><th>생년월일</th><th>자녀</th><th>연락처</th><th>주소</th><th>주민등록번호</th><th>반려동물·메모</th></tr></thead>
               <tbody id="edbRows"></tbody>
             </table></div>
             <details id="edbTools" class="eb-card">
@@ -9143,9 +9166,10 @@ const limitCompareData = {};
       return;
     }
     const td = (v, cls) => `<td${cls ? ` class="${cls}"` : ''}>${v}</td>`;
-    box.innerHTML = `<div class="fc-tw"><table class="fc-tb"><thead><tr><th>이름</th><th>연락처</th><th>생년월일</th><th>주민번호</th><th>주소</th><th>DB</th><th>배정일</th><th>메모</th></tr></thead><tbody>` +
+    box.innerHTML = `<div class="fc-tw"><table class="fc-tb"><thead><tr><th>이름</th><th>진행·체결</th><th>연락처</th><th>생년월일</th><th>주민번호</th><th>주소</th><th>DB</th><th>배정일</th><th>메모</th></tr></thead><tbody>` +
       customers.map(c => '<tr>' +
         td(`<b>${escapeHtml(c.name || '(이름 없음)')}</b> <span class="fc-card-status" style="${fcStatusColor(c.status)}">${escapeHtml(c.status || '')}</span>`) +
+        td(c.ev ? window.pgCell(c.progress, false) + ` <button type="button" class="pg-btn fcPg" data-id="${c.id}">✏️ 기록</button>` : '<span style="color:#aaa">-</span>') +
         td(`<a href="tel:${escapeHtml(c.phone || '')}">${escapeHtml(c.phone || '-')}</a>`) +
         td(escapeHtml(c.birth || '-')) +
         td(fcRrnCell(c)) +
@@ -9186,8 +9210,10 @@ const limitCompareData = {};
     document.getElementById('fcGate').style.display = 'none';
     document.getElementById('fcBody').style.display = 'block';
     document.getElementById('fcWho').textContent = d2.branch + ' · ' + d2.name + '님';
-    document.getElementById('fcCount').textContent = '· 배정 ' + list.length + '건';
+    document.getElementById('fcCount').textContent = '· 배정 ' + list.length + '건' + window.pgFcSum(list);
     FC_CRED = { branch: d2.branch, name: d2.name, sabun: sb, ver }; FC_KEY = d2.myKey || null; FC_LIST = list;
+    window.FC_CRED_GET = () => FC_CRED; window.FC_LIST_GET = () => FC_LIST;
+    window.FC_REDRAW = () => { fcRenderList(FC_LIST); document.getElementById('fcCount').textContent = '· 배정 ' + FC_LIST.length + '건' + window.pgFcSum(FC_LIST); };
     FC_PRIV = null; fcRenderList(list); fcKeyUi();
     if(FC_KEY){
       if(pw){ window.rrnKit.open(FC_KEY.wrapped, pw).then(k => { FC_PRIV = k; if(remember) window.rrnMem.save(fcMemId(), FC_KEY.pub, k); return fcDecrypt(); }).catch(() => fcKeyUi()); }
@@ -10094,7 +10120,18 @@ const limitCompareData = {};
       t._h = setTimeout(() => { t._done = false; if(!busyN) t.style.display = 'none'; }, 3500);
       msg(text, bad);
     }
-    const LBL = { list: 'DB 불러오는 중…', assign: '배분 처리 중…', delete: '삭제 중…', checkfc: '참석자 확인 중…' };
+    const LBL = { list: 'DB 불러오는 중…', assign: '배분 처리 중…', delete: '삭제 중…', checkfc: '참석자 확인 중…', confirm: '처리 중…' };
+    /* 체결 확인·반려 (지사장) */
+    document.addEventListener('click', e => {
+      const bt = e.target.closest && e.target.closest('.edbCf'); if(!bt) return;
+      const val = bt.dataset.v;
+      if(val === '반려' && !confirm('이 체결 건을 반려할까요? 반려하면 실적 집계에서 빠집니다.')) return;
+      call({ action:'confirm', id: Number(bt.dataset.id), cid: bt.dataset.cid, val }).then(r => {
+        if(!r || !r.ok){ notify((r && r.error) || '처리하지 못했습니다.', true); return; }
+        const x = (LAST && LAST.rows || []).find(z => z.id === Number(bt.dataset.id)); if(x) x.progress = r.progress;
+        render(); notify(val ? '체결 건을 ' + val + ' 처리했습니다.' : '처리를 취소했습니다.');
+      }).catch(() => notify('네트워크 오류가 발생했습니다.', true));
+    });
     function call(body){
       busy(LBL[body.action] || '처리 중…');
       return fetchRaw(body).finally(idle);
@@ -10124,7 +10161,7 @@ const limitCompareData = {};
       rows.forEach(x => { const k = x.eventDate + '|' + x.eventName; if(!by[k]){ by[k] = []; order.push(k); } by[k].push(x); });
       order.sort((a, c) => c.localeCompare(a));
       return order.map(k => { const g = by[k], p = k.split('|'), ed = g.filter(x => !x.ro).length, un = g.filter(x => !x.assignedFc).length;
-        return '<tr class="eb-grp"><td>' + (ed ? '<input type="checkbox" class="edbGrp" data-g="' + escapeHtml(k) + '" title="이 행사 전체 선택">' : '') + '</td><td colspan="12">📅 ' + escapeHtml(p[0]) + ' · ' + escapeHtml(p[1]) + ' — ' + g.length + '건 <span style="font-weight:600; color:#8A6300;">(미배분 ' + un + ')</span></td></tr>' + g.map(rowHtml).join(''); }).join('');
+        return '<tr class="eb-grp"><td>' + (ed ? '<input type="checkbox" class="edbGrp" data-g="' + escapeHtml(k) + '" title="이 행사 전체 선택">' : '') + '</td><td colspan="14">📅 ' + escapeHtml(p[0]) + ' · ' + escapeHtml(p[1]) + ' — ' + g.length + '건 <span style="font-weight:600; color:#8A6300;">(미배분 ' + un + ')</span></td></tr>' + g.map(rowHtml).join(''); }).join('');
     }
     function pickUi(){ const n = document.querySelectorAll('.edbChk:checked').length; const e = $('edbPick'); if(e) e.innerHTML = n ? '<b style="color:var(--navy-2)">' + n + '건 선택됨</b>' : '고객을 체크하세요'; }
     document.addEventListener('change', e => {
@@ -10141,9 +10178,10 @@ const limitCompareData = {};
       const sm = {}; ROWS.forEach(x => { const k = x.eventDate + '|' + x.eventName + '|' + x.kind; sm[k] = (sm[k] || 0) + 1; });
       const summary = Object.keys(sm).sort().reverse().map(k => { const p = k.split('|'); return { date: p[0], eventName: p[1], kind: p[2], count: sm[k] }; });
       $('edbSummary').innerHTML = '<b>총 ' + ROWS.length + '건</b>' + (bf ? ' <span style="color:#888; font-size:12.5px;">(' + escapeHtml(bf) + ')</span>' : '') + ' <span style="font-size:12.5px; color:#666;">· 행사 ' + summary.map(x => x.date + x.eventName).filter((v, k, a) => a.indexOf(v) === k).length + '개 · 미배분 <b style="color:#8A6300">' + ROWS.filter(x => !x.assignedFc).length + '건</b></span>';
+      $('edbStat').innerHTML = window.pgStats(ROWS);
       $('edbAll').checked = false; keyUi(); setTimeout(pickUi, 0);
       const gk = x => escapeHtml(x.eventDate + '|' + x.eventName);
-      $('edbRows').innerHTML = edbGroup(ROWS, x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" data-g="' + gk(x) + '" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td>' + '<td>' + (x.assignedFc ? '<b style="color:var(--navy-2)">' + escapeHtml(x.assignedFc) + '</b>' : '<span style="color:#B26A00; font-weight:700">미배분</span>') + '</td>' + '<td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.address || '') + '">' + (x.address ? escapeHtml(x.address) : (x.infoEdit ? '<button type="button" class="edbRrnIn" data-id="' + x.id + '" style="border:1px solid #C9D3E6; background:#F5F8FD; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer;">✏️ 입력</button>' : '-')) + '</td><td>' + rrnCell(x) + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td></tr>') || '<tr><td colspan="13" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
+      $('edbRows').innerHTML = edbGroup(ROWS, x => '<tr style="border-top:1px solid var(--line);"><td>' + (x.ro ? '<span title="산하 지점 DB는 조회만 가능" style="color:#aaa">조회</span>' : '<input type="checkbox" class="edbChk" data-g="' + gk(x) + '" value="' + x.id + '">') + '</td><td>' + escapeHtml(x.eventDate) + '</td><td>' + escapeHtml(x.eventName) + '</td><td>' + escapeHtml(x.kind) + '</td><td>' + escapeHtml(x.branch || '-') + (x.ro ? ' <span style="color:#888">(산하·조회전용)</span>' : '') + '</td>' + '<td>' + (x.assignedFc ? '<b style="color:var(--navy-2)">' + escapeHtml(x.assignedFc) + '</b>' : '<span style="color:#B26A00; font-weight:700">미배분</span>') + '</td>' + '<td>' + (x.assignedFc ? window.pgCell(x.progress, true) : '') + '</td><td>' + window.pgContracts(x, true) + '</td>' + '<td>' + escapeHtml(x.personName) + '</td><td>' + escapeHtml(x.personBirth) + '</td><td>' + escapeHtml(x.childName ? x.childName + ' ' + x.childBirth : '-') + '</td><td>' + escapeHtml(x.phone || '-') + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.address || '') + '">' + (x.address ? escapeHtml(x.address) : (x.infoEdit ? '<button type="button" class="edbRrnIn" data-id="' + x.id + '" style="border:1px solid #C9D3E6; background:#F5F8FD; color:var(--navy-2); border-radius:6px; padding:3px 8px; font-size:12px; font-weight:700; cursor:pointer;">✏️ 입력</button>' : '-')) + '</td><td>' + rrnCell(x) + '</td><td class="memo" style="font-size:11.5px;" title="' + escapeHtml(x.petInfo || '') + '">' + escapeHtml(x.petInfo || '-') + '</td></tr>') || '<tr><td colspan="15" style="padding:14px; color:#888;">조건에 맞는 내역이 없습니다.</td></tr>';
     }
 
     /* ── 주민등록번호: 사람별 열쇠. 개인키는 본인 비밀번호로 잠겨 서버에 있고, 이 화면 안에서만 풂 ── */
@@ -10895,6 +10933,125 @@ const limitCompareData = {};
       e.preventDefault(); e.stopPropagation();
       if(await window.growRequireMember()) window.open(a.href, '_blank', 'noopener');
     }, true);
+  })();
+
+  // ================= 행사 DB 진행(터치)·체결 관리 =================
+  // 설계사: 내 DB 조회에서 단계(미접촉→통화→상담약속→상담완료→체결/거절)·메모·체결(보험사·상품·월보험료·체결일) 입력
+  // 체결이 들어오면 해당 지사장에게 텔레그램 알림(서버). 실적은 입력 즉시 집계, 지사장은 DB관리에서 확인·반려
+  (function(){
+    const STAGES = ['미접촉', '통화', '상담약속', '상담완료', '체결', '거절'];
+    const won = n => Number(n || 0).toLocaleString('ko-KR');
+    const live = p => (p && Array.isArray(p.c) ? p.c : []).filter(c => c.ok !== '반려');
+    window.pgCell = function(p, admin){
+      p = p || {};
+      const st = p.stage || '미접촉', i = STAGES.indexOf(st);
+      const tip = [p.memo, p.at ? p.at + (p.by ? ' · ' + p.by : '') : ''].filter(Boolean).join(' / ');
+      return '<span class="pg-st s' + (i < 0 ? 0 : i) + '" title="' + escapeHtml(tip) + '">' + escapeHtml(st) + '</span>' + (admin && p.memo ? ' <span style="font-size:11px; color:#888; max-width:120px; display:inline-block; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;" title="' + escapeHtml(tip) + '">' + escapeHtml(p.memo) + '</span>' : '');
+    };
+    window.pgContracts = function(x, admin){
+      const cs = (x.progress && Array.isArray(x.progress.c)) ? x.progress.c : [];
+      if(!cs.length) return '';
+      return '<div class="pg-ct">' + cs.map(c => {
+        const st = c.ok === '확인' ? '<span class="ok">✔확인</span>' : c.ok === '반려' ? '<span class="no">반려</span>' : '<span class="wait">확인대기</span>';
+        const line = '<span class="' + (c.ok === '반려' ? 'rej' : '') + '">' + escapeHtml(c.co) + ' · ' + escapeHtml(c.pr) + ' · 월 ' + won(c.amt) + '원 (' + escapeHtml(c.d) + ')</span> ' + st;
+        const btn = admin && !x.ro ? (c.ok
+          ? ' <button type="button" class="pg-btn edbCf" data-id="' + x.id + '" data-cid="' + escapeHtml(c.id) + '" data-v="" title="확인·반려 취소">↺</button>'
+          : ' <button type="button" class="pg-btn edbCf" data-id="' + x.id + '" data-cid="' + escapeHtml(c.id) + '" data-v="확인">확인</button><button type="button" class="pg-btn edbCf" data-id="' + x.id + '" data-cid="' + escapeHtml(c.id) + '" data-v="반려" style="color:#B02A20;">반려</button>') : '';
+        return '<div>' + line + btn + '</div>';
+      }).join('') + '</div>';
+    };
+    window.pgFcSum = function(list){
+      const ev = list.filter(c => c.ev);
+      if(!ev.length) return '';
+      const touched = ev.filter(c => c.progress && c.progress.stage && c.progress.stage !== '미접촉').length;
+      const cs = [].concat.apply([], ev.map(c => live(c.progress)));
+      return ' · 터치 ' + touched + '/' + ev.length + ' · 체결 ' + cs.length + '건 (월 ' + won(cs.reduce((a, c) => a + Number(c.amt || 0), 0)) + '원)';
+    };
+    window.pgStats = function(rows){
+      const asg = rows.filter(x => x.assignedFc);
+      if(!asg.length) return '';
+      const sum = list => {
+        const o = { n: list.length, touch: 0, talk: 0, deal: 0, rej: 0, cnt: 0, amt: 0, wait: 0 };
+        list.forEach(x => {
+          const p = x.progress || {}, st = p.stage || '미접촉';
+          if(st !== '미접촉') o.touch++;
+          if(st === '상담약속' || st === '상담완료') o.talk++;
+          if(st === '거절') o.rej++;
+          const cs = live(p);
+          if(cs.length) o.deal++;
+          o.cnt += cs.length; o.amt += cs.reduce((a, c) => a + Number(c.amt || 0), 0);
+          o.wait += cs.filter(c => !c.ok).length;
+        });
+        return o;
+      };
+      const t = sum(asg), pct = (a, b) => b ? Math.round(a * 100 / b) + '%' : '-';
+      const by = {}; asg.forEach(x => { (by[x.assignedFc] = by[x.assignedFc] || []).push(x); });
+      const fcRows = Object.keys(by).map(k => Object.assign({ fc: k }, sum(by[k]))).sort((a, b) => b.amt - a.amt || b.touch - a.touch);
+      return '<details class="eb-card" open style="margin:8px 0;"><summary style="cursor:pointer; font-weight:800; color:var(--navy-2);">📊 DB 터치·체결 현황 <span style="font-weight:600; color:#888; font-size:12px;">(배분된 DB 기준 · 체결은 입력 즉시 집계, 반려 제외)</span></summary>'
+        + '<div class="pg-stat">'
+        + '<div><b>' + t.n + '</b><span>배분</span></div>'
+        + '<div><b>' + t.touch + ' <small style="font-size:12px">(' + pct(t.touch, t.n) + ')</small></b><span>터치</span></div>'
+        + '<div><b>' + t.talk + '</b><span>상담 진행</span></div>'
+        + '<div><b>' + t.deal + ' <small style="font-size:12px">(' + pct(t.deal, t.n) + ')</small></b><span>체결 고객</span></div>'
+        + '<div><b>' + t.cnt + '건</b><span>체결 건수</span></div>'
+        + '<div><b>' + won(t.amt) + '</b><span>월보험료 합계(원)</span></div>'
+        + '<div><b style="color:#8A6300">' + t.wait + '</b><span>확인 대기</span></div>'
+        + '<div><b style="color:#B02A20">' + t.rej + '</b><span>거절</span></div>'
+        + '</div><div style="overflow-x:auto;"><table class="pg-fct"><thead><tr><th>설계사</th><th>배분</th><th>터치</th><th>터치율</th><th>상담</th><th>체결고객</th><th>체결건</th><th>월보험료(원)</th><th>확인대기</th><th>거절</th></tr></thead><tbody>'
+        + fcRows.map(r => '<tr><td>' + escapeHtml(r.fc) + '</td><td>' + r.n + '</td><td>' + r.touch + '</td><td>' + pct(r.touch, r.n) + '</td><td>' + r.talk + '</td><td>' + r.deal + '</td><td>' + r.cnt + '</td><td>' + won(r.amt) + '</td><td>' + (r.wait ? '<b style="color:#8A6300">' + r.wait + '</b>' : 0) + '</td><td>' + r.rej + '</td></tr>').join('')
+        + '</tbody></table></div></details>';
+    };
+
+    /* 설계사 입력 창 */
+    const API = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
+    const today = () => { const d = new Date(Date.now() + 9 * 3600 * 1000); return d.toISOString().slice(0, 10); };
+    const COS = ['삼성생명','한화생명','교보생명','신한라이프','KB라이프','미래에셋생명','동양생명','흥국생명','ABL생명','농협생명','DB생명','KDB생명','메트라이프생명','라이나생명','iM라이프','푸본현대생명','하나생명','삼성화재','현대해상','DB손보','KB손보','메리츠화재','한화손보','흥국화재','롯데손보','농협손보','하나손보','AIG손보','라이나손보'];
+    function openPg(c){
+      if(!window.FC_CRED_GET || !window.FC_CRED_GET()){ alert('다시 로그인해 주세요.'); return; }
+      const p = JSON.parse(JSON.stringify(c.progress || {}));
+      let stage = p.stage || '미접촉';
+      const el = document.createElement('div'); el.className = 'pg-modal';
+      const draw = () => {
+        const cs = Array.isArray(p.c) ? p.c : [];
+        el.innerHTML = '<div class="pg-card"><h3>' + escapeHtml(c.name || '') + '</h3><div class="sub">' + escapeHtml(c.dbType || '') + ' · ' + escapeHtml(c.phone || '') + '</div>'
+          + '<label>진행 단계</label><div class="pg-stages">' + STAGES.map(s => '<button type="button" data-s="' + s + '" class="' + (s === stage ? 'on' : '') + '">' + s + '</button>').join('') + '</div>'
+          + '<label>메모</label><input type="text" class="pg-memo" maxlength="200" placeholder="예) 11/2 오후 3시 방문 상담 약속" value="' + escapeHtml(p.memo || '') + '">'
+          + (cs.length ? '<label>체결 내역</label><div class="pg-ct">' + cs.map(k => '<div>' + escapeHtml(k.co) + ' · ' + escapeHtml(k.pr) + ' · 월 ' + won(k.amt) + '원 (' + escapeHtml(k.d) + ') ' + (k.ok === '확인' ? '<span class="ok">✔확인</span>' : k.ok === '반려' ? '<span class="no">반려</span>' : '<span class="wait">확인대기</span> <button type="button" class="pg-btn pg-del" data-cid="' + escapeHtml(k.id) + '">삭제</button>') + '</div>').join('') + '</div>' : '')
+          + '<div class="pg-box" style="display:' + (stage === '체결' ? 'block' : 'none') + '"><div style="font-size:12.5px; font-weight:800; color:var(--navy-2);">＋ 체결 계약 입력' + (cs.length ? ' (추가 계약)' : '') + '</div>'
+          + '<label>보험사</label><input type="text" class="pg-co" list="pgCoList" placeholder="예) 메리츠화재"><datalist id="pgCoList">' + COS.map(x => '<option value="' + x + '">').join('') + '</datalist>'
+          + '<label>상품명</label><input type="text" class="pg-pr" maxlength="40" placeholder="예) 간편 건강보험">'
+          + '<div class="pg-row2"><div><label>월보험료 (원)</label><input type="text" inputmode="numeric" class="pg-amt" placeholder="예) 85000"></div><div><label>체결일</label><input type="date" class="pg-d" value="' + today() + '"></div></div>'
+          + '<div style="font-size:11px; color:#888; margin-top:6px;">저장하면 지사장에게 체결 알림이 갑니다. 계약이 여러 건이면 저장 후 다시 열어 추가하세요.</div></div>'
+          + '<div class="pg-msg"></div><div class="pg-acts"><button type="button" class="pg-close">닫기</button><button type="button" class="pg-save">저장</button></div></div>';
+        el.querySelectorAll('.pg-stages button').forEach(b => b.onclick = () => { p.memo = el.querySelector('.pg-memo').value; stage = b.dataset.s; draw(); });
+        el.querySelector('.pg-close').onclick = () => el.remove();
+        el.querySelectorAll('.pg-del').forEach(b => b.onclick = () => { if(confirm('이 체결 내역을 삭제할까요?')) send({ delContract: b.dataset.cid }); });
+        el.querySelector('.pg-save').onclick = () => {
+          const co = el.querySelector('.pg-co').value.trim(), pr = el.querySelector('.pg-pr').value.trim(), amt = el.querySelector('.pg-amt').value.replace(/[^0-9]/g, ''), d = el.querySelector('.pg-d').value;
+          const any = stage === '체결' && (co || pr || amt);
+          if(stage === '체결' && !any && !live(p).length){ msg('체결 계약 내용을 입력해 주세요.'); return; }
+          send(any ? { contract: { co, pr, amt, d } } : {});
+        };
+      };
+      const msg = t => { const m = el.querySelector('.pg-msg'); if(m) m.textContent = t || ''; };
+      const send = async extra => {
+        const cred = window.FC_CRED_GET();
+        const sv = el.querySelector('.pg-save'); sv.disabled = true; sv.textContent = '저장 중…'; msg('');
+        let r = null;
+        try{ r = await (await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ action:'fcprogress', sabun: cred.sabun, ver: cred.ver, id: c.id, stage, memo: el.querySelector('.pg-memo').value }, extra)) })).json(); }catch(e){}
+        sv.disabled = false; sv.textContent = '저장';
+        if(!r || !r.ok){ msg((r && r.error) || '네트워크 오류가 발생했습니다.'); return; }
+        c.progress = r.progress;
+        if(extra.delContract){ Object.assign(p, JSON.parse(JSON.stringify(r.progress))); draw(); window.FC_REDRAW && window.FC_REDRAW(); return; }
+        el.remove(); window.FC_REDRAW && window.FC_REDRAW();
+      };
+      draw(); document.body.appendChild(el);
+    }
+    document.addEventListener('click', e => {
+      const b = e.target.closest && e.target.closest('.fcPg'); if(!b) return;
+      const list = window.FC_LIST_GET ? window.FC_LIST_GET() : [];
+      const c = list.find(x => x.ev && x.id === Number(b.dataset.id)); if(c) openPg(c);
+    });
   })();
 </script>
 <script src="/assets/datefix.js"></script>
