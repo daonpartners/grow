@@ -1259,6 +1259,14 @@ tr.sel td{background:var(--accent-soft)}
   </main>
 </div>
 
+<script>
+/* 비밀번호 규칙: 8자 이상 + 숫자·영문·특수문자 포함, 흔한 비밀번호 금지 (보안 강화 2026-10-27) */
+window.pwBad=function(p){p=String(p||"");
+ if(p.length<8) return "비밀번호는 8자 이상입니다.";
+ if(!/[0-9]/.test(p)||!/[A-Za-z]/.test(p)||!/[^A-Za-z0-9]/.test(p)) return "비밀번호는 숫자·영문·특수문자(예: ! @ # $ % *)를 모두 넣어 주세요.";
+ const low=p.toLowerCase(); if(["password1!","qwer1234!","abcd1234!","a1234567!","1q2w3e4r!","p@ssw0rd","qwerty1!"].indexOf(low)>=0||/(.)\1{3,}/.test(p)) return "너무 쉬운 비밀번호입니다. 다른 비밀번호를 정해 주세요.";
+ return "";};
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -2297,7 +2305,7 @@ $("#f-signup").addEventListener("submit",e=>{e.preventDefault();
   if(!/^\S+@\S+\.\S+$/.test(em)) return m.textContent="이메일 형식을 확인하세요.";
   if(!$("#su-name").value.trim()) return m.textContent="이름을 입력하세요.";
   if(!ME.certified) return m.textContent="휴대폰 인증을 해 주세요.";
-  if($("#su-pw").value.length<8) return m.textContent="비밀번호는 8자 이상입니다.";
+  if(window.pwBad($("#su-pw").value)) return m.textContent=window.pwBad($("#su-pw").value);
   if(!$("#su-a1").checked||!$("#su-a2").checked) return m.textContent="필수 동의 2개를 체크해 주세요.";
   Object.assign(ME,{fresh:true,demo:false,email:em,name:$("#su-name").value.trim(),phone:$("#su-phone").value,company:$("#su-company").value.trim(),branch:$("#su-branch").value.trim(),plan:null,expires:null,payments:[],pb:null});
   e.target.reset(); m.textContent="";
@@ -2328,7 +2336,7 @@ $("#mp-photo").onchange=e=>{const f=e.target.files[0]; if(!f) return; const rd=n
 $("#f-me").addEventListener("submit",e=>{e.preventDefault(); Object.assign(ME,{name:$("#mp-name").value.trim()||ME.name,phone:phoneOk($("#mp-phone").value)?fmtPhone($("#mp-phone").value):ME.phone,company:$("#mp-company").value.trim(),branch:$("#mp-branch").value.trim()}); renderMe(); $("#mp-msg").textContent="저장했습니다.";});
 $("#f-pw").addEventListener("submit",e=>{e.preventDefault(); const m=$("#pw-msg");
   if(!$("#pw0").value) return m.textContent="현재 비밀번호를 입력하세요.";
-  if($("#pw1").value.length<8) return m.textContent="새 비밀번호는 8자 이상입니다.";
+  if(window.pwBad($("#pw1").value)) return m.textContent="새 "+window.pwBad($("#pw1").value);
   if($("#pw1").value!==$("#pw2").value) return m.textContent="새 비밀번호가 서로 다릅니다.";
   e.target.reset(); m.textContent="변경했습니다 (시범: 실제 저장 없음).";});
 $("#f-qna").addEventListener("submit",e=>{e.preventDefault(); const t=$("#q-title").value.trim(), b=$("#q-body").value.trim();
@@ -2918,7 +2926,7 @@ document.addEventListener("submit",async e=>{ if(!CLOUD.on||!CLOUD.sb) return; c
     $("#lg-pw").value=""; m.textContent=""; if(await cloudLogin(data.user)){ if(PAY.pending){ completePay(); return; } enterApp("home"); } return; }
   if(f.id==="f-signup"){ e.preventDefault(); e.stopImmediatePropagation(); const m=$("#su-msg"), em=$("#su-email").value.trim(), pw=$("#su-pw").value, name=$("#su-name").value.trim(), ph=$("#su-phone").value;
     if(!/^\S+@\S+\.\S+$/.test(em)) return m.textContent="이메일 형식을 확인하세요."; if(!name) return m.textContent="이름을 입력하세요.";
-    if(!phoneOk(ph)) return m.textContent="휴대폰번호 형식을 확인하세요."; if(pw.length<8) return m.textContent="비밀번호는 8자 이상입니다.";
+    if(!phoneOk(ph)) return m.textContent="휴대폰번호 형식을 확인하세요."; if(window.pwBad(pw)) return m.textContent=window.pwBad(pw);
     if(!$("#su-a1").checked||!$("#su-a2").checked) return m.textContent="필수 동의 2개를 체크해 주세요.";
     m.textContent="가입 중…";
     const {data,error}=await CLOUD.sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+location.pathname,data:{name,phone:fmtPhone(ph),company:$("#su-company").value.trim(),branch:$("#su-branch").value.trim(),marketing:$("#su-a3").checked}}});
@@ -2926,7 +2934,7 @@ document.addEventListener("submit",async e=>{ if(!CLOUD.on||!CLOUD.sb) return; c
     f.reset(); if(data.session){ m.textContent=""; await cloudLogin(data.user); enterApp("home"); }
     else { m.textContent="가입 확인 메일을 보냈습니다. 메일의 링크를 누르면 바로 시작할 수 있습니다."; } return; }
   if(f.id==="f-pw"){ e.preventDefault(); e.stopImmediatePropagation(); const m=$("#pw-msg");
-    if($("#pw1").value.length<8) return m.textContent="새 비밀번호는 8자 이상입니다."; if($("#pw1").value!==$("#pw2").value) return m.textContent="새 비밀번호가 서로 다릅니다.";
+    if(window.pwBad($("#pw1").value)) return m.textContent="새 "+window.pwBad($("#pw1").value); if($("#pw1").value!==$("#pw2").value) return m.textContent="새 비밀번호가 서로 다릅니다.";
     const {error}=await CLOUD.sb.auth.updateUser({password:$("#pw1").value}); m.textContent=error?"변경하지 못했습니다: "+error.message:"비밀번호를 변경했습니다."; if(!error) f.reset(); return; }
 },true);
 document.addEventListener("click",async e=>{ if(!CLOUD.on||!CLOUD.sb) return;
