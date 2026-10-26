@@ -1424,7 +1424,7 @@ async function parseCoverage(file){
   if((m=text.match(/월\s*보험료(?:\s*합계)?\s*([\d,]+)\s*원/))) c.premium=+m[1].replace(/,/g,'');
   if(!c.premium&&(m=text.match(/표준형\n(\d{1,2})\s+([\d,]{5,})\n/))){ c.contracts=+m[1]; c.premium=+m[2].replace(/,/g,''); }
   if((m=text.match(/(\d{4})[.-](\d{2})[.-](\d{2})/))) c.date=m[1]+'.'+m[2]+'.'+m[3];
-  c.source=/메리츠/.test(text)?'메리츠 간편보장분석':(/신정원|신용정보원/.test(text)?'신용정보원 조회 보장분석':'보장분석 자료');
+  c.source=/간편보장분석/.test(text)||(/메리츠/.test(text)&&/충분|부족/.test(text))?'메리츠 간편보장분석':(/전체\s*보장현황/.test(text)?'전체 보장현황(기준담보 37개)':(/신정원|신용정보원/.test(text)?'신용정보원 조회 보장분석':'보장분석 자료'));
 
   // 1) 진단표(권장·가입·과부족) 행
   var seen={};
@@ -1440,6 +1440,8 @@ async function parseCoverage(file){
     c.lines.push({name:mm[2],amt:v});
   });
   try{ c.ctrs=covContracts(pitems); }catch(e){ console.error(e); c.ctrs=[]; }
+  // 1-2) 판정 칸이 비어 있는 '전체 보장현황(기준담보 37개)' 표: 담보명 + 첫 금액(가입 합계)
+  if(!c.rows.length) covSummaryRows(all,c);
   if(!c.rows.length){
     covGenericRows(all,c);
     if(c.rows.length) c.warns.push('권장금액·과부족 표를 찾지 못해 담보와 금액만 읽었습니다. 아래 표에서 확인해 주세요.');
@@ -1449,6 +1451,47 @@ async function parseCoverage(file){
   covNormalize(c);
   covInitSel(c);
   return c;
+}
+/* 전체 보장현황(기준담보 37개) 형식: 1~2쪽 '담보명 가입합계 ...' 줄을 정해진 분류로 읽음 (권장금액·판정 없음) */
+var COV_STD=[
+  ['상해사망','death','상해사망'],['질병사망','death','질병사망'],
+  ['상해80%미만후유장해','disab','상해후유장해(80% 미만)'],['질병80%미만후유장해','disab','질병후유장해(80% 미만)'],
+  ['장기요양간병비','ltc','장기요양 간병비'],['경증치매진단','dementia_mild','경증치매 진단비'],
+  ['간병인/간호간병상해일당','care','상해 간병인·간호간병 일당'],['간병인/간호간병질병일당','care','질병 간병인·간호간병 일당'],
+  ['일반암','cancer','일반암 진단비'],['유사암','cancer_sim','유사암 진단비'],['고액암','cancer_high','고액암 진단비'],
+  ['고액(표적)항암치료비','cancer_named','고액(표적)항암치료비'],
+  ['뇌혈관질환','brain_all','뇌혈관질환 진단비'],['뇌졸중','stroke','뇌졸중 진단비'],['뇌출혈','brain_hem','뇌출혈 진단비'],
+  ['허혈성심장질환','ihd','허혈성심장질환 진단비'],['급성심근경색증','ami','급성심근경색 진단비'],
+  ['상해입원의료비','silson','실손 상해 입원의료비'],['상해통원의료비','silson','실손 상해 통원의료비'],['질병입원의료비','silson','실손 질병 입원의료비'],['질병통원의료비','silson','실손 질병 통원의료비'],['3대비급여실손','silson','실손 3대 비급여'],
+  ['상해수술비','surg_inj','상해수술비'],['질병수술비','surg_dis','질병수술비'],['암수술비','cancer_surg','암수술비'],
+  ['뇌혈관질환수술비','cv_surg','뇌혈관질환 수술비'],['허혈성심장질환수술비','cv_surg','허혈성심장질환 수술비'],
+  ['상해입원일당','hosp','상해 입원일당'],['질병입원일당','hosp','질병 입원일당'],
+  ['벌금(대인/스쿨존/대물)','driver','운전자 벌금 (대인·스쿨존·대물)'],['교통사고처리지원금','driver','교통사고처리지원금'],['변호사선임비용','driver','변호사선임비용'],['자동차사고부상','driver','자동차사고 부상치료비'],
+  ['골절진단비','fracture','골절 진단비'],['보철치료비','dental','치아 보철치료비'],['가족/일상/자녀배상','liab','일상생활배상책임 (가족·일상·자녀)'],['화재벌금','liab','화재벌금']
+];
+function covSummaryRows(all,c){
+  if(!/전체\s*보장현황/.test(all.join('\n'))) return;
+  var byKey={}; COV_STD.forEach(function(x){ byKey[x[0].replace(/\s+/g,'')]=x; });
+  var keys=Object.keys(byKey).sort(function(a,b){return b.length-a.length;});
+  var seen={};
+  all.forEach(function(l){
+    var flat=l.replace(/\s+/g,''), hit=null;
+    for(var i=0;i<keys.length;i++){ if(flat.indexOf(keys[i])===0){ hit=keys[i]; break; } }
+    if(!hit||seen[hit]) return;
+    // 이름 뒤 첫 금액(가입 합계): '1억 5,200만' 처럼 두 덩어리일 수 있음
+    var rest=l, k=0, name=byKey[hit][0];
+    for(var j=0;j<rest.length&&k<name.length;j++){ if(rest[j]!==' '){ if(rest[j]===name[k]) k++; else return; } }
+    rest=rest.slice(j).trim(); if(!rest) return;
+    var t=rest.split(/\s+/), amt=null;
+    if(t[0]==='-') amt=0;
+    else if(/억$/.test(t[0])&&t[1]&&/^\d[\d,]*(만|천)?$/.test(t[1])) amt=compactWon(t[0]+t[1]);
+    else amt=compactWon(t[0]);
+    if(amt==null) return;
+    seen[hit]=1;
+    var x=byKey[hit];
+    c.rows.push({on:true,name:x[2],amt:amt,rec:null,status:amt>0?'':'미가입',cat:x[1],keep:true});
+  });
+  if(c.rows.length) c.std37=true;
 }
 function covGenericRows(all,c){
   var unit=0,m,text=all.join('\n'); if((m=text.match(/단위\s*[:：]?\s*(만원|천원|원)/))) unit={'만원':1e4,'천원':1e3,'원':1}[m[1]];
@@ -1489,7 +1532,7 @@ function circSurg(c){
 function covNormalize(c){
   var out=[], care={};
   c.rows.forEach(function(r){
-    if(r.cat==='cancer_named'){ r.on=false; r.hidden=true; out.push(r); return; }
+    if(r.cat==='cancer_named'&&!r.keep){ r.on=false; r.hidden=true; out.push(r); return; }
     if(r.cat==='care'){
       var k=/상해/.test(r.name)?'상해':'질병', type=/지원/.test(r.name)?'지원':'사용';
       (care[k]=care[k]||{})[type]=r; return;
@@ -1638,7 +1681,7 @@ var COV_TRENDS=[
    why:'암은 진단 뒤 다른 장기로 전이되는 경우가 있습니다. 상품에 따라 전이된 암을 처음 생긴 부위 기준으로만 보는 경우가 있어, 전이암 보장 여부를 약관으로 따로 확인해야 합니다.',
    ask:'암이 다른 곳으로 퍼졌을 때도 진단비를 받을 수 있는지 확인해 보셨나요?'},
   {k:'care',title:'간병인 일당 (사용형·지원형 중 택1)',
-   fn:function(c){ var rs=covRows(c,['care']).filter(function(r){return r.amt>0;}); return {has:rs.length>0,amt:0,extra:rs.map(function(r){return r.name.replace(/\s*\(.*$/,'')+' '+won(r.amt);}).join(' · ')}; },
+   fn:function(c){ var rs=covRows(c,['care']).filter(function(r){return r.amt>0;}); return {has:rs.length>0,amt:rs.reduce(function(a,r){return Math.max(a,r.amt);},0),extra:rs.map(function(r){return r.name.replace(/\s*\(.*$/,'')+' '+won(r.amt);}).join(' · ')}; },
    cover:'입원 중 간병인을 직접 쓰고 비용을 받는 사용형, 보험사가 간병인을 보내주는 지원형 중 하나로 가입합니다.',
    why:'개인 간병인 비용은 건강보험이 적용되지 않아, 입원이 길어질수록 본인 부담이 커집니다.',
    ask:'입원하시면 간병은 누가 하나요? 간병인 하루 비용을 알고 계신가요?'},
@@ -1654,7 +1697,7 @@ var COV_TRENDS=[
    why:'장기요양 재가급여도 본인부담금(일반 15%)이 있고, 한도를 넘는 이용분과 식비 등은 전액 본인 부담입니다. 집에서 돌봄을 받는 기간이 길어질수록 비용이 쌓입니다.',
    ask:'요양등급을 받아 집에서 방문요양을 받게 되면, 매달 드는 본인부담금을 어떻게 준비하실 계획인가요?'},
   {k:'surgery',title:'수술비 (질병·상해 1~5종·N대 수술)',
-   fn:function(c){ var rs=covRows(c,['surg_dis','surg_n','surg_inj','surg_injn','cancer_surg','cv_surg']).filter(function(r){return r.amt>0;}); return {has:rs.length>0,amt:0,extra:rs.map(function(r){return r.name+' '+won(r.amt);}).join(' · ')}; },
+   fn:function(c){ var rs=covRows(c,['surg_dis','surg_n','surg_inj','surg_injn','cancer_surg','cv_surg']).filter(function(r){return r.amt>0;}); return {has:rs.length>0,amt:rs.reduce(function(a,r){return Math.max(a,r.amt);},0),extra:rs.map(function(r){return r.name+' '+won(r.amt);}).join(' · ')}; },
    cover:'질병이나 상해로 수술할 때마다 수술 종류(1~5종)나 정해진 수술 목록(N대 수술)에 따라 정액으로 지급하는 담보입니다.',
    why:'실손의료비는 실제 쓴 치료비만 보상하지만, 수술비는 정해진 금액을 받아 수술 뒤 회복 기간의 생활비·소득 공백에 쓸 수 있습니다. 용종 제거처럼 자주 하는 수술은 낮은 종으로 분류되는 경우가 많아 금액을 확인합니다.',
    ask:'수술을 받으면 실손 말고 따로 받는 금액이 얼마인지 알고 계신가요?'},
@@ -1728,7 +1771,7 @@ function covSummaryBlocks(c){
           '<div style="padding:'+fz(6)+'px 6px;text-align:center">'+(r.status?'<span style="display:inline-block;font-size:'+fz(11.5)+'px;font-weight:800;padding:2px 8px;border-radius:5px;color:#fff;background:'+ST_COL[r.status]+'">'+r.status+'</span>':'')+'</div></div>';
       }).join('')+'</div></div>');
   });
-  out.push('<div class="small">권장금액과 충분·부족 판정은 원 자료('+esc(c.source||'보장분석')+')의 기준을 그대로 옮긴 것입니다.</div>');
+  out.push('<div class="small">'+(c.std37?'가입금액은 원 자료('+esc(c.source||'보장분석')+')의 담보별 합계이며, 원 자료에 권장금액이 없어 충분·부족 판정은 표시하지 않았습니다.':'권장금액과 충분·부족 판정은 원 자료('+esc(c.source||'보장분석')+')의 기준을 그대로 옮긴 것입니다.')+'</div>');
   return out;
 }
 function covScenarioBlocks(c){
