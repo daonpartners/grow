@@ -1502,7 +1502,21 @@ body.growon{ background:var(--g-navy); }
         </div>
 
         <div id="fcGate">
-          <div id="fcResetNotice" style="display:none; margin-bottom:10px; padding:11px 13px; border:1px solid #F2C94C; background:#FFF8E1; border-radius:10px; font-size:13px; line-height:1.65; color:#5C4300;">🔒 <b>보안 강화 안내 (10/27)</b><br>기존 설계사 비밀번호가 <b>초기화</b>되었습니다. 사번을 넣고 <b>들어가기</b>를 누르면 새 비밀번호를 만들 수 있습니다.<br>새 비밀번호는 <b>8자 이상, 숫자·영소문자·특수문자</b>(예: ! @ # $ % *)를 모두 넣어야 합니다. 사번과 같은 비밀번호는 쓰지 마세요.<br>배정 고객 주민번호는 지사장이 DB관리를 한 번 열면 다시 보입니다.</div>
+          <div id="fcResetNotice" style="display:none; margin-bottom:12px; padding:12px 14px; border:1.5px solid #F2C94C; background:#FFF8E1; border-radius:12px;">
+            <div style="font-size:15px; font-weight:900; color:#5C4300;">🔒 비밀번호 새로 만들기</div>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:8px; font-size:13px; font-weight:800; color:var(--navy-2);">
+              <span style="background:#fff; border:1px solid #E8D9A8; border-radius:999px; padding:5px 11px;">① 사번 입력</span><span style="color:#B08A2E;">→</span>
+              <span style="background:#fff; border:1px solid #E8D9A8; border-radius:999px; padding:5px 11px;">② 들어가기</span><span style="color:#B08A2E;">→</span>
+              <span style="background:#fff; border:1px solid #E8D9A8; border-radius:999px; padding:5px 11px;">③ 새 비밀번호 2번 입력</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; font-size:12px; font-weight:800;">
+              <span style="background:#E8F1FF; color:#1a56c4; border-radius:6px; padding:3px 8px;">8자 이상</span>
+              <span style="background:#E8F1FF; color:#1a56c4; border-radius:6px; padding:3px 8px;">숫자</span>
+              <span style="background:#E8F1FF; color:#1a56c4; border-radius:6px; padding:3px 8px;">영소문자</span>
+              <span style="background:#E8F1FF; color:#1a56c4; border-radius:6px; padding:3px 8px;">특수문자 ! @ # $ % *</span>
+              <span style="background:#FDECEC; color:#B02A20; border-radius:6px; padding:3px 8px;">비번 = 사번 ✕</span>
+            </div>
+          </div>
           <div class="qna-notice">👤 <b>미래에셋 사번</b>과 본인 비밀번호로 들어갑니다. 본인에게 배정된 고객만 보이며, 같은 비밀번호로 고객 주민등록번호도 열립니다.<br>처음이라면 사번만 넣고 [들어가기]를 누르세요. 비밀번호를 정하는 칸이 나옵니다. (사번은 소속 지사장이 먼저 등록해야 합니다)</div>
           <div class="qna-form open" style="max-width:360px;">
             <input type="text" id="fcSabun" inputmode="numeric" placeholder="미래에셋 사번 (숫자)" autocomplete="username">
