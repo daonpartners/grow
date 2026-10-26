@@ -1753,7 +1753,8 @@ function covSummaryBlocks(c){
   var out=[], cnt={'충분':0,'부족':0,'미가입':0};
   c.rows.forEach(function(r){ if(r.on&&cnt[r.status]!=null) cnt[r.status]++; });
   var tiles=[['계약',(c.contracts!=null?c.contracts+'건':'-')],['월 보험료',c.premium?c.premium.toLocaleString('ko-KR')+'원':'-'],['충분',cnt['충분']+'개'],['부족',cnt['부족']+'개'],['미가입',cnt['미가입']+'개']];
-  out.push('<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">'+tiles.map(function(t,i){var col=i>=2?ST_COL[t[0]]:'var(--navy)';return '<div style="background:#fff;border:1px solid #E4DCD2;border-radius:10px;padding:8px 12px"><div style="font-size:'+fz(12)+'px;color:var(--muted)">'+t[0]+'</div><div style="font-size:'+(String(t[1]).length>8?16:20)+'px;font-weight:800;color:'+col+';margin-top:2px;white-space:nowrap;letter-spacing:-.02em">'+t[1]+'</div></div>';}).join('')+'</div>');
+  if(c.std37) tiles=tiles.filter(function(t){return t[0]!=='충분'&&t[0]!=='부족';});
+  out.push('<div style="display:grid;grid-template-columns:repeat('+tiles.length+',minmax(0,1fr));gap:10px">'+tiles.map(function(t,i){var col=ST_COL[t[0]]||'var(--navy)';return '<div style="background:#fff;border:1px solid #E4DCD2;border-radius:10px;padding:8px 12px"><div style="font-size:'+fz(12)+'px;color:var(--muted)">'+t[0]+'</div><div style="font-size:'+(String(t[1]).length>8?16:20)+'px;font-weight:800;color:'+col+';margin-top:2px;white-space:nowrap;letter-spacing:-.02em">'+t[1]+'</div></div>';}).join('')+'</div>');
   // 엑셀처럼: 구분마다 표 하나, 담보를 한 줄씩 아래로
   var SC='40px minmax(0,1fr) '+cw(112)+'px '+cw(104)+'px '+cw(104)+'px '+cw(66)+'px';
   var cell='padding:'+fz(6)+'px 10px;border-right:1px solid #E3E6EC';
