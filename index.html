@@ -1643,9 +1643,9 @@ body.growon{ background:var(--g-navy); }
             <div class="qna-form" id="eventNewForm">
               <div class="qna-form-row">
                 <select id="eventNewCategory">
+                  <option value="아파트행사">아파트행사</option>
+                  <option value="펫행사">펫행사</option>
                   <option value="산모교실">산모교실</option>
-                  <option value="펫페어">펫페어</option>
-                  <option value="입주박람회">입주박람회</option>
                   <option value="기타행사">기타행사</option>
                 </select>
                 <input type="text" id="eventNewAuthor" placeholder="등록자명">
@@ -1660,9 +1660,9 @@ body.growon{ background:var(--g-navy); }
 
             <div class="filter-row" id="eventFilterRow" style="margin:14px 0;">
               <button class="filter-pill active" data-ecat="전체">전체</button>
+              <button class="filter-pill" data-ecat="아파트행사">아파트행사</button>
+              <button class="filter-pill" data-ecat="펫행사">펫행사</button>
               <button class="filter-pill" data-ecat="산모교실">산모교실</button>
-              <button class="filter-pill" data-ecat="펫페어">펫페어</button>
-              <button class="filter-pill" data-ecat="입주박람회">입주박람회</button>
               <button class="filter-pill" data-ecat="기타행사">기타행사</button>
             </div>
             <div id="eventList"></div>
@@ -10748,14 +10748,16 @@ const limitCompareData = {};
   function renderEvents(){
     const box = document.getElementById('eventList');
     if(!box) return;
-    const list = eventCat === '전체' ? eventPosts : eventPosts.filter(p => p.category === eventCat);
+    /* 예전 분류명은 새 이름으로 보여줌: 입주박람회→아파트행사, 펫페어→펫행사 */
+    const ECAT = c => ({ '입주박람회': '아파트행사', '펫페어': '펫행사' })[c] || c || '기타행사';
+    const list = eventCat === '전체' ? eventPosts : eventPosts.filter(p => ECAT(p.category) === eventCat);
     if(!list.length){
       box.innerHTML = '<div class="cr-empty" style="padding:28px; text-align:center;">등록된 행사가 없습니다.</div>';
       return;
     }
     box.innerHTML = list.map(p => `
       <div class="evt-card">
-        <span class="evt-tag">${escapeHtml(p.category)}</span>
+        <span class="evt-tag">${escapeHtml(ECAT(p.category))}</span>
         <div class="evt-title">${escapeHtml(p.title)}</div>
         <div class="evt-date">${escapeHtml(p.author || '')} · ${escapeHtml(p.date || '')}</div>
         ${p.content ? `<div class="evt-content">${escapeHtml(p.content)}</div>` : ''}
