@@ -3373,7 +3373,7 @@ body.growon{ background:var(--g-navy); }
         payload.files = readFiles;
       }
       const res = await fetch(NOTICE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-      if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
+      if(!res.ok) throw new Error(res.status === 500 ? '링크의 기사를 하나도 가져오지 못했거나 서버 오류입니다 (500)' : '서버 응답 오류 (' + res.status + ')');
       /* 서버 재조회를 기다리지 않고 화면에 바로 반영 (GitHub 반영은 최대 5분 정도 걸릴 수 있음) */
       const now = new Date();
       const y = now.toISOString().slice(0,10);
@@ -10564,8 +10564,9 @@ const limitCompareData = {};
       });
       if(!res.ok) throw new Error('서버 응답 오류 (' + res.status + ')');
       const data = await res.json().catch(() => ({}));
-      msg.textContent = '✅ 발행 완료! grow.ai.kr 데일리뉴스에 최대 5분 정도 후 반영됩니다.'; msg.style.color = 'green';
-      ta.value = '';
+      const fl = Array.isArray(data.failed) ? data.failed : [];
+      msg.textContent = '✅ 발행 완료! (뉴스 ' + (data.count || urls.length - fl.length) + '건) grow.ai.kr 데일리뉴스에 최대 5분 정도 후 반영됩니다.' + (fl.length ? ' ⚠ 가져오지 못해 빠진 링크 ' + fl.length + '건: ' + fl.map(u => /naver\.com/.test(u) ? '네이버 기사' : u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 30)).join(', ') + ' (네이버 링크는 막히는 경우가 많아 다음·언론사 링크를 권장합니다)' : ''); msg.style.color = 'green';
+      ta.value = fl.join('\n');
     }catch(err){
       msg.textContent = '실패했습니다: ' + (err.message || '네트워크 오류') + ' · 잠시 후 다시 시도해주세요.';
       msg.style.color = 'var(--orange-deep)';
