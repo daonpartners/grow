@@ -1,126 +1,119 @@
 {
-  "date": "2026-09-28",
-  "dateLabel": "2026.09.28(월)",
+  "date": "2026-10-27",
+  "dateLabel": "2026.10.27(화)",
   "weather": [
     {
       "city": "서울",
-      "min": 17,
-      "max": 24,
-      "code": 3
+      "min": 5,
+      "max": 15,
+      "code": 1
     },
     {
       "city": "부산",
-      "min": 20,
-      "max": 26,
-      "code": 3
+      "min": 9,
+      "max": 19,
+      "code": 0
     },
     {
       "city": "대구",
-      "min": 19,
-      "max": 25,
-      "code": 3
+      "min": 7,
+      "max": 17,
+      "code": 1
     },
     {
       "city": "인천",
-      "min": 16,
-      "max": 22,
-      "code": 3
+      "min": 6,
+      "max": 14,
+      "code": 1
     },
     {
       "city": "광주",
-      "min": 18,
-      "max": 25,
-      "code": 3
+      "min": 9,
+      "max": 17,
+      "code": 1
     },
     {
       "city": "대전",
-      "min": 16,
-      "max": 25,
-      "code": 3
+      "min": 5,
+      "max": 16,
+      "code": 1
     },
     {
       "city": "강릉",
-      "min": 17,
-      "max": 25,
-      "code": 3
+      "min": 7,
+      "max": 17,
+      "code": 1
     },
     {
       "city": "제주",
-      "min": 22,
-      "max": 23,
-      "code": 55
+      "min": 14,
+      "max": 19,
+      "code": 2
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "7,001.71",
-      "diff": "-79.21",
-      "dir": "down"
+      "value": "5,711.73",
+      "diff": "+242.26",
+      "dir": "up"
     },
     {
       "label": "코스닥",
-      "value": "861.13",
-      "diff": "+16.65",
+      "value": "758.93",
+      "diff": "+31.72",
       "dir": "up"
     },
     {
       "label": "환율(USD)",
-      "value": "1,357.78",
-      "diff": "-9.58",
-      "dir": "down"
-    },
-    {
-      "label": "국제유가($/배럴)",
-      "value": "93.1",
-      "diff": "+0.7",
+      "value": "1,323.18",
+      "diff": "+1.42",
       "dir": "up"
     },
     {
-      "label": "금(돈)",
-      "value": "697,662",
-      "diff": "-14,714",
+      "label": "국제유가($/배럴)",
+      "value": "100.8",
+      "diff": "-2.5",
       "dir": "down"
+    },
+    {
+      "label": "금(돈)",
+      "value": "643,016",
+      "diff": "+4,324",
+      "dir": "up"
     }
   ],
   "trends": [
-    "오유경 아나운서",
-    "columbus vs inter miami",
-    "오늘날씨"
+    "node.js 취약점",
+    "al 탈락",
+    "특수부대"
   ],
   "news": [
     {
       "cat": "보험",
-      "title": "원화 강세에 다시 주목받는 달러보험",
-      "summary": "원화 강세로 달러보험 판매가 증가하고 있다. 금융당국 경고 이후 판매가 줄었으나 최근 다시 반등세를 보이고 있다.",
-      "url": "https://n.news.naver.com/article/009/0005739953?sid=101",
-      "host": "n.news.naver.com"
+      "title": "설계사 직무 확인 소홀로 배상 판결",
+      "summary": "설계사가 근로자의 직무를 제대로 확인하지 않아 GA가 1억 원 배상 판결을 받았다. 이는 보험 모집 과정에서 판매책임 관리의 중요성을 다시 일깨우는 사례로 주목받고 있다.",
+      "url": "https://www.insjournal.co.kr/news/articleView.html?idxno=33646",
+      "host": "insjournal.co.kr"
     },
     {
-      "cat": "보험",
-      "title": "금융당국, 초대형 GA 종합감독 방안 발표",
-      "summary": "금융당국이 초대형 GA에 대한 종합감독 방안을 발표하며 제재 기준을 보험사 수준으로 상향할 계획이다. GA의 무분별한 겸영을 금지하고, 상호에 '보험대리점' 명시를 의무화할 예정이다.",
-      "url": "https://m.sentv.co.kr/article/view/sentv202609230059",
-      "host": "m.sentv.co.kr"
-    },
-    {
-      "cat": "보험",
-      "title": "보험금 받아도 보장되는 리필보험",
-      "summary": "리필형 보험이 암 및 중증질환 치료비를 일정 기간 후 다시 보장한다. 보험사들이 이러한 상품을 잇따라 출시하고 있다.",
-      "url": "https://v.daum.net/v/20260928003338089?from=newsbot&botref=KN&botevent=q",
+      "cat": "생활",
+      "title": "하루 5000보 미만, 치매 위험 증가",
+      "summary": "하루 5000보 이하 걷는 성인은 신경계 질환 진단율이 81% 높다는 연구 결과가 나왔다. 8000보 이상 걷는 것만으로도 위험이 낮아질 수 있다고 전해진다.",
+      "url": "https://v.daum.net/v/20261026220840201",
       "host": "v.daum.net"
     },
     {
-      "cat": "보험",
-      "title": "치매·간병인 보험 신계약 50% 증가",
-      "summary": "고령화 사회 진입으로 치매·간병인 보험 신계약이 2년 새 50% 증가했다. 보험사들은 치료와 간병, 자산관리 기능을 결합한 상품을 출시하고 있다.",
-      "url": "https://v.daum.net/v/20260928055750316?from=newsbot&botref=KN&botevent=q",
+      "cat": "생활",
+      "title": "혈압약과 두통약 병용 시 콩팥 손상 위험",
+      "summary": "이뇨제를 복용하는 사람이 소염진통제를 추가하면 급성 콩팥 손상 위험이 높아질 수 있다. 혈압약과 이뇨제를 함께 복용할 경우 신장 손상 위험이 증가하므로 주의가 필요하다.",
+      "url": "https://v.daum.net/v/20261027050249727?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "작은 일을 참지 못하면 큰 계획을 그르친다",
-    "author": "공자"
+    "text": "먼저 자신을 다스린 뒤에 남을 다스린다",
+    "author": "대학"
   },
-  "updatedAt": "2026-09-28T10:11:17.000Z"
+  "updatedAt": "2026-10-27T10:49:01.000Z"
 }
