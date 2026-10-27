@@ -1267,6 +1267,7 @@ function covClassify(name){
   if(/암/.test(n)&&/(주요치료|통합치료)/.test(n)) return 'cancer_main';
   if(/중입자|양성자|표적|면역항암|카티|CAR-?T|항암/i.test(n)) return 'cancer_named';
   if(/암/.test(n)&&/치료비/.test(n)) return 'cancer_main';
+  if(/순환계|2대질환/.test(n)&&/진단/.test(n)&&!/치료/.test(n)) return 'heart_other';
   if(/2대질환|순환계/.test(n)||(/(심혈관|뇌혈관|심장|뇌|허혈)/.test(n)&&/(주요치료|치료비|혈전|중재)/.test(n))) return 'circ_tx';
   if(/암/.test(n)&&/수술/.test(n)) return 'cancer_surg';
   if(/(뇌|심장|심혈관|허혈|관상동맥)/.test(n)&&/수술/.test(n)) return 'cv_surg';
@@ -1377,6 +1378,7 @@ function covContracts(pages){
         if((m=r2.match(/(\S+납\/[^\s]+)/))) o.pay=m[1];
         if((m=r3.match(/(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/))){ o.from=o.from||m[1]; o.to=m[2]; }
         if((m=r3.match(/([\d,]+)\s*원/))) o.prem=+m[1].replace(/,/g,'');
+        if(/납입\s*완료/.test(r3)) o.done=true;
         start(o); i+=3; continue;
       }
       if(isM&&/^계약자\/피보험자/.test(t)&&i>=2){
@@ -1385,6 +1387,7 @@ function covContracts(pages){
         var r4=(rows[i+1]||{}).text||'';
         if((m=r4.match(/(\d{4}\.\d{2}\.\d{2})\s*~\s*(\d{4}\.\d{2}\.\d{2})/))){ o2.from=m[1]; o2.to=m[2]; }
         if((m=r4.match(/월\s*보험료\s*([\d,]+)\s*원/))) o2.prem=+m[1].replace(/,/g,'');
+        if(/납입\s*완료/.test(r4+' '+t)) o2.done=true;
         start(o2); i+=1; continue;
       }
       if(!cur) continue;
@@ -1424,7 +1427,7 @@ async function parseCoverage(file){
   if((m=text.match(/월\s*보험료(?:\s*합계)?\s*([\d,]+)\s*원/))) c.premium=+m[1].replace(/,/g,'');
   if(!c.premium&&(m=text.match(/표준형\n(\d{1,2})\s+([\d,]{5,})\n/))){ c.contracts=+m[1]; c.premium=+m[2].replace(/,/g,''); }
   if((m=text.match(/(\d{4})[.-](\d{2})[.-](\d{2})/))) c.date=m[1]+'.'+m[2]+'.'+m[3];
-  c.source=/간편보장분석/.test(text)||(/메리츠/.test(text)&&/충분|부족/.test(text))?'메리츠 간편보장분석':(/전체\s*보장현황/.test(text)?'전체 보장현황(기준담보 37개)':(/신정원|신용정보원/.test(text)?'신용정보원 조회 보장분석':'보장분석 자료'));
+  c.source=/기준담보\s*\/\s*권장금액|전체\s*보장현황/.test(text)&&!/간편보장분석/.test(text)?'전체 보장현황(기준담보 37개)':/간편보장분석/.test(text)||(/메리츠/.test(text)&&/충분|부족/.test(text))?'메리츠 간편보장분석':(/전체\s*보장현황/.test(text)?'전체 보장현황(기준담보 37개)':(/신정원|신용정보원/.test(text)?'신용정보원 조회 보장분석':'보장분석 자료'));
 
   // 1) 진단표(권장·가입·과부족) 행
   var seen={};
@@ -1537,6 +1540,9 @@ function covCareDetail(c){
   });
   return res.length?res:null;
 }
+/* 상위 담보가 하위 질병을 '제외'하고 있으면(예: 허혈성심장질환(급성심근경색증 제외)) 그 금액은 하위 질병에 나오지 않음 */
+var COV_EXCL={ami:/급성심근경색(증)?제외/,stroke:/뇌졸중제외/,brain_hem:/뇌출혈제외/,cancer_high:/고액(치료비)?암제외/};
+function covExcl(c,up,child){ var re=COV_EXCL[child]; if(!re) return 0; return c.lines.filter(function(l){ var n=l.name.replace(/\s+/g,''); return re.test(n)&&covClassify(l.name)===up; }).reduce(function(a,l){return a+l.amt;},0); }
 function covLineSum(c,re,not){ return c.lines.filter(function(l){return re.test(l.name)&&!(not&&not.test(l.name));}).reduce(function(a,l){return a+l.amt;},0); }
 /* 순환계(2대질환) 치료비 안의 수술 보장: 회사·가입금액별 지급표 (만원). 확인된 표만 넣음 */
 var CIRC_SURG={
@@ -1583,7 +1589,25 @@ function covNormalize(c){
     c.rows.push({on:true,cat:'cancer_nonpay',name:'비급여 암주요치료비',amt:nonpay,rec:null,status:nonpay?'':'미가입'});
   }
   if(!main){ var mv=covLineSum(c,/암\s*주요치료|암주요치료|암\s*통합치료/,/비급여/); c.rows.push({on:true,cat:'cancer_main',name:'암 주요치료비',amt:mv,rec:null,status:mv?'':'미가입'}); }
-  if(!c.rows.some(function(r){return r.cat==='circ_tx';})){ var cv=covLineSum(c,/순환계|2대질환|2대질병/); c.rows.push({on:true,cat:'circ_tx',name:'2대질환(순환계) 주요치료비',amt:cv,rec:null,status:cv?'':'미가입'}); }
+  if(!c.rows.some(function(r){return r.cat==='circ_tx';})){ var cv=covLineSum(c,/순환계|(^|[^\d])2대질환|(^|[^\d])2대질병/,/진단|수술비/); c.rows.push({on:true,cat:'circ_tx',name:'2대질환(순환계) 주요치료비',amt:cv,rec:null,status:cv?'':'미가입'}); }
+  /* 1~5종 수술비: 원본 권장표(37개)에 행이 없으므로 계약별 담보의 종별 금액으로 행을 만든다 (해당 종 금액만 지급) */
+  [['surg_n',false,'질병 1~5종 수술비'],['surg_injn',true,'상해 1~5종 수술비']].forEach(function(z){
+    if(c.rows.some(function(r){return r.cat===z[0];})) return;
+    var by={};
+    c.lines.forEach(function(l){
+      var nm=l.name; if(!/수술/.test(nm)||!/종/.test(nm)) return;
+      if(/상해/.test(nm)!==z[1]) return;
+      if(/암수술|뇌|심장|관절|척추|양성종양|대질병|순환계/.test(nm)) return;
+      var t=nm.replace(/[1-5]\s*[~\-]\s*[1-5]\s*종/g,'');
+      var k=(t.match(/[_(（]\s*([1-5])\s*종/)||t.match(/([1-5])\s*종/)||[])[1]; if(!k) return;
+      by[k]=(by[k]||0)+l.amt;
+    });
+    var ks=Object.keys(by).sort();
+    if(!ks.length){ if(!z[1]) c.rows.push({on:true,cat:z[0],name:z[2],amt:0,rec:null,status:'미가입'}); return; }
+    var vals=ks.map(function(k){return by[k];}), mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+    c.rows.push({on:true,cat:z[0],name:z[2],amt:mx,rec:null,status:'',jong:by,amtLbl:mn===mx?won(mx):won(mn).replace(/원$/,'')+'~'+won(mx),showNote:true,
+      note:ks.map(function(k){return k+'종 '+won(by[k]);}).join(' · ')+' (수술 종에 해당하는 금액만 지급)'});
+  });
   /* 뇌혈관질환 진단비: 원본 권장표에 행이 없어도 계약별 담보에서 합산해 항상 표시 (미가입이면 미가입으로) */
   if(!c.rows.some(function(r){return r.cat==='brain_all';})){ var bv=covLineSum(c,/뇌혈관/,/수술|치료비|산정특례|입원|간병/); var bi=c.rows.findIndex(function(r){return COV_GROUP[r.cat]==='뇌·심장 진단';}); var br={on:true,cat:'brain_all',name:'뇌혈관질환 진단비',amt:bv,rec:null,status:bv?'':'미가입'}; if(bi<0) c.rows.push(br); else c.rows.splice(bi,0,br); }
   if(!c.rows.some(function(r){return r.cat==='dem_drug';})){ var dv=covLineSum(c,/(치매|알츠하이머|레켐비).*(약물|치료비)/); c.rows.push({on:true,cat:'dem_drug',name:'치매 표적약물치료비',amt:dv,rec:null,status:dv?'':'미가입'}); }
@@ -1611,12 +1635,12 @@ function covNormalize(c){
   /* 상위 진단비가 하위 질병을 포함: 뇌혈관질환(I60~I69) ⊃ 뇌졸중 ⊃ 뇌출혈(I60~I62), 허혈성심장질환(I20~I25) ⊃ 급성심근경색(I21~I23).
      하위 담보가 0원이어도 상위 담보로 진단비가 나오므로 미가입으로 보지 않고, 진단 시 받는 합계를 보여준다 (표시용, 합산에는 넣지 않음) */
   [['stroke',['brain_all'],'뇌졸중'],['brain_hem',['brain_all','stroke'],'뇌출혈'],['ami',['ihd'],'급성심근경색'],['cancer_high',['cancer'],'고액암']].forEach(function(n){
-    var ups=n[1].map(function(k){ return {k:k,amt:c.rows.filter(function(r){return r.on&&r.cat===k&&!r.viaUp;}).reduce(function(a,r){return a+(r.amt||0);},0)}; }).filter(function(x){return x.amt>0;});
+    var ups=n[1].map(function(k){ return {k:k,amt:Math.max(0,c.rows.filter(function(r){return r.on&&r.cat===k&&!r.viaUp;}).reduce(function(a,r){return a+(r.amt||0);},0)-covExcl(c,k,n[0]))}; }).filter(function(x){return x.amt>0;});
     if(!ups.length) return;
     c.rows.forEach(function(r){
       if(r.cat!==n[0]||r.amt>0) return;
       var tot=ups.reduce(function(a,x){return a+x.amt;},0);
-      r.viaUp=true; r.upAmt=tot; r.status='포함';
+      r.viaUp=true; r.upAmt=tot; r.status=r.rec!=null&&tot<r.rec?'부족':'포함';
       r.note=ups.map(function(x){return COV_NAME[x.k].replace(/ 진단비$/,'')+' '+won(x.amt);}).join(' + ')+' — '+n[2]+'도 보장범위에 포함 (진단 시 합계)';
     });
   });
@@ -1669,6 +1693,7 @@ function covScenario(c,s){
   var r={sit:s.sit,code:s.code,now:0,later:0,basis:[],note:s.note||'',laterLbl:s.laterLbl||''};
   var lineOf=function(rs,pre){ rs.forEach(function(x){ r.basis.push((pre||'')+x.name+' '+won(x.amt)); }); };
   if(s.surgery){
+    r.surg=true;
     var dis=covRows(c,['surg_dis']), sj=surgJong(c), tot=covRows(c,['surg_n']);
     r.now=dis.reduce(function(a,x){return a+x.amt;},0); lineOf(dis);
     if(s.spec){ var sp=covSpec(c,s.spec); if(sp.length) r.spec={n:sp.length,max:Math.max.apply(null,sp.map(function(x){return x.amt;})),names:sp.map(function(x){return x.name;})}; }
@@ -1683,11 +1708,14 @@ function covScenario(c,s){
     r.note='하루 금액 × 10일 기준 · 간병인 지원형(서비스 제공)과 1인실 일당은 제외';
     return r;
   }
-  var nr=covRows(c,s.now); r.now=nr.reduce(function(a,x){return a+x.amt;},0); lineOf(nr);
+  var nr=covRows(c,s.now), ex=0, xk={ami:'ami',bleed:'brain_hem',infarct:'stroke'}[s.k];
+  if(xk) nr=nr.filter(function(x){ if(x.cat===xk) return true; var e=covExcl(c,x.cat,xk); if(!e) return true; if(e>=x.amt){ r.basis.push(x.name+' '+won(x.amt)+' — '+s.sit+' 제외 담보라 해당 없음'); return false; } ex+=e; return true; });
+  r.now=nr.reduce(function(a,x){return a+x.amt;},0)-ex; lineOf(nr);
   if(s.spec){ var sp2=covSpec(c,s.spec); var v=sp2.reduce(function(a,x){return a+x.amt;},0);
     if(s.specNow){ r.now+=v; lineOf(sp2); } else if(sp2.length){ r.spec={n:sp2.length,max:Math.max.apply(null,sp2.map(function(x){return x.amt;})),names:sp2.map(function(x){return x.name;})}; } }
-  if(s.later){ var lr=covRows(c,s.later); r.later+=lr.reduce(function(a,x){return a+x.amt;},0); lineOf(lr,'(추가) '); }
-  if(s.circOnly){ var ci=covSpec(c,/순환계/); if(ci.length){ var cv=ci.reduce(function(a,x){return a+x.amt;},0); r.later+=cv; lineOf(ci,'(추가) '); r.laterLbl='치료·산정특례 시'; } }
+  var organ={aneurysm:'brain',bleed:'brain',infarct:'brain',angina:'heart',ami:'heart'}[s.k];
+  if(s.later){ var lr=covRows(c,s.later).filter(function(x){ if(x.cat!=='cv_surg'||!organ) return true; var br=/뇌/.test(x.name), ht=/심장|허혈|심혈관|관상동맥/.test(x.name); if(br&&ht) return true; return organ==='brain'?!ht:!br; }); r.later+=lr.reduce(function(a,x){return a+x.amt;},0); lineOf(lr,'(추가) '); }
+  if(s.circOnly){ var ci=covSpec(c,/순환계/).filter(function(x){return !/진단/.test(x.name)||/치료/.test(x.name);}); if(ci.length){ var cv=ci.reduce(function(a,x){return a+x.amt;},0); r.later+=cv; lineOf(ci,'(추가) '); r.laterLbl='치료·산정특례 시'; } }
   return r;
 }
 var TREND_SRC={circ:'비즈니스워치, 2025.2.15',dem_drug:'헬스조선 2025.9.9 · 파이낸셜뉴스 2024.12.26',nonpay:'뉴스타파, 2026.4.20 (2년 금액은 1회 비용 × 35회로 계산한 예시)'};
@@ -1816,11 +1844,11 @@ function covSummaryBlocks(c){
       '<div class="ctitle" style="padding:8px 12px;background:#F1F4F9;border-bottom:1px solid #C9D0DC;font-size:'+fz(16)+'px;justify-content:space-between"><span>'+g+'</span><span style="font-size:'+fz(12.5)+'px;font-weight:700;color:var(--ink2)">담보 '+rs.length+'개'+(nb?' · <b style="color:'+ST_COL['부족']+'">부족 '+nb+'</b>':'')+(nm?' · <b style="color:'+ST_COL['미가입']+'">미가입 '+nm+'</b>':'')+'</span></div>'+
       '<div style="display:grid;grid-template-columns:'+SC+';background:#2B3346;color:#fff;font-size:'+fz(12)+'px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 10px">담보</div><div style="padding:6px 10px;text-align:right">가입금액</div><div style="padding:6px 10px;text-align:right">권장금액</div><div style="padding:6px 10px;text-align:right">부족 금액</div><div style="padding:6px 6px;text-align:center">판정</div></div>'+
       '<div class="bl" style="gap:0">'+rs.map(function(r,k){
-        var gap=r.rec!=null&&r.rec>r.amt&&!(r.viaCirc&&!r.amt)?won(r.rec-r.amt):'-';
+        var has=r.viaUp&&!r.amt?r.upAmt:r.amt, gap=r.rec!=null&&r.rec>has&&!(r.viaCirc&&!r.amt)?won(r.rec-has):'-';
         return '<div style="display:grid;grid-template-columns:'+SC+';align-items:center;border-bottom:1px solid #D9DEE7;background:'+(k%2?'#F5F7FB':'#fff')+'">'+
           '<div style="'+cell+';text-align:center;color:#7B8190;font-size:'+fz(12)+'px">'+(k+1)+'</div>'+
           '<div style="'+cell+';font-size:'+fz(13.5)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+(r.viaCirc||r.viaUp||r.showNote?'<div style="font-size:'+fz(11)+'px;font-weight:700;color:#0E7490;margin-top:1px">'+esc(r.note)+'</div>':'')+'</div>'+
-          '<div style="'+cell+';text-align:right;font-size:'+fz(14.5)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':(r.viaCirc||r.viaUp?'#0E7490':'#B4472F'))+'">'+(r.viaUp&&!r.amt?won(r.upAmt):(r.amt>0||!r.viaCirc?won(r.amt):'포함'))+'</div>'+
+          '<div style="'+cell+';text-align:right;font-size:'+fz(14.5)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':(r.viaCirc||r.viaUp?'#0E7490':'#B4472F'))+'">'+(r.viaUp&&!r.amt?won(r.upAmt):(r.amtLbl?esc(r.amtLbl):(r.amt>0||!r.viaCirc?won(r.amt):'포함')))+'</div>'+
           '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;color:var(--ink2);white-space:nowrap">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
           '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;font-weight:700;white-space:nowrap;color:'+(gap==='-'?'#9AA0AA':'#B4472F')+'">'+gap+'</div>'+
           '<div style="padding:'+fz(6)+'px 6px;text-align:center">'+(r.status?'<span style="display:inline-block;font-size:'+fz(11.5)+'px;font-weight:800;padding:2px 8px;border-radius:5px;color:#fff;background:'+ST_COL[r.status]+'">'+r.status+'</span>':'')+'</div></div>';
@@ -1836,7 +1864,7 @@ function covScenarioBlocks(c){
     out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch">'+list.slice(i,i+3).map(function(r){
       return '<div class="card" style="padding:10px 12px;gap:5px;border-top:4px solid '+(r.now?'var(--blue)':'#B4472F')+'">'+
         '<div><div style="font-size:'+fz(15)+'px;font-weight:800;line-height:1.3">'+r.sit+'</div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+r.code+'</div></div>'+
-        '<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+(r.later||r.min?'진단·확정 시':'받을 수 있는 금액')+'</div><div style="font-size:'+fz(22)+'px;font-weight:800;letter-spacing:-.02em;color:'+(r.now?'var(--blue)':'#B4472F')+'">'+(r.now?won(r.now):'없음')+'</div></div>'+
+        '<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+(r.surg?'수술 시 (질병수술비)':(r.later||r.min?'진단·확정 시':'받을 수 있는 금액'))+'</div><div style="font-size:'+fz(22)+'px;font-weight:800;letter-spacing:-.02em;color:'+(r.now?'var(--blue)':'#B4472F')+'">'+(r.now?won(r.now):'없음')+'</div></div>'+
         (r.later?'<div style="background:#EEF2FA;border-radius:7px;padding:4px 8px;font-size:'+fz(12)+'px;line-height:1.4;color:var(--navy)"><b>+ 최대 '+won(r.later)+'</b> · '+esc(r.laterLbl)+'</div>':(r.laterLbl?'<div style="background:#F6F1EA;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;color:var(--ink2)">'+esc(r.laterLbl)+'</div>':''))+
         (r.spec?'<div style="background:#FDF1EC;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;line-height:1.4;color:var(--warm2)"><b>전용 특약 '+r.spec.n+'건</b> · 조건 해당 시만 (건당 최대 '+won(r.spec.max)+')</div>':'')+
         (r.basis.length?'<div style="font-size:'+fz(11)+'px;line-height:1.45;color:var(--ink2)">'+r.basis.slice(0,4).map(esc).join('<br>')+(r.basis.length>4?'<br>외 '+(r.basis.length-4)+'건':'')+'</div>':'')+
@@ -1926,7 +1954,7 @@ function covTilesBlocks(c){
   var none=ck.filter(function(x){return x.amt<=0;}), weak=ck.filter(function(x){return x.amt>0&&x.status==='부족';}), ok=ck.filter(function(x){return x.amt>0&&x.status!=='부족';});
   var out=['<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">'+[['잘 준비됨',ok.length,'#2F7D4A'],['보완 필요',weak.length,'#C27C0E'],['비어 있음',none.length,'#B4472F']].map(function(v){
     return '<div style="background:#fff;border:1px solid #E4DCD2;border-top:4px solid '+v[2]+';border-radius:10px;padding:10px 14px"><div style="font-size:13px;color:var(--muted)">'+v[0]+'</div><div style="font-size:24px;font-weight:800;color:'+v[2]+'">'+v[1]+'개 담보</div></div>';}).join('')+'</div>'];
-  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.name)+' '+won(x.amt)+'</span>';}).join('')+'</div></div>');
+  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.name)+' '+(x.lbl?esc(x.lbl):won(x.amt))+'</span>';}).join('')+'</div></div>');
   return out;
 }
 /* 보완 제안 · 추가 검토: 진단비 → 치료비 → 수술비 → 간병인 → 치매 → 연금 순서의 기본 점검표 하나로 */
@@ -1949,7 +1977,7 @@ var BASIC=[
 ];
 function basicRow(c,it){
   var r={name:'',amt:0,st:'없음',rec:null,core:false};
-  if(it.cat){ var x=covCat(c,it.cat); r.name=it.n||x.name; r.amt=x.amt; r.rec=x.rec; r.st=x.amt>0?(x.status==='부족'?'부족':'있음'):'없음'; r.cat=it.cat; }
+  if(it.cat){ var x=covCat(c,it.cat); r.name=it.n||x.name; r.amt=x.amt; r.rec=x.rec; r.lbl=x.lbl; r.st=x.amt>0?(x.status==='부족'?'부족':'있음'):'없음'; r.cat=it.cat; }
   else { var t=COV_TRENDS.filter(function(k){return k.k===it.tr;})[0]; if(!t) return null; if(c.trd&&c.trd[t.k]===false) return null;
     var v=covTrend(c,t); r.name=it.n||t.title; r.amt=v.amt||0; r.st=v.has?'있음':(t.noData?'확인 필요':'없음'); r.core=!!t.core; r.cat=t.cat||''; r.extra=v.extra; r.src=TREND_SRC[t.k]; r.ask=it.k||''; }
   return r;
@@ -1976,7 +2004,7 @@ function covAdviseBlocks(c,o){
         var gap=r.st==='부족'&&r.rec>r.amt?'<div style="font-size:11.5px;color:#C27C0E;font-weight:700">권장보다 '+won(r.rec-r.amt)+' 부족</div>':'';
         return '<div style="display:grid;grid-template-columns:'+C+';align-items:center;border-bottom:1px solid #D9DEE7;background:'+(r.st==='있음'?(k%2?'#F5F7FB':'#fff'):'#FFF8F5')+'">'+
           '<div style="padding:6px 10px;border-right:1px solid #E3E6EC"><div style="font-size:'+fz(13.5)+'px;font-weight:800;line-height:1.3">'+esc(r.name)+'</div>'+sig+'</div>'+
-          '<div style="padding:6px 10px;border-right:1px solid #E3E6EC;text-align:right"><div style="font-size:'+fz(14)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':'#B4472F')+'">'+(r.amt>0?won(r.amt):(r.st==='확인 필요'?'-':'없음'))+'</div>'+gap+'</div>'+
+          '<div style="padding:6px 10px;border-right:1px solid #E3E6EC;text-align:right"><div style="font-size:'+fz(14)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':'#B4472F')+'">'+(r.amt>0?(r.lbl?esc(r.lbl):won(r.amt)):(r.st==='확인 필요'?'-':'없음'))+'</div>'+gap+'</div>'+
           '<div style="padding:6px 4px;border-right:1px solid #E3E6EC;text-align:center"><span style="display:inline-block;font-size:11.5px;font-weight:800;padding:2px 7px;border-radius:5px;color:#fff;background:'+BST[r.st]+'">'+r.st+'</span></div>'+
           '<div style="padding:6px 10px;font-size:'+fz(12.5)+'px;line-height:1.45;color:var(--ink2)">'+esc(r.d)+(r.ask?'<div style="margin-top:3px;font-weight:700;color:#8E3420">▶ '+esc(r.ask)+'</div>':'')+'</div></div>';
       }).join('')+'</div></div>');
@@ -2101,7 +2129,7 @@ function covCat(cov,cat){
   var rec=rs.reduce(function(s,r){return s+(r.rec||0);},0)||null;
   var st=rs.some(function(r){return r.status==='부족';})?'부족':(amt>0?'충분':'미가입');
   if(amt>0&&rs.every(function(r){return !r.status;})) st='있음';
-  return {cat:cat,name:COV_NAME[cat],amt:amt,rec:rec,status:st,found:rs.length>0};
+  return {cat:cat,name:COV_NAME[cat],amt:amt,rec:rec,status:st,found:rs.length>0,lbl:rs.length===1?rs[0].amtLbl:''};
 }
 function areaCheck(cov,a){
   var k=areaKey(a), m=AREA_COV[k]; if(!m) return null;
@@ -2114,7 +2142,7 @@ function areaCheck(cov,a){
 }
 var VERDICT_COL={'잘 준비됨':'#2F7D4A','보완 필요':'#C27C0E','비어 있음':'#B4472F'};
 function vBadge(v){ return '<span style="display:inline-block;font-size:12.5px;font-weight:800;padding:3px 10px;border-radius:14px;color:#fff;background:'+VERDICT_COL[v]+';white-space:nowrap">'+v+'</span>'; }
-function stTxt(x){ return x.amt>0?won(x.amt)+(x.status==='부족'?' (부족)':''):'없음'; }
+function stTxt(x){ return x.amt>0?(x.lbl||won(x.amt))+(x.status==='부족'?' (부족)':''):'없음'; }
 
 function dcChecks(c){ return c.areas.filter(function(a){return a.on;}).map(function(a){return areaCheck(c.cov,a);}).filter(Boolean); }
 
@@ -2281,22 +2309,22 @@ function ctrGroups(cov){
 }
 function ctrSummaryBlocks(cov){
   var L=cov.ctrs||[], out=[]; if(!L.length) return out;
-  var G=ctrGroups(cov), sum=L.reduce(function(a,c){return a+(c.prem||0);},0);
+  var G=ctrGroups(cov), sum=L.reduce(function(a,c){return a+(c.done?0:(c.prem||0));},0);
   out.push('<p class="lead">가입하신 보험을 회사별로 정리했습니다. 다음 장부터 <b>한 회사에 한 장씩</b>, 담보를 한 줄에 하나씩 정리했습니다. 담보명과 가입금액은 '+esc(cov.source||'보장분석 자료')+'('+esc(cov.date||'')+' 기준)에 등록된 내용 그대로입니다.</p>');
   var C='38px '+cw(110)+'px minmax(0,1fr) 70px '+cw(100)+'px '+cw(92)+'px';
   out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden">'+
     '<div style="display:grid;grid-template-columns:'+C+';gap:8px;background:#2B3346;color:#fff;font-size:12.5px;font-weight:700;padding:8px 12px"><div>No</div><div>회사</div><div>상품</div><div style="text-align:right">담보 수</div><div style="text-align:right">월 보험료</div><div style="text-align:right">보장 만기</div></div>'+
-    L.map(function(c,i){ return '<div style="display:grid;grid-template-columns:'+C+';gap:8px;font-size:'+fz(13)+'px;padding:7px 12px;border-bottom:1px solid #E3E6EC;align-items:center;background:'+(i%2?'#F7F9FC':'#fff')+'"><div style="color:var(--muted)">'+(i+1)+'</div><div style="font-weight:800;color:var(--navy)">'+esc(c.co)+'</div><div style="line-height:1.35">'+esc(ctrClean(c.prod)||c.prod)+'</div><div style="text-align:right">'+c.items.length+'개</div><div style="text-align:right;font-weight:800">'+(c.prem?c.prem.toLocaleString()+'원':'<span style="color:var(--muted);font-weight:400">미표시</span>')+'</div><div style="text-align:right;color:var(--ink2)">'+esc((c.to||'').replace(/^9999.*/,'종신'))+'</div></div>'; }).join('')+
-    '<div style="display:flex;justify-content:space-between;padding:9px 12px;font-size:'+fz(15)+'px;font-weight:900;background:#EEF1F6"><span>'+G.length+'개 회사 · '+L.length+'건</span><span>월 '+sum.toLocaleString()+'원</span></div></div>');
+    L.map(function(c,i){ return '<div style="display:grid;grid-template-columns:'+C+';gap:8px;font-size:'+fz(13)+'px;padding:7px 12px;border-bottom:1px solid #E3E6EC;align-items:center;background:'+(i%2?'#F7F9FC':'#fff')+'"><div style="color:var(--muted)">'+(i+1)+'</div><div style="font-weight:800;color:var(--navy)">'+esc(c.co)+'</div><div style="line-height:1.35">'+esc(ctrClean(c.prod)||c.prod)+'</div><div style="text-align:right">'+c.items.length+'개</div><div style="text-align:right;font-weight:800">'+(c.prem?c.prem.toLocaleString()+'원'+(c.done?'<div style="font-size:11px;font-weight:700;color:#2F7D4A">납입완료</div>':''):'<span style="color:var(--muted);font-weight:400">미표시</span>')+'</div><div style="text-align:right;color:var(--ink2)">'+esc((c.to||'').replace(/^9999.*/,'종신'))+'</div></div>'; }).join('')+
+    '<div style="display:flex;justify-content:space-between;padding:9px 12px;font-size:'+fz(15)+'px;font-weight:900;background:#EEF1F6"><span>'+G.length+'개 회사 · '+L.length+'건</span><span>'+(L.some(function(c){return c.done;})?'납입 중 ':'')+'월 '+sum.toLocaleString()+'원</span></div></div>');
   if(cov.contracts&&cov.contracts>L.length) out.push('<div class="small" style="font-size:12px;color:#4A4A55">· 보장분석 자료의 정상계약은 '+cov.contracts+'건이며, 담보 상세가 표시된 '+L.length+'건을 정리했습니다. 나머지 계약은 보험증권으로 확인합니다.</div>');
   return out;
 }
 var CTR_COLS='44px 54px minmax(0,1fr) 128px';
 function ctrCompanyBlocks(g,num,idx,total){
-  var out=[], prem=g.list.reduce(function(a,c){return a+(c.prem||0);},0), cnt=g.list.reduce(function(a,c){return a+c.items.length;},0);
+  var out=[], prem=g.list.reduce(function(a,c){return a+(c.done?0:(c.prem||0));},0), cnt=g.list.reduce(function(a,c){return a+c.items.length;},0);
   out.push('<div class="sech keepnext"><div style="display:flex;flex-direction:column;gap:6px"><div class="kicker" style="color:var(--blue)">'+num+' · 회사별 가입 내역 · '+idx+' / '+total+'</div>'+
     '<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;border-bottom:3px solid var(--navy);padding-bottom:8px"><h2 class="h2" style="color:var(--navy);margin:0">'+esc(g.co)+'</h2>'+
-    '<div style="text-align:right;font-size:14px;color:var(--ink2)">'+g.list.length+'건 · 담보 '+cnt+'개<br><b style="font-size:20px;color:var(--navy)">월 '+(prem?prem.toLocaleString()+'원':'보험료 미표시')+'</b></div></div></div></div>');
+    '<div style="text-align:right;font-size:14px;color:var(--ink2)">'+g.list.length+'건 · 담보 '+cnt+'개<br><b style="font-size:20px;color:var(--navy)">'+(prem?'월 '+prem.toLocaleString()+'원':(g.list.every(function(c){return c.done;})?'납입완료':'월 보험료 미표시'))+'</b></div></div></div></div>');
   g.list.forEach(function(c,ci){
     var n=0;
     var row=function(it){ n++; var silson=it.kind==='실손';
@@ -2308,7 +2336,7 @@ function ctrCompanyBlocks(g,num,idx,total){
     out.push('<div class="card'+(ci?' pgbreak':'')+'" style="flex:none;padding:0;gap:0;overflow:hidden;border-color:#C9D0DC">'+
       '<div style="padding:9px 12px;background:#F1F4F9;border-bottom:1px solid #C9D0DC;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">'+
         '<div class="ctitle" style="font-size:15.5px"><span>'+esc(ctrClean(c.prod)||c.prod)+'</span></div>'+
-        '<div style="font-size:12.5px;color:var(--ink2);white-space:nowrap">'+(c.prem?'월 <b>'+c.prem.toLocaleString()+'원</b>':'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+' ~ '+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
+        '<div style="font-size:12.5px;color:var(--ink2);white-space:nowrap">'+(c.prem?(c.done?'납입완료 (기존 월 '+c.prem.toLocaleString()+'원)':'월 <b>'+c.prem.toLocaleString()+'원</b>'):'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+' ~ '+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
       '<div style="display:grid;grid-template-columns:'+CTR_COLS+';background:#2B3346;color:#fff;font-size:12px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 4px;text-align:center">구분</div><div style="padding:6px 10px">담보명</div><div style="padding:6px 12px;text-align:right">가입금액</div></div>'+
       '<div class="bl" style="gap:0">'+c.items.map(row).join('')+'</div></div>');
     out=out.concat(ctrNoteBlocks({list:[c]}));
@@ -2433,12 +2461,12 @@ function ctrSection(host,cov,a,num){
 function ctrBlocks(cov){
   var L=cov.ctrs||[], out=[];
   if(!L.length) return out;
-  var sum=L.reduce(function(a,c){return a+(c.prem||0);},0);
+  var sum=L.reduce(function(a,c){return a+(c.done?0:(c.prem||0));},0);
   out.push('<p class="lead">가입하신 보험을 회사·상품별로 정리했습니다. 담보명과 가입금액은 '+esc(cov.source||'보장분석 자료')+'('+esc(cov.date||'')+' 기준)에 등록된 내용 그대로이며, 실제 보장 내용은 각 보험증권과 약관으로 확인합니다.</p>');
   out.push('<div class="card" style="padding:10px 14px;gap:0">'+
     '<div style="display:grid;grid-template-columns:'+cw(84)+'px minmax(0,1fr) '+cw(96)+'px '+cw(92)+'px;gap:8px;font-size:12px;font-weight:700;color:var(--muted);padding-bottom:5px;border-bottom:1px solid var(--line)"><div>회사</div><div>상품</div><div style="text-align:right">월 보험료</div><div style="text-align:right">보장 만기</div></div>'+
-    L.map(function(c){ return '<div style="display:grid;grid-template-columns:'+cw(84)+'px minmax(0,1fr) '+cw(96)+'px '+cw(92)+'px;gap:8px;font-size:'+fz(13)+'px;padding:5px 0;border-bottom:1px solid #F0EAE3;align-items:center"><div style="font-weight:800;color:var(--navy)">'+esc(c.co)+'</div><div style="line-height:1.35">'+esc(ctrClean(c.prod)||c.prod)+'</div><div style="text-align:right;font-weight:700">'+(c.prem?c.prem.toLocaleString()+'원':'<span style="color:var(--muted);font-weight:400">미표시</span>')+'</div><div style="text-align:right;color:var(--ink2)">'+esc((c.to||'').replace(/^9999.*/,'종신'))+'</div></div>'; }).join('')+
-    '<div style="display:flex;justify-content:space-between;padding-top:7px;font-size:'+fz(14)+'px;font-weight:800"><span>'+L.length+'건</span><span>월 '+sum.toLocaleString()+'원</span></div></div>');
+    L.map(function(c){ return '<div style="display:grid;grid-template-columns:'+cw(84)+'px minmax(0,1fr) '+cw(96)+'px '+cw(92)+'px;gap:8px;font-size:'+fz(13)+'px;padding:5px 0;border-bottom:1px solid #F0EAE3;align-items:center"><div style="font-weight:800;color:var(--navy)">'+esc(c.co)+'</div><div style="line-height:1.35">'+esc(ctrClean(c.prod)||c.prod)+'</div><div style="text-align:right;font-weight:700">'+(c.prem?c.prem.toLocaleString()+'원'+(c.done?'<div style="font-size:11px;font-weight:700;color:#2F7D4A">납입완료</div>':''):'<span style="color:var(--muted);font-weight:400">미표시</span>')+'</div><div style="text-align:right;color:var(--ink2)">'+esc((c.to||'').replace(/^9999.*/,'종신'))+'</div></div>'; }).join('')+
+    '<div style="display:flex;justify-content:space-between;padding-top:7px;font-size:'+fz(14)+'px;font-weight:800"><span>'+L.length+'건</span><span>'+(L.some(function(c){return c.done;})?'납입 중 ':'')+'월 '+sum.toLocaleString()+'원</span></div></div>');
   var CH=24;
   L.forEach(function(c){
     for(var i=0;i<c.items.length;i+=CH){
@@ -2446,7 +2474,7 @@ function ctrBlocks(cov){
       var row=function(it){ return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:2px 0;border-bottom:1px dotted #E7DFD6;align-items:baseline"><div style="font-size:'+fz(12)+'px;line-height:1.3;color:var(--ink)">'+esc(it.name)+'</div><div style="font-size:'+fz(12.5)+'px;font-weight:800;white-space:nowrap;color:var(--navy)">'+won(it.amt)+'</div></div>'; };
       out.push('<div class="card" style="padding:10px 14px;gap:6px">'+
         '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-size:'+fz(15.5)+'px;font-weight:800;color:var(--navy)">'+esc(c.co)+' <span style="font-weight:700;color:var(--ink)">'+esc(ctrClean(c.prod)||c.prod)+'</span>'+(i?' <span style="font-size:12px;color:var(--muted)">(이어서)</span>':'')+'</div>'+
-        '<div style="font-size:'+fz(12.5)+'px;color:var(--ink2);white-space:nowrap">'+(c.prem?'월 <b>'+c.prem.toLocaleString()+'원</b>':'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+'~'+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
+        '<div style="font-size:'+fz(12.5)+'px;color:var(--ink2);white-space:nowrap">'+(c.prem?(c.done?'납입완료 (기존 월 '+c.prem.toLocaleString()+'원)':'월 <b>'+c.prem.toLocaleString()+'원</b>'):'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+'~'+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
         '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px"><div>'+part.slice(0,half).map(row).join('')+'</div><div>'+part.slice(half).map(row).join('')+'</div></div></div>');
     }
   });
@@ -2462,7 +2490,7 @@ function covPropBlocks(c){
   out.push('<p class="lead">진단비·치료비·수술비·간병·실손 등 꼭 필요한 핵심 담보 '+ck.length+'가지를 기준으로 지금 보험을 점검하고, 비어 있거나 부족한 보장을 보완 순서대로 정리했습니다. 실제 가입 여부와 금액은 건강상태·고지사항·보험료 부담을 함께 확인한 뒤 결정합니다.</p>');
   out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">'+[['잘 준비됨',ok.length,'#2F7D4A'],['보완 필요',weak.length,'#C27C0E'],['비어 있음',none.length,'#B4472F']].map(function(v){
     return '<div style="background:#fff;border:1px solid #E4DCD2;border-top:4px solid '+v[2]+';border-radius:10px;padding:10px 14px"><div style="font-size:13px;color:var(--muted)">'+v[0]+'</div><div style="font-size:24px;font-weight:800;color:'+v[2]+'">'+v[1]+'개 담보</div></div>';}).join('')+'</div>');
-  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.name)+' '+won(x.amt)+'</span>';}).join('')+'</div></div>');
+  if(ok.length) out.push('<div class="card" style="padding:10px 14px;gap:6px"><div style="font-size:14px;font-weight:800;color:#2F7D4A">잘 준비된 보장</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ok.map(function(x){return '<span style="background:#E4F0E6;color:#1F5A2B;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700">'+esc(x.name)+' '+(x.lbl?esc(x.lbl):won(x.amt))+'</span>';}).join('')+'</div></div>');
   var props=none.concat(weak).sort(function(x,y){return COV_KEYS.indexOf(x.cat)-COV_KEYS.indexOf(y.cat);}).slice(0,6);
   out.push('<div class="keepnext" style="font-size:19px;font-weight:800;color:var(--navy);margin-top:6px">이렇게 보완하시길 권합니다</div>');
   if(!props.length) out.push('<div class="card" style="font-size:14.5px">핵심 담보가 모두 준비되어 있습니다. 지금 보장을 유지하시고 갱신·만기 시점을 함께 관리하세요.</div>');
