@@ -569,8 +569,33 @@
     }).filter(Boolean).slice(0, 3) : [];
 
     // ── 4) 간병인 · 운전자
-    const care = find(/간병인|간호·?간병|간호간병/).filter(i => !/181일이상/.test(nm(i)));
-    const careCard = care.length ? card("입원해서 간병이 필요할 때", "", `하루 ${fmt2(Math.max(...care.map(i => i.amt)))}`, "가장 큰 담보 기준", care.map(i => chipI(i, "b")), "간병인 사용·간호간병통합서비스 중 실제 이용한 쪽 담보로 지급 · 지급 일수 한도는 담보명 참고", "b") : "";
+    // 간병: 간병인사용(요양병원 제외) / 간병인사용(요양병원) / 간호·간병통합서비스 — 각각 1~180일 · 181일 이후로 나눠 1년(365일) 계산
+    const care = find(/간병인|간호·?간병|간호간병/);
+    const cgKind = i => { const n = nm(i);
+      const kind = /간호·?간병통합|간호간병통합/.test(n) ? "nurse" : "cg";
+      const place = /상급종합/.test(n) ? "top" : (/요양병원(?!제외)/.test(n.replace(/요양,정신,한방병원제외|요양·정신·한방병원제외/g, "")) && !/요양병원제외/.test(n)) ? "ltc" : "gen";
+      const late = /181일이상|180일초과/.test(n);
+      return { kind, place, late };
+    };
+    const CG_GROUPS = [
+      ["cg", "gen", "간병인 사용 (요양병원 제외 병원)"],
+      ["cg", "ltc", "간병인 사용 (요양병원)"],
+      ["nurse", "gen", "간호·간병통합서비스 병동"],
+      ["nurse", "ltc", "간호·간병통합서비스 (요양병원)"],
+      ["cg", "top", "상급종합병원에서 간병인 사용 시 추가"],
+      ["nurse", "top", "상급종합병원 간호·간병통합 추가"],
+    ];
+    const cgRows = CG_GROUPS.map(([k, pl, t]) => {
+      const xs = care.filter(i => { const c = cgKind(i); return c.kind === k && c.place === pl; });
+      if (!xs.length) return null;
+      const early = xs.filter(i => !cgKind(i).late), late = xs.filter(i => cgKind(i).late);
+      const a = early.length ? Math.max(...early.map(i => i.amt)) : 0, b = late.length ? Math.max(...late.map(i => i.amt)) : 0;
+      return { t, a, b, year: a * 180 + b * 185, add: pl === "top", items: xs };
+    }).filter(Boolean);
+    const cgTable = cgRows.length ? `<table class="bs-cgt"><thead><tr><th></th><th>입원 1~180일<small>하루</small></th><th>181일째부터<small>하루</small></th><th>1년 내내 입원 시<small>180일 + 185일</small></th></tr></thead><tbody>${cgRows.map(r => `<tr${r.add ? ' class="add"' : ""}><th>${escH(r.t)}</th><td>${r.a ? fmt2(r.a) : "—"}</td><td>${r.b ? fmt2(r.b) : (r.a ? "<small>보장 없음</small>" : "—")}</td><td><b>${r.year ? fmt2(r.year) : "—"}</b>${r.a && !r.b ? "<small>180일분</small>" : ""}</td></tr>`).join("")}</tbody></table>` : "";
+    const cgMain = cgRows.filter(r => !r.add).sort((x, y) => y.year - x.year)[0];
+    const careCard = cgRows.length ? card("입원해서 간병이 필요할 때", "간병인을 쓰거나 간호·간병통합서비스 병동에 입원하면 입원 1일당 지급", cgMain ? fmt2(cgMain.year) : "", cgMain ? "1년 내내 입원 시 (가장 큰 줄)" : "",
+      [cgTable], "줄마다 따로 계산 — 한 날에는 실제 이용한 쪽(간병인 사용 또는 간호·간병통합, 요양병원 여부) 담보로 지급 · 상급종합병원 담보는 그 병원 입원 시 추가 · 181일째부터 담보는 같은 해 입원 180일 초과분 · 간병인 하루 사용금액이 적으면 감액하는 담보가 있음(설계서 보장내용 확인)", "b") : "";
     const drv = find(/벌금|교통사고처리|변호사선임/);
     const drvCard = drv.length ? card("운전 중 사고로 형사 책임을 질 때", "", fmt2(sumA(drv)), "담보 합 (한도)", drv.map(i => chipI(i, "g")), "", "g") : "";
 
@@ -582,7 +607,7 @@
       const head = U.sec(String(++no).padStart(2, "0"), t);
       return rows.map((r, k) => `<div class="bs-blk">${k ? "" : head}<div class="bs-cases cx ${cls || ""} n${r.length}">${r.join("")}</div>${k === rows.length - 1 && note ? `<p class="bs-small">${note}</p>` : ""}</div>`).join("");
     };
-    const body = blockOf("큰 병에 걸리면 받는 돈", big, "two", typeNote ? "수술을 받으면 " + typeNote : "") + blockOf("많이 받는 수술 Top 3", surgCards, "", typeNote ? "위 금액에 " + typeNote.replace(/^\+ /, "") + "가 더해질 수 있습니다." : "") + blockOf("간병·운전", [careCard, drvCard].filter(Boolean), "two");
+    const body = blockOf("큰 병에 걸리면 받는 돈", big, "two", typeNote ? "수술을 받으면 " + typeNote : "") + blockOf("많이 받는 수술 Top 3", surgCards, "", typeNote ? "위 금액에 " + typeNote.replace(/^\+ /, "") + "가 더해질 수 있습니다." : "") + blockOf(careCard && drvCard ? "간병·운전" : careCard ? "간병" : "운전자", [careCard, drvCard].filter(Boolean), "two");
     const yak = `<div class="bs-blk bs-box w bs-yak"><div class="bs-boxh"><b>${escH(p.company || "이 보험사")} 약관 등록 전 안내</b></div><p>금액은 설계서 <b>가입금액 그대로</b>이며, 사례에는 담보명에 그 질병·수술 이름이 적힌 담보만 넣었습니다. 치료비는 설계서 특약 안내사항의 <b>항목별 지급금액</b>(계약일부터 1년 경과 이후 기준)을 옮겼습니다. 몇 종 수술인지, 감액기간 같은 지급 조건은 약관에 따릅니다.</p></div>`;
     const src = `<p class="bs-blk bs-common">통계 출처: ${STATS.death} · ${STATS.cancer} · ${STATS.surg}. 금액은 ${escH(p.company)} 설계서(${escH(p.product)})의 가입금액이며, 실제 지급 여부와 금액은 진단명·질병코드·수술 분류와 약관에 따릅니다.</p>`;
     return `<div class="page a4 bs bsp" data-bsflow="1">${U.top(1)}${U.hero("설계서 가입금액 기준")}
@@ -791,6 +816,10 @@
 .bs-subh{display:flex;justify-content:space-between;gap:8px}.bs-subh span{font-weight:600;color:#374151}.bs-subh b{white-space:nowrap;font-size:12px}
 .bs-subp{display:flex;flex-wrap:wrap;gap:3px}.bs-subp em{font-style:normal;font-size:9.6px;background:#f3f4f6;border-radius:5px;padding:1px 6px;color:#374151}.bs-subp em b{font-size:10px}
 .bs-blk{display:flex;flex-direction:column;gap:8px}
+.bs-cgt{width:100%;border-collapse:collapse;font-size:12.5px}.bs-cgt th,.bs-cgt td{padding:6px 8px;border-bottom:1px solid #eef0f2;text-align:right;vertical-align:middle}
+.bs-cgt thead th{font-size:11px;color:#6b7280;font-weight:600;background:var(--bsf)}.bs-cgt thead th small,.bs-cgt td small{display:block;font-size:9.5px;color:#9ca3af;font-weight:400}
+.bs-cgt tbody th{text-align:left;font-weight:600;color:#1f2937}.bs-cgt td{font-weight:700;color:var(--b);font-size:13.5px}.bs-cgt td b{font-size:16px;color:var(--b)}
+.bs-cgt tr.add th{color:#6b7280;font-weight:500}.bs-cgt tr.add td{color:#6b7280}
 .bs-sum{margin-top:4px;border-radius:10px;background:#fff7ed;border:1.5px solid #fdba74;padding:8px 11px;display:flex;flex-direction:column;gap:3px}
 .bs-sum-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.bs-sum-h span{font-size:12px;font-weight:700;color:#9a3412}.bs-sum-h b{font-size:22px;color:#c2410c;white-space:nowrap}
 .bs-sum>small{font-size:10.5px;color:#9a3412}.bs-sum ul{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:1px}
