@@ -359,6 +359,10 @@
   .aa-sec{font-size:15.5px; font-weight:900; margin:14px 0 8px; padding:6px 10px; border-radius:8px;}
   .aa-sec.nl{background:#EAF2FF; color:#1F4FA8;}
   .aa-sec.lf{background:#E8F7EE; color:#17733F;}
+  .aa-sec.tx{background:#FFF4E8; color:var(--orange-deep);}
+  .aa-tx{display:flex; gap:10px; padding:7px 4px; border-bottom:1px solid #F0F1F6; font-size:13.5px;}
+  .aa-tx-k{flex:none; width:118px; font-weight:800; color:var(--navy-2);}
+  .aa-tx-v{color:#3A4060;}
   .aa-card{border:1px solid #E6E8F0; border-left:4px solid var(--orange); border-radius:10px; padding:10px 12px; margin:0 0 8px; background:#FFFCF8;}
   .aa-co{display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px;}
   .aa-name{font-size:16px; font-weight:900; color:var(--navy-2);}
@@ -4993,6 +4997,17 @@ body.growon{ background:var(--g-navy); }
       if(/^└/.test(L) && openCard){
         const t = L.replace(/^└\s*/, '').replace(/^추천\s*이유\s*:\s*/, '');
         html += '<div class="aa-why"><span class="aa-why-l">추천 이유</span>' + hl(t) + '</div>';
+        return;
+      }
+      if(/^■/.test(L)){
+        closeCard(); closeCheck();
+        html += '<div class="aa-sec tx">📋 ' + esc(L.replace(/^■\s*/, '')) + '</div>';
+        return;
+      }
+      if(/^[-•]\s*[^:]{2,20}:\s*\S/.test(L) && !inCheck){
+        closeCard();
+        const m = L.match(/^[-•]\s*([^:]{2,20}):\s*(.*)$/);
+        html += '<div class="aa-tx"><span class="aa-tx-k">' + esc(m[1]) + '</span><span class="aa-tx-v">' + hl(m[2]) + '</span></div>';
         return;
       }
       if(/^▶/.test(L)){
