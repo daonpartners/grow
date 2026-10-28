@@ -280,13 +280,13 @@
 
   /* ---------------- 8. 양식 미등록 회사: AI가 담보표를 원문 그대로 옮김 (n8n) ---------------- */
   const AI_URL = "https://daonpartners.app.n8n.cloud/webhook/daon-proposal-read";
-  const AMT_LINE = /\d[\d,.]*\s*(억|천만|백만|만)\s*원?|\d{1,3}(,\d{3}){2,}\s*원?/;
+  const AMT_LINE = /\d[\d,.]*\s*(억|천만|백만|만)\s*원?|\d{1,3}(,\d{3})+\s*원|\d{1,3}(,\d{3}){2,}/;
   async function aiRead(pages) {
     // 보낼 쪽 고르기: ① 앞쪽 가입담보표 ② 세부 지급표(특약 안내사항·세부보장·'- 항목 : 금액' 목록) ③ 남는 자리에 그 밖의 금액 있는 쪽
     //  (메리츠처럼 담보 설명 쪽이 길게 이어지면 뒤쪽 세부 지급표가 글자 수 한도에 밀려 빠지던 문제)
-    const DET = /안내사항|세부보장항목|통합치료항목|세부보장\s*지급|[-·]\s*[^:\n]{2,40}\s*:\s*(수술\s*1회당\s*)?[\d,]+\s*(만|천만|백만|억)?원|수술\s*1회당\s*[\d,]+\s*(만|천만|백만)?원/;
-    const info = pages.map((ls, i) => { const t = ls.join("\n"); return { i, n: ls.filter(l => AMT_LINE.test(l)).length, det: DET.test(t), ref: /해약환급금\s*예시/.test(t) }; });
-    const first = info.filter(x => x.i === 0 || (x.n >= 1 && !x.ref && x.i < 8)).map(x => x.i);
+    const DET = /안내사항|세부보장항목|통합치료항목|세부보장\s*지급|보장급부명|지급사유\s+지급금액|[-·]\s*[^:\n]{2,40}\s*:\s*(수술\s*1회당\s*)?[\d,]+\s*(만|천만|백만|억)?원|수술\s*1회당\s*[\d,]+\s*(만|천만|백만)?원/;
+    const info = pages.map((ls, i) => { const t = ls.join("\n"); return { i, n: ls.filter(l => AMT_LINE.test(l)).length, det: DET.test(t), ref: /해약환급금\s*예시|확인서|비교\s*예시|보험료\s*비교|필수비교/.test(t), head: /가입금액|보험료/.test(t) }; });
+    const first = info.filter(x => x.i === 0 || ((x.n >= 1 || x.head) && !x.ref && x.i < 8)).map(x => x.i);
     const det = info.filter(x => x.det && !x.ref && first.indexOf(x.i) < 0).map(x => x.i);
     const rest = info.filter(x => x.n >= 2 && !x.ref && first.indexOf(x.i) < 0 && det.indexOf(x.i) < 0).map(x => x.i);
     const chosen = [];
@@ -313,13 +313,14 @@
     if (!p) {
       source = "ai";
       const d = await aiRead(pages);
-      const items = d.items.map((x, i) => ({ no: i + 1, name: x.name, amt: manAny(x.amt), amtText: x.amt, prem: +(String(x.prem || "").replace(/[^\d]/g, "")) || null, term: x.term || "" }));
+      const per = t => (String(t || "").match(/^\s*(매월|매년|월|연)\s*/) || [])[1] || "";
+      const items = d.items.map((x, i) => ({ no: i + 1, name: x.name, amt: manAny(String(x.amt || "").replace(/^\s*(매월|매년|월|연)\s*/, "")), per: per(x.amt) === "월" ? "매월" : per(x.amt) === "연" ? "매년" : per(x.amt), amtText: x.amt, prem: +(String(x.prem || "").replace(/[^\d]/g, "")) || null, term: x.term || "" }));
       // 세부보장이 딸린 머리줄(예: 26종 …치료비 → ┗ 세부 담보들)은 가입금액이 없는 게 정상이라 경고에서 뺌
       const isHead = x => items.some(y => y !== x && /\[/.test(y.name) && y.name.replace(/\s+/g, "").slice(0, 14) === x.name.replace(/\s+/g, "").slice(0, 14));
       items.forEach(x => { if (isHead(x)) x.amt = null; });  // 머리줄 숫자는 보험료일 때가 있음 (AI가 단위를 붙여도 가입금액으로 쓰지 않음)
       const bad = items.filter(x => x.amt == null && x.amtText && !isHead(x));
       if (bad.length) warns.push("가입금액 표기를 계산하지 못한 담보 " + bad.length + "개: " + bad.map(x => x.name + "(" + x.amtText + ")").join(", "));
-      p = { company: companyOf(d.company) || co || d.company || "", product: d.product || "", code: "", insured: d.insured || "", age: d.age || null, sex: d.sex || "", premium: d.premium || null, no: "", issued: "", items, warn: [], details: (d.details || []).map(t => ({ rider: t.rider, rows: (t.rows || []).map(r => ({ item: r.item, freq: r.freq || "", amt: manAny(r.amt), amtText: r.amt })) })) };
+      p = { company: companyOf(d.company) || co || d.company || "", product: d.product || "", code: "", insured: d.insured || "", age: d.age || null, sex: d.sex || "", premium: d.premium || null, no: "", issued: "", items, warn: [], details: (d.details || []).map(t => ({ rider: t.rider, rows: (t.rows || []).map(r => ({ item: r.item, freq: r.freq || "", amt: manAny(String(r.amt || "").replace(/^\s*(매월|매년|월|연)\s*/, "")), amtText: r.amt })) })) };
       warns.push("AI가 담보표를 읽었습니다. 왼쪽 목록의 담보명·가입금액이 원본(앞 장)과 같은지 꼭 확인해 주세요.");
     }
     p.company = p.company || co || "";
@@ -434,7 +435,14 @@
     const find = (...res) => RAW.filter(i => res.every(re => re.test(nm(i))));
     const sumA = arr => arr.reduce((x, i) => x + i.amt, 0);
     const uniq = arr => [...new Set(arr)];
-    const chipI = (i, cls) => `<div class="bs-li ${cls || ""}"><span>${escH(short(i.name))}</span><b>${fmt2(i.amt)}</b></div>`;
+    // 실제 지급액: 보장내용에 그 담보의 지급금액이 하나로 적혀 있으면(예: 장기요양 생활자금 매월 5만) 가입금액 대신 그 금액
+    const payOf = i => {
+      const d = detOf(i), r = d && d.rows.filter(x => !/한도/.test(x.item) && x.amt).length === 1 ? d.rows.find(x => !/한도/.test(x.item) && x.amt) : null;
+      if (!r) return { amt: i.amt, per: i.per || "", freq: "" };
+      const per = (String(r.amtText || "").match(/매월|매년/) || [])[0] || (/매월/.test(r.freq) ? "매월" : /매년/.test(r.freq) ? "매년" : "");
+      return { amt: r.amt, per, freq: r.freq.replace(/^(매월|매년)\s*,?\s*/, "") };
+    };
+    const chipI = (i, cls) => { const y = payOf(i); return `<div class="bs-li ${cls || ""}"><span>${escH(short(i.name))}${y.freq ? `<small>${escH(y.freq)}</small>` : ""}</span><b>${y.per ? y.per + " " : ""}${fmt2(y.amt)}</b></div>`; };
     const card = (title, sub, pill, pillSub, chips, ref, cls, tx) => `<div class="bs-case ${cls || ""}"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div>${pill ? `<div class="bs-pill">${pill}${pillSub ? `<small>${pillSub}</small>` : ""}</div>` : ""}</div><div class="bs-lis">${chips.join("")}</div>${tx ? `<div class="bs-txw"><i>치료받을 때 — 항목마다 정해진 금액</i>${tx}</div>` : ""}${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
 
     // ── 수술 공통: 질병수술비(제외 조건 없는 것 / 있는 것), 1~5종 질병수술비
@@ -508,8 +516,12 @@
     // 심장·뇌 이름이 붙은 담보 없이 순환계 치료비만 있으면 한 장으로
     if (circ.length && !heartDx.length && !heartS.length && !heartTx.length && !brainDx.length && !brainS.length && !brainTx.length)
       big.push(card("심장·뇌혈관질환 치료 (순환계)", "심장질환 사망원인 2위 · 뇌혈관질환 4위", "", "", [], "그 질병이 약관의 순환계질환 분류표에 들 때 지급", "h", txBox(circ, false, "o")));
-    const dem = find(/치매|경도인지|장기요양|레켐비|도나네맙/);
-    if (dem.length) big.push(card("치매·장기요양", "", fmt2(Math.max(...dem.map(i => i.amt))) , "가장 큰 담보", dem.map(i => chipI(i, "c")), "", "b"));
+    const ltc = find(/장기요양/), dem = find(/치매|경도인지|레켐비|도나네맙/).filter(i => !/장기요양/.test(nm(i)));
+    if (dem.length) big.push(card("치매 진단·치료", "", fmt2(Math.max(...dem.map(i => payOf(i).amt))), "가장 큰 담보", dem.map(i => chipI(i, "c")), "", "b"));
+    if (ltc.length) {
+      const ys = ltc.map(payOf), mon = ys.filter(y => y.per === "매월");
+      big.push(card("장기요양 등급을 받으면", "노인장기요양보험 등급 판정 시", mon.length ? `매월 ${fmt2(Math.max(...mon.map(y => y.amt)))}` : fmt2(Math.max(...ys.map(y => y.amt))), mon.length ? "가장 큰 등급 기준" : "가장 큰 담보", ltc.map(i => { const y = payOf(i); return y.per || y.freq ? chipI(i, "b") : `<div class="bs-li b"><span>${escH(short(i.name))}<small>가입금액 기준 — 매월 지급액은 설계서 보장내용 확인</small></span><b>${fmt2(i.amt)}</b></div>`; }), mon.length ? "생활자금은 등급 판정 후 매월 지급 — 보증·최대 지급기간은 담보별 안내 참고" : "", "b"));
+    }
 
     // ── 3) 많이 받는 수술 Top 3 (나이를 알면 그 연령대 최다 수술을 맨 앞에)
     const list = SURG_CASES.slice();
@@ -722,7 +734,7 @@
 .bsp .cx .bs-pill{font-size:19px;padding:3px 11px}.bsp .cx .bs-pill small{font-size:9.5px}
 .bs-lis{display:flex;flex-direction:column}
 .bs-li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:4px 2px;border-bottom:1px solid #f0f1f3;font-size:12.3px;color:#1f2937}
-.bs-li:last-child{border-bottom:0}.bs-li b{white-space:nowrap;font-size:13.5px;color:#111827}
+.bs-li:last-child{border-bottom:0}.bs-li span small{display:block;font-size:10px;color:#6b7280}.bs-li b{white-space:nowrap;font-size:13.5px;color:#111827}
 .bs-li.c b{color:var(--c)}.bs-li.t b{color:var(--g)}.bs-li.s b{color:#4338ca}.bs-li.b b{color:var(--b)}.bs-li.o b{color:var(--o)}.bs-li.g b{color:var(--g)}
 .bsp .cx .bs-txw>i{font-size:11.5px}.bsp .cx .bs-txr>b{font-size:11.5px}.bsp .cx .bs-txr>small,.bsp .cx .bs-txr>span{font-size:10.5px}
 .bsp .cx .bs-txw .bs-chip{font-size:11.3px;padding:2px 8px}.bsp .cx .bs-txw .bs-chip b{font-size:12px}.bsp .cx .bs-chip small{font-size:9.5px}
