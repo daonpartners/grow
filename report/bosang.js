@@ -383,27 +383,122 @@
         <p>${p.age ? `피보험자 ${escH(p.sex)} ${p.age}세 · ` : ""}${p.premium ? `월 보험료 ${Number(p.premium).toLocaleString("ko-KR")}원 · ` : ""}${note}</p></div>`;
     if (M.D) return renderKB(M, { insured, top, sec, hero, foot, fmt: fmtv });
 
-    /* ===== 약관 미등록 회사: 설계서에 있는 담보만, 묶음별 (담보 없는 묶음은 아예 뺌) ===== */
-    const its = M.items || [];
-    const order = Object.keys(GROUPS).filter(g => its.some(i => i.g === g));
-    const blocks = order.map(g => ({ g, rows: subGroups(its.filter(i => i.g === g)) }));
-    const top1 = rows => rows.map(r => r.parts ? { name: r.title, amt: Math.max(...r.parts.map(x => x.i.amt)) } : { name: r.i.name, amt: r.i.amt }).sort((x, y) => y.amt - x.amt)[0];
-    const kpis = blocks.filter(b => b.g !== "base" && b.g !== "etc").slice(0, 4).map(b => { const t = top1(b.rows); return `<div class="bs-k k${GCLS[b.g] || "g"}"><span>${GKPI[b.g]}</span><b>${fmtv(t.amt)}</b><small>${escH(t.name)}</small></div>`; }).join("");
-    const rowHtml = r => r.parts
-      ? `<div><span>${escH(r.title)} <small>(세부 ${r.parts.length}개)</small></span><b>${r.same ? "각 " + fmtv(r.parts[0].i.amt) : fmtv(Math.min(...r.parts.map(x => x.i.amt))) + "~" + fmtv(Math.max(...r.parts.map(x => x.i.amt)))}</b></div>`
-      : `<div><span>${escH(r.i.name)}</span><b>${fmtv(r.i.amt)}</b></div>`;
-    const dtypes = its.filter(i => i.k === "dtype").map(i => ({ i, t: (i.name.replace(/[1-5]\s*[~\-]\s*[1-5]\s*종/g, "").match(/([1-5])\s*종/) || [])[1] })).filter(x => x.t);
-    const typeRow = dtypes.length >= 2 ? `<div class="bs-types"><span>질병 종수술비 (수술 1회당)</span>${dtypes.sort((x, y) => x.t - y.t).map(x => `<em><small>${x.t}종</small>${fmtv(x.i.amt)}</em>`).join("")}</div>` : "";
-    if (typeRow) blocks.forEach(b => { if (b.g === "surg") b.rows = b.rows.filter(r => !(r.i && dtypes.some(x => x.i === r.i))); });
+    /* ===== 약관 미등록 회사: '왜 이 상품인가' — 보험료 비중 + 공식 통계 순위별 보상 사례 =====
+       담보와 사례의 연결은 설계서 담보명에 그 질병·수술 이름이 적힌 것만 (추정 연결 없음) */
+    return renderCases(M, { insured, top, sec, hero, foot, fmt: fmtv });
+  }
+
+  // 공식 통계 (사례 순위의 근거) — 새 통계가 나오면 여기만 고침
+  const STATS = {
+    death: "국가데이터처 「2025년 사망원인통계」(2026.9.22)",
+    cancer: "보건복지부·국립암센터 「2023년 국가암등록통계」(2026.1.20)",
+    surg: "국민건강보험공단 「2025년 주요수술 통계연보」(2026.8.31)",
+  };
+  const SURG_CASES = [
+    { t: "백내장 수술", s: "수술 건수 1위 · 연 692,126건", re: /백내장/ },
+    { t: "허리·목 디스크 수술", s: "일반척추수술 2위 · 연 199,147건", re: /추간판|디스크|척추/ },
+    { t: "치핵(치질) 수술", s: "수술 건수 4위 · 연 151,864건", re: /치핵|치질/ },
+    { t: "담낭 절제술 (담석 등)", s: "수술 건수 5위 · 연 103,817건", re: /담낭|담석/ },
+  ];
+  const AGE_SURG = [ // 연령대별 최다 수술 (같은 통계연보)
+    [a => a <= 9, { t: "편도 절제술", s: "9세 이하 최다 수술", re: /편도/ }],
+    [a => a >= 10 && a <= 19, { t: "충수(맹장) 수술", s: "10대 최다 수술", re: /충수|맹장/ }],
+    [a => a >= 40 && a <= 49, { t: "치핵(치질) 수술", s: "40대 최다 수술 · 전체 4위", re: /치핵|치질/ }],
+    [a => a >= 50, { t: "백내장 수술", s: "50대 이상 최다 수술 · 전체 1위", re: /백내장/ }],
+  ];
+
+  function renderCases(M, U) {
+    const p = M.p, fmt2 = U.fmt;
+    const nm = i => String(i.name).replace(/\s+/g, "");
+    const short = t => { t = String(t).replace(/\((건강가입|간편가입|일반가입|맞춤고지|감액없음)\)/g, ""); const m = t.match(/\[(.+)\]/); return (m ? m[1] : t).replace(/\s+/g, " ").trim(); };
+    const RAW = (p.items || []).filter(i => !i.group && i.amt != null && i.amt > 0 && !/포인트/.test(nm(i)));
+    const find = (...res) => RAW.filter(i => res.every(re => re.test(nm(i))));
+    const sumA = arr => arr.reduce((x, i) => x + i.amt, 0);
+    const uniq = arr => [...new Set(arr)];
+    const chipI = (i, cls) => `<span class="bs-chip ${cls || ""}">${escH(short(i.name))} <b>${fmt2(i.amt)}</b></span>`;
+    const card = (title, sub, pill, pillSub, chips, ref, cls, tx) => `<div class="bs-case ${cls || ""}"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div>${pill ? `<div class="bs-pill">${pill}${pillSub ? `<small>${pillSub}</small>` : ""}</div>` : ""}</div>${tx ? `<div class="bs-tx">${tx}</div>` : ""}<div class="bs-case-p">${chips.join("")}</div>${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
+
+    // ── 수술 공통: 질병수술비(제외 조건 없는 것 / 있는 것), 1~5종 질병수술비
+    const dsAll = find(/^질병수술비/), dsPlain = dsAll.filter(i => !/제외/.test(nm(i)));
+    const dtype = RAW.filter(i => /질병[1-5]종|질병.*[1-5]종.*수술/.test(nm(i)) && !/상해/.test(nm(i)));
+    const typeNote = dtype.length ? `+ 1~5종 질병수술비 ${fmt2(Math.min(...dtype.map(i => i.amt)))}~${fmt2(Math.max(...dtype.map(i => i.amt)))} (몇 종인지는 약관 수술분류표)` : "";
+    const surgOf = re => RAW.filter(i => /수술비/.test(nm(i)) && !/수술후/.test(nm(i)) && re.test(nm(i)) && !/^질병수술비/.test(nm(i)));
+
+    // ── 1) 이 설계의 핵심: 보험료가 어디에 쓰이나
+    const BUCKET = [["수술", /수술/], ["암", /암/], ["뇌·심장", /뇌|심장|순환계|심근|허혈/], ["간병·입원", /간병|간호|입원|일당/], ["치매", /치매|인지|장기요양|레켐비/], ["운전자", /벌금|교통사고|변호사|운전/], ["사망·장해", /사망|장해/]];
+    const prems = RAW.map(i => ({ i, w: +(String(i.prem || "").replace(/[^\d]/g, "")) || 0 })).filter(x => x.w);
+    const tot = prems.reduce((x, y) => x + y.w, 0);
+    const byB = {}; prems.forEach(({ i, w }) => { const b = (BUCKET.find(([, re]) => re.test(nm(i))) || ["기타"])[0]; byB[b] = (byB[b] || 0) + w; });
+    const ranked = Object.entries(byB).filter(([b, w]) => b !== "기타" && w / tot >= 0.01).sort((x, y) => y[1] - x[1]).slice(0, 3);
+    const WHY = { "암": "암은 사망원인 1위", "뇌·심장": "심장질환 사망원인 2위 · 뇌혈관질환 4위", "수술": "백내장 수술만 한 해 69만 건", "간병·입원": "입원 시 간병비 부담", "치매": "", "운전자": "", "사망·장해": "" };
+    const core = tot && ranked.length ? `<div class="bs-blk"><div class="bs-core"><div class="bs-core-h"><b>이 설계의 중심 — ${escH(ranked[0][0])}</b><span>월 보험료 ${Number(p.premium || tot).toLocaleString("ko-KR")}원 중 어디에 쓰이나 (설계서 담보별 보험료 기준)</span></div><div class="bs-core-t">${ranked.map(([b, w], k) => `<div class="${k ? "" : "on"}"><span>${escH(b)}</span><b>${Math.round(w / tot * 100)}%</b><small>${WHY[b] || ""}</small></div>`).join("")}</div></div></div>` : "";
+
+    // ── 2) 큰 병 사례 (사망원인·암 발생 순위)
+    const big = [];
+    const sex = p.sex || "", age = +p.age || 0;
+    const cancerDx = find(/암.*진단|암진단/).filter(i => !/유사암|소액암|갑상선|기타피부|제자리|경계성/.test(nm(i).replace(/유사암제외/g, "")) || /유사암제외/.test(nm(i)));
+    const icParts = cancerDx.filter(i => /^통합암/.test(nm(i))), otherDx = cancerDx.filter(i => !/^통합암/.test(nm(i)));
+    const caTx = find(/암/, /통합치료|주요치료/).filter(i => !/생활비/.test(nm(i)));
+    const caSpecial = find(/중입자|양성자/);
+    const caTxSum = sumA(caTx);
+    const rep = sex === "여" ? { t: "유방암", s: "여성 암 발생 1위", re: /유방/ } : sex === "남" ? { t: "전립선암", s: "남성 암 발생 1위", re: /전립선/ } : { t: "폐암", s: "암 발생 2위 (1위 갑상선암)", re: /폐암/ };
+    if (cancerDx.length || caTx.length) {
+      const icOne = icParts.length ? [icParts.slice().sort((x, y) => y.amt - x.amt)[0]] : [];
+      const typeTx = find(rep.re, /항암|방사선|약물/);
+      const surgC = dsPlain.concat(surgOf(rep.re));
+      const lump = sumA(otherDx) + sumA(icOne) + sumA(surgC);
+      big.push(card(`${rep.t} 진단·치료`, `${rep.s} · 암은 사망원인 1위`, lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "",
+        [...otherDx.map(i => chipI(i, "c")), icParts.length ? `<span class="bs-chip c">통합암진단비 (해당 암 구분) <b>${fmt2(icOne[0].amt)}</b></span>` : "", ...surgC.map(i => chipI(i, "t")), ...typeTx.map(i => chipI(i)), ...caTx.map(i => chipI(i, "o")), ...caSpecial.map(i => chipI(i))],
+        icParts.length > 1 ? `통합암은 암 구분(${icParts.length}개)별로 따로 지급 — ${rep.t}이 어느 구분인지는 약관 분류표` : "", "c", caTxSum ? `+ 치료비 담보 연 ${fmt2(caTxSum)} 한도 (받은 치료만큼)` : ""));
+    }
+    const thyDx = find(/유사암진단|갑상선암진단/), thyTx = find(/갑상선암/, /치료|약물|호르몬/).filter(i => !/\(기타피부암\)/.test(nm(i)));
+    if (thyDx.length || thyTx.length) {
+      const lump = sumA(thyDx) + sumA(dsPlain) + sumA(surgOf(/갑상선/));
+      big.push(card("갑상선암", "암 발생 1위 (유사암)", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...thyDx.map(i => chipI(i, "c")), ...dsPlain.map(i => chipI(i, "t")), ...surgOf(/갑상선/).map(i => chipI(i, "t")), ...thyTx.map(i => chipI(i))], "", "c", thyTx.length ? `+ 치료 시 ${thyTx.map(i => fmt2(i.amt)).join("·")} (담보별)` : ""));
+    }
+    const circ = find(/순환계/, /치료/);
+    const heartDx = find(/(심장|심근경색|허혈|협심증)/, /진단/), heartS = surgOf(/심장/), heartTx = find(/심장/, /치료/).filter(i => !/수술/.test(nm(i)));
+    if (heartDx.length || heartS.length || heartTx.length) {
+      const lump = sumA(heartDx) + sumA(heartS) + sumA(dsPlain);
+      const tx = sumA(circ) + sumA(heartTx);
+      big.push(card("심장질환 (협심증·심근경색 등)", "사망원인 2위", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...heartDx.map(i => chipI(i, "c")), ...heartS.map(i => chipI(i, "t")), ...dsPlain.map(i => chipI(i, "t")), ...heartTx.map(i => chipI(i, "o")), ...circ.map(i => chipI(i, "o"))], circ.length ? "순환계 치료비는 그 질병이 약관의 순환계질환 분류표에 들 때" : "", "h", tx ? `+ 치료비 담보 연 ${fmt2(tx)} 한도 (받은 치료만큼)` : ""));
+    }
+    const brainDx = find(/(뇌혈관|뇌졸중|뇌경색|뇌출혈)/, /진단/), brainS = surgOf(/뇌혈관|뇌졸중|뇌출혈|뇌경색/), brainTx = find(/(뇌혈관|뇌졸중)/, /치료/).filter(i => !/수술/.test(nm(i)));
+    if (brainDx.length || brainS.length || brainTx.length) {
+      const lump = sumA(brainDx) + sumA(brainS) + sumA(dsPlain);
+      const tx = sumA(circ) + sumA(brainTx);
+      big.push(card("뇌혈관질환 (뇌경색·뇌출혈 등)", "사망원인 4위", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...brainDx.map(i => chipI(i, "c")), ...brainS.map(i => chipI(i, "t")), ...dsPlain.map(i => chipI(i, "t")), ...brainTx.map(i => chipI(i, "o")), ...circ.map(i => chipI(i, "o"))], circ.length ? "순환계 치료비는 그 질병이 약관의 순환계질환 분류표에 들 때" : "", "b", tx ? `+ 치료비 담보 연 ${fmt2(tx)} 한도 (받은 치료만큼)` : ""));
+    }
+    // 심장·뇌 이름이 붙은 담보 없이 순환계 치료비만 있으면 한 장으로
+    if (circ.length && !heartDx.length && !heartS.length && !heartTx.length && !brainDx.length && !brainS.length && !brainTx.length)
+      big.push(card("심장·뇌혈관질환 치료 (순환계)", "심장질환 사망원인 2위 · 뇌혈관질환 4위", "", "", circ.map(i => chipI(i, "o")), "그 질병이 약관의 순환계질환 분류표에 들 때 지급", "h", `+ 치료비 담보 연 ${fmt2(sumA(circ))} 한도 (받은 치료만큼)`));
+    const dem = find(/치매|경도인지|장기요양|레켐비|도나네맙/);
+    if (dem.length) big.push(card("치매·장기요양", "", fmt2(Math.max(...dem.map(i => i.amt))) , "가장 큰 담보", dem.map(i => chipI(i, "c")), "", "b"));
+
+    // ── 3) 많이 받는 수술 Top 3 (나이를 알면 그 연령대 최다 수술을 맨 앞에)
+    const list = SURG_CASES.slice();
+    const ag = age ? (AGE_SURG.find(([f]) => f(age)) || [])[1] : null;
+    if (ag) { const k = list.findIndex(c => String(c.re) === String(ag.re)); if (k >= 0) list.splice(k, 1); list.unshift(ag); }
+    const surgCards = (dsAll.length || dtype.length || RAW.some(i => /수술/.test(nm(i)))) ? list.map(c => {
+      const sp = surgOf(c.re), pay = dsAll.concat(sp);
+      if (!pay.length && !dtype.length) return "";
+      return card(c.t, c.s, pay.length ? fmt2(sumA(pay)) : "", pay.length ? "수술 1회" : "", [...dsAll.map(i => chipI(i, "t")), ...sp.map(i => chipI(i, "s"))], "", "g");
+    }).filter(Boolean).slice(0, 3) : [];
+
+    // ── 4) 간병인 · 운전자
+    const care = find(/간병인|간호·?간병|간호간병/).filter(i => !/181일이상/.test(nm(i)));
+    const careCard = care.length ? card("입원해서 간병이 필요할 때", "", `하루 ${fmt2(Math.max(...care.map(i => i.amt)))}`, "가장 큰 담보 기준", care.map(i => chipI(i, "b")), "간병인 사용·간호간병통합서비스 중 실제 이용한 쪽 담보로 지급 · 지급 일수 한도는 담보명 참고", "b") : "";
+    const drv = find(/벌금|교통사고처리|변호사선임/);
+    const drvCard = drv.length ? card("운전 중 사고로 형사 책임을 질 때", "", fmt2(sumA(drv)), "담보 합 (한도)", drv.map(i => chipI(i, "g")), "", "g") : "";
+
     let no = 0;
-    const secs = blocks.map(b => `<div class="bs-blk">${sec(String(++no).padStart(2, "0"), GROUPS[b.g])}${b.g === "surg" ? typeRow : ""}<div class="bs-gl ${GCLS[b.g]}">${b.rows.map(rowHtml).join("")}</div></div>`).join("");
-    const yak = `<div class="bs-blk bs-box w bs-yak"><div class="bs-boxh"><b>${escH(p.company || "이 보험사")} 약관 등록 전 안내</b></div><p>금액은 설계서에 적힌 <b>가입금액 그대로</b>입니다. 몇 종 수술인지(수술분류표), 치료비의 세부 지급액·연간 한도, 감액기간 같은 지급 조건은 이 회사 약관이 등록되면 사례별로 계산해 드립니다. 실제 지급은 약관과 보험사 심사에 따릅니다.</p></div>`;
-    const common = `<p class="bs-blk bs-common">금액은 ${escH(p.company)} 설계서(${escH(p.product)})의 가입금액을 옮긴 것입니다. 실제 지급 여부와 금액은 진단명·질병코드·수술 분류와 약관에 따르며, 가입 전 상품설명서와 약관을 반드시 확인하시기 바랍니다.</p>`;
-    // 한 장에 다 넣고, 화면에 붙인 뒤 BOSANG.reflow()가 넘치는 묶음을 다음 장으로 넘김
-    return `<div class="page a4 bs bsp" data-bsflow="1">${top(1)}${hero("설계서 가입금액 기준")}
-      ${kpis ? `<div class="bs-kpis">${kpis}</div>` : ""}
-      ${secs || `<p class="bs-small">설계서에서 가입 담보를 찾지 못했습니다.</p>`}
-      ${yak}${common}${foot}</div>`;
+    const blockOf = (t, cards, cls, note) => cards.length ? `<div class="bs-blk">${U.sec(String(++no).padStart(2, "0"), t)}<div class="bs-cases ${cls || ""}">${cards.join("")}</div>${note ? `<p class="bs-small">${note}</p>` : ""}</div>` : "";
+    const body = blockOf("큰 병에 걸리면 받는 돈", big, "two", typeNote ? "수술을 받으면 " + typeNote : "") + blockOf("많이 받는 수술 Top 3", surgCards, "", typeNote ? "위 금액에 " + typeNote.replace(/^\+ /, "") + "가 더해질 수 있습니다." : "") + blockOf("간병·운전", [careCard, drvCard].filter(Boolean), "two");
+    const yak = `<div class="bs-blk bs-box w bs-yak"><div class="bs-boxh"><b>${escH(p.company || "이 보험사")} 약관 등록 전 안내</b></div><p>금액은 설계서 <b>가입금액 그대로</b>이며, 사례에는 담보명에 그 질병·수술 이름이 적힌 담보만 넣었습니다. 몇 종 수술인지, 치료비 세부 지급액, 감액기간 같은 지급 조건은 약관에 따릅니다.</p></div>`;
+    const src = `<p class="bs-blk bs-common">통계 출처: ${STATS.death} · ${STATS.cancer} · ${STATS.surg}. 금액은 ${escH(p.company)} 설계서(${escH(p.product)})의 가입금액이며, 실제 지급 여부와 금액은 진단명·질병코드·수술 분류와 약관에 따릅니다.</p>`;
+    return `<div class="page a4 bs bsp" data-bsflow="1">${U.top(1)}${U.hero("설계서 가입금액 기준")}
+      ${core}${body || `<p class="bs-small">설계서에서 사례로 보여드릴 담보를 찾지 못했습니다.</p>`}
+      ${yak}${src}${U.foot}</div>`;
   }
 
   // 같은 담보의 세부보장(담보명[세부]…)은 한 칸으로 묶음 — 이름은 설계서 그대로
@@ -591,7 +686,11 @@
 .bsp .bs-gl>div.bs-sub{grid-column:1/-1;display:flex;flex-direction:column;gap:3px;padding:5px 2px}
 .bs-subh{display:flex;justify-content:space-between;gap:8px}.bs-subh span{font-weight:600;color:#374151}.bs-subh b{white-space:nowrap;font-size:12px}
 .bs-subp{display:flex;flex-wrap:wrap;gap:3px}.bs-subp em{font-style:normal;font-size:9.6px;background:#f3f4f6;border-radius:5px;padding:1px 6px;color:#374151}.bs-subp em b{font-size:10px}
-.bs-blk{display:flex;flex-direction:column;gap:8px}.bs-k.kg{background:var(--gs);border-color:var(--g)}.bs-k.kg b{color:var(--g)}.bsp .bs-gl.g>div>b{color:var(--g)}.bsp .bs-gl.b>div>b{color:var(--b)}
+.bs-blk{display:flex;flex-direction:column;gap:8px}
+.bsp .bs-cases.two{grid-template-columns:1fr 1fr}.bsp .bs-cases>div{min-width:0}.bsp .bs-case .bs-chip{white-space:normal}.bsp .bs-case .bs-chip b{white-space:nowrap}.bs-tx{font-size:10px;font-weight:700;color:var(--o)}.bs-case.c{border-left:3px solid var(--c)}.bs-case.h{border-left:3px solid var(--h)}.bs-case.b{border-left:3px solid var(--b)}.bs-case.g{border-left:3px solid var(--g)}
+.bs-case.c .bs-pill{background:var(--c)}.bs-case.h .bs-pill{background:var(--h)}.bs-case.b .bs-pill{background:var(--b)}
+.bs-core{border-radius:10px;background:var(--gs);padding:9px 12px;display:flex;flex-direction:column;gap:6px}.bs-core-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}.bs-core-h b{font-size:14px;color:var(--g)}.bs-core-h span{font-size:9.5px;color:#6b7280}
+.bs-core-t{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.bs-core-t>div{background:#fff;border-radius:8px;padding:6px 9px;display:flex;flex-direction:column}.bs-core-t>div.on{outline:2px solid var(--g)}.bs-core-t span{font-size:10.5px;font-weight:600}.bs-core-t b{font-size:20px;color:var(--g);line-height:1.2}.bs-core-t small{font-size:9px;color:#6b7280}.bs-k.kg{background:var(--gs);border-color:var(--g)}.bs-k.kg b{color:var(--g)}.bsp .bs-gl.g>div>b{color:var(--g)}.bsp .bs-gl.b>div>b{color:var(--b)}
 `;
   function ensureCss() {
     if (typeof document === "undefined") return;
