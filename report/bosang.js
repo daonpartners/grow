@@ -443,7 +443,7 @@
       return { amt: r.amt, per, freq: r.freq.replace(/^(매월|매년)\s*,?\s*/, "") };
     };
     const chipI = (i, cls) => { const y = payOf(i); return `<div class="bs-li ${cls || ""}"><span>${escH(short(i.name))}${y.freq ? `<small>${escH(y.freq)}</small>` : ""}</span><b>${y.per ? y.per + " " : ""}${fmt2(y.amt)}</b></div>`; };
-    const card = (title, sub, pill, pillSub, chips, ref, cls, tx) => `<div class="bs-case ${cls || ""}"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div>${pill ? `<div class="bs-pill">${pill}${pillSub ? `<small>${pillSub}</small>` : ""}</div>` : ""}</div><div class="bs-lis">${chips.join("")}</div>${tx ? `<div class="bs-txw"><i>치료받을 때 — 항목마다 정해진 금액</i>${tx}</div>` : ""}${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
+    const card = (title, sub, pill, pillSub, chips, ref, cls, tx, sumHtml) => `<div class="bs-case ${cls || ""}"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div>${pill ? `<div class="bs-pill">${pill}${pillSub ? `<small>${pillSub}</small>` : ""}</div>` : ""}</div><div class="bs-lis">${chips.join("")}</div>${sumHtml || ""}${tx ? `<div class="bs-txw"><i>${sumHtml ? "그 밖의 치료 항목 (그 치료를 받으면 추가)" : "치료받을 때 — 항목마다 정해진 금액"}</i>${tx}</div>` : ""}${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
 
     // ── 수술 공통: 질병수술비(제외 조건 없는 것 / 있는 것), 1~5종 질병수술비
     const dsAll = find(/^질병수술비/), dsPlain = dsAll.filter(i => !/제외/.test(nm(i)));
@@ -477,12 +477,32 @@
       const lim = d.rows.find(r => /한도/.test(r.item) && r.amt);
       return { rows, lim };
     };
-    const txBox = (items, wantSim, cls) => items.map(i => {
-      const t = txRows(i, wantSim);
+    const txBox = (items, wantSim, cls, used) => items.map(i => {
+      const t0 = txRows(i, wantSim), t = t0 && used ? { rows: t0.rows.filter(r => !used.has(r)), lim: t0.lim } : t0;
+      if (used && t0 && t0.rows.length && !t.rows.length) return "";
       if (!t || !t.rows.length) return `<div class="bs-txr"><b>${escH(short(i.name))}</b><span>가입금액 ${fmt2(i.amt)} · 치료 항목마다 정해진 금액 지급 (항목·금액은 설계서 특약 안내사항·약관)</span></div>`;
       const big = t.rows.filter(r => r.amt >= 100), sm = t.rows.filter(r => r.amt < 100);
       return `<div class="bs-txr"><b>${escH(short(i.name))}</b><div class="bs-case-p">${big.map(r => `<span class="bs-chip ${cls || "o"}">${escH(lab(r.item))} <small>${escH(r.freq)}</small> <b>${fmt2(r.amt)}</b></span>`).join("")}${sm.length ? `<span class="bs-chip">검사·재활 등 ${sm.length}개 항목 <b>${fmt2(Math.min(...sm.map(r => r.amt)))}~${fmt2(Math.max(...sm.map(r => r.amt)))}</b></span>` : ""}</div>${t.lim ? `<small>연간 총 지급 한도 ${fmt2(t.lim.amt)}</small>` : ""}</div>`;
     }).join("");
+    // ── 계산: 한 해에 이런 치료를 받으면 담보마다 얼마 (설계서 항목별 금액 합, 연간 한도 넘으면 한도까지)
+    const pickRows = (i, pats, wantSim) => {
+      const t = txRows(i, wantSim); if (!t || !t.rows.length) return null;
+      const got = []; pats.forEach(re => { const r = t.rows.find(x => re.test(String(x.item).replace(/\s+/g, "")) && got.indexOf(x) < 0); if (r) got.push(r); });
+      if (!got.length) return null;
+      const raw = got.reduce((a, r) => a + r.amt, 0), lim = t.lim ? t.lim.amt : 0;
+      return { i, got, raw, sum: lim ? Math.min(raw, lim) : raw, lim };
+    };
+    const scenLine = x => `<li><span>${escH(short(x.i.name))}</span><em>${x.got.map(r => `${escH(lab(r.item))} ${fmt2(r.amt)}`).join(" + ")}${x.lim && x.raw > x.lim ? ` → 연간 한도 ${fmt2(x.lim)}` : ""}</em><b>${fmt2(x.sum)}</b></li>`;
+    const sumBox = (title, lump, lines, extra, note) => {
+      const tx = lines.reduce((a, x) => a + x.sum, 0) + extra.reduce((a, i) => a + i.amt, 0);
+      if (!tx) return "";
+      return `<div class="bs-sum"><div class="bs-sum-h"><span>${title}</span><b>${fmt2(lump + tx)}</b></div><small>${lump ? `진단·수술 ${fmt2(lump)} + ` : ""}치료 ${fmt2(tx)}</small><ul>${lines.map(scenLine).join("")}${extra.map(i => `<li><span>${escH(short(i.name))}</span><em>해당 치료 시</em><b>${fmt2(i.amt)}</b></li>`).join("")}</ul>${note ? `<p>${note}</p>` : ""}</div>`;
+    };
+    const usedOf = arr => arr.length ? new Set(arr.flatMap(x => x.got)) : undefined;
+    const P_CA = [/^(?!.*(다빈치|로봇)).*수술/, /항암약물/, /항암방사선/];
+    const P_HEART = [/스텐트|^(?!.*혈전).*수술/, /중환자실/];
+    const P_BRAIN = [/혈전용해/, /중환자실/, /혈전제거|^(?!.*혈전).*수술/];
+    const NOTE_NP = "비급여(전액본인부담) 담보는 비급여 치료를 받았을 때 · 실제 받은 치료 항목만 지급";
     const caSpecial = find(/중입자|양성자/);
     const caTxSum = sumA(caTx);
     const rep = sex === "여" ? { t: "유방암", s: "여성 암 발생 1위", re: /유방/ } : sex === "남" ? { t: "전립선암", s: "남성 암 발생 1위", re: /전립선/ } : { t: "폐암", s: "암 발생 2위 (1위 갑상선암)", re: /폐암/ };
@@ -491,36 +511,51 @@
       const typeTx = find(rep.re, /항암|방사선|약물/);
       const surgC = dsPlain.concat(surgOf(rep.re));
       const lump = sumA(otherDx) + sumA(icOne) + sumA(surgC);
+      const scC = caTx.map(i => pickRows(i, P_CA, false)).filter(Boolean);
       big.push(card(`${rep.t} 진단·치료`, `${rep.s} · 암은 사망원인 1위`, lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "",
         [...otherDx.map(i => chipI(i, "c")), icParts.length ? `<div class="bs-li c"><span>통합암진단비 (해당 암 구분)</span><b>${fmt2(icOne[0].amt)}</b></div>` : "", ...surgC.map(i => chipI(i, "t")), ...typeTx.map(i => chipI(i)), ...caSpecial.map(i => chipI(i))],
-        icParts.length > 1 ? `통합암은 암 구분(${icParts.length}개)별로 따로 지급 — ${rep.t}이 어느 구분인지는 약관 분류표` : "", "c", caTx.length ? txBox(caTx, false) : ""));
+        icParts.length > 1 ? `통합암은 암 구분(${icParts.length}개)별로 따로 지급 — ${rep.t}이 어느 구분인지는 약관 분류표` : "", "c", caTx.length ? txBox(caTx, false, undefined, usedOf(scC)) : "",
+        sumBox(`${rep.t}으로 수술·항암약물·항암방사선을 받은 해 — 예상 합계`, lump, scC, typeTx.filter(i => /방사선|약물/.test(nm(i))), NOTE_NP)));
     }
     const thyDx = find(/유사암진단|갑상선암진단/), thyTx = find(/갑상선암/, /치료|약물|호르몬/).filter(i => !/\(기타피부암\)/.test(nm(i)));
     if (thyDx.length || thyTx.length) {
       const lump = sumA(thyDx) + sumA(dsPlain) + sumA(surgOf(/갑상선/));
-      big.push(card("갑상선암", "암 발생 1위 (유사암)", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...thyDx.map(i => chipI(i, "c")), ...dsPlain.map(i => chipI(i, "t")), ...surgOf(/갑상선/).map(i => chipI(i, "t")), ], "", "c", (thyTx.length || caTx.length) ? (thyTx.length ? `<div class="bs-txr"><b>갑상선암 치료 담보</b><div class="bs-lis">${thyTx.map(i => chipI(i, "o")).join("")}</div></div>` : "") + txBox(caTx.filter(i => { const t = txRows(i, true); return t && t.rows.length; }), true) : ""));
+      const scT = caTx.map(i => pickRows(i, [/유사암수술|갑상선.*수술/, /갑상선암항암방사선|갑상선암.*방사선/], true)).filter(Boolean);
+      big.push(card("갑상선암", "암 발생 1위 (유사암)", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...thyDx.map(i => chipI(i, "c")), ...dsPlain.map(i => chipI(i, "t")), ...surgOf(/갑상선/).map(i => chipI(i, "t")), ], "", "c", (thyTx.length || caTx.length) ? txBox(caTx.filter(i => { const t = txRows(i, true); return t && t.rows.length; }), true, undefined, usedOf(scT)) : "", sumBox("갑상선암으로 수술·항암방사선 치료를 받은 해 — 예상 합계", lump, scT, thyTx, NOTE_NP)));
     }
     const circ = find(/순환계/, /치료/);
     const heartDx = find(/(심장|심근경색|허혈|협심증)/, /진단/), heartS = surgOf(/심장/), heartTx = find(/심장/, /치료/).filter(i => !/수술/.test(nm(i)));
     if (heartDx.length || heartS.length || heartTx.length) {
       const lump = sumA(heartDx) + sumA(heartS) + sumA(dsPlain);
       const tx = sumA(circ) + sumA(heartTx);
-      big.push(card("심장질환 (협심증·심근경색 등)", "사망원인 2위", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...heartDx.map(i => chipI(i, "c")), ...heartS.map(i => chipI(i, "t")), ...dsPlain.map(i => chipI(i, "t")), ], circ.length ? "순환계 치료비는 그 질병이 약관의 순환계질환 분류표에 들 때" : "", "h", tx ? txBox(circ.concat(heartTx), false, "o") : ""));
+      const scH = circ.concat(heartTx).map(i => pickRows(i, P_HEART, false)).filter(Boolean);
+      big.push(card("심장질환 (협심증·심근경색 등)", "사망원인 2위", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...heartDx.map(i => chipI(i, "c")), ...heartS.map(i => chipI(i, "t")), ...dsPlain.map(i => chipI(i, "t")), ], circ.length ? "순환계 치료비는 그 질병이 약관의 순환계질환 분류표에 들 때" : "", "h", tx ? txBox(circ.concat(heartTx), false, "o", usedOf(scH)) : "", sumBox("협심증·심근경색으로 스텐트 등 수술과 중환자실 치료를 받은 해 — 예상 합계", lump, scH, [], "그 질병이 약관의 순환계질환 분류표에 들 때 · 실제 받은 치료 항목만 지급")));
     }
     const brainDx = find(/(뇌혈관|뇌졸중|뇌경색|뇌출혈)/, /진단/), brainS = surgOf(/뇌혈관|뇌졸중|뇌출혈|뇌경색/), brainTx = find(/(뇌혈관|뇌졸중)/, /치료/).filter(i => !/수술/.test(nm(i)));
     if (brainDx.length || brainS.length || brainTx.length) {
       const lump = sumA(brainDx) + sumA(brainS) + sumA(dsPlain);
       const tx = sumA(circ) + sumA(brainTx);
-      big.push(card("뇌혈관질환 (뇌경색·뇌출혈 등)", "사망원인 4위", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...brainDx.map(i => chipI(i, "c")), ...brainS.map(i => chipI(i, "t")), ...dsPlain.map(i => chipI(i, "t")), ], circ.length ? "순환계 치료비는 그 질병이 약관의 순환계질환 분류표에 들 때" : "", "b", tx ? txBox(circ.concat(brainTx), false, "o") : ""));
+      const scB = circ.concat(brainTx).map(i => pickRows(i, P_BRAIN, false)).filter(Boolean);
+      big.push(card("뇌혈관질환 (뇌경색·뇌출혈 등)", "사망원인 4위", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...brainDx.map(i => chipI(i, "c")), ...brainS.map(i => chipI(i, "t")), ...dsPlain.map(i => chipI(i, "t")), ], circ.length ? "순환계 치료비는 그 질병이 약관의 순환계질환 분류표에 들 때" : "", "b", tx ? txBox(circ.concat(brainTx), false, "o", usedOf(scB)) : "", sumBox("뇌경색으로 혈전용해·중환자실·혈전제거술을 받은 해 — 예상 합계", lump, scB, [], "그 질병이 약관의 순환계질환 분류표에 들 때 · 실제 받은 치료 항목만 지급")));
     }
     // 심장·뇌 이름이 붙은 담보 없이 순환계 치료비만 있으면 한 장으로
     if (circ.length && !heartDx.length && !heartS.length && !heartTx.length && !brainDx.length && !brainS.length && !brainTx.length)
       big.push(card("심장·뇌혈관질환 치료 (순환계)", "심장질환 사망원인 2위 · 뇌혈관질환 4위", "", "", [], "그 질병이 약관의 순환계질환 분류표에 들 때 지급", "h", txBox(circ, false, "o")));
     const ltc = find(/장기요양/), dem = find(/치매|경도인지|레켐비|도나네맙/).filter(i => !/장기요양/.test(nm(i)));
-    if (dem.length) big.push(card("치매 진단·치료", "", fmt2(Math.max(...dem.map(i => payOf(i).amt))), "가장 큰 담보", dem.map(i => chipI(i, "c")), "", "b"));
+    if (dem.length) {
+      const steps = dem.map(i => ({ i, n: +((nm(i).match(/(\d+)회이상/) || [])[1] || 0), y: payOf(i) })).filter(x => x.n).sort((a, b) => a.n - b.n);
+      let acc = 0; const stepTxt = steps.map(x => { acc += x.y.amt; return `<li><span>${x.n}회 투약${x.n > 1 ? " 도달" : ""}</span><em>+${fmt2(x.y.amt)}</em><b>${fmt2(acc)}</b></li>`; }).join("");
+      const others = dem.filter(i => !steps.some(x => x.i === i)), oSum = sumA(others.map(i => ({ amt: payOf(i).amt })));
+      const total = acc + oSum;
+      const sb = steps.length >= 2 ? `<div class="bs-sum"><div class="bs-sum-h"><span>표적치매약물 투약 횟수가 쌓일수록 — 누적 합계</span><b>${fmt2(total)}</b></div><small>${steps.length}단계 각 1회씩 지급${oSum ? ` + 그 밖의 치매 담보 ${fmt2(oSum)}` : ""}</small><ul>${stepTxt}</ul><p>단계별 담보는 그 투약 횟수에 처음 도달했을 때 1회씩 지급 (설계서 보장내용 기준)</p></div>` : "";
+      big.push(card("치매 진단·치료", "", fmt2(steps.length >= 2 ? total : Math.max(...dem.map(i => payOf(i).amt))), steps.length >= 2 ? "최대 누적" : "가장 큰 담보", dem.map(i => chipI(i, "c")), "", "b", "", sb));
+    }
     if (ltc.length) {
       const ys = ltc.map(payOf), mon = ys.filter(y => y.per === "매월");
-      big.push(card("장기요양 등급을 받으면", "노인장기요양보험 등급 판정 시", mon.length ? `매월 ${fmt2(Math.max(...mon.map(y => y.amt)))}` : fmt2(Math.max(...ys.map(y => y.amt))), mon.length ? "가장 큰 등급 기준" : "가장 큰 담보", ltc.map(i => { const y = payOf(i); return y.per || y.freq ? chipI(i, "b") : `<div class="bs-li b"><span>${escH(short(i.name))}<small>가입금액 기준 — 매월 지급액은 설계서 보장내용 확인</small></span><b>${fmt2(i.amt)}</b></div>`; }), mon.length ? "생활자금은 등급 판정 후 매월 지급 — 보증·최대 지급기간은 담보별 안내 참고" : "", "b"));
+      const g = y => +((String(y.freq).match(/(\d+)\s*회\s*보증/) || [])[1] || 0);
+      const calc = ltc.map((i, k) => ({ i, y: ys[k] })).filter(x => x.y.per === "매월");
+      const ltcSum = calc.length ? `<div class="bs-sum"><div class="bs-sum-h"><span>등급 판정 후 받는 생활자금 — 계산</span><b>${fmt2(Math.max(...calc.map(x => x.y.amt * (g(x.y) || 12))))}</b></div><small>등급별로 따로 지급 (한 번에 한 등급) · 가장 큰 금액 기준</small><ul>${calc.map(x => `<li><span>${escH(short(x.i.name))}</span><em>매월 ${fmt2(x.y.amt)} × ${g(x.y) ? g(x.y) + "회 보증" : "12개월"}</em><b>${fmt2(x.y.amt * (g(x.y) || 12))}</b></li>`).join("")}</ul><p>${calc.some(x => /종신/.test(x.y.freq)) ? "보증 횟수 이후에도 살아 계시고 등급이 유지되면 최대 종신까지 매월 지급 · " : ""}금액은 설계서 보장내용 기준</p></div>` : "";
+      big.push(card("장기요양 등급을 받으면", "노인장기요양보험 등급 판정 시", mon.length ? `매월 ${fmt2(Math.max(...mon.map(y => y.amt)))}` : fmt2(Math.max(...ys.map(y => y.amt))), mon.length ? "가장 큰 등급 기준" : "가장 큰 담보", ltc.map(i => { const y = payOf(i); return y.per || y.freq ? chipI(i, "b") : `<div class="bs-li b"><span>${escH(short(i.name))}<small>가입금액 기준 — 매월 지급액은 설계서 보장내용 확인</small></span><b>${fmt2(i.amt)}</b></div>`; }), mon.length ? "생활자금은 등급 판정 후 매월 지급 — 보증·최대 지급기간은 담보별 안내 참고" : "", "b", "", ltcSum));
     }
 
     // ── 3) 많이 받는 수술 Top 3 (나이를 알면 그 연령대 최다 수술을 맨 앞에)
@@ -540,7 +575,13 @@
     const drvCard = drv.length ? card("운전 중 사고로 형사 책임을 질 때", "", fmt2(sumA(drv)), "담보 합 (한도)", drv.map(i => chipI(i, "g")), "", "g") : "";
 
     let no = 0;
-    const blockOf = (t, cards, cls, note) => cards.length ? `<div class="bs-blk">${U.sec(String(++no).padStart(2, "0"), t)}<div class="bs-cases cx ${cls || ""} n${cards.length}">${cards.join("")}</div>${note ? `<p class="bs-small">${note}</p>` : ""}</div>` : "";
+    const blockOf = (t, cards, cls, note) => {
+      if (!cards.length) return "";
+      const per = /two/.test(cls || "") ? 2 : 3, rows = [];
+      for (let k = 0; k < cards.length; k += per) rows.push(cards.slice(k, k + per));
+      const head = U.sec(String(++no).padStart(2, "0"), t);
+      return rows.map((r, k) => `<div class="bs-blk">${k ? "" : head}<div class="bs-cases cx ${cls || ""} n${r.length}">${r.join("")}</div>${k === rows.length - 1 && note ? `<p class="bs-small">${note}</p>` : ""}</div>`).join("");
+    };
     const body = blockOf("큰 병에 걸리면 받는 돈", big, "two", typeNote ? "수술을 받으면 " + typeNote : "") + blockOf("많이 받는 수술 Top 3", surgCards, "", typeNote ? "위 금액에 " + typeNote.replace(/^\+ /, "") + "가 더해질 수 있습니다." : "") + blockOf("간병·운전", [careCard, drvCard].filter(Boolean), "two");
     const yak = `<div class="bs-blk bs-box w bs-yak"><div class="bs-boxh"><b>${escH(p.company || "이 보험사")} 약관 등록 전 안내</b></div><p>금액은 설계서 <b>가입금액 그대로</b>이며, 사례에는 담보명에 그 질병·수술 이름이 적힌 담보만 넣었습니다. 치료비는 설계서 특약 안내사항의 <b>항목별 지급금액</b>(계약일부터 1년 경과 이후 기준)을 옮겼습니다. 몇 종 수술인지, 감액기간 같은 지급 조건은 약관에 따릅니다.</p></div>`;
     const src = `<p class="bs-blk bs-common">통계 출처: ${STATS.death} · ${STATS.cancer} · ${STATS.surg}. 금액은 ${escH(p.company)} 설계서(${escH(p.product)})의 가입금액이며, 실제 지급 여부와 금액은 진단명·질병코드·수술 분류와 약관에 따릅니다.</p>`;
@@ -750,6 +791,11 @@
 .bs-subh{display:flex;justify-content:space-between;gap:8px}.bs-subh span{font-weight:600;color:#374151}.bs-subh b{white-space:nowrap;font-size:12px}
 .bs-subp{display:flex;flex-wrap:wrap;gap:3px}.bs-subp em{font-style:normal;font-size:9.6px;background:#f3f4f6;border-radius:5px;padding:1px 6px;color:#374151}.bs-subp em b{font-size:10px}
 .bs-blk{display:flex;flex-direction:column;gap:8px}
+.bs-sum{margin-top:4px;border-radius:10px;background:#fff7ed;border:1.5px solid #fdba74;padding:8px 11px;display:flex;flex-direction:column;gap:3px}
+.bs-sum-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.bs-sum-h span{font-size:12px;font-weight:700;color:#9a3412}.bs-sum-h b{font-size:22px;color:#c2410c;white-space:nowrap}
+.bs-sum>small{font-size:10.5px;color:#9a3412}.bs-sum ul{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:1px}
+.bs-sum li{display:grid;grid-template-columns:1fr auto;grid-template-areas:"n b" "e e";column-gap:8px;align-items:baseline;font-size:11px;border-top:1px dashed #fed7aa;padding-top:3px}.bs-sum li span{grid-area:n}.bs-sum li b{grid-area:b}.bs-sum li em{grid-area:e}.bs-sum li span{font-weight:600;color:#374151}.bs-sum li em{font-style:normal;color:#6b7280;font-size:10px}.bs-sum li b{white-space:nowrap;color:#c2410c;font-size:12px}
+.bs-sum p{margin:2px 0 0;font-size:9.6px;color:#9a3412}
 .bsp .bs-cases.two{grid-template-columns:1fr 1fr}.bsp .bs-cases>div{min-width:0}.bsp .bs-case .bs-chip{white-space:normal}.bsp .bs-case .bs-chip b{white-space:nowrap}.bs-txw{display:flex;flex-direction:column;gap:3px;border-top:1px dashed #e5e7eb;padding-top:4px}.bs-txw>i{font-style:normal;font-size:9.8px;font-weight:700;color:var(--o)}.bs-txr{display:flex;flex-direction:column;gap:2px}.bs-txr>b{font-size:10px;color:#374151}.bs-txr>span,.bs-txr>small{font-size:9px;color:#6b7280}.bs-chip small{font-size:8.6px;color:#6b7280}.bs-case.c{border-left:3px solid var(--c)}.bs-case.h{border-left:3px solid var(--h)}.bs-case.b{border-left:3px solid var(--b)}.bs-case.g{border-left:3px solid var(--g)}
 .bs-case.c .bs-pill{background:var(--c)}.bs-case.h .bs-pill{background:var(--h)}.bs-case.b .bs-pill{background:var(--b)}
 .bs-core{border-radius:10px;background:var(--gs);padding:9px 12px;display:flex;flex-direction:column;gap:6px}.bs-core-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}.bs-core-h b{font-size:14px;color:var(--g)}.bs-core-h span{font-size:9.5px;color:#6b7280}
