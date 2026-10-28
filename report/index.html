@@ -9,7 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="bosang.js?v=13"></script>
+<script src="bosang.js?v=14"></script>
 <style>
 :root{
   --ink:#1C1D22; --ink2:#33343C; --muted:#55565F; --line:#D9CFC4;
@@ -171,12 +171,13 @@ body{overflow-x:hidden}
       <div class="actions">
         <button class="btn primary" id="saveOne" disabled>이 고객 PDF 저장</button>
         <button class="btn ghost" id="saveAll" disabled>전체 PDF 저장</button>
+        <button class="btn ghost" id="printOne" disabled>바로 출력</button>
       </div>
       <p class="hint" id="fnHint">파일 이름: 고객명_지문성향리포트_설계사명.pdf</p>
     </div>
   </aside>
 
-  <div class="mbar" id="mbar"><button class="btn ghost" id="mPreview">미리보기로 이동</button><button class="btn primary" id="mSave">이 고객 PDF 저장</button></div>
+  <div class="mbar" id="mbar"><button class="btn ghost" id="mPreview">미리보기로 이동</button><button class="btn primary" id="mSave">이 고객 PDF 저장</button><button class="btn ghost" id="mPrint">출력</button></div>
   <main class="main">
     <div class="status" id="status"></div>
     <div class="empty" id="empty">왼쪽에서 결과지 PDF를 올리면<br>여기에 고객용 리포트가 미리 보입니다.</div>
@@ -2792,6 +2793,7 @@ function renderList(){
   var ok=state.customers.some(function(c){return c.mode===state.mode&&!c.error;});
   $('saveAll').disabled=!ok||state.busy;
   $('saveOne').disabled=!curC()||!!curC().error||state.busy;
+  $('printOne').disabled=!curC()||!!curC().error||state.busy;
 }
 function renderEdit(){
   var c=curC();
@@ -2920,6 +2922,14 @@ function fitPreview(){
 })();
 window.addEventListener('resize',function(){ clearTimeout(window.__fpT); window.__fpT=setTimeout(fitPreview,150); });
 $('mSave').onclick=function(){ $('saveOne').click(); };
+// 바로 출력: 미리보기의 장들을 A4로 인쇄 (bosang.js의 printPages — 제안서 말고 다른 리포트 탭도 같이 씀)
+$('printOne').onclick=function(){
+  if(needAdv()) return;
+  var c=curC(); if(!c||c.error) return;
+  if(!window.BOSANG||!BOSANG.printPages){ setStatus('출력 도구를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.'); return; }
+  if(!BOSANG.printPages($('pages'), fileName(c).replace(/\.pdf$/i,''))) setStatus('출력할 리포트가 없습니다.');
+};
+$('mPrint').onclick=function(){ $('printOne').click(); };
 $('mPreview').onclick=function(){ var p=$('pages'); if(p) p.scrollIntoView({behavior:'smooth'}); };
 async function savePdf(c){
   var hostZ=$('pages').style.zoom, docZ=document.documentElement.style.zoom; $('pages').style.zoom=''; document.documentElement.style.zoom='';

@@ -806,6 +806,40 @@
     if (!document.getElementById("bs-style")) { const st = document.createElement("style"); st.id = "bs-style"; st.textContent = CSS + CSS2; document.head.appendChild(st); }
   }
 
+  /* ---------------- 12-1. 바로 출력: 리포트 장(.page/.a4)만 따로 A4로 인쇄 (grow·보잇 공용) ---------------- */
+  // 화면 확대·축소, 앱 메뉴와 상관없이 장만 복사해 인쇄용 창에서 엶. 글자는 선명하게(그림으로 바꾸지 않음), 배경색 그대로 인쇄
+  function printPages(host, title) {
+    const pages = host ? [...host.querySelectorAll(".page, .a4")].filter(el => !el.parentElement.closest(".page, .a4")) : [];
+    if (!pages.length) return false;
+    const fr = document.createElement("iframe");
+    fr.setAttribute("aria-hidden", "true");
+    fr.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden";
+    document.body.appendChild(fr);
+    const styles = [...document.querySelectorAll('style, link[rel="stylesheet"]')].map(n => n.outerHTML).join("");
+    const css = `@page{size:A4;margin:9mm}
+html,body{margin:0;padding:0;background:#fff}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pp{display:flex;flex-direction:column;align-items:center}
+.pp>*{zoom:.914;box-shadow:none!important;margin:0!important;transform:none!important;break-after:page;page-break-after:always;break-inside:avoid;overflow:hidden}
+.pp>*:last-child{break-after:auto;page-break-after:auto}
+[contenteditable]{outline:none!important}`;
+    const d = fr.contentDocument;
+    d.open();
+    d.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${escH(title || document.title)}</title>${styles}<style>${css}</style></head><body><div class="pp">${pages.map(el => el.outerHTML).join("")}</div></body></html>`);
+    d.close();
+    const go = async () => {
+      try { if (d.fonts && d.fonts.ready) await d.fonts.ready; } catch (e) { }
+      await Promise.all([...d.images].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
+      const w = fr.contentWindow;
+      const done = () => setTimeout(() => fr.remove(), 500);
+      w.addEventListener("afterprint", done);
+      w.focus(); w.print();
+      setTimeout(done, 60000);
+    };
+    if (d.readyState === "complete") go(); else fr.onload = go;
+    return true;
+  }
+
   /* ---------------- 13. 보잇 화면 (index.html 의 보상제안서 메뉴: bsg-*) ---------------- */
   const S = { docs: [] };
   const $ = q => document.querySelector(q);
@@ -819,6 +853,7 @@
     const un = S.docs.flatMap(d => (d.warns || []).concat(d.M.D ? d.M.unknown.map(u => "약관 사전에 없어 설계서 가입금액 그대로 표시: " + u.name) : []));
     const ub = $("#bsg-unknown"); if (ub) ub.innerHTML = un.length ? `<details open><summary>확인할 내용 ${un.length}개 (설계사용)</summary><p class="note">${un.map(escH).join("<br>")}</p></details>` : "";
     const pb = $("#bsg-pdf"); if (pb) pb.disabled = !S.docs.length;
+    const pr = $("#bsg-print"); if (pr) pr.disabled = !S.docs.length;
   }
   async function addFiles(files) {
     const msg = $("#bsg-msg");
@@ -859,10 +894,11 @@
     const inp = $("#bsg-file"); if (!inp) return;
     inp.addEventListener("change", e => { const fs = [...e.target.files]; e.target.value = ""; addFiles(fs); });
     $("#bsg-pdf").addEventListener("click", savePdf);
+    const pr = $("#bsg-print"); if (pr) pr.addEventListener("click", () => { const nm = (S.docs[0] && S.docs[0].M.p.insured) || "고객"; if (!printPages($("#sheets-bosang"), `보험금예상안내서_${nm}`)) $("#bsg-msg").textContent = "출력할 안내서가 없습니다."; });
     document.addEventListener("click", e => { const d = e.target.closest("[data-bsdel]"); if (d) { S.docs.splice(+d.dataset.bsdel, 1); draw(); } });
     draw();
   }
   if (typeof document !== "undefined") { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init(); }
 
-  G.BOSANG = { reflow, subGroups, pdfLines, parseKB, build, build2, readProposal, render2, origPages, ensureCss, companyOf, manAny, genClass, GROUPS, man, fmt, DICTS, KB_DICT, IC_NAME, AI_URL };
+  G.BOSANG = { printPages, reflow, subGroups, pdfLines, parseKB, build, build2, readProposal, render2, origPages, ensureCss, companyOf, manAny, genClass, GROUPS, man, fmt, DICTS, KB_DICT, IC_NAME, AI_URL };
 })(typeof window !== "undefined" ? window : globalThis);
