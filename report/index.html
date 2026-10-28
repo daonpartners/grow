@@ -9,6 +9,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="bosang.js?v=1"></script>
+<script src="proposal.js?v=1"></script>
 <style>
 :root{
   --ink:#1C1D22; --ink2:#33343C; --muted:#55565F; --line:#D9CFC4;
@@ -132,10 +134,11 @@ body{overflow-x:hidden}
         <div><b>고객 리포트 생성기</b>자료 PDF를 올리면 고객용 리포트 PDF가 만들어집니다</div>
       </div>
       <div class="tabs" style="margin-top:14px" id="tabs">
-        <button class="tab on" data-mode="adult">성인 지문성향</button>
-        <button class="tab" data-mode="child">자녀 지문성향</button>
-        <button class="tab" data-mode="disease">질병예측</button>
+        <button class="tab on" data-mode="adult">성인지문</button>
+        <button class="tab" data-mode="child">자녀지문</button>
+        <button class="tab" data-mode="disease">양자+보장분석</button>
         <button class="tab" data-mode="coverage">보장분석</button>
+        <button class="tab" data-mode="proposal" style="grid-column:1/-1">제안서</button>
       </div>
     </div>
 
@@ -199,7 +202,8 @@ var MODES={
   adult:{label:'성인 지문성향',drop:'KGATest <b>성인</b> 결과지 PDF를 <b>여기로 끌어놓거나 클릭</b>하세요<br>여러 명을 한 번에 올려도 됩니다',file:'지문성향리포트'},
   child:{label:'자녀 지문성향',drop:'KGATest <b>아동·청소년</b> 결과지 PDF를 <b>여기로 끌어놓거나 클릭</b>하세요<br>여러 명을 한 번에 올려도 됩니다',file:'자녀지문성향리포트'},
   disease:{label:'질병예측',drop:'',file:'질병예측리포트'},
-  coverage:{label:'보장분석',drop:'',file:'보장분석리포트'}
+  coverage:{label:'보장분석',drop:'',file:'보장분석리포트'},
+  proposal:{label:'제안서',drop:'KB손해보험 <b>상품제안서(설계제안서) PDF</b>를 <b>여기로 끌어놓거나 클릭</b>하세요<br>원본 담보표 + 보상제안서 2장이 만들어집니다',file:'보험금예상안내서'}
 };
 // 다중지능 (원 결과지 그래프 제목의 지능 이름 → 쉬운 설명)
 var MI={
@@ -2720,8 +2724,23 @@ var GEN={
   adult:{parse:parsePdf,build:buildFp,edit:editFp,bind:bindFp,up:'2. 결과지 PDF 올리기',err:'KGATest 결과지 PDF가 맞는지 확인해 주세요.'},
   child:{parse:parsePdf,build:buildFp,edit:editFp,bind:bindFp,up:'2. 결과지 PDF 올리기',err:'KGATest 결과지 PDF가 맞는지 확인해 주세요.'},
   disease:{parse:parseDisease,build:buildDisease,edit:editDisease,bind:bindDisease,up:'2. 질병예측 자료 PDF 올리기',err:'질병예측 예방보장 컨설팅 리포트 PDF가 맞는지 확인해 주세요.'},
-  coverage:{parse:parseCoverage,build:buildCoverage,edit:editCoverage,bind:bindCoverage,up:'2. 보장분석 자료 PDF 올리기',err:'PDF에서 글자를 읽지 못했습니다. 스캔 이미지 PDF는 읽을 수 없습니다.'}
+  coverage:{parse:parseCoverage,build:buildCoverage,edit:editCoverage,bind:bindCoverage,up:'2. 보장분석 자료 PDF 올리기',err:'PDF에서 글자를 읽지 못했습니다. 스캔 이미지 PDF는 읽을 수 없습니다.'},
+  proposal:{parse:parseProposal,build:buildProposal,edit:editProposal,bind:function(){},up:'2. 설계제안서 PDF 올리기',err:'KB손해보험 상품제안서 PDF가 맞는지 확인해 주세요. (암호가 걸린 PDF·스캔 이미지는 읽을 수 없습니다)'}
 };
+/* ---------- 제안서: 설계제안서 원본(담보표 장) + 보상제안서 2장 — 계산은 bosang.js(보잇 공용), 화면은 proposal.js ---------- */
+async function parseProposal(f){
+  await ensureWorker();
+  if(!window.PROPOSAL) throw new Error('proposal.js 없음');
+  var c=await window.PROPOSAL.parse(f,pdfjsLib);
+  c.warns=c.warns||[];
+  return c;
+}
+function buildProposal(c,host){ var a=adv(); window.PROPOSAL.build(c,host,{name:a.name,title:a.title,org:ORG},foot(a)); }
+function editProposal(c){
+  var M=c.M||{};
+  return '<div class="grid2"><label class="f">고객 이름<input data-f="name" value="'+esc(c.name||'')+'"></label></div>'+
+    '<p class="hint" style="margin:6px 0 0">원본 설계제안서 '+(c.imgs||[]).length+'장 + 보상제안서 2장 · 계산한 담보 '+((M.used||[]).length)+'개'+(M.unknown&&M.unknown.length?' · 사전에 없는 담보 '+M.unknown.length+'개(보상제안서에서 제외)':'')+'</p>';
+}
 MODES.disease.drop='<b>질병예측 검사자료</b>와 같은 고객의 <b>보장분석 PDF</b>를 <b>함께 끌어놓거나 클릭</b>하세요<br>보장분석 없이 검사자료만 올려도 됩니다';
 MODES.coverage.drop='기존 <b>보장분석 자료 PDF</b>를 <b>여기로 끌어놓거나 클릭</b>하세요<br>담보명과 금액을 자동으로 읽어옵니다';
 
@@ -2747,6 +2766,7 @@ function subLabel(c){
   if(c.mode==='adult'||c.mode==='child') return c.main?c.main+' × '+c.sub:'';
   if(c.mode==='disease') return ((c.areas||[]).length?c.areas.length+'개 영역':'')+(c.cov?' + 보장분석':'');
   if(c.mode==='coverage') return (c.rows||[]).length+'개 담보';
+  if(c.mode==='proposal') return c.M?c.M.used.length+'개 담보':'';
   return '';
 }
 function renderList(){
