@@ -9,8 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="bosang.js?v=1"></script>
-<script src="proposal.js?v=1"></script>
+<script src="bosang.js?v=2"></script>
 <style>
 :root{
   --ink:#1C1D22; --ink2:#33343C; --muted:#55565F; --line:#D9CFC4;
@@ -203,7 +202,7 @@ var MODES={
   child:{label:'자녀 지문성향',drop:'KGATest <b>아동·청소년</b> 결과지 PDF를 <b>여기로 끌어놓거나 클릭</b>하세요<br>여러 명을 한 번에 올려도 됩니다',file:'자녀지문성향리포트'},
   disease:{label:'질병예측',drop:'',file:'질병예측리포트'},
   coverage:{label:'보장분석',drop:'',file:'보장분석리포트'},
-  proposal:{label:'제안서',drop:'KB손해보험 <b>상품제안서(설계제안서) PDF</b>를 <b>여기로 끌어놓거나 클릭</b>하세요<br>원본 담보표 + 보상제안서 2장이 만들어집니다',file:'보험금예상안내서'}
+  proposal:{label:'제안서',drop:'보험사 <b>설계서(가입제안서) PDF</b>를 <b>여기로 끌어놓거나 클릭</b>하세요<br>원본 담보표 + 보상제안서 2장이 만들어집니다',file:'보험금예상안내서'}
 };
 // 다중지능 (원 결과지 그래프 제목의 지능 이름 → 쉬운 설명)
 var MI={
@@ -2725,21 +2724,28 @@ var GEN={
   child:{parse:parsePdf,build:buildFp,edit:editFp,bind:bindFp,up:'2. 결과지 PDF 올리기',err:'KGATest 결과지 PDF가 맞는지 확인해 주세요.'},
   disease:{parse:parseDisease,build:buildDisease,edit:editDisease,bind:bindDisease,up:'2. 질병예측 자료 PDF 올리기',err:'질병예측 예방보장 컨설팅 리포트 PDF가 맞는지 확인해 주세요.'},
   coverage:{parse:parseCoverage,build:buildCoverage,edit:editCoverage,bind:bindCoverage,up:'2. 보장분석 자료 PDF 올리기',err:'PDF에서 글자를 읽지 못했습니다. 스캔 이미지 PDF는 읽을 수 없습니다.'},
-  proposal:{parse:parseProposal,build:buildProposal,edit:editProposal,bind:function(){},up:'2. 설계제안서 PDF 올리기',err:'KB손해보험 상품제안서 PDF가 맞는지 확인해 주세요. (암호가 걸린 PDF·스캔 이미지는 읽을 수 없습니다)'}
+  proposal:{parse:parseProposal,build:buildProposal,edit:editProposal,bind:function(){},up:'2. 설계제안서 PDF 올리기',err:'설계서 PDF를 읽지 못했습니다. (암호가 걸린 PDF·스캔 이미지는 읽을 수 없습니다)'}
 };
-/* ---------- 제안서: 설계제안서 원본(담보표 장) + 보상제안서 2장 — 계산은 bosang.js(보잇 공용), 화면은 proposal.js ---------- */
+/* ---------- 제안서: 설계서 원본(담보표 장) + 보상제안서 2장 — 읽기·약관·계산·화면 모두 bosang.js(보잇과 공용) ---------- */
 async function parseProposal(f){
   await ensureWorker();
-  if(!window.PROPOSAL) throw new Error('proposal.js 없음');
-  var c=await window.PROPOSAL.parse(f,pdfjsLib);
-  c.warns=c.warns||[];
-  return c;
+  if(!window.BOSANG||!BOSANG.readProposal) throw new Error('bosang.js 없음');
+  var r;
+  try{ r=await BOSANG.readProposal(f,pdfjsLib); }
+  catch(e){ return {fileName:f.name,error:(e&&e.msg)||'설계서 PDF를 읽지 못했습니다.',warns:[]}; }
+  var M=BOSANG.build2(r.p), w=r.warns.slice();
+  if(!M.D) w.push((r.p.company||'이 보험사')+' 약관은 아직 등록 전이라 설계서 가입금액 그대로 보여드립니다.');
+  else if(M.unknown.length) w.push('약관 사전에 없는 담보 '+M.unknown.length+'개는 보상제안서에서 뺐습니다: '+M.unknown.map(function(u){return u.name;}).join(', '));
+  if(M.tierMissing&&M.tierMissing.length) w.push('통합치료비 가입금액의 세부 지급표가 사전에 없어 일부 세부 금액을 비웠습니다.');
+  return {fileName:f.name,name:r.p.insured||'',p:r.p,M:M,imgs:r.imgs,source:r.source,warns:w};
 }
-function buildProposal(c,host){ var a=adv(); window.PROPOSAL.build(c,host,{name:a.name,title:a.title,org:ORG},foot(a)); }
+function buildProposal(c,host){ BOSANG.ensureCss(); var a=adv(); host.innerHTML=BOSANG.origPages(c.imgs)+BOSANG.render2(c.M,{insured:c.name,agent:{name:a.name,title:a.title,org:ORG},foot:foot(a)}); }
 function editProposal(c){
   var M=c.M||{};
   return '<div class="grid2"><label class="f">고객 이름<input data-f="name" value="'+esc(c.name||'')+'"></label></div>'+
-    '<p class="hint" style="margin:6px 0 0">원본 설계제안서 '+(c.imgs||[]).length+'장 + 보상제안서 2장 · 계산한 담보 '+((M.used||[]).length)+'개'+(M.unknown&&M.unknown.length?' · 사전에 없는 담보 '+M.unknown.length+'개(보상제안서에서 제외)':'')+'</p>';
+    '<p class="hint" style="margin:6px 0 0">'+esc((c.p&&c.p.company)||'')+' · 원본 '+(c.imgs||[]).length+'장 + 보상제안서 2장 · '+(M.D?'약관 계산 '+M.used.length+'개':'약관 등록 전(가입금액 기준)')+(c.source==='ai'?' · AI 읽기':'')+'</p>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--navy);margin:8px 0 4px">읽은 담보 ('+((M.items||[]).length)+'개) — 원본과 대조하세요</div>'+
+    '<div style="max-height:260px;overflow:auto;font-size:12px;border:1px solid #E4DCD2;border-radius:8px;padding:4px 8px">'+(M.items||[]).map(function(i){return '<div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted #E4DCD2;padding:2px 0"><span>'+esc(i.name)+'</span><b style="white-space:nowrap">'+BOSANG.fmt(i.amt)+'</b></div>';}).join('')+'</div>';
 }
 MODES.disease.drop='<b>질병예측 검사자료</b>와 같은 고객의 <b>보장분석 PDF</b>를 <b>함께 끌어놓거나 클릭</b>하세요<br>보장분석 없이 검사자료만 올려도 됩니다';
 MODES.coverage.drop='기존 <b>보장분석 자료 PDF</b>를 <b>여기로 끌어놓거나 클릭</b>하세요<br>담보명과 금액을 자동으로 읽어옵니다';
@@ -2766,7 +2772,7 @@ function subLabel(c){
   if(c.mode==='adult'||c.mode==='child') return c.main?c.main+' × '+c.sub:'';
   if(c.mode==='disease') return ((c.areas||[]).length?c.areas.length+'개 영역':'')+(c.cov?' + 보장분석':'');
   if(c.mode==='coverage') return (c.rows||[]).length+'개 담보';
-  if(c.mode==='proposal') return c.M?c.M.used.length+'개 담보':'';
+  if(c.mode==='proposal') return c.M?((c.p&&c.p.company)||'')+' '+(c.M.items||[]).length+'개 담보':'';
   return '';
 }
 function renderList(){
