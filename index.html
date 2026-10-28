@@ -396,14 +396,17 @@
   /* AI 보험비서: 떠 있는 창 — 머리 부분을 끌어 이동, 오른쪽 아래 모서리·버튼으로 크기 조절 */
   #aiChatModalBackdrop{background:transparent; pointer-events:none; padding:0;}
   #aiChatModalBackdrop .ai-chat-card{pointer-events:auto; position:fixed; right:24px; bottom:24px; width:480px; height:min(640px,80vh); max-width:calc(100vw - 16px); max-height:calc(100vh - 16px); min-width:300px; min-height:340px; resize:both; box-shadow:0 18px 50px rgba(18,21,43,.35); border:1px solid var(--line);}
-  #aiChatModalBackdrop .ai-chat-head{cursor:move; user-select:none; touch-action:none; padding-right:120px;}
+  #aiChatModalBackdrop .ai-chat-head{cursor:move; user-select:none; touch-action:none; padding-right:230px;}
   .ai-chat-tools{position:absolute; top:14px; right:48px; display:flex; gap:4px;}
   .ai-chat-tools button{border:1px solid var(--line); background:#fff; color:var(--navy-2); border-radius:7px; width:28px; height:26px; font-size:14px; font-weight:900; line-height:1; cursor:pointer;}
   .ai-chat-tools button:hover{border-color:var(--orange); color:var(--orange-deep);}
+  .ai-chat-tools button.ai-chat-new{width:auto; padding:0 10px; font-size:12.5px; background:var(--orange); border-color:var(--orange); color:#fff;}
+  .ai-chat-tools button.ai-chat-new:hover{background:var(--orange-deep); color:#fff;}
   #aiChatModalBackdrop.dragging .ai-chat-card{opacity:.92;}
   @media (max-width:640px){
     #aiChatModalBackdrop .ai-chat-card{left:8px !important; right:8px !important; top:auto !important; bottom:8px !important; width:auto !important; height:78vh; resize:none;}
-    #aiChatModalBackdrop .ai-chat-head{cursor:default;}
+    #aiChatModalBackdrop .ai-chat-head{cursor:default; padding-right:150px;}
+    #aiChatSmaller, #aiChatBigger, #aiChatReset{display:none;}
   }
   /* ===== 질병별 인수가이드 ===== */
   .disease-notice{background:var(--orange-tint); border-radius:10px; padding:13px 15px; font-size:12.5px; color:var(--navy-2); line-height:1.6; margin-bottom:14px;}
@@ -3149,7 +3152,7 @@ body.growon{ background:var(--g-navy); }
 <div class="modal-backdrop" id="aiChatModalBackdrop">
   <div class="modal-card ai-chat-card">
     <button class="modal-close" id="aiChatModalClose">&times;</button>
-    <div class="ai-chat-tools"><button type="button" id="aiChatSmaller" title="작게">−</button><button type="button" id="aiChatBigger" title="크게">+</button><button type="button" id="aiChatReset" title="원래 위치·크기">↺</button></div>
+    <div class="ai-chat-tools"><button type="button" id="aiChatNew" class="ai-chat-new" title="대화를 지우고 새 주제로 질문">새로 질문하기</button><button type="button" id="aiChatSmaller" title="작게">−</button><button type="button" id="aiChatBigger" title="크게">+</button><button type="button" id="aiChatReset" title="원래 위치·크기">↺</button></div>
     <div class="ai-chat-head" id="aiChatHead" title="끌어서 이동">
       <span class="ai-chat-icon">🤖</span>
       <div>
@@ -3158,7 +3161,7 @@ body.growon{ background:var(--g-navy); }
       </div>
     </div>
     <div class="ai-chat-body" id="aiChatBody">
-      <div class="ai-chat-empty">궁금하신 내용을 입력해보세요.<br><span>예: 순환계 주요치료비 연간 한도가 큰 회사는?</span></div>
+      <div class="ai-chat-empty">궁금하신 내용을 입력해보세요.<br><span>예: 순환계 주요치료비 연간 한도가 큰 회사는?<br>같은 주제는 이 창에서 이어서, 다른 주제는 [새로 질문하기]</span></div>
     </div>
     <div class="ai-chat-input-row">
       <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="질문을 입력하세요...">
@@ -5109,6 +5112,16 @@ body.growon{ background:var(--g-navy); }
       input.focus();
     }
   }
+  /* 새로 질문하기: 이전 대화(화면·직전 질문 기억)를 지우고 새 주제로 시작. 같은 창에서 이어 묻는 질문은 직전 대화를 함께 보낸다 */
+  function aiChatNew(){
+    aiHist.length = 0;
+    const body = document.getElementById('aiChatBody');
+    if(body) body.innerHTML = '<div class="ai-chat-empty">새 질문을 입력해보세요.<br><span>같은 주제는 이 창에서 이어서 물어보시고, 다른 주제는 [새로 질문하기]를 누르세요.</span></div>';
+    const input = document.getElementById('aiChatInput');
+    if(input && !input.disabled){ input.value = ''; input.focus(); }
+  }
+  const _aicn = document.getElementById('aiChatNew');
+  if(_aicn) _aicn.addEventListener('click', aiChatNew);
   const _aics = document.getElementById('aiChatSend');
   if(_aics) _aics.addEventListener('click', aiChatSend);
   const _aici = document.getElementById('aiChatInput');
