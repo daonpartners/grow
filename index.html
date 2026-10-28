@@ -353,6 +353,33 @@
   .ai-msg-user{align-self:flex-end; background:var(--navy-2); color:#fff; border-bottom-right-radius:3px;}
   .ai-msg-bot{align-self:flex-start; background:#F1F2FB; color:var(--ink); border-bottom-left-radius:3px;}
   .ai-msg-bot.loading{color:var(--slate); font-style:italic;}
+  .ai-msg{font-size:14px;}
+  .ai-msg-rich{max-width:96%; background:#fff; border:1px solid #E3E6F2; white-space:normal; font-size:14.5px; line-height:1.65; padding:14px 16px;}
+  .aa-basis{display:inline-block; font-size:12px; color:#5B6380; background:#F3F4F8; border-radius:8px; padding:5px 10px; margin-bottom:10px;}
+  .aa-sec{font-size:15.5px; font-weight:900; margin:14px 0 8px; padding:6px 10px; border-radius:8px;}
+  .aa-sec.nl{background:#EAF2FF; color:#1F4FA8;}
+  .aa-sec.lf{background:#E8F7EE; color:#17733F;}
+  .aa-card{border:1px solid #E6E8F0; border-left:4px solid var(--orange); border-radius:10px; padding:10px 12px; margin:0 0 8px; background:#FFFCF8;}
+  .aa-co{display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px;}
+  .aa-name{font-size:16px; font-weight:900; color:var(--navy-2);}
+  .aa-prem{font-size:14px; color:#333;}
+  .aa-prem b{color:var(--orange-deep); font-size:15.5px;}
+  .aa-prem small{font-size:12px; color:#6B7190; margin-left:2px;}
+  .aa-tag{font-size:11.5px; font-weight:800; color:#B45309; background:#FEF3C7; border-radius:999px; padding:2px 8px;}
+  .aa-why{margin-top:6px; font-size:13.5px; color:#3A4060; line-height:1.6;}
+  .aa-why b{color:var(--navy-2);}
+  .aa-why-l{display:inline-block; font-size:11px; font-weight:900; color:#fff; background:var(--navy-2); border-radius:5px; padding:1px 6px; margin-right:6px; vertical-align:1px;}
+  .aa-check{margin-top:14px; background:#F6F7FB; border-radius:10px; padding:10px 12px;}
+  .aa-check-t{font-size:15px; font-weight:900; color:var(--navy-2); margin-bottom:6px;}
+  .aa-ck{display:flex; gap:8px; padding:6px 0; border-top:1px dashed #DDE0EA; font-size:13.5px;}
+  .aa-ck:first-of-type{border-top:none;}
+  .aa-num{flex:none; width:22px; height:22px; border-radius:50%; background:var(--orange); color:#fff; font-size:12px; font-weight:900; display:flex; align-items:center; justify-content:center;}
+  .aa-ci{color:#4A5070; margin-top:2px;}
+  .aa-p{margin:4px 0;}
+  .aa-li{margin:3px 0; padding-left:14px; position:relative;}
+  .aa-li:before{content:'•'; position:absolute; left:2px; color:var(--orange);}
+  .aa-foot{margin-top:12px; font-size:12px; color:#7A809A;}
+
   .ai-msg-sources{margin-top:8px; padding-top:8px; border-top:1px solid rgba(0,0,0,.08); font-size:10.5px; display:flex; flex-direction:column; gap:4px;}
   .ai-msg-sources a{color:var(--orange-deep); text-decoration:none; font-weight:700;}
   .ai-msg-sources a:hover{text-decoration:underline;}
@@ -4930,6 +4957,67 @@ body.growon{ background:var(--g-navy); }
   if(_pgnext) _pgnext.addEventListener('click', (e) => { e.stopPropagation(); postGalleryCurIdx++; postGalleryRenderLb(); });
   if(typeof attachLbSwipe === 'function') attachLbSwipe('postGalleryLb', () => { postGalleryCurIdx--; postGalleryRenderLb(); }, () => { postGalleryCurIdx++; postGalleryRenderLb(); });
 
+  /* AI 답변을 읽기 쉬운 카드형으로 바꿔 보여준다 (손보/생보 구분, 회사 카드, 추천 이유, 설계사 체크리스트) */
+  function aiFormatAnswer(text){
+    const esc = s => escapeHtml(String(s));
+    const lines = String(text || '').replace(/\r/g, '').split('\n');
+    let html = '', inCheck = false, openCard = false;
+    const closeCard = () => { if(openCard){ html += '</div>'; openCard = false; } };
+    const closeCheck = () => { if(inCheck){ html += '</div>'; inCheck = false; } };
+    const hl = s => esc(s).replace(/(\d[\d,]*(?:\.\d+)?\s*(?:만원|원|만|위))(?![가-힣])/g, '<b>$1</b>');
+    const premHtml = s => { const m = s.match(/^(.*?\d[\d,]*\s*원)(.*)$/); return m ? '<b>' + esc(m[1]) + '</b><small>' + esc(m[2]) + '</small>' : esc(s); };
+    lines.forEach((raw, idx) => {
+      const L = raw.trim();
+      if(!L){ return; }
+      if(idx === 0 && /기준/.test(L) && L.length < 140){ html += '<div class="aa-basis">' + esc(L) + '</div>'; return; }
+      if(/^(손해보험|생명보험)\s*:?$/.test(L)){
+        closeCard(); closeCheck();
+        html += '<div class="aa-sec ' + (L.indexOf('손해') === 0 ? 'nl' : 'lf') + '">' + (L.indexOf('손해') === 0 ? '🛡️ ' : '💚 ') + esc(L.replace(/:$/, '')) + '</div>';
+        return;
+      }
+      if(/^[-•]\s*.+\s·\s/.test(L) && !inCheck){
+        closeCard();
+        let t = L.replace(/^[-•]\s*/, '');
+        let tag = '';
+        const m = t.match(/\((원수사 매니저 확인|가입 가능 여부 확인)\)\s*$/);
+        if(m){ tag = m[1]; t = t.slice(0, m.index).trim(); }
+        const parts = t.split(/\s·\s/);
+        const name = parts.shift();
+        const prem = parts.join(' · ');
+        html += '<div class="aa-card"><div class="aa-co"><span class="aa-name">' + esc(name) + '</span>'
+          + (prem ? '<span class="aa-prem">' + premHtml(prem) + '</span>' : '')
+          + (tag ? '<span class="aa-tag">' + esc(tag) + '</span>' : '') + '</div>';
+        openCard = true;
+        return;
+      }
+      if(/^└/.test(L) && openCard){
+        const t = L.replace(/^└\s*/, '').replace(/^추천\s*이유\s*:\s*/, '');
+        html += '<div class="aa-why"><span class="aa-why-l">추천 이유</span>' + hl(t) + '</div>';
+        return;
+      }
+      if(/^▶/.test(L)){
+        closeCard(); closeCheck();
+        html += '<div class="aa-check"><div class="aa-check-t">✅ ' + esc(L.replace(/^▶\s*/, '')) + '</div>';
+        inCheck = true;
+        return;
+      }
+      if(/^[①②③④⑤]/.test(L)){
+        const m = L.match(/^([①②③④⑤])\s*([^:：]{1,14})[:：]\s*(.*)$/);
+        const item = m ? '<span class="aa-num">' + m[1] + '</span><div><b>' + esc(m[2]) + '</b><div class="aa-ci">' + esc(m[3]) + '</div></div>'
+                       : '<span class="aa-num">' + esc(L[0]) + '</span><div>' + esc(L.slice(1).trim()) + '</div>';
+        if(!inCheck){ closeCard(); html += '<div class="aa-check">'; inCheck = true; }
+        html += '<div class="aa-ck">' + item + '</div>';
+        return;
+      }
+      if(/^※/.test(L)){ closeCard(); closeCheck(); html += '<div class="aa-foot">' + esc(L) + '</div>'; return; }
+      closeCard();
+      if(/^[-•]\s*/.test(L)) html += '<div class="aa-li">' + hl(L.replace(/^[-•]\s*/, '')) + '</div>';
+      else html += '<div class="aa-p">' + hl(L) + '</div>';
+    });
+    closeCard(); closeCheck();
+    return html;
+  }
+
   function aiChatAddMsg(role, text, sources, answerType){
     const body = document.getElementById('aiChatBody');
     if(!body) return null;
@@ -4947,8 +5035,10 @@ body.growon{ background:var(--g-navy); }
       badge.textContent = isDoc ? '📄 사내 자료 근거' : '💡 일반 지식 (참고용)';
       div.appendChild(badge);
       const txt = document.createElement('div');
-      txt.textContent = text;
+      txt.className = 'aa';
+      txt.innerHTML = aiFormatAnswer(text);
       div.appendChild(txt);
+      div.classList.add('ai-msg-rich');
     } else {
       div.textContent = text;
     }
