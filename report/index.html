@@ -9,7 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="bosang.js?v=5"></script>
+<script src="bosang.js?v=6"></script>
 <style>
 :root{
   --ink:#1C1D22; --ink2:#33343C; --muted:#55565F; --line:#D9CFC4;
@@ -2735,11 +2735,11 @@ async function parseProposal(f){
   catch(e){ return {fileName:f.name,error:(e&&e.msg)||'설계서 PDF를 읽지 못했습니다.',warns:[]}; }
   var M=BOSANG.build2(r.p), w=r.warns.slice();
   if(!M.D) w.push((r.p.company||'이 보험사')+' 약관은 아직 등록 전이라 설계서 가입금액 그대로 보여드립니다.');
-  else if(M.unknown.length) w.push('약관 사전에 없는 담보 '+M.unknown.length+'개는 보상제안서에서 뺐습니다: '+M.unknown.map(function(u){return u.name;}).join(', '));
+  else if(M.unknown.length) w.push('약관 사전에 없는 담보 '+M.unknown.length+'개는 약관 계산 없이 설계서 가입금액 그대로 표시했습니다: '+M.unknown.map(function(u){return u.name;}).join(', '));
   if(M.tierMissing&&M.tierMissing.length) w.push('통합치료비 가입금액의 세부 지급표가 사전에 없어 일부 세부 금액을 비웠습니다.');
   return {fileName:f.name,name:r.p.insured||'',p:r.p,M:M,imgs:r.imgs,source:r.source,warns:w};
 }
-function buildProposal(c,host){ BOSANG.ensureCss(); var a=adv(); host.innerHTML=BOSANG.origPages(c.imgs)+BOSANG.render2(c.M,{insured:c.name,agent:{name:a.name,title:a.title,org:ORG},foot:foot(a)}); }
+function buildProposal(c,host){ BOSANG.ensureCss(); var a=adv(); host.innerHTML=BOSANG.origPages(c.imgs)+BOSANG.render2(c.M,{insured:c.name,agent:{name:a.name,title:a.title,org:ORG},foot:foot(a)}); if(BOSANG.reflow) BOSANG.reflow(host); }
 function editProposal(c){
   var M=c.M||{};
   return '<div class="grid2"><label class="f">고객 이름<input data-f="name" value="'+esc(c.name||'')+'"></label></div>'+
