@@ -97,6 +97,7 @@
     ["ic_digest", /통합암진단비.*\(소화기관암진단비/], ["ic_lung", /통합암진단비.*\(폐암진단비/], ["ic_liver", /통합암진단비.*\(간암,?담낭암/],
     ["ic_blood", /통합암진단비.*\(혈액암진단비/], ["ic_head", /통합암진단비.*\(두경부암진단비/], ["ic_11", /통합암진단비.*\(11대특정암진단비/],
     ["ic_3high", /통합암진단비.*\(3대특정고액암진단비/], ["ic_genito", /통합암진단비.*\(생식기암및비뇨기관암/], ["ic_small", /통합암진단비.*\(특정소액암진단비/],
+    ["stroke", /^뇌졸중진단비/], ["brainhem", /^뇌출혈진단비/], ["sbrain", /^특정뇌혈관질환/], ["ihd", /^허혈성심장질환진단비/], ["ami", /^급성심근경색(증)?진단비/],
     ["brain", /^뇌혈관질환진단비/], ["heart1", /^심장질환\(특정Ⅰ\)진단비/], ["heart2", /^심장질환\(특정Ⅱ\)진단비/], ["arrhy", /^부정맥질환\(Ⅰ49\)진단비|^부정맥질환\(I49\)진단비/],
     ["benignbrain", /^양성뇌종양진단비/],
     ["frac", /^골절진단비\(치아파절포함\)/], ["frac2", /^골절진단비Ⅱ/], ["frac5", /^5대골절진단비/], ["cast", /^깁스치료비/],
@@ -135,6 +136,8 @@
   };
 
   const KB_DICT = {
+    // 진단비별 보장 질병(약관 분류표 기준). 약관 원문으로 확인한 것만 넣음 — 비어 있으면 안내서에 괄호 표기를 하지 않음
+    scope: {},
     company: "KB손해보험",
     basis: "KB 5.10.10 플러스 건강보험(세만기)(무배당)(26.09) 약관 (2026-10-01 적용)",
     match: p => p.company === "KB손해보험" || (/KB/.test(p.product || "") && !/라이프|생명/.test(p.product || "")),
@@ -398,20 +401,28 @@
       has("brain") || has("heart1") ? kpi("kb", "뇌·심장 진단 즉시", fmt2(Math.max(v("brain"), v("heart1"))), `뇌혈관 ${fmt2(v("brain"))} · 심장 ${fmt2(v("heart1"))}`) : "",
       has("circ") ? kpi("kh", "뇌·심장 치료비 · 매년", fmt2(v("circ")), "순환계 통합치료 연 한도") : "",
     ].join("");
-    const dx = (cls, t, amt, sub) => amt ? `<div class="${cls}"><span>${t}</span><b>${fmt2(amt)}</b><small>${sub || ""}</small></div>` : "";
+    const SC = (D && D.scope) || {};
+    const dx = (cls, t, amt, sub, k) => amt ? `<div class="${cls}"><span>${t}${k && SC[k] ? `<em>(${SC[k]})</em>` : ""}</span><b>${fmt2(amt)}</b>${k && SC[k] ? "" : `<small>${sub || ""}</small>`}</div>` : "";
+    // 사전에 없는 진단비 담보도 설계서 가입금액 그대로 진단비 칸에 보여 줌 (진단 시 일시금)
+    const dxOther = M.unknown.filter(u => /진단/.test(u.name) && !/수술|치료|입원|일당/.test(u.name) && u.amt).map(u => `<div class="g"><span>${escH(u.name.replace(/진단비.*$/, "").replace(/\s+/g, " "))}</span><b>${fmt2(u.amt)}</b><small>설계서 가입금액</small></div>`);
     const dxBox = [
       dx("c", "암 (유사암 제외)", v("cancer"), "진단 시 일시금 · 이후 보험료 납입면제"),
       icKeys.length ? `<div class="c ic"><span>통합암 · 부위별 (전이·재발 시 부위마다 다시 지급)</span><div class="bs-ic">${icKeys.map(k => chip(IC_NAME[k], v(k), "c")).join("")}</div></div>` : "",
       dx("c", "유사암 (갑상선암 등)", v("simcancer"), "계약일부터 보장"),
-      dx("b", "뇌혈관질환", v("brain"), "뇌경색·뇌출혈·대뇌동맥류 등"),
-      dx("h", "심장질환 (특정Ⅰ)", v("heart1"), "협심증·심방세동·심부전 등"),
-      dx("h", "심장질환 (특정Ⅱ)", v("heart2"), "급성심근경색·심정지 소생"),
-      dx("h", "부정맥 (I49)", v("arrhy"), ""),
+      dx("b", "뇌혈관질환", v("brain"), "뇌경색·뇌출혈·대뇌동맥류 등", "brain"),
+      dx("b", "뇌졸중", v("stroke"), "", "stroke"),
+      dx("b", "뇌출혈", v("brainhem"), "", "brainhem"),
+      dx("b", "특정뇌혈관질환", v("sbrain"), "", "sbrain"),
+      dx("h", "허혈성심장질환", v("ihd"), "", "ihd"),
+      dx("h", "급성심근경색", v("ami"), "", "ami"),
+      dx("h", "심장질환 (특정Ⅰ)", v("heart1"), "협심증·심방세동·심부전 등", "heart1"),
+      dx("h", "심장질환 (특정Ⅱ)", v("heart2"), "급성심근경색·심정지 소생", "heart2"),
+      dx("h", "부정맥 (I49)", v("arrhy"), "", "arrhy"),
       dx("b", "양성뇌종양", v("benignbrain"), ""),
       has("frac") || has("frac2") ? `<div class="g"><span>골절 (치아파절 포함)</span><b>${fmt2(dsum("frac", "frac2"))}</b><small>${[has("frac5") ? "5대골절 +" + fmt2(v("frac5")) : "", has("cast") ? "깁스 +" + fmt2(v("cast")) : ""].filter(Boolean).join(" · ")}</small></div>` : "",
       dx("g", "화상", v("burn"), ""),
       dx("b", "외상성 특정 뇌손상·뇌출혈", dsum("tbi", "tbleed"), ""),
-    ].filter(Boolean).join("");
+    ].concat(dxOther).filter(Boolean).join("");
     const cases = [];
     const card = (title, sub, total, totSub, parts, ref) => `<div class="bs-case"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div><div class="bs-pill">${total}${totSub ? `<small>${totSub}</small>` : ""}</div></div><div class="bs-case-p">${chips(parts)}</div>${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
     const tp = k => ({ d1: "1종", d2: "2종", d3: "3종", d4: "4종", d5: "5종" }[k]);
@@ -484,7 +495,9 @@
 .page.bsp,.a4.bsp{padding:28px 34px 0;gap:8px;font-size:11px;line-height:1.45;color:#1f2937;background:#fff;--g:#0f766e;--gs:#e6f4f1;--c:#be123c;--cs:#fdecef;--b:#4338ca;--bsf:#eef0fd;--h:#c2410c;--hs:#fdf0e8;--o:#b45309}
 .bsp .pfoot{margin:auto 0 0;flex:none}.bsp .bs-foot{margin-top:auto;margin-bottom:14px}
 .bsp h3,.bsp h4{color:inherit}
-.bsp .bs-dx{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.bsp .bs-dx{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.bsp .bs-hero{padding:12px 18px}.bsp .bs-hero h2{font-size:21px;margin:2px 0 6px}.bsp .bs-k{padding:6px 10px}.bsp .bs-k b{font-size:19px}
+.bsp .bs-case-p{gap:2px}.bsp .bs-ref{font-size:8.4px}.bsp .bs-sec{font-size:13.5px;margin:2px 0 0}
 .bsp .bs-dx>div{border-radius:8px;padding:5px 9px;display:flex;flex-direction:column;gap:1px;border-left:4px solid}
 .bsp .bs-dx>div>span{font-size:10px;font-weight:700;color:#374151}.bsp .bs-dx>div>b{font-size:16px;line-height:1.2;white-space:nowrap}.bsp .bs-dx>div>small{font-size:9px;color:#6b7280}
 .bsp .bs-dx>.c{background:var(--cs);border-color:var(--c)}.bsp .bs-dx>.c>b{color:var(--c)}
@@ -492,6 +505,7 @@
 .bsp .bs-dx>.h{background:var(--hs);border-color:var(--h)}.bsp .bs-dx>.h>b{color:var(--h)}
 .bsp .bs-dx>.g{background:var(--gs);border-color:var(--g)}.bsp .bs-dx>.g>b{color:var(--g)}
 .bsp .bs-dx>.ic{grid-column:span 2}
+.bsp .bs-dx>div>span em{font-style:normal;font-weight:500;font-size:8.6px;color:#6b7280;margin-left:3px;line-height:1.3}
 .bsp .bs-ic{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
 .bsp .bs-cases{grid-template-columns:1fr 1fr 1fr;gap:6px}.bsp .bs-case{padding:6px 8px;gap:3px}.bsp .bs-case-h b{font-size:11.5px}.bsp .bs-pill{font-size:13.5px;padding:1px 7px}
 .bsp .bs-row{grid-template-columns:78px 1fr 84px;padding:4px 0}
