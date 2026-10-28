@@ -282,8 +282,17 @@
   const AI_URL = "https://daonpartners.app.n8n.cloud/webhook/daon-proposal-read";
   const AMT_LINE = /\d[\d,.]*\s*(억|천만|백만|만)\s*원?|\d{1,3}(,\d{3}){2,}\s*원?/;
   async function aiRead(pages) {
-    const pick = pages.map((ls, i) => ({ i, n: ls.filter(l => AMT_LINE.test(l)).length })).filter(x => x.i === 0 || x.n >= 2).map(x => x.i);
-    let text = ""; for (const i of pick) { const t = `[${i + 1}쪽]\n` + pages[i].join("\n") + "\n"; if (text.length + t.length > 58000) break; text += t; }
+    // 보낼 쪽 고르기: ① 앞쪽 가입담보표 ② 세부 지급표(특약 안내사항·세부보장·'- 항목 : 금액' 목록) ③ 남는 자리에 그 밖의 금액 있는 쪽
+    //  (메리츠처럼 담보 설명 쪽이 길게 이어지면 뒤쪽 세부 지급표가 글자 수 한도에 밀려 빠지던 문제)
+    const DET = /안내사항|세부보장항목|통합치료항목|세부보장\s*지급|[-·]\s*[^:\n]{2,40}\s*:\s*(수술\s*1회당\s*)?[\d,]+\s*(만|천만|백만|억)?원|수술\s*1회당\s*[\d,]+\s*(만|천만|백만)?원/;
+    const info = pages.map((ls, i) => { const t = ls.join("\n"); return { i, n: ls.filter(l => AMT_LINE.test(l)).length, det: DET.test(t), ref: /해약환급금\s*예시/.test(t) }; });
+    const first = info.filter(x => x.i === 0 || (x.n >= 1 && !x.ref && x.i < 8)).map(x => x.i);
+    const det = info.filter(x => x.det && !x.ref && first.indexOf(x.i) < 0).map(x => x.i);
+    const rest = info.filter(x => x.n >= 2 && !x.ref && first.indexOf(x.i) < 0 && det.indexOf(x.i) < 0).map(x => x.i);
+    const chosen = [];
+    let size = 0; for (const i of first.concat(det, rest)) { const len = pages[i].join("\n").length + 12; if (size + len > 58000) continue; chosen.push(i); size += len; }
+    chosen.sort((a, b) => a - b);
+    let text = ""; for (const i of chosen) text += `[${i + 1}쪽]\n` + pages[i].join("\n") + "\n";
     const r = await fetch(AI_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
     const d = await r.json().catch(() => null);
     if (!d || !d.ok) throw { code: "ai", msg: (d && d.error) || "담보표를 읽지 못했습니다." };
@@ -307,6 +316,7 @@
       const items = d.items.map((x, i) => ({ no: i + 1, name: x.name, amt: manAny(x.amt), amtText: x.amt, prem: +(String(x.prem || "").replace(/[^\d]/g, "")) || null, term: x.term || "" }));
       // 세부보장이 딸린 머리줄(예: 26종 …치료비 → ┗ 세부 담보들)은 가입금액이 없는 게 정상이라 경고에서 뺌
       const isHead = x => items.some(y => y !== x && /\[/.test(y.name) && y.name.replace(/\s+/g, "").slice(0, 14) === x.name.replace(/\s+/g, "").slice(0, 14));
+      items.forEach(x => { if (isHead(x)) x.amt = null; });  // 머리줄 숫자는 보험료일 때가 있음 (AI가 단위를 붙여도 가입금액으로 쓰지 않음)
       const bad = items.filter(x => x.amt == null && x.amtText && !isHead(x));
       if (bad.length) warns.push("가입금액 표기를 계산하지 못한 담보 " + bad.length + "개: " + bad.map(x => x.name + "(" + x.amtText + ")").join(", "));
       p = { company: companyOf(d.company) || co || d.company || "", product: d.product || "", code: "", insured: d.insured || "", age: d.age || null, sex: d.sex || "", premium: d.premium || null, no: "", issued: "", items, warn: [], details: (d.details || []).map(t => ({ rider: t.rider, rows: (t.rows || []).map(r => ({ item: r.item, freq: r.freq || "", amt: manAny(r.amt), amtText: r.amt })) })) };
