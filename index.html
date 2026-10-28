@@ -4959,8 +4959,10 @@ body.growon{ background:var(--g-navy); }
     input.value = '';
     input.disabled = true;
     if(sendBtn) sendBtn.disabled = true;
-    const loadingEl = aiChatAddMsg('bot', 'AI가 자료를 확인하고 있습니다...');
+    const loadingEl = aiChatAddMsg('bot', 'AI가 자료를 확인하고 있습니다... 0초');
     if(loadingEl) loadingEl.classList.add('loading');
+    const t0 = Date.now();
+    const tick = setInterval(() => { if(loadingEl) loadingEl.textContent = 'AI가 자료를 확인하고 있습니다... ' + Math.round((Date.now() - t0) / 1000) + '초'; }, 1000);
     try{
       const res = await fetch(DOC_AI_SEARCH_WEBHOOK, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -4978,6 +4980,7 @@ body.growon{ background:var(--g-navy); }
       if(loadingEl) loadingEl.remove();
       aiChatAddMsg('bot', '네트워크 오류로 답변을 가져오지 못했습니다.');
     } finally {
+      clearInterval(tick);
       input.disabled = false;
       if(sendBtn) sendBtn.disabled = false;
       input.focus();
