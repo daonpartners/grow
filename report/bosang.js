@@ -150,7 +150,6 @@
     },
     company: "KB손해보험",
     basis: "KB 5.10.10 플러스 건강보험(세만기)(무배당)(26.09) 약관 (2026-10-01 적용)",
-    basisProduct: "KB 5.10.10 플러스 건강보험(세만기)(무배당)(26.09)",
     match: p => p.company === "KB손해보험" || (/KB/.test(p.product || "") && !/라이프|생명/.test(p.product || "")),
     rules: KB_RULES, tier: TIER,
     // 1~5종수술Ⅲ 분류표(【별표55-1】) · 116대질병 분류표(【별표17】~) 근거 문구
@@ -172,18 +171,25 @@
   const DICTS = [KB_DICT];
 
   /* ---------------- 5. 제안서 + 사전 → 금액 ---------------- */
+  const isDx = nm => /진단/.test(nm) && !/수술|치료|입원|일당|간병|통원/.test(nm);
+  const isCancerDx = nm => isDx(nm) && /암/.test(nm);
   function build(p) {
     const D = DICTS.find(d => d.match(p));
-    const A = {}, unknown = [], used = [];
+    const A = {}, unknown = [], used = [], cancerDx = [], rawDx = [];
     if (D) for (const it of p.items) {
       if (it.group || it.amt == null) continue;
       const nm = it.name.replace(/\s+/g, "");
       const r = D.rules.find(([, re]) => re.test(nm));
+      // 암 진단비(암·전이암포함·고액암·재진단암 등)는 사전 여부와 관계없이 설계서 이름·가입금액 그대로 한 줄씩 (통합암 부위별은 칩으로 따로)
+      const isIc = r && /^ic_/.test(r[0]);
+      if (!isIc && isCancerDx(nm)) cancerDx.push(it);
       if (r) { if (r[0] !== "base") { A[r[0]] = (A[r[0]] || 0) + it.amt; used.push(it.name); } }
+      else if (isCancerDx(nm)) used.push(it.name);
+      else if (isDx(nm)) { rawDx.push(it); used.push(it.name); }  // 사전에 없는 진단비도 설계서 가입금액으로 표시
       else unknown.push(it);
     }
     const tierOf = k => { if (!D || !A[k]) return null; const t = D.tier[k] || {}; return t[A[k]] || null; };
-    return { p, D, A, unknown, used, T: { ci_hi: tierOf("ci_hi"), ci_np: tierOf("ci_np"), circ: tierOf("circ") }, tierMissing: ["ci_hi", "ci_np", "circ"].filter(k => A[k] && !tierOf(k)) };
+    return { p, D, A, unknown, used, cancerDx, rawDx, T: { ci_hi: tierOf("ci_hi"), ci_np: tierOf("ci_np"), circ: tierOf("circ") }, tierMissing: ["ci_hi", "ci_np", "circ"].filter(k => A[k] && !tierOf(k)) };
   }
 
   /* ---------------- 5-1. 화면 스타일 (안내서 공통) ---------------- */
@@ -318,10 +324,6 @@
       await pg.render({ canvasContext: cx, viewport: vp }).promise;
       imgs.push({ src: cv.toDataURL("image/jpeg", 0.92), w: cv.width, h: cv.height });
     }
-    // 설계서 상품과 약관 사전의 기준 상품이 다르면 설계사에게 알림 (분류표·지급표가 그 상품 약관과 다를 수 있음)
-    const D = DICTS.find(d => d.match(p)), nz = s => String(s || "").replace(/세만기|[\s()（）_]/g, "");
-    if (D && D.basisProduct && p.product && nz(p.product).indexOf(nz(D.basisProduct)) === -1)
-      warns.push(`설계서 상품(${p.product})과 약관 사전의 기준 상품(${D.basisProduct})이 다릅니다. 진단비 포함 질병·수술 분류·통합치료비 지급표는 기준 약관으로 표시되므로, 이 상품 약관과 같은지 확인하세요.`);
     return { p, imgs, source, warns };
   }
 
@@ -408,10 +410,17 @@
     const chips = arr => arr.filter(Boolean).join("");
     const icKeys = Object.keys(IC_NAME).filter(has);
     const icFirst = has("ic_digest") ? "ic_digest" : icKeys[0];
+    const dxName = n => escH(String(n).replace(/\s+/g, " ").trim());
+    const cList = (M.cancerDx || []).filter(i => !/유사암진단|소액암|갑상선암진단|제자리암|경계성/.test(i.name.replace(/\s+/g, "")) || /유사암제외/.test(i.name.replace(/\s+/g, "")));
+    const byAmt = arr => arr.slice().sort((a, b) => b.amt - a.amt)[0] || null;
+    const cMain = byAmt(cList.filter(i => /유사암제외|일반암|^암진단/.test(i.name.replace(/\s+/g, "")))) || byAmt(cList);
+    // 통합암: 설계서의 담보명(부위 앞부분)을 그대로 제목으로
+    const icItems = (p.items || []).filter(i => !i.group && D && D.rules.some(([k, re]) => /^ic_/.test(k) && re.test(i.name.replace(/\s+/g, ""))));
+    const icTitle = icItems.length ? [...new Set(icItems.map(i => i.name.replace(/\s+/g, " ").replace(/\s*[(_]\s*(소화기관암|폐암|간암|혈액암|두경부암|11대|3대|생식기|특정소액).*$/, "").trim()))].join(" · ") : "통합암진단비";
     const ciLimit = v("ci_hi") + v("ci_np");
     const kpi = (cls, t, big, sub) => `<div class="bs-k ${cls}"><span>${t}</span><b>${big}</b><small>${sub}</small></div>`;
     const kpis = [
-      has("cancer") ? kpi("kc", "암 진단 즉시", fmt2(v("cancer") + (icFirst ? v(icFirst) : 0)), `암진단 ${fmt2(v("cancer"))}${icFirst ? " + 부위별 " + fmt2(v(icFirst)) : ""}`) : "",
+      cMain || icFirst ? kpi("kc", "암 진단 즉시", fmt2((cMain ? cMain.amt : 0) + (icFirst ? v(icFirst) : 0)), [cMain ? dxName(cMain.name) + " " + fmt2(cMain.amt) : "", icFirst ? "통합암 " + IC_NAME[icFirst] + " " + fmt2(v(icFirst)) : ""].filter(Boolean).join(" + ")) : "",
       ciLimit ? kpi("kc", "암 치료비 · 매년", fmt2(ciLimit), "통합치료비 연간 한도 합") : "",
       has("brain") || has("heart1") ? kpi("kb", "뇌·심장 진단 즉시", fmt2(Math.max(v("brain"), v("heart1"))), `뇌혈관 ${fmt2(v("brain"))} · 심장 ${fmt2(v("heart1"))}`) : "",
       has("circ") ? kpi("kh", "뇌·심장 치료비 · 매년", fmt2(v("circ")), "순환계 통합치료 연 한도") : "",
@@ -419,11 +428,11 @@
     const SC = (D && D.scope) || {};
     const dx = (cls, t, amt, sub, k) => amt ? `<div class="${cls}"><span>${t}${k && SC[k] ? `<em>(${SC[k]})</em>` : ""}</span><b>${fmt2(amt)}</b>${k && SC[k] ? "" : `<small>${sub || ""}</small>`}</div>` : "";
     // 사전에 없는 진단비 담보도 설계서 가입금액 그대로 진단비 칸에 보여 줌 (진단 시 일시금)
-    const dxOther = M.unknown.filter(u => /진단/.test(u.name) && !/수술|치료|입원|일당/.test(u.name) && u.amt).map(u => `<div class="g"><span>${escH(u.name.replace(/진단비.*$/, "").replace(/\s+/g, " "))}</span><b>${fmt2(u.amt)}</b><small>설계서 가입금액</small></div>`);
+    const cancerBox = (M.cancerDx || []).map(i => `<div class="c"><span>${dxName(i.name)}</span><b>${fmt2(i.amt)}</b><small>설계서 가입금액 · 진단 시 일시금</small></div>`);
+    const dxOther = (M.rawDx || []).filter(u => u.amt).map(u => `<div class="g"><span>${dxName(u.name)}</span><b>${fmt2(u.amt)}</b><small>설계서 가입금액</small></div>`);
     const dxBox = [
-      dx("c", "암 (유사암 제외)", v("cancer"), "진단 시 일시금 · 이후 보험료 납입면제"),
-      icKeys.length ? `<div class="c ic"><span>통합암 · 부위별 (전이·재발 시 부위마다 다시 지급)</span><div class="bs-ic">${icKeys.map(k => chip(IC_NAME[k], v(k), "c")).join("")}</div></div>` : "",
-      dx("c", "유사암 (갑상선암 등)", v("simcancer"), "계약일부터 보장"),
+      ...cancerBox,
+      icKeys.length ? `<div class="c ic"><span>${escH(icTitle)} <em>(약관 제2조: 암 구분별 최초 1회의 진단에 한하여 각각 지급)</em></span><div class="bs-ic">${icKeys.map(k => chip(IC_NAME[k], v(k), "c")).join("")}</div></div>` : "",
       dx("b", "뇌혈관질환", v("brain"), "뇌경색·뇌출혈·대뇌동맥류 등", "brain"),
       dx("b", "뇌졸중", v("stroke"), "", "stroke"),
       dx("b", "뇌출혈", v("brainhem"), "", "brainhem"),
