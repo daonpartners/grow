@@ -2012,10 +2012,10 @@ body.growon{ background:var(--g-navy); }
           <div class="edu-tabs" id="salesCenterTabs" data-reveal>
             <!-- 버그 다발로 잠정 비활성화(2026-08-16). 코드는 보존, 복원 시 style="display:none" 제거 -->
             <button class="edu-tab" data-sctab="coveragecompare" style="display:none;">📊 고객보장비교(AI)</button>
-            <button class="edu-tab active" data-sctab="counsel">💻 온라인영업</button>
-            <button class="edu-tab" data-sctab="analysis">📊 보장분석 및 비교</button>
-            <button class="edu-tab" data-sctab="contract">📑 계약업무</button>
-            <button class="edu-tab" data-sctab="crm">👥 고객관리</button>
+            <button class="edu-tab active" data-sctab="counsel">💻 온라인센터</button>
+            <button class="edu-tab" data-sctab="event">🎪 행사센터</button>
+            <button class="edu-tab" data-sctab="inhouse">🏢 인하우스센터</button>
+            <button class="edu-tab" data-sctab="etc">📁 기타</button>
           </div>
 
           <div class="edu-panel" id="sc-coveragecompare">
@@ -2072,6 +2072,25 @@ body.growon{ background:var(--g-navy); }
             <div id="scCounselPanels"></div>
           </div>
 
+          <!-- 행사센터 (2026-10-28 신설, 연결 전) -->
+          <div class="edu-panel" id="sc-event">
+            <div class="sc-sub-grid">
+              <div class="sc-sub-card"><div class="sc-sub-t">🖐️ 지문</div><div class="sc-sub-d">준비 중</div></div>
+              <div class="sc-sub-card"><div class="sc-sub-t">🩺 질병예측</div><div class="sc-sub-d">준비 중</div></div>
+              <div class="sc-sub-card"><div class="sc-sub-t">🐾 펫</div><div class="sc-sub-d">준비 중</div></div>
+              <div class="sc-sub-card"><div class="sc-sub-t">🏪 소상공인</div><div class="sc-sub-d">준비 중</div></div>
+            </div>
+          </div>
+          <!-- 인하우스센터 (2026-10-28 신설) -->
+          <div class="edu-panel" id="sc-inhouse">
+            <div class="disease-notice">🏢 인하우스센터 — 준비 중입니다.</div>
+          </div>
+          <!-- 기타 (2026-10-28 신설) -->
+          <div class="edu-panel" id="sc-etc">
+            <div class="disease-notice">📁 기타 — 준비 중입니다.</div>
+          </div>
+
+          <!-- 아래 보장분석 및 비교 / 계약업무 / 고객관리는 2026-10-28 메뉴에서 삭제(탭 제거, 코드 보존) -->
           <!-- ② 보장분석 및 비교 -->
           <div class="edu-panel" id="sc-analysis">
             <div class="sc-sub-grid" style="margin-bottom:16px;">
