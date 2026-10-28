@@ -3093,11 +3093,11 @@ body.growon{ background:var(--g-navy); }
       <span class="ai-chat-icon">🤖</span>
       <div>
         <div class="ai-chat-title">AI 보험비서</div>
-        <div class="ai-chat-sub">사내 자료 우선 · 없으면 일반 지식으로 안내</div>
+        <div class="ai-chat-sub">매월 판매전략·비교표 자료 기준으로 답합니다</div>
       </div>
     </div>
     <div class="ai-chat-body" id="aiChatBody">
-      <div class="ai-chat-empty">궁금하신 내용을 입력해보세요.<br><span>예: 유사암 지급비율이 어떻게 되나요?</span></div>
+      <div class="ai-chat-empty">궁금하신 내용을 입력해보세요.<br><span>예: 순환계 주요치료비 연간 한도가 큰 회사는?</span></div>
     </div>
     <div class="ai-chat-input-row">
       <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="질문을 입력하세요...">
@@ -4802,7 +4802,7 @@ body.growon{ background:var(--g-navy); }
 
   // ================= 질문센터: 보험도우미(AI 자료검색) =================
   // 검색은 클라이언트가 아니라 n8n 웹훅에서 처리합니다: Notion에 저장된 실제 문서 발췌문만 근거로 AI가 답변을 정리합니다.
-  const DOC_AI_SEARCH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-doc-ai-search';
+  const DOC_AI_SEARCH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-ai-v2';
 
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   // 텍스트 안의 URL(http(s):// 또는 www.로 시작)을 자동으로 클릭 가능한 링크로 바꿔줌. 나머지 텍스트는 그대로 이스케이프 처리.
@@ -4944,17 +4944,17 @@ body.growon{ background:var(--g-navy); }
     input.value = '';
     input.disabled = true;
     if(sendBtn) sendBtn.disabled = true;
-    const loadingEl = aiChatAddMsg('bot', 'AI가 자료를 확인하고 있습니다...');
+    const loadingEl = aiChatAddMsg('bot', 'AI가 자료를 확인하고 있습니다... (10~20초)');
     if(loadingEl) loadingEl.classList.add('loading');
     try{
       const res = await fetch(DOC_AI_SEARCH_WEBHOOK, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ query: q })
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if(loadingEl) loadingEl.remove();
       if(!data.success){
-        aiChatAddMsg('bot', '답변을 가져오는 중 오류가 발생했습니다.');
+        aiChatAddMsg('bot', data.answer || '답변을 가져오는 중 오류가 발생했습니다. 잠시 후 다시 질문해 주세요.');
       } else {
         aiChatAddMsg('bot', data.answer || '답변을 찾지 못했습니다.', data.sources, data.answerType);
       }
