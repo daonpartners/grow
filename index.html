@@ -2120,7 +2120,7 @@ body.growon{ background:var(--g-navy); }
               <div class="sc-sub-card sc-sub-link active" data-ctab="design"><div class="sc-sub-t">📑 설계안추천</div></div>
               <div class="sc-sub-card sc-sub-link" data-ctab="limit"><div class="sc-sub-t">📊 회사별 인수한도 비교</div></div>
               <div class="sc-sub-card sc-sub-link" data-ctab="monitoring"><div class="sc-sub-t">🖥️ 모니터링</div></div>
-              <div class="sc-sub-card sc-sub-link" onclick="showView('qna'); setTimeout(() => { const b = document.querySelector('#qnaTabs [data-qtab=&quot;underwrite&quot;]'); if(b) b.click(); }, 50);"><div class="sc-sub-t">📋 고지의무</div><div class="sc-sub-d">업무지원센터 &gt; 가입·인수 가이드 바로가기 →</div></div>
+              <div class="sc-sub-card sc-sub-link" onclick="dcGoTo('uw');"><div class="sc-sub-t">📋 고지의무</div><div class="sc-sub-d">자료센터 &gt; 가입·인수 가이드 바로가기 →</div></div>
             </div>
 
             <div class="edu-panel active" id="sc-ctab-design">
@@ -2204,6 +2204,8 @@ body.growon{ background:var(--g-navy); }
           <button class="edu-tab" data-dctab="counsel">🗣️ 상담(화법) 및 스크립트</button>
           <button class="edu-tab" data-dctab="cardimg">🖼️ 카드·콘텐츠</button>
           <button class="edu-tab" data-dctab="forms">📑 서식·업무자료</button>
+          <button class="edu-tab" data-dctab="uw">🔎 가입·인수 가이드</button>
+          <button class="edu-tab" data-dctab="qa">💬 Q&amp;A</button>
         </div>
 
         <div class="edu-panel dc-toplevel active" id="dc-guide-panel">
@@ -2521,22 +2523,7 @@ body.growon{ background:var(--g-navy); }
         <div class="edu-panel dc-toplevel" id="dc-forms">
           <div id="smList-forms"></div>
         </div>
-      </section>
-      </div>
-      <div class="gview" id="view-qna">
-<section class="panel panel-navy" id="qna">
-        <div class="panel-head">
-          <div><h2 class="panel-title">🛠️ 업무지원센터</h2></div>
-        </div>
-
-        <div class="edu-tabs honey-tabs" id="qnaTabs" data-reveal>
-          <button class="edu-tab active" data-qtab="underwrite">🔎 가입·인수 가이드</button>
-          <button class="edu-tab" data-qtab="claim2">📮 보험금청구</button>
-          <button class="edu-tab" data-qtab="center">💬 Q&amp;A</button>
-        </div>
-
-
-        <div class="edu-panel active" id="qna-underwrite">
+        <div class="edu-panel dc-toplevel" id="qna-underwrite">
           <div class="disease-notice">
             🔎 가입 전 확인해야 할 <b>고지·통지의무, 인수·부담보 기준, 설계 팁</b>을 한 곳에서 확인하세요.
           </div>
@@ -2609,22 +2596,20 @@ body.growon{ background:var(--g-navy); }
           </div>
         </div>
 
-        <div class="edu-panel" id="qna-claim2">
-          <div class="surgery-pin" id="cbPin_claim2">
-            <div class="surgery-pin-head">
-              <span class="surgery-pin-icon">📮</span>
-              <div><div class="surgery-pin-title">보상·청구가이드 첨부자료</div></div>
-              <button type="button" class="lc-upload-btn cb-register-btn" data-board="claim2" style="display:none;" onclick="limitOpenUpload('claim2')">＋ 게시물 등록</button>
-            </div>
-            <div class="driver-menu" id="cbMenu_claim2"></div>
-          </div>
-          <div class="faq-area"></div>
-        </div>
-
-        <div class="edu-panel" id="qna-center">
+        <div class="edu-panel dc-toplevel" id="qna-center">
           <div class="subsection-title">📋 자주 묻는 질문</div>
           <div class="faq-area" id="qna-center-faqarea"></div>
         </div>
+
+      </section>
+      </div>
+      <div class="gview" id="view-qna">
+<section class="panel panel-navy" id="qna">
+        <div class="panel-head">
+          <div><h2 class="panel-title">🛠️ 업무지원센터</h2></div>
+        </div>
+
+
 
         <!-- 다온지사 게시판: 숨김 처리 (삭제 아님, 추후 재사용 가능) -->
         <div style="display:none;" id="daonBoardHidden">
@@ -2683,10 +2668,9 @@ body.growon{ background:var(--g-navy); }
     <div class="rail-t">그로우설계사공간</div>
     <a class="gbtn" href="/report/" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">📑 그로우사업부 리포트생성<small>지문성향 · 질병예측 · 보장분석</small></a>
     <button class="gbtn" data-view="fclookup">👤 내 DB 조회<small>FC 전용</small></button>
-    <button class="gbtn" data-view="materials">🎓 교육센터</button>
     <button class="gbtn" data-view="salescenter">🧾 영업센터</button>
     <button class="gbtn" data-view="datacenter">🗂️ 자료센터</button>
-    <button class="gbtn" data-view="qna">🛠️ 업무지원센터</button>
+    <button class="gbtn" type="button" id="boitGoBtn">BOIT 바로가기</button>
     <a class="gbtn" href="https://openga.calsplatz.com/login" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">미래에셋금융서비스<small>(M포스트)</small></a>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
 
@@ -4699,7 +4683,8 @@ body.growon{ background:var(--g-navy); }
     _dcTabs.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('#view-datacenter .dc-toplevel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById(btn.dataset.dctab === 'guide' ? 'dc-guide-panel' : 'dc-' + btn.dataset.dctab).classList.add('active');
+    const _dcIds = { guide:'dc-guide-panel', uw:'qna-underwrite', qa:'qna-center' };
+    document.getElementById(_dcIds[btn.dataset.dctab] || 'dc-' + btn.dataset.dctab).classList.add('active');
   });
   // 자료센터 내 교육자료 하위 탭 (내부교육/외부강사교육/기타영업교육)
   const _dcEduTabs = document.getElementById('dcEduTabs');
