@@ -420,13 +420,22 @@
   function renderCases(M, U) {
     const p = M.p, fmt2 = U.fmt;
     const nm = i => String(i.name).replace(/\s+/g, "");
-    const short = t => { t = String(t).replace(/\((건강가입|간편가입|일반가입|맞춤고지|감액없음)\)/g, ""); const m = t.match(/\[(.+)\]/); return (m ? m[1] : t).replace(/\s+/g, " ").trim(); };
+    // 담보명 줄이기 (화면용): 가입형태·환급형·고지형 같은 괄호, '무배당', '_1종' 등은 빼고 보장 이름만
+    const short = t => {
+      t = String(t).replace(/\((건강가입|간편가입|일반가입|맞춤고지|감액없음)\)/g, "");
+      const m = t.match(/^(.*?)\[(.+)\](.*)$/); if (m) t = /(비|금|일당)/.test(m[2]) ? m[2] : m[1].trim() + "(" + m[2] + ")";
+      t = t.replace(/^\s*\(?무배당\)?\s*/, "").replace(/\([^()]*(해약환급금|갱신|고지|납입면제|가입형)[^()]*\)/g, "").replace(/_\s*\d종/g, "").replace(/_/g, " ");
+      const sp = t.trim().split(/\s+/); // '특약명 보험금명' 꼴이면 보험금명(뒤쪽)을 앞에
+      const k = sp.findIndex((w, x) => x > 0 && /(보험금|진단비|치료비|수술비|일당|급여금)/.test(w));
+      if (k > 0 && /특약/.test(sp.slice(0, k).join(""))) t = sp.slice(k).join(" ");
+      return t.replace(/\s+/g, " ").trim();
+    };
     const RAW = (p.items || []).filter(i => !i.group && i.amt != null && i.amt > 0 && !/포인트/.test(nm(i)));
     const find = (...res) => RAW.filter(i => res.every(re => re.test(nm(i))));
     const sumA = arr => arr.reduce((x, i) => x + i.amt, 0);
     const uniq = arr => [...new Set(arr)];
-    const chipI = (i, cls) => `<span class="bs-chip ${cls || ""}">${escH(short(i.name))} <b>${fmt2(i.amt)}</b></span>`;
-    const card = (title, sub, pill, pillSub, chips, ref, cls, tx) => `<div class="bs-case ${cls || ""}"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div>${pill ? `<div class="bs-pill">${pill}${pillSub ? `<small>${pillSub}</small>` : ""}</div>` : ""}</div><div class="bs-case-p">${chips.join("")}</div>${tx ? `<div class="bs-txw"><i>치료받을 때 — 항목마다 정해진 금액</i>${tx}</div>` : ""}${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
+    const chipI = (i, cls) => `<div class="bs-li ${cls || ""}"><span>${escH(short(i.name))}</span><b>${fmt2(i.amt)}</b></div>`;
+    const card = (title, sub, pill, pillSub, chips, ref, cls, tx) => `<div class="bs-case ${cls || ""}"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div>${pill ? `<div class="bs-pill">${pill}${pillSub ? `<small>${pillSub}</small>` : ""}</div>` : ""}</div><div class="bs-lis">${chips.join("")}</div>${tx ? `<div class="bs-txw"><i>치료받을 때 — 항목마다 정해진 금액</i>${tx}</div>` : ""}${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
 
     // ── 수술 공통: 질병수술비(제외 조건 없는 것 / 있는 것), 1~5종 질병수술비
     const dsAll = find(/^질병수술비/), dsPlain = dsAll.filter(i => !/제외/.test(nm(i)));
@@ -475,13 +484,13 @@
       const surgC = dsPlain.concat(surgOf(rep.re));
       const lump = sumA(otherDx) + sumA(icOne) + sumA(surgC);
       big.push(card(`${rep.t} 진단·치료`, `${rep.s} · 암은 사망원인 1위`, lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "",
-        [...otherDx.map(i => chipI(i, "c")), icParts.length ? `<span class="bs-chip c">통합암진단비 (해당 암 구분) <b>${fmt2(icOne[0].amt)}</b></span>` : "", ...surgC.map(i => chipI(i, "t")), ...typeTx.map(i => chipI(i)), ...caSpecial.map(i => chipI(i))],
+        [...otherDx.map(i => chipI(i, "c")), icParts.length ? `<div class="bs-li c"><span>통합암진단비 (해당 암 구분)</span><b>${fmt2(icOne[0].amt)}</b></div>` : "", ...surgC.map(i => chipI(i, "t")), ...typeTx.map(i => chipI(i)), ...caSpecial.map(i => chipI(i))],
         icParts.length > 1 ? `통합암은 암 구분(${icParts.length}개)별로 따로 지급 — ${rep.t}이 어느 구분인지는 약관 분류표` : "", "c", caTx.length ? txBox(caTx, false) : ""));
     }
     const thyDx = find(/유사암진단|갑상선암진단/), thyTx = find(/갑상선암/, /치료|약물|호르몬/).filter(i => !/\(기타피부암\)/.test(nm(i)));
     if (thyDx.length || thyTx.length) {
       const lump = sumA(thyDx) + sumA(dsPlain) + sumA(surgOf(/갑상선/));
-      big.push(card("갑상선암", "암 발생 1위 (유사암)", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...thyDx.map(i => chipI(i, "c")), ...dsPlain.map(i => chipI(i, "t")), ...surgOf(/갑상선/).map(i => chipI(i, "t")), ], "", "c", (thyTx.length || caTx.length) ? (thyTx.length ? `<div class="bs-txr"><b>갑상선암 치료 담보</b><div class="bs-case-p">${thyTx.map(i => chipI(i, "o")).join("")}</div></div>` : "") + txBox(caTx.filter(i => { const t = txRows(i, true); return t && t.rows.length; }), true) : ""));
+      big.push(card("갑상선암", "암 발생 1위 (유사암)", lump ? fmt2(lump) : "", lump ? "진단·수술 시" : "", [...thyDx.map(i => chipI(i, "c")), ...dsPlain.map(i => chipI(i, "t")), ...surgOf(/갑상선/).map(i => chipI(i, "t")), ], "", "c", (thyTx.length || caTx.length) ? (thyTx.length ? `<div class="bs-txr"><b>갑상선암 치료 담보</b><div class="bs-lis">${thyTx.map(i => chipI(i, "o")).join("")}</div></div>` : "") + txBox(caTx.filter(i => { const t = txRows(i, true); return t && t.rows.length; }), true) : ""));
     }
     const circ = find(/순환계/, /치료/);
     const heartDx = find(/(심장|심근경색|허혈|협심증)/, /진단/), heartS = surgOf(/심장/), heartTx = find(/심장/, /치료/).filter(i => !/수술/.test(nm(i)));
@@ -519,7 +528,7 @@
     const drvCard = drv.length ? card("운전 중 사고로 형사 책임을 질 때", "", fmt2(sumA(drv)), "담보 합 (한도)", drv.map(i => chipI(i, "g")), "", "g") : "";
 
     let no = 0;
-    const blockOf = (t, cards, cls, note) => cards.length ? `<div class="bs-blk">${U.sec(String(++no).padStart(2, "0"), t)}<div class="bs-cases ${cls || ""}">${cards.join("")}</div>${note ? `<p class="bs-small">${note}</p>` : ""}</div>` : "";
+    const blockOf = (t, cards, cls, note) => cards.length ? `<div class="bs-blk">${U.sec(String(++no).padStart(2, "0"), t)}<div class="bs-cases cx ${cls || ""} n${cards.length}">${cards.join("")}</div>${note ? `<p class="bs-small">${note}</p>` : ""}</div>` : "";
     const body = blockOf("큰 병에 걸리면 받는 돈", big, "two", typeNote ? "수술을 받으면 " + typeNote : "") + blockOf("많이 받는 수술 Top 3", surgCards, "", typeNote ? "위 금액에 " + typeNote.replace(/^\+ /, "") + "가 더해질 수 있습니다." : "") + blockOf("간병·운전", [careCard, drvCard].filter(Boolean), "two");
     const yak = `<div class="bs-blk bs-box w bs-yak"><div class="bs-boxh"><b>${escH(p.company || "이 보험사")} 약관 등록 전 안내</b></div><p>금액은 설계서 <b>가입금액 그대로</b>이며, 사례에는 담보명에 그 질병·수술 이름이 적힌 담보만 넣었습니다. 치료비는 설계서 특약 안내사항의 <b>항목별 지급금액</b>(계약일부터 1년 경과 이후 기준)을 옮겼습니다. 몇 종 수술인지, 감액기간 같은 지급 조건은 약관에 따릅니다.</p></div>`;
     const src = `<p class="bs-blk bs-common">통계 출처: ${STATS.death} · ${STATS.cancer} · ${STATS.surg}. 금액은 ${escH(p.company)} 설계서(${escH(p.product)})의 가입금액이며, 실제 지급 여부와 금액은 진단명·질병코드·수술 분류와 약관에 따릅니다.</p>`;
@@ -704,6 +713,21 @@
 .bsp .bs-dx>div>span em{font-style:normal;font-weight:500;font-size:8.6px;color:#6b7280;margin-left:3px;line-height:1.3}
 .bsp .bs-ic{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
 .bsp .bs-cases{grid-template-columns:1fr 1fr 1fr;gap:6px}.bsp .bs-case{padding:6px 8px;gap:3px}.bsp .bs-case-h b{font-size:11.5px}.bsp .bs-pill{font-size:13.5px;padding:1px 7px}
+/* 사례 카드(약관 미등록 회사) — 크게·한 줄씩 */
+.bsp .bs-cases.cx{grid-template-columns:1fr 1fr;gap:9px}.bsp .bs-cases.cx.n1{grid-template-columns:1fr}
+.bsp .bs-cases.cx>.bs-case:last-child:nth-child(odd){grid-column:1/-1}
+.bsp .bs-cases.cx:not(.two).n3{grid-template-columns:1fr 1fr 1fr}.bsp .bs-cases.cx:not(.two).n3>.bs-case:last-child{grid-column:auto}
+.bsp .cx .bs-case{padding:10px 13px;gap:6px;border-radius:12px}
+.bsp .cx .bs-case-h b{font-size:15px}.bsp .cx .bs-case-h small{font-size:11px;margin-top:1px}
+.bsp .cx .bs-pill{font-size:19px;padding:3px 11px}.bsp .cx .bs-pill small{font-size:9.5px}
+.bs-lis{display:flex;flex-direction:column}
+.bs-li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:4px 2px;border-bottom:1px solid #f0f1f3;font-size:12.3px;color:#1f2937}
+.bs-li:last-child{border-bottom:0}.bs-li b{white-space:nowrap;font-size:13.5px;color:#111827}
+.bs-li.c b{color:var(--c)}.bs-li.t b{color:var(--g)}.bs-li.s b{color:#4338ca}.bs-li.b b{color:var(--b)}.bs-li.o b{color:var(--o)}.bs-li.g b{color:var(--g)}
+.bsp .cx .bs-txw>i{font-size:11.5px}.bsp .cx .bs-txr>b{font-size:11.5px}.bsp .cx .bs-txr>small,.bsp .cx .bs-txr>span{font-size:10.5px}
+.bsp .cx .bs-txw .bs-chip{font-size:11.3px;padding:2px 8px}.bsp .cx .bs-txw .bs-chip b{font-size:12px}.bsp .cx .bs-chip small{font-size:9.5px}
+.bsp .cx .bs-ref{font-size:10px}
+.bsp .bs-core-t b{font-size:24px}.bsp .bs-core-t span{font-size:12px}.bsp .bs-core-t small{font-size:10.5px}.bsp .bs-core-h b{font-size:16px}
 .bsp .bs-row{grid-template-columns:78px 1fr 84px;padding:4px 0}
 .bsp .bs-flow em{font-size:15px}.bsp .bs-ex em{font-size:21px}.bsp .bs-ex{padding:6px 10px}
 .bsp .bs-gl{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
