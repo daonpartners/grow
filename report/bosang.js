@@ -204,10 +204,57 @@
           appx: [3, "113 충수절제술(G211~G214) 3종"] },
       },
     },
+    {
+      company: "DB손해보험",
+      basis: "DB손해보험 (무)프로미라이프 참좋은행복더블플러스종합보험2607 약관 (판매 2026-07-01~)",
+      scope: [
+        [/뇌혈관/, "【별표15】 I60~I69"],
+        [/뇌졸중/, "【별표16】 I60·I61·I62·I63·I65·I66"],
+        [/뇌출혈/, "【별표17】 거미막하출혈(I60)·뇌내출혈(I61)·기타 비외상성 두개내출혈(I62)"],
+        [/허혈/, "【별표20】 I20~I25"],
+        [/급성심근경색/, "【별표21】 I21·I22·I23"],
+      ],
+      surg: {
+        "1-5": { name: "1-5종수술Ⅳ 분류표【별표168】",
+          cat: [1, "72 백내장·수정체 관혈수술 1종"],
+          disc: [3, "9 척추골·골반골·추간판 관혈수술 3종"],
+          hemo: [1, "44 치루·치열·치핵 근본수술 1종"],
+          gall: [3, "36 담낭·담도 관혈수술 3종"],
+          tonsil: [1, "17 편도·아데노이드 절제수술 1종"],
+          appx: [2, "충수절제술(충수염 관련) 2종"] },
+      },
+    },
+    {
+      company: "삼성화재",
+      basis: "삼성화재 (무)건강보험 THE FIT 파트너(2610.1) 약관 (판매개시 2026-10-12)",
+      scope: [
+        [/뇌혈관/, "[별표-질병관련7] I60~I69"],
+        [/뇌졸중/, "[별표-질병관련4] I60·I61·I62·I63·I65·I66"],
+        [/뇌출혈/, "[별표-질병관련6] 거미막하출혈(I60)·뇌내출혈(I61)·기타 비외상성 두개내출혈(I62)"],
+        [/급성심근경색/, "[별표-질병관련5] I21·I22·I23"],
+        [/허혈/, "[별표-질병관련8] I20~I25"],
+      ],
+      surg: {
+        "1-5": { name: "1~5종수술분류표[별표-상해및질병관련10]",
+          cat: [1, "71 백내장·수정체 관혈수술 1종"],
+          disc: [3, "9 척추골·골반골·추간판 관혈수술 3종 (내시경·경피적이면 88-2 척추 2종)"],
+          hemo: [1, "44 치루·탈항·치핵 근본수술 1종"],
+          gall: [3, "36 담낭·담도 관혈수술(개복) 3종 (복강경 등 내시경 수술이면 88-2 복부장기 2종)"],
+          tonsil: [1, "17 편도·아데노이드 절제수술 1종"],
+          appx: [2, "41 충수 절제술 2종"] },
+        "1-8": { name: "1~8종수술및시술분류표[별표-상해및질병관련9]",
+          cat: [1, "수정체 소절개·대절개 수술(C061~C073)·후발성 백내장(C080) 1종"],
+          disc: [2, "척추후궁절제술 및 추간판제거술(B173·B174·I083·I084) 2종"],
+          hemo: [1, "치핵수술(G271·G272) 1종"],
+          gall: [4, "담낭절제술(H101~H108) 4종"],
+          tonsil: [1, "편도 및 아데노이드 수술(D161·D162) 1종"],
+          appx: [3, "충수절제술(G211~G214) 3종"] },
+      },
+    },
   ];
   const packOf = p => PACKS.find(k => k.company === (p && p.company)) || null;
-  const surgTbl = n => /1\s*[-~]\s*7\s*종/.test(n) ? "1-7" : "1-5";
-  const surgCls = n => { const m = String(n).replace(/1\s*[-~]\s*[57]\s*종/g, "").match(/([1-7])\s*종/); return m ? +m[1] : 0; };
+  const surgTbl = n => /1\s*[-~]\s*8\s*종/.test(n) ? "1-8" : /1\s*[-~]\s*7\s*종/.test(n) ? "1-7" : "1-5";
+  const surgCls = n => { const m = String(n).replace(/1\s*[-~]\s*[578]\s*종/g, "").match(/([1-8])\s*종/); return m ? +m[1] : 0; };
 
   /* ---------------- 5. 제안서 + 사전 → 금액 ---------------- */
   const isDx = nm => /진단/.test(nm) && !/수술|치료|입원|일당|간병|통원/.test(nm);
@@ -488,8 +535,8 @@
 
     // ── 수술 공통: 질병수술비(제외 조건 없는 것 / 있는 것), 1~5종 질병수술비
     const dsAll = find(/^질병수술비/), dsPlain = dsAll.filter(i => !/제외/.test(nm(i)));
-    const dtype = RAW.filter(i => /질병[1-7]종|질병.*[1-7]종.*수술/.test(nm(i)) && !/상해/.test(nm(i)));
-    const typeNote = dtype.length ? `+ ${dtype.some(i => surgTbl(nm(i)) === "1-7") ? "1~7종" : "1~5종"} 질병수술비 ${fmt2(Math.min(...dtype.map(i => i.amt)))}~${fmt2(Math.max(...dtype.map(i => i.amt)))} (${PK ? "종 분류는 " + uniq(dtype.map(i => PK.surg[surgTbl(i.name)] && PK.surg[surgTbl(i.name)].name)).filter(Boolean).join("·") : "몇 종인지는 약관 수술분류표"})` : "";
+    const dtype = RAW.filter(i => /질병[1-8]종|질병.*[1-8]종.*수술/.test(nm(i)) && !/상해/.test(nm(i)));
+    const typeNote = dtype.length ? `+ ${dtype.some(i => surgTbl(nm(i)) === "1-8") ? "1~8종" : dtype.some(i => surgTbl(nm(i)) === "1-7") ? "1~7종" : "1~5종"} 질병수술비 ${fmt2(Math.min(...dtype.map(i => i.amt)))}~${fmt2(Math.max(...dtype.map(i => i.amt)))} (${PK ? "종 분류는 " + uniq(dtype.map(i => PK.surg[surgTbl(i.name)] && PK.surg[surgTbl(i.name)].name)).filter(Boolean).join("·") : "몇 종인지는 약관 수술분류표"})` : "";
     const surgOf = re => RAW.filter(i => /수술비/.test(nm(i)) && !/수술후/.test(nm(i)) && re.test(nm(i)) && !/^질병수술비/.test(nm(i)));
 
     // ── 1) 이 설계의 핵심: 보험료가 어디에 쓰이나
@@ -610,7 +657,7 @@
       if (PK && c.k) for (const tb of uniq(dtype.map(i => surgTbl(nm(i))))) {
         const T = PK.surg[tb], e = T && T[c.k]; if (!e) continue;
         const hit = dtype.filter(i => surgTbl(nm(i)) === tb && surgCls(nm(i)) === e[0]);
-        if (hit.length) { ty.push(...hit); refs.push(T.name + " " + e[1]); }
+        ty.push(...hit); refs.push(T.name + " " + e[1]);
       }
       const pay = dsAll.concat(sp, ty);
       if (!pay.length && !dtype.length) return "";
