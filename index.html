@@ -1591,6 +1591,8 @@ body.growon{ background:var(--g-navy); }
             <span class="adm-badge">FC</span>
             <span class="adm-who" id="fcWho"></span>
             <span class="adm-role" id="fcCount"></span>
+            <button type="button" class="adm-out" id="fcXls" title="배정 고객 목록을 엑셀(CSV)로 저장">📥 엑셀 다운로드</button>
+            <button type="button" class="adm-out" id="fcPrint" title="배정 고객 목록 인쇄·PDF 저장">🖨️ 인쇄</button>
             <button type="button" class="adm-out" id="fcOut">나가기</button>
           </div>
           <div id="fcKey" style="display:none; margin:10px 0; padding:12px 14px; border:1px solid #C9D3E6; border-radius:10px; background:#F5F8FD;">
@@ -9396,6 +9398,51 @@ const limitCompareData = {};
     if(fg) fg.addEventListener('click', () => { window.rrnMem.drop(fcMemId()); FC_PRIV = null; FC_LIST.forEach(c => { delete c._d; }); fcRenderList(FC_LIST); fcKeyUi(); fcKeyMsg('잠갔습니다. 다음에는 비밀번호를 다시 입력해야 합니다.'); });
   })();
 
+  /* 내 DB 엑셀 다운로드·인쇄: 주민번호는 뒷자리 마스킹(앞 7자리만)으로 내보냄 — 파일·종이로 나가는 개인정보 최소화 */
+  function fcExportRows(){
+    const list = window.FC_LIST_GET ? window.FC_LIST_GET() : [];
+    const mask = v => String(v || '').replace(/(\d{6})-?([1-8])\d{6}/g, '$1-$2******');
+    const won = n => Number(n || 0).toLocaleString('ko-KR');
+    return list.map(c => {
+      const p = c.progress || {}, cs = Array.isArray(p.c) ? p.c.filter(k => k.ok !== '반려') : [];
+      return {
+        name: c.name || '', stage: c.ev ? (p.stage || '미접촉') : '', deal: cs.map(k => k.co + ' ' + k.pr + ' 월' + won(k.amt) + '원(' + k.d + ')').join(' / '),
+        phone: c.phone || '', birth: c.birth || '', rrn: c._d ? mask(c._d) : (c.rrn ? '잠김' : ''), address: c.address || '',
+        db: c.dbType || '', at: String(c.assignedAt || '').slice(0, 10), memo: [p.memo, c.memo].filter(Boolean).join(' / ')
+      };
+    });
+  }
+  const FC_COLS = [['name','이름'],['stage','진행'],['deal','체결'],['phone','연락처'],['birth','생년월일'],['rrn','주민번호(뒷자리 가림)'],['address','주소'],['db','DB'],['at','배정일'],['memo','메모']];
+  function fcFileName(ext){ const c = window.FC_CRED_GET ? window.FC_CRED_GET() : {}; return ['내DB', c.branch || '', c.name || '', new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10)].filter(Boolean).join('_') + '.' + ext; }
+  const _fcx = document.getElementById('fcXls');
+  if(_fcx) _fcx.addEventListener('click', () => {
+    const rows = fcExportRows();
+    if(!rows.length){ alert('내려받을 고객이 없습니다.'); return; }
+    if(!confirm('배정 고객 ' + rows.length + '명을 엑셀 파일로 저장합니다.\n고객 개인정보가 들어 있으니 상담 용도로만 쓰고, 다른 사람에게 보내지 마세요.')) return;
+    const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const lines = [FC_COLS.map(c => q(c[1])).join(',')].concat(rows.map(r => FC_COLS.map(c => q(c[0] === 'phone' || c[0] === 'birth' ? (r[c[0]] ? '="' + r[c[0]] + '"' : '') : r[c[0]])).join(',')));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+    a.download = fcFileName('csv'); document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  });
+  const _fcp = document.getElementById('fcPrint');
+  if(_fcp) _fcp.addEventListener('click', () => {
+    const rows = fcExportRows();
+    if(!rows.length){ alert('인쇄할 고객이 없습니다.'); return; }
+    const c = window.FC_CRED_GET ? window.FC_CRED_GET() : {};
+    const w = window.open('', '_blank');
+    if(!w){ alert('팝업이 막혀 있습니다. 브라우저 주소창 오른쪽에서 팝업을 허용해 주세요.'); return; }
+    const e = escapeHtml;
+    w.document.write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>' + e(fcFileName('pdf').replace(/\.pdf$/, '')) + '</title><style>'
+      + '@page{size:A4 landscape;margin:10mm}body{font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:10.5px;color:#111;margin:0}'
+      + 'h1{font-size:15px;margin:0 0 4px}p{margin:0 0 8px;color:#555}table{width:100%;border-collapse:collapse}th,td{border:1px solid #999;padding:4px 5px;text-align:left;vertical-align:top}'
+      + 'th{background:#eee}tr{page-break-inside:avoid}.no{width:22px;text-align:center}.ft{margin-top:8px;color:#888;font-size:9.5px}</style></head><body>'
+      + '<h1>내 DB 고객 목록 · ' + e(c.branch || '') + ' ' + e(c.name || '') + '</h1><p>출력일 ' + e(new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 16).replace('T', ' ')) + ' · ' + rows.length + '명</p>'
+      + '<table><thead><tr><th class="no">#</th>' + FC_COLS.map(k => '<th>' + e(k[1]) + '</th>').join('') + '</tr></thead><tbody>'
+      + rows.map((r, i) => '<tr><td class="no">' + (i + 1) + '</td>' + FC_COLS.map(k => '<td>' + e(r[k[0]]) + '</td>').join('') + '</tr>').join('')
+      + '</tbody></table><div class="ft">고객 개인정보가 들어 있습니다. 상담 후 파기하고 외부로 반출하지 마세요. (그로우온 내 DB 조회)</div></body></html>');
+    w.document.close(); w.focus(); setTimeout(() => w.print(), 300);
+  });
   function fcRenderList(customers){
     const box = document.getElementById('fcList');
     if(!customers.length){
