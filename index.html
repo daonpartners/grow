@@ -9108,10 +9108,9 @@ const limitCompareData = {};
   ];
   const MASTER_ADMIN_MEMBERS = [
     { name: '김덕규', title: '교육본부장', canManageEdu: true },
-    { name: '이수정', title: '교육본부장', canManageEdu: true },
-    { name: '김승준', title: '지점장', canManageEdu: true },
-    { name: '성영진', title: '지점장', canManageEdu: true }
+    { name: '이수정', title: '교육본부장', canManageEdu: true }
   ];
+  /* 2026-11-03: 공용 코드는 교육본부장 2명 전용. 김승준(광명가온지점)·성영진(광명리본지점)은 각 지점 인증번호로 입장 */
   /* 공용(최상위) 코드는 홈페이지 소스에 두지 않고 서버(n8n)에서 확인 */
   const ADMIN_ACCOUNTS = {};
   const ADMIN_SRV = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-admin';
@@ -9121,7 +9120,7 @@ const limitCompareData = {};
   let admName = '';
   let admLabel = '';
 
-  /* 교육본부장·지점장(master26) 4명 전원 동일 권한: 교육센터 강의실·자료실 포함 전 영역 편집 가능. 최상위 관리자는 항상 참. */
+  /* 교육본부장(공용 코드) 2명 동일 권한: 교육센터 강의실·자료실 포함 전 영역 편집 가능. 최상위 관리자는 항상 참. */
   function isEduAdmin(){ return sessionStorage.getItem('growAdmin') === '1' && sessionStorage.getItem('growCanManageEdu') === '1'; }
   function canManageEdu(){ return isTopAdmin() || isEduAdmin(); }
 
