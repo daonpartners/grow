@@ -1407,7 +1407,9 @@ function covContracts(pages){
       if(cat&&nm&&cat.indexOf(nm)===0){ nm=cat; cat=''; }
       var shown=ctrClean(nm), base=ctrClean(cur.prod), sq=function(x){return x.replace(/\s/g,'');};
       if(!shown||sq(shown)===sq(base)||(base&&sq(base).indexOf(sq(shown))===0)||(base&&sq(shown).indexOf(sq(base))===0&&sq(shown).length<=sq(base).length+2)) shown=ctrClean(cat)||shown;
-      cur.items.push({kind:its[1].s.trim(),name:shown,cat:cat&&cat!==shown?cat:'',amt:amt});
+      var coNm=ctrClean(nm), stdNm=ctrClean(cat)||cat;
+      if(!coNm||sq(coNm)===sq(base)||(base&&sq(base).indexOf(sq(coNm))===0)||(base&&sq(coNm).indexOf(sq(base))===0&&sq(coNm).length<=sq(base).length+2)) coNm='';
+      cur.items.push({kind:its[1].s.trim(),name:shown,cat:cat&&cat!==shown?cat:'',coName:coNm,std:stdNm,amt:amt});
     }
   });
   return list.filter(function(c){return c.items.length;});
@@ -2314,7 +2316,7 @@ function ctrGroups(cov){
 function ctrSummaryBlocks(cov){
   var L=cov.ctrs||[], out=[]; if(!L.length) return out;
   var G=ctrGroups(cov), sum=L.reduce(function(a,c){return a+(c.done?0:(c.prem||0));},0);
-  out.push('<p class="lead">가입하신 보험을 회사별로 정리했습니다. 다음 장부터 <b>한 회사에 한 장씩</b>, 담보를 한 줄에 하나씩 정리했습니다. 담보명과 가입금액은 '+esc(cov.source||'보장분석 자료')+'('+esc(cov.date||'')+' 기준)에 등록된 내용 그대로입니다.</p>');
+  out.push('<p class="lead">가입하신 보험을 회사별로 정리했습니다. 다음 장부터 <b>한 회사에 한 장씩</b>, 담보를 한 줄에 하나씩 정리했습니다. 담보는 신용정보원 표준 담보명을 기준으로 하고 보험사 담보명을 함께 적었습니다. 담보명과 가입금액은 '+esc(cov.source||'보장분석 자료')+'('+esc(cov.date||'')+' 기준)에 등록된 내용 그대로입니다.</p>');
   var C='38px '+cw(110)+'px minmax(0,1fr) 70px '+cw(100)+'px '+cw(92)+'px';
   out.push('<div class="card" style="flex:none;padding:0;gap:0;overflow:hidden">'+
     '<div style="display:grid;grid-template-columns:'+C+';gap:8px;background:#2B3346;color:#fff;font-size:12.5px;font-weight:700;padding:8px 12px"><div>No</div><div>회사</div><div>상품</div><div style="text-align:right">담보 수</div><div style="text-align:right">월 보험료</div><div style="text-align:right">보장 만기</div></div>'+
@@ -2323,7 +2325,7 @@ function ctrSummaryBlocks(cov){
   if(cov.contracts&&cov.contracts>L.length) out.push('<div class="small" style="font-size:12px;color:#4A4A55">· 보장분석 자료의 정상계약은 '+cov.contracts+'건이며, 담보 상세가 표시된 '+L.length+'건을 정리했습니다. 나머지 계약은 보험증권으로 확인합니다.</div>');
   return out;
 }
-var CTR_COLS='44px 54px minmax(0,1fr) 128px';
+var CTR_COLS='40px 50px minmax(0,0.85fr) minmax(0,1.25fr) 112px';
 function ctrCompanyBlocks(g,num,idx,total){
   var out=[], prem=g.list.reduce(function(a,c){return a+(c.done?0:(c.prem||0));},0), cnt=g.list.reduce(function(a,c){return a+c.items.length;},0);
   out.push('<div class="sech keepnext"><div style="display:flex;flex-direction:column;gap:6px"><div class="kicker" style="color:var(--blue)">'+num+' · 회사별 가입 내역 · '+idx+' / '+total+'</div>'+
@@ -2335,13 +2337,14 @@ function ctrCompanyBlocks(g,num,idx,total){
       return '<div style="display:grid;grid-template-columns:'+CTR_COLS+';align-items:center;font-size:13px;border-bottom:1px solid #D9DEE7;background:'+(n%2?'#fff':'#F5F7FB')+'">'+
         '<div style="padding:5px 8px;text-align:center;color:#7B8190;border-right:1px solid #E3E6EC">'+n+'</div>'+
         '<div style="padding:5px 4px;text-align:center;border-right:1px solid #E3E6EC"><span style="font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:'+(silson?'#E6F4EA':'#EAF0FB')+';color:'+(silson?'#2F7D4A':'#2B4C8C')+'">'+esc(it.kind||'정액')+'</span></div>'+
-        '<div style="padding:5px 10px;line-height:1.35;color:var(--ink);border-right:1px solid #E3E6EC">'+esc(it.name)+'</div>'+
+        '<div style="padding:5px 10px;line-height:1.35;color:var(--ink);font-weight:700;border-right:1px solid #E3E6EC">'+esc(it.std||it.name)+'</div>'+
+        '<div style="padding:5px 10px;line-height:1.35;font-size:12px;color:var(--ink2);border-right:1px solid #E3E6EC">'+esc(it.coName||(it.std?'':it.name)||'-')+'</div>'+
         '<div style="padding:5px 12px;text-align:right;font-weight:900;font-size:14px;color:var(--navy);white-space:nowrap">'+won(it.amt)+'</div></div>'; };
     out.push('<div class="card'+(ci?' pgbreak':'')+'" style="flex:none;padding:0;gap:0;overflow:hidden;border-color:#C9D0DC">'+
       '<div style="padding:9px 12px;background:#F1F4F9;border-bottom:1px solid #C9D0DC;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">'+
         '<div class="ctitle" style="font-size:15.5px"><span>'+esc(ctrClean(c.prod)||c.prod)+'</span></div>'+
         '<div style="font-size:12.5px;color:var(--ink2);white-space:nowrap">'+(c.prem?(c.done?'납입완료 (기존 월 '+c.prem.toLocaleString()+'원)':'월 <b>'+c.prem.toLocaleString()+'원</b>'):'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+' ~ '+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
-      '<div style="display:grid;grid-template-columns:'+CTR_COLS+';background:#2B3346;color:#fff;font-size:12px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 4px;text-align:center">구분</div><div style="padding:6px 10px">담보명</div><div style="padding:6px 12px;text-align:right">가입금액</div></div>'+
+      '<div style="display:grid;grid-template-columns:'+CTR_COLS+';background:#2B3346;color:#fff;font-size:12px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 4px;text-align:center">구분</div><div style="padding:6px 10px">신정원 담보명</div><div style="padding:6px 10px">회사 담보명</div><div style="padding:6px 12px;text-align:right">가입금액</div></div>'+
       '<div class="bl" style="gap:0">'+c.items.map(row).join('')+'</div></div>');
     out=out.concat(ctrNoteBlocks({list:[c]}));
   });
