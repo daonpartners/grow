@@ -1526,21 +1526,23 @@ function covCareDetail(c){
   if(!L.length) return null;
   var res=[], sum=function(a){return a.reduce(function(x,l){return x+l.amt;},0);};
   ['질병','상해'].forEach(function(k){
-    var K=L.filter(function(l){return new RegExp(k).test(l.name);}); if(!K.length) return;
+    var K=L.filter(function(l){ return k==='질병'?(/질병/.test(l.name)||!/상해/.test(l.name)):/상해/.test(l.name); }); if(!K.length) return;
     var nurse=K.filter(function(l){return /간호간병/.test(l.name)&&!/간병인/.test(l.name.replace(/간호간병/g,''));});
     var cg=K.filter(function(l){return nurse.indexOf(l)<0;});
+    var isNH=function(l){ var n=l.name.replace(/\s/g,''); return /요양병원/.test(n)&&!/요양병원제외|요양병원\)?제외|요양,정신/.test(n); };
+    var per=function(l){ var n=l.name.replace(/\s/g,''); return /181일/.test(n)?'181일 이후':(/365일/.test(n)?'입원 1~365일':(/180일/.test(n)?'입원 1~180일':'')); };
     ['사용','지원'].forEach(function(t){
       var T=cg.filter(function(l){return t==='지원'?/지원/.test(l.name):!/지원/.test(l.name);}); if(!T.length) return;
-      var nh=T.filter(function(l){return /\(요양병원\)/.test(l.name);});
-      var lg=T.filter(function(l){return nh.indexOf(l)<0&&/181일/.test(l.name);});
-      var base=T.filter(function(l){return nh.indexOf(l)<0&&lg.indexOf(l)<0;});
-      var per=base.some(function(l){return /365일/.test(l.name);})?'365일':(base.some(function(l){return /180일/.test(l.name);})?'180일':'');
+      var nh=T.filter(isNH), gen=T.filter(function(l){return nh.indexOf(l)<0;});
+      var lg=gen.filter(function(l){return per(l)==='181일 이후';}), base=gen.filter(function(l){return lg.indexOf(l)<0;});
+      var bp=base.map(per).filter(Boolean)[0]||'';
       var notes=[];
-      if(per) notes.push('입원 1~'+per+' 보장');
-      if(lg.length) notes.push('181일 이후 '+won(sum(lg))+' (요양·정신·한방병원 제외)');
-      else if(per==='180일') notes.push('181일 이후 보장 없음');
-      notes.push(nh.length?'요양병원 '+won(sum(nh))+(/180일/.test(nh.map(function(l){return l.name;}).join(''))?' (180일 한도)':''):'요양병원 보장 없음');
-      res.push({on:true,cat:'care',name:k+' 간병인 일당 ('+t+'형·요양병원 제외)',amt:sum(base),rec:null,status:sum(base)?'':'미가입',note:notes.join(' · '),showNote:true});
+      if(!lg.length&&bp==='입원 1~180일') notes.push('181일 이후 보장 없음');
+      if(!nh.length) notes.push('요양병원 보장 없음');
+      if(base.length) res.push({on:true,cat:'care',name:k+' 간병인 일당 ('+t+'형·요양병원 제외'+(bp?' · '+bp:'')+')',amt:sum(base),rec:null,status:sum(base)?'':'미가입',note:notes.join(' · '),showNote:notes.length>0});
+      if(lg.length) res.push({on:true,cat:'care',name:k+' 간병인 일당 ('+t+'형·요양병원 제외 · 181일 이후)',amt:sum(lg),rec:null,status:'',note:'입원 181일째부터 지급 (요양·정신·한방병원 제외 등 약관 확인)',showNote:true,careExtra:true});
+      var byP={}; nh.forEach(function(l){ var q=per(l)||'기간 약관 확인'; (byP[q]=byP[q]||[]).push(l); });
+      Object.keys(byP).forEach(function(q){ res.push({on:true,cat:'care',name:k+' 간병인 일당 ('+t+'형·요양병원 · '+q+')',amt:sum(byP[q]),rec:null,status:'',note:'요양병원 입원 시 지급',showNote:true,careExtra:true}); });
     });
     if(nurse.length) res.push({on:true,cat:'nurse_svc',name:k+' 간호간병통합서비스 일당',amt:sum(nurse),rec:null,status:'',note:'간병인 일당과 별도 지급',showNote:true});
   });
@@ -1662,8 +1664,8 @@ function covNormalize(c){
   c.rows.sort(function(a,b){ var ga=COV_GROUPS.indexOf(COV_GROUP[a.cat]), gb=COV_GROUPS.indexOf(COV_GROUP[b.cat]); return ga-gb; });
 }
 /* ---------- 계산 ---------- */
-function covSum(c,cats,filter){ return c.rows.filter(function(r){return r.on&&cats.indexOf(r.cat)>=0&&(!filter||filter(r));}).reduce(function(s,r){return s+(r.amt||0);},0); }
-function covRows(c,cats){ return c.rows.filter(function(r){return r.on&&cats.indexOf(r.cat)>=0&&r.amt>0;}); }
+function covSum(c,cats,filter){ return c.rows.filter(function(r){return r.on&&!r.careExtra&&cats.indexOf(r.cat)>=0&&(!filter||filter(r));}).reduce(function(s,r){return s+(r.amt||0);},0); }
+function covRows(c,cats){ return c.rows.filter(function(r){return r.on&&!r.careExtra&&cats.indexOf(r.cat)>=0&&r.amt>0;}); }
 function surgJong(c){
   var by={};
   c.lines.forEach(function(l){
@@ -1717,7 +1719,7 @@ function covScenario(c,s){
     return r;
   }
   if(s.daily){
-    var d=c.rows.filter(function(x){return x.on&&x.amt>0&&/질병/.test(x.name)&&(x.cat==='hosp'||(x.cat==='care'&&/사용형 가입/.test(x.name)))&&!/1인실/.test(x.name);});
+    var d=c.rows.filter(function(x){return x.on&&x.amt>0&&/질병/.test(x.name)&&(x.cat==='hosp'||(x.cat==='care'&&/사용형/.test(x.name)&&!x.careExtra))&&!/1인실/.test(x.name);});
     r.now=d.reduce(function(a,x){return a+x.amt;},0)*10; lineOf(d);
     r.note='하루 금액 × 10일 기준 · 간병인 지원형(서비스 제공)과 1인실 일당은 제외';
     return r;
@@ -1802,7 +1804,7 @@ var COV_TRENDS=[
 function covTrend(c,t){
   if(t.fn) return t.fn(c);
   if(t.cat){
-    var rs=c.rows.filter(function(r){return r.on&&r.cat===t.cat&&r.amt>0;});
+    var rs=c.rows.filter(function(r){return r.on&&!r.careExtra&&r.cat===t.cat&&r.amt>0;});
     var amt=rs.reduce(function(a,r){return a+r.amt;},0), extra='';
     if(t.k==='circ'&&amt){ var cl=covSpec(c,/순환계/); extra=cl.length?'순환계 범위 담보 보유: '+cl.map(function(l){return l.name.replace(/\(.*$/,'');}).slice(0,2).join(', ')+' — 부정맥·심부전 포함 여부는 약관 질병 범위표로 확인':'2대질환(뇌혈관·허혈성심장) 범위로 보입니다 — 부정맥·심부전까지 넓힌 순환계 담보인지 확인'; }
     if(t.k==='cancer_main'){ var m=rs[0]; if(m&&m.note) extra=m.note+' 후 금액'; }
@@ -2140,7 +2142,7 @@ var AREA_COV={
   women:{must:['cancer','cancer_sim','surg_dis'],plus:['surg_n','cancer_main'],scn:['breast','fibroid']}
 };
 function covCat(cov,cat){
-  var rs=cov.rows.filter(function(r){return r.on&&!r.hidden&&r.cat===cat;});
+  var rs=cov.rows.filter(function(r){return r.on&&!r.careExtra&&!r.hidden&&r.cat===cat;});
   var amt=rs.reduce(function(s,r){return s+(r.amt||0);},0);
   var rec=rs.reduce(function(s,r){return s+(r.rec||0);},0)||null;
   var st=rs.some(function(r){return r.status==='부족';})?'부족':(amt>0?'충분':'미가입');
