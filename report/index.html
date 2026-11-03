@@ -1650,6 +1650,14 @@ function covNormalize(c){
       r.note=ups.map(function(x){return COV_NAME[x.k].replace(/ 진단비$/,'')+' '+won(x.amt);}).join(' + ')+' — '+n[2]+'도 보장범위에 포함 (진단 시 합계)';
     });
   });
+  /* 유사암 진단비가 따로 없으면: 일반암 진단비 약관에서 유사암을 10~20%로 지급하는 경우가 많아 그렇게 안내 */
+  (function(){
+    var ca=c.rows.filter(function(r){return r.on&&r.cat==='cancer'&&r.amt>0;}).reduce(function(a,r){return a+r.amt;},0); if(!ca) return;
+    var sims=c.rows.filter(function(r){return r.cat==='cancer_sim';}); if(sims.some(function(r){return r.on&&r.amt>0;})) return;
+    var r=sims[0]; if(!r){ r={on:true,cat:'cancer_sim',name:'유사암 진단비',amt:0,rec:null,status:''}; c.rows.push(r); }
+    r.simPct=true; r.amtLbl='암진단비의 10~20%'; r.showNote=true; r.status='약관 확인';
+    r.note='유사암 진단비가 따로 없음 · 암진단비('+won(ca)+')의 10~20% 지급 (약관 확인)';
+  })();
   var gi={}; COV_CATS.forEach(function(x,i){gi[x[0]]=i;});
   c.rows.sort(function(a,b){ var ga=COV_GROUPS.indexOf(COV_GROUP[a.cat]), gb=COV_GROUPS.indexOf(COV_GROUP[b.cat]); return ga-gb; });
 }
@@ -1717,6 +1725,7 @@ function covScenario(c,s){
   var nr=covRows(c,s.now), ex=0, xk={ami:'ami',bleed:'brain_hem',infarct:'stroke'}[s.k];
   if(xk) nr=nr.filter(function(x){ if(x.cat===xk) return true; var e=covExcl(c,x.cat,xk); if(!e) return true; if(e>=x.amt){ r.basis.push(x.name+' '+won(x.amt)+' — '+s.sit+' 제외 담보라 해당 없음'); return false; } ex+=e; return true; });
   r.now=nr.reduce(function(a,x){return a+x.amt;},0)-ex; lineOf(nr);
+  if(s.k==='sim'&&!r.now&&c.rows.some(function(z){return z.simPct;})){ r.nowLbl='암진단비의 10~20%'; r.basis.push('유사암 진단비가 따로 없어 암진단비의 10~20% 지급 (약관 확인)'); }
   if(s.spec){ var sp2=covSpec(c,s.spec); var v=sp2.reduce(function(a,x){return a+x.amt;},0);
     if(s.specNow){ r.now+=v; lineOf(sp2); } else if(sp2.length){ r.spec={n:sp2.length,max:Math.max.apply(null,sp2.map(function(x){return x.amt;})),names:sp2.map(function(x){return x.name;})}; } }
   var organ={aneurysm:'brain',bleed:'brain',infarct:'brain',angina:'heart',ami:'heart'}[s.k];
@@ -1816,7 +1825,7 @@ function covInitSel(c){
 var COV_K=1; function fz(n){return Math.round(n*COV_K*10)/10;} function cw(n){return Math.round(n*(1+(COV_K-1)*0.9));}
 /* ---------- 리포트 화면 ---------- */
 function covHead(k,t){ return function(cont){ return '<div style="display:flex;flex-direction:column;gap:8px"><div class="kicker" style="color:var(--blue)">'+k+(cont?' · 이어서':'')+'</div>'+(cont||!t?'':'<h2 class="h2" style="color:var(--navy)">'+t+'</h2>')+'</div>'; }; }
-var ST_COL={'충분':'#2F7D4A','부족':'#C27C0E','미가입':'#B4472F','포함':'#0E7490'};
+var ST_COL={'충분':'#2F7D4A','부족':'#C27C0E','미가입':'#B4472F','포함':'#0E7490','약관 확인':'#8A8F98'};
 function stBadge(s){ return s?'<span style="display:inline-block;min-width:52px;text-align:center;font-size:'+fz(13)+'px;font-weight:800;padding:3px 8px;border-radius:20px;color:#fff;background:'+ST_COL[s]+'">'+s+'</span>':''; }
 /* 조사: 마지막 글자에 받침이 있으면 a, 없으면 b (으로/로는 ㄹ받침도 b) */
 function jo(w,a,b){ w=String(w||'').replace(/\s*\([^()]*\)\s*$/,'').trim(); var ch=w.charCodeAt(w.length-1);
@@ -1850,11 +1859,11 @@ function covSummaryBlocks(c){
       '<div class="ctitle" style="padding:8px 12px;background:#F1F4F9;border-bottom:1px solid #C9D0DC;font-size:'+fz(16)+'px;justify-content:space-between"><span>'+g+'</span><span style="font-size:'+fz(12.5)+'px;font-weight:700;color:var(--ink2)">담보 '+rs.length+'개'+(nb?' · <b style="color:'+ST_COL['부족']+'">부족 '+nb+'</b>':'')+(nm?' · <b style="color:'+ST_COL['미가입']+'">미가입 '+nm+'</b>':'')+'</span></div>'+
       '<div style="display:grid;grid-template-columns:'+SC+';background:#2B3346;color:#fff;font-size:'+fz(12)+'px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 10px">담보</div><div style="padding:6px 10px;text-align:right">가입금액</div><div style="padding:6px 10px;text-align:right">권장금액</div><div style="padding:6px 10px;text-align:right">부족 금액</div><div style="padding:6px 6px;text-align:center">판정</div></div>'+
       '<div class="bl" style="gap:0">'+rs.map(function(r,k){
-        var has=r.viaUp&&!r.amt?r.upAmt:r.amt, gap=r.rec!=null&&r.rec>has&&!(r.viaCirc&&!r.amt)?won(r.rec-has):'-';
+        var has=r.viaUp&&!r.amt?r.upAmt:r.amt, gap=r.rec!=null&&r.rec>has&&!(r.viaCirc&&!r.amt)&&!r.simPct?won(r.rec-has):'-';
         return '<div style="display:grid;grid-template-columns:'+SC+';align-items:center;border-bottom:1px solid #D9DEE7;background:'+(k%2?'#F5F7FB':'#fff')+'">'+
           '<div style="'+cell+';text-align:center;color:#7B8190;font-size:'+fz(12)+'px">'+(k+1)+'</div>'+
           '<div style="'+cell+';font-size:'+fz(13.5)+'px;font-weight:600;line-height:1.3">'+esc(r.name)+(r.viaCirc||r.viaUp||r.showNote?'<div style="font-size:'+fz(11)+'px;font-weight:700;color:#0E7490;margin-top:1px">'+esc(r.note)+'</div>':'')+'</div>'+
-          '<div style="'+cell+';text-align:right;font-size:'+fz(14.5)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':(r.viaCirc||r.viaUp?'#0E7490':'#B4472F'))+'">'+(r.viaUp&&!r.amt?won(r.upAmt):(r.amtLbl?esc(r.amtLbl):(r.amt>0||!r.viaCirc?won(r.amt):'포함')))+'</div>'+
+          '<div style="'+cell+';text-align:right;font-size:'+fz(14.5)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':(r.viaCirc||r.viaUp?'#0E7490':(r.simPct?'#4A4F5C':'#B4472F')))+'">'+(r.viaUp&&!r.amt?won(r.upAmt):(r.amtLbl?esc(r.amtLbl):(r.amt>0||!r.viaCirc?won(r.amt):'포함')))+'</div>'+
           '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;color:var(--ink2);white-space:nowrap">'+(r.rec!=null?won(r.rec):'-')+'</div>'+
           '<div style="'+cell+';text-align:right;font-size:'+fz(13)+'px;font-weight:700;white-space:nowrap;color:'+(gap==='-'?'#9AA0AA':'#B4472F')+'">'+gap+'</div>'+
           '<div style="padding:'+fz(6)+'px 6px;text-align:center">'+(r.status?'<span style="display:inline-block;font-size:'+fz(11.5)+'px;font-weight:800;padding:2px 8px;border-radius:5px;color:#fff;background:'+ST_COL[r.status]+'">'+r.status+'</span>':'')+'</div></div>';
@@ -1870,7 +1879,7 @@ function covScenarioBlocks(c){
     out.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch">'+list.slice(i,i+3).map(function(r){
       return '<div class="card" style="padding:10px 12px;gap:5px;border-top:4px solid '+(r.now?'var(--blue)':'#B4472F')+'">'+
         '<div><div style="font-size:'+fz(15)+'px;font-weight:800;line-height:1.3">'+r.sit+'</div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+r.code+'</div></div>'+
-        '<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+(r.surg?'수술 시 (질병수술비)':(r.later||r.min?'진단·확정 시':'받을 수 있는 금액'))+'</div><div style="font-size:'+fz(22)+'px;font-weight:800;letter-spacing:-.02em;color:'+(r.now?'var(--blue)':'#B4472F')+'">'+(r.now?won(r.now):'없음')+'</div></div>'+
+        '<div><div style="font-size:'+fz(11)+'px;color:var(--muted)">'+(r.surg?'수술 시 (질병수술비)':(r.later||r.min?'진단·확정 시':'받을 수 있는 금액'))+'</div><div style="font-size:'+fz(r.nowLbl&&!r.now?17:22)+'px;font-weight:800;letter-spacing:-.02em;color:'+(r.now?'var(--blue)':(r.nowLbl?'#4A4F5C':'#B4472F'))+'">'+(r.now?won(r.now):(r.nowLbl||'없음'))+'</div></div>'+
         (r.later?'<div style="background:#EEF2FA;border-radius:7px;padding:4px 8px;font-size:'+fz(12)+'px;line-height:1.4;color:var(--navy)"><b>+ 최대 '+won(r.later)+'</b> · '+esc(r.laterLbl)+'</div>':(r.laterLbl?'<div style="background:#F6F1EA;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;color:var(--ink2)">'+esc(r.laterLbl)+'</div>':''))+
         (r.spec?'<div style="background:#FDF1EC;border-radius:7px;padding:4px 8px;font-size:'+fz(11.5)+'px;line-height:1.4;color:var(--warm2)"><b>전용 특약 '+r.spec.n+'건</b> · 조건 해당 시만 (건당 최대 '+won(r.spec.max)+')</div>':'')+
         (r.basis.length?'<div style="font-size:'+fz(11)+'px;line-height:1.45;color:var(--ink2)">'+r.basis.slice(0,4).map(esc).join('<br>')+(r.basis.length>4?'<br>외 '+(r.basis.length-4)+'건':'')+'</div>':'')+
@@ -1983,7 +1992,8 @@ var BASIC=[
 ];
 function basicRow(c,it){
   var r={name:'',amt:0,st:'없음',rec:null,core:false};
-  if(it.cat){ var x=covCat(c,it.cat); r.name=it.n||x.name; r.amt=x.amt; r.rec=x.rec; r.lbl=x.lbl; r.st=x.amt>0?(x.status==='부족'?'부족':'있음'):'없음'; r.cat=it.cat; }
+  if(it.cat){ var x=covCat(c,it.cat); r.name=it.n||x.name; r.amt=x.amt; r.rec=x.rec; r.lbl=x.lbl; r.st=x.amt>0?(x.status==='부족'?'부족':'있음'):'없음'; r.cat=it.cat;
+    var sp=c.rows.filter(function(z){return z.cat===it.cat&&z.simPct;})[0]; if(sp&&!(x.amt>0)){ r.st='확인 필요'; r.lbl='암진단비의 10~20%'; r.ask='유사암 진단비가 따로 없어 암진단비의 10~20%가 지급됩니다 (약관 확인)'; } }
   else { var t=COV_TRENDS.filter(function(k){return k.k===it.tr;})[0]; if(!t) return null; if(c.trd&&c.trd[t.k]===false) return null;
     var v=covTrend(c,t); r.name=it.n||t.title; r.amt=v.amt||0; r.st=v.has?'있음':(t.noData?'확인 필요':'없음'); r.core=!!t.core; r.cat=t.cat||''; r.extra=v.extra; r.src=TREND_SRC[t.k]; r.ask=it.k||''; }
   return r;
@@ -2010,7 +2020,7 @@ function covAdviseBlocks(c,o){
         var gap=r.st==='부족'&&r.rec>r.amt?'<div style="font-size:11.5px;color:#C27C0E;font-weight:700">권장보다 '+won(r.rec-r.amt)+' 부족</div>':'';
         return '<div style="display:grid;grid-template-columns:'+C+';align-items:center;border-bottom:1px solid #D9DEE7;background:'+(r.st==='있음'?(k%2?'#F5F7FB':'#fff'):'#FFF8F5')+'">'+
           '<div style="padding:6px 10px;border-right:1px solid #E3E6EC"><div style="font-size:'+fz(13.5)+'px;font-weight:800;line-height:1.3">'+esc(r.name)+'</div>'+sig+'</div>'+
-          '<div style="padding:6px 10px;border-right:1px solid #E3E6EC;text-align:right"><div style="font-size:'+fz(14)+'px;font-weight:900;white-space:nowrap;color:'+(r.amt>0?'var(--navy)':'#B4472F')+'">'+(r.amt>0?(r.lbl?esc(r.lbl):won(r.amt)):(r.st==='확인 필요'?'-':'없음'))+'</div>'+gap+'</div>'+
+          '<div style="padding:6px 10px;border-right:1px solid #E3E6EC;text-align:right"><div style="font-size:'+fz(!r.amt&&r.lbl?12:14)+'px;font-weight:900;white-space:'+(!r.amt&&r.lbl?'normal':'nowrap')+';color:'+(r.amt>0?'var(--navy)':'#B4472F')+'">'+(r.amt>0?(r.lbl?esc(r.lbl):won(r.amt)):(r.lbl?esc(r.lbl):(r.st==='확인 필요'?'-':'없음')))+'</div>'+gap+'</div>'+
           '<div style="padding:6px 4px;border-right:1px solid #E3E6EC;text-align:center"><span style="display:inline-block;font-size:11.5px;font-weight:800;padding:2px 7px;border-radius:5px;color:#fff;background:'+BST[r.st]+'">'+r.st+'</span></div>'+
           '<div style="padding:6px 10px;font-size:'+fz(12.5)+'px;line-height:1.45;color:var(--ink2)">'+esc(r.d)+(r.ask?'<div style="margin-top:3px;font-weight:700;color:#8E3420">▶ '+esc(r.ask)+'</div>':'')+'</div></div>';
       }).join('')+'</div></div>');
