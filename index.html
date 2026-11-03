@@ -3294,7 +3294,7 @@ body.growon{ background:var(--g-navy); }
 ];
 
   function noticeRowHtml(n, idx){
-    const canEdit = isTopAdmin();
+    const canEdit = canPost();
     return `
       <div class="notice${n.pinned ? ' pinned' : ''}" data-idx="${idx}">
         <span class="tag ${n.tag}">${escapeHtml(n.tag)}</span>
@@ -3343,7 +3343,7 @@ body.growon{ background:var(--g-navy); }
     document.getElementById('noticeBoardModalBackdrop').classList.add('open');
   });
   function renderNoticeBoardList(){
-    const canEdit = isTopAdmin();
+    const canEdit = canPost();
     const bar = canEdit ? `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn notice-new-btn">＋ 새 공지 등록</button></div>` : '';
     const html = bar + (notices.length === 0
       ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
@@ -3381,7 +3381,7 @@ body.growon{ background:var(--g-navy); }
   /* ===== 공지사항 등록/수정/삭제 ===== */
   let noticeFormIdx = null;
   function noticeOpenForm(idx){
-    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    if(!canPost()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
     noticeFormIdx = (idx === null || idx === undefined) ? null : idx;
     const editing = noticeFormIdx !== null;
     const n = editing ? notices[noticeFormIdx] : null;
@@ -3457,7 +3457,7 @@ body.growon{ background:var(--g-navy); }
     }
   });
   async function noticeDelete(idx){
-    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    if(!canPost()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
     const n = notices[idx]; if(!n) return;
     if(!confirm('«' + n.title + '»\n\n정말 삭제하시겠습니까?')) return;
     try{
@@ -3767,7 +3767,7 @@ body.growon{ background:var(--g-navy); }
   function renderScheduleAdminBar(){
     const bar = document.getElementById('scheduleAdminBar');
     if(!bar) return;
-    if(isTopAdmin()){
+    if(canPost()){
       bar.style.display = 'block';
       bar.innerHTML = `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn" id="scheduleNewBtn">＋ 새 일정 등록</button></div>`;
       const nb = document.getElementById('scheduleNewBtn');
@@ -3800,7 +3800,7 @@ body.growon{ background:var(--g-navy); }
     const events = (currentEventsByDate[dKey] || []).slice().sort((a,b) => new Date(a.dateStart) - new Date(b.dateStart));
     const d = new Date(dKey);
     document.getElementById('dayModalTitle').textContent = `${d.getMonth()+1}월 ${d.getDate()}일 일정`;
-    const canEdit = isTopAdmin();
+    const canEdit = canPost();
     document.getElementById('dayModalList').innerHTML = events.map(ev => {
       const meta = [ev.time, ev.place].filter(Boolean).join(' · ');
       const idx = schedule.indexOf(ev);
@@ -3830,7 +3830,7 @@ body.growon{ background:var(--g-navy); }
   /* ===== 일정 등록/수정/삭제 ===== */
   let scheduleFormIdx = null;
   function scheduleOpenForm(idx){
-    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    if(!canPost()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
     scheduleFormIdx = (idx === null || idx === undefined) ? null : idx;
     const editing = scheduleFormIdx !== null;
     const ev = editing ? schedule[scheduleFormIdx] : null;
@@ -3893,7 +3893,7 @@ body.growon{ background:var(--g-navy); }
     }
   });
   async function scheduleDelete(idx){
-    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    if(!canPost()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
     const ev = schedule[idx]; if(!ev) return;
     if(!confirm('«' + ev.title + '»\n\n정말 삭제하시겠습니까?')) return;
     try{
@@ -4276,7 +4276,7 @@ body.growon{ background:var(--g-navy); }
   loadStrategy();
 
   function renderStrategyAllList(){
-    const canEdit = isTopAdmin();
+    const canEdit = canPost();
     const bar = canEdit ? `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn strategy-new-btn">＋ 새 영업전략 등록</button></div>` : '';
     const html = bar + (strategyPosts.length === 0
       ? '<div class="doc-empty-note">아직 등록된 게시물이 없습니다.</div>'
@@ -4324,7 +4324,7 @@ body.growon{ background:var(--g-navy); }
   /* ===== 영업전략 등록/수정/삭제 ===== */
   let strategyFormIdx = null;
   function strategyOpenForm(idx){
-    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    if(!canPost()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
     strategyFormIdx = (idx === null || idx === undefined) ? null : idx;
     const editing = strategyFormIdx !== null;
     const p = editing ? strategyPosts[strategyFormIdx] : null;
@@ -4400,7 +4400,7 @@ body.growon{ background:var(--g-navy); }
     }
   });
   async function strategyDelete(idx){
-    if(!isTopAdmin()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
+    if(!canPost()){ alert('관리자센터에서 인증 후 이용해주세요.'); return; }
     const p = strategyPosts[idx]; if(!p) return;
     if(!confirm('«' + p.title + '»\n\n정말 삭제하시겠습니까?')) return;
     try{
@@ -8197,6 +8197,8 @@ const limitCompareData = {};
   }
   /* 게시 권한: 관리자(본부) + 지사장 모두 허용 */
   function smCanEdit(){ return sessionStorage.getItem('growAdmin') === '1'; }
+  /* 게시물 등록·수정 권한: 관리자센터에 들어온 모든 관리자(관리자·지사장·지점장·교육본부장). 데일리뉴스 발행·DB게시물 등록·사이트 설정은 최상위 관리자만 */
+  function canPost(){ return smCanEdit(); }
   function isTopAdmin(){ return sessionStorage.getItem('growAdmin') === '1' && sessionStorage.getItem('growRole') === 'admin'; }
   function smWhoAmI(){
     return sessionStorage.getItem('growName') || sessionStorage.getItem('growLabel') || '관리자';
@@ -9122,7 +9124,7 @@ const limitCompareData = {};
 
   /* 교육본부장(공용 코드) 2명 동일 권한: 교육센터 강의실·자료실 포함 전 영역 편집 가능. 최상위 관리자는 항상 참. */
   function isEduAdmin(){ return sessionStorage.getItem('growAdmin') === '1' && sessionStorage.getItem('growCanManageEdu') === '1'; }
-  function canManageEdu(){ return isTopAdmin() || isEduAdmin(); }
+  function canManageEdu(){ return canPost(); }
 
   function applyAdminRole(){
     const isAdmin = admRole === 'admin';
@@ -9138,7 +9140,7 @@ const limitCompareData = {};
     const role = document.getElementById('admRole');
     if(role) role.textContent = isAdmin
       ? '· ' + admLabel + ' · DB 게시물 등록 및 전체 관리 권한'
-      : (isMaster ? '· ' + admLabel + ' · 회의자료·행사신청·DB신청·앨범 및 교육·영업·자료·업무지원센터 관리 권한' : '· ' + admBranch + (isBr ? '' : '지사') + ' 명의로 DB 신청 가능');
+      : (isMaster ? '· ' + admLabel + ' · 게시물 등록·수정(공지·일정·영업전략·강의실·자료) 및 회의자료·행사신청·DB신청·앨범 권한' : '· ' + admBranch + (isBr ? '' : '지사') + ' · 게시물 등록·수정, DB 신청·DB관리 권한');
 
     const newBtn = document.getElementById('dbbNewBtn');
     const newForm = document.getElementById('dbbNewForm');
@@ -9170,10 +9172,11 @@ const limitCompareData = {};
     if(typeof renderLectureAdminBar === 'function') renderLectureAdminBar();
     if(typeof renderDataCenter === 'function') renderDataCenter();
     if(typeof Object !== 'undefined' && typeof salesMaterials !== 'undefined') Object.keys(salesMaterials).forEach(k => { if(typeof renderSmFolder === 'function') renderSmFolder(k); });
-    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn','dnEditJumpBtn','strategyQuickAddBtn'].forEach(id => {
+    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn','strategyQuickAddBtn'].forEach(id => {
       const el = document.getElementById(id);
-      if(el) el.style.display = isTopAdmin() ? 'inline-block' : 'none';
+      if(el) el.style.display = canPost() ? 'inline-block' : 'none';
     });
+    { const el = document.getElementById('dnEditJumpBtn'); if(el) el.style.display = isTopAdmin() ? 'inline-block' : 'none'; }
   }
   // 각 페이지의 "✏️ 관리자 편집" 버튼: 관리자센터로 이동해 해당 관리 탭을 바로 열어준다.
   function jumpToAdminTab(tabId){
@@ -10767,9 +10770,9 @@ const limitCompareData = {};
   const _dnTabBtn = document.getElementById('dailyNewsTabBtn');
   if(_dnTabBtn) _dnTabBtn.style.display = isTopAdmin() ? '' : 'none';
   const _noticeAdminTabBtn = document.getElementById('noticeAdminTabBtn');
-  if(_noticeAdminTabBtn) _noticeAdminTabBtn.style.display = isTopAdmin() ? '' : 'none';
+  if(_noticeAdminTabBtn) _noticeAdminTabBtn.style.display = canPost() ? '' : 'none';
   const _strategyAdminTabBtn = document.getElementById('strategyAdminTabBtn');
-  if(_strategyAdminTabBtn) _strategyAdminTabBtn.style.display = isTopAdmin() ? '' : 'none';
+  if(_strategyAdminTabBtn) _strategyAdminTabBtn.style.display = canPost() ? '' : 'none';
   const _dnBtn = document.getElementById('dnPublishBtn');
   if(_dnBtn) _dnBtn.addEventListener('click', async () => {
     const msg = document.getElementById('dnPublishMsg');
