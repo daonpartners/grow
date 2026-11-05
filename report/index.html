@@ -10,6 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="bosang.js?v=18"></script>
+<script src="terms-scope.js?v=1"></script>
 <style>
 :root{
   --ink:#1C1D22; --ink2:#33343C; --muted:#55565F; --line:#D9CFC4;
@@ -2095,9 +2096,17 @@ function editCoverage(c){
     COV_TRENDS.map(function(t){return '<label><input type="checkbox" data-trd="'+t.k+'"'+(c.trd[t.k]?' checked':'')+'><span>'+t.title+'</span></label>';}).join('')+'</div>'+
     '<div style="font-size:14px;font-weight:700;color:var(--navy);margin:8px 0 6px">읽어온 담보 (가입금액, 만원)</div>'+
     '<div class="covt">'+c.rows.map(function(r,i){return '<div class="covr"><input type="checkbox" data-i="'+i+'" data-k="on"'+(r.on?' checked':'')+' aria-label="포함"><input data-i="'+i+'" data-k="name" value="'+esc(r.name)+'" aria-label="담보명"><input data-i="'+i+'" data-k="amt" type="number" value="'+((r.amt||0)/1e4)+'" aria-label="가입금액(만원)"><select data-i="'+i+'" data-k="cat" aria-label="분류">'+opts(r.cat)+'</select></div>';}).join('')+'</div>'+
-    '<button class="btn ghost" data-add="1" style="margin-top:8px;width:100%">+ 담보 직접 추가</button>';
+    '<button class="btn ghost" data-add="1" style="margin-top:8px;width:100%">+ 담보 직접 추가</button>'+
+    '<div style="font-size:14px;font-weight:700;color:var(--navy);margin:12px 0 4px">약관 분류표 등록 필요</div>'+
+    '<p class="hint" style="margin:0 0 6px">리포트의 \'약관 확인 필요\' 담보 목록입니다. 고객 정보 없이 회사·상품·가입연월·담보명만 복사됩니다. 이 목록을 보내 주시면 약관 원문으로 확인해 등록합니다.</p>'+
+    '<button class="btn ghost" data-scopemiss="1" style="width:100%">등록 필요 목록 복사</button>';
 }
 function bindCoverage(c,root){
+  var sm=root.querySelector('[data-scopemiss]'); if(sm) sm.onclick=function(){
+    var L=scopeMissList(); if(!L.length){ alert('등록이 필요한 담보가 없습니다.'); return; }
+    var t='회사\t상품\t가입연월\t담보명\n'+L.map(function(x){return [x.co,x.product,x.join_ym,x.cov].join('\t');}).join('\n');
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){ alert(L.length+'건 복사했습니다.'); },function(){ prompt('아래 내용을 복사하세요',t); });
+  };
   var timer=null; var later=function(){ clearTimeout(timer); timer=setTimeout(renderCurrent,350); };
   root.querySelectorAll('[data-scn]').forEach(function(el){ el.onchange=function(){ c.scn[el.dataset.scn]=el.checked; renderCurrent(); }; });
   root.querySelectorAll('[data-trd]').forEach(function(el){ el.onchange=function(){ c.trd[el.dataset.trd]=el.checked; renderCurrent(); }; });
@@ -2358,10 +2367,38 @@ function ctrCompanyBlocks(g,num,idx,total){
         '<div style="font-size:12.5px;color:var(--ink2);white-space:nowrap">'+(c.prem?(c.done?'납입완료 (기존 월 '+c.prem.toLocaleString()+'원)':'월 <b>'+c.prem.toLocaleString()+'원</b>'):'보험료 미표시')+(c.pay?' · '+esc(c.pay):'')+(c.from?' · '+esc(c.from)+' ~ '+esc((c.to||'').replace(/^9999.*/,'종신')):'')+'</div></div>'+
       '<div style="display:grid;grid-template-columns:'+CTR_COLS+';background:#2B3346;color:#fff;font-size:12px;font-weight:700"><div style="padding:6px 8px;text-align:center">No</div><div style="padding:6px 4px;text-align:center">구분</div><div style="padding:6px 10px">신정원 담보명</div><div style="padding:6px 10px">회사 담보명</div><div style="padding:6px 12px;text-align:right">가입금액</div></div>'+
       '<div class="bl" style="gap:0">'+c.items.map(row).join('')+'</div></div>');
+    out=out.concat(ctrScopeBlocks(c));
     out=out.concat(ctrNoteBlocks({list:[c]}));
   });
   return out;
 }
+/* ---------- 계약별 담보 분류표: 약관 원문 사전(terms-scope.js)에서 회사·상품 버전·가입일이 맞을 때만 표시 ---------- */
+var SCOPE_MISS={};
+function ctrScopeBlocks(c){
+  var T=window.TERMS_SCOPE; if(!T) return [];
+  var rows=[], seen={};
+  c.items.forEach(function(it){
+    var nm=it.coName||it.name||it.std, nd=T.need(nm)||T.need(it.std); if(!nd) return;
+    var key=(it.coName||it.name)+'|'+(it.std||''); if(seen[key]) return; seen[key]=1;
+    var hit=T.lookup(c.co,c.prod,c.from,nm)||T.lookup(c.co,c.prod,c.from,it.std);
+    if(!hit||hit.none){ var mk=c.co+'|'+c.prod+'|'+String(c.from||'').slice(0,7)+'|'+nm; SCOPE_MISS[mk]={co:c.co,product:c.prod,join_ym:String(c.from||'').replace(/\./g,'-').slice(0,7),cov:nm}; }
+    rows.push({nm:nm,g:nd.g,hit:hit&&!hit.none?hit:null});
+  });
+  if(!rows.length) return [];
+  var ok=rows.filter(function(r){return r.hit;}), basis=ok.length?ok[0].hit.basis:'';
+  var r=function(x){ return '<div style="display:grid;grid-template-columns:'+cw(150)+'px '+cw(150)+'px minmax(0,1fr);gap:8px;padding:5px 0;border-bottom:1px dotted #D9DEE7;font-size:12px;line-height:1.4;align-items:start">'+
+    '<div style="font-weight:700;color:var(--ink)">'+esc(x.nm)+'<div style="font-size:10.5px;color:var(--muted);font-weight:600">'+esc(x.g)+'</div></div>'+
+    (x.hit?'<div style="color:var(--navy);font-weight:700">'+esc(x.hit.label)+'</div><div style="color:var(--ink2)">'+esc(x.hit.codes)+'</div>'
+          :'<div style="color:#B4472F;font-weight:700">약관 확인 필요</div><div style="color:var(--muted)">이 상품·가입 시기의 약관 분류표가 아직 등록되지 않았습니다.</div>')+'</div>'; };
+  var out=[], CH=8;
+  for(var i=0;i<rows.length;i+=CH){ var last=i+CH>=rows.length;
+    out.push('<div class="card" style="flex:none;padding:9px 12px;gap:2px;border-color:#C9D0DC;background:#FBFCFE">'+
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><div style="font-size:13.5px;font-weight:800;color:var(--navy)">약관 담보 분류표'+(i?' (이어서)':'')+'</div><div style="font-size:11px;color:var(--muted)">'+ok.length+' / '+rows.length+'개 확인</div></div>'+
+      rows.slice(i,i+CH).map(r).join('')+
+      (last?'<div style="font-size:10.5px;color:var(--muted);line-height:1.5;margin-top:4px">'+(basis?'기준: '+esc(basis)+' · ':'')+'질병 해당 여부는 진단 당시 한국표준질병·사인분류와 약관 정의로 판단하며, 최종 지급은 가입 상품 약관과 보험사 심사에 따릅니다.</div>':'')+'</div>'); }
+  return out;
+}
+function scopeMissList(){ return Object.keys(SCOPE_MISS).map(function(k){return SCOPE_MISS[k];}); }
 /* ---------- 회사별 화면 하단: 실손의료비 세대 정리 · 운전자보험 가입 시기별 해당 여부 ---------- */
 function ymd(s){ var m=String(s||'').match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/); return m?(+m[1])*10000+(+m[2])*100+(+m[3]):0; }
 var SILSON_GEN=[
