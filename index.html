@@ -1354,7 +1354,7 @@ body.growon{ background:var(--g-navy); }
                 <div><h2 class="panel-title" style="font-size:16px;">📊 회사별 인수한도</h2></div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                   <button type="button" id="limitUploadOpenBtnStrategy" class="qna-new-btn sc-inline-edit-btn cb-register-btn" data-board="limit_compare" style="display:none;">＋ 게시물 등록</button>
-                  <button type="button" class="qna-new-btn" style="width:auto; padding:8px 16px; margin-bottom:0;" onclick="showView('salescenter'); document.querySelector('[data-sctab=&quot;contract&quot;]')?.click(); document.querySelector('[data-ctab=&quot;limit&quot;]')?.click();">📋 게시물 보기</button>
+                  <button type="button" class="qna-new-btn" style="width:auto; padding:8px 16px; margin-bottom:0;" onclick="openLimitBoardView()">📋 게시물 보기</button>
                 </div>
               </div>
               <div class="driver-menu" id="limitCompareMenuInStrategy"></div>
@@ -4283,10 +4283,10 @@ body.growon{ background:var(--g-navy); }
     const html = bar + (strategyPosts.length === 0
       ? '<div class="doc-empty-note">아직 등록된 게시물이 없습니다.</div>'
       : strategyPosts.map((p, idx) => `
-        <div class="doc-search-result" style="text-align:left;">
+        <div class="doc-search-result st-all-item" data-stopen="${idx}" style="text-align:left; cursor:pointer;">
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
             <div style="flex:1; min-width:0;">
-              <div class="doc-name">${escapeHtml(p.title)}</div>
+              <div class="doc-name">${escapeHtml(p.title)}${p.images && p.images.length ? ` <span style="font-size:11px; font-weight:600; color:var(--slate);">🖼️ ${p.images.length}장</span>` : ''}</div>
               <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}${p.author ? ' · ' + escapeHtml(p.author) : ''}</div>
             </div>
             ${canEdit ? `<div style="flex-shrink:0; display:flex; gap:5px;">
@@ -4294,9 +4294,8 @@ body.growon{ background:var(--g-navy); }
               <button type="button" class="sm-del" data-stdidx="${idx}">삭제</button>
             </div>` : ''}
           </div>
-          <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(p.content)}</div>
-          ${galleryHtml(p.images)}
-          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">⬇️ 파일 다운로드</a>` : ''}
+          <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${escapeHtml(p.content)}</div>
+          <div style="font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:6px;">🔍 눌러서 전체 보기</div>
         </div>
       `).join(''));
     ['strategyAllList', 'strategyAdminList'].forEach(cid => {
@@ -4304,6 +4303,9 @@ body.growon{ background:var(--g-navy); }
       if(!box) return;
       box.innerHTML = html;
       box.querySelectorAll('.strategy-new-btn').forEach(b => b.addEventListener('click', () => strategyOpenForm(null)));
+      box.querySelectorAll('.st-all-item[data-stopen]').forEach(el => {
+        el.addEventListener('click', (e) => { if(e.target.closest('button, a')) return; openStrategyDetail(strategyPosts[Number(el.dataset.stopen)]); });
+      });
       box.querySelectorAll('.sm-edit[data-steidx]').forEach(el => {
         el.addEventListener('click', () => strategyOpenForm(Number(el.dataset.steidx)));
       });
@@ -7702,6 +7704,19 @@ const limitCompareData = {};
     btn.classList.add('active');
     document.getElementById('sc-' + btn.dataset.sctab).classList.add('active');
   });
+
+  /* 이달의 영업전략 > 회사별 인수한도 [게시물 보기]: 영업센터의 계약업무 패널(탭 버튼 없음)을 직접 열고 '회사별 인수한도 비교' 박스를 띄운다 */
+  function openLimitBoardView(){
+    showView('salescenter');
+    document.querySelectorAll('#salesCenterTabs .edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#view-salescenter > section > .edu-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('sc-contract');
+    if(panel) panel.classList.add('active');
+    const card = document.querySelector('#scContractTabs .sc-sub-card[data-ctab="limit"]');
+    if(card) card.click();
+    if(panel) setTimeout(() => panel.scrollIntoView({ block: 'start', behavior: 'smooth' }), 50);
+  }
+  window.openLimitBoardView = openLimitBoardView;
 
   // ================= 계약업무 내 박스 전환 (설계안추천 / 회사별 인수한도비교) =================
   const _scContractTabs = document.getElementById('scContractTabs');
