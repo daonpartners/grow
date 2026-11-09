@@ -355,6 +355,21 @@
   .ai-msg-bot.loading{color:var(--slate); font-style:italic;}
   .ai-msg{font-size:14px;}
   .ai-msg-rich{max-width:96%; background:#fff; border:1px solid #E3E6F2; white-space:normal; font-size:14.5px; line-height:1.65; padding:14px 16px;}
+  .aa-concl{font-size:15.5px; font-weight:900; color:var(--navy-2); line-height:1.6; margin:2px 0 10px;}
+  mark.aa-hl{background:#FFF0A0; color:inherit; font-weight:800; padding:0 2px; border-radius:2px;}
+  .aa-actions{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; padding-top:10px; border-top:1px dashed #DDE0EA;}
+  .aa-btn{font-size:12px; font-weight:800; border:1px solid #DDE0EA; background:#fff; color:var(--navy-2); border-radius:999px; padding:6px 11px; cursor:pointer; font-family:inherit;}
+  .aa-btn:hover{border-color:var(--orange); color:var(--orange-deep);}
+  .aa-btn.fb{border-color:#FCD9B6; background:#FFF7EE; color:var(--orange-deep);}
+  .aa-follow{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .aa-follow-l{width:100%; font-size:11.5px; font-weight:800; color:#6B7190;}
+  .aa-fbform{margin-top:10px; background:#fff; border:1px solid #E6E8F0; border-radius:10px; padding:10px; display:none;}
+  .aa-fbform.open{display:block;}
+  .aa-fbform select,.aa-fbform input,.aa-fbform textarea{width:100%; box-sizing:border-box; border:1px solid #DDE0EA; border-radius:8px; padding:7px 9px; font-size:13px; font-family:inherit; margin-top:6px;}
+  .aa-fbform textarea{min-height:60px; resize:vertical;}
+  .aa-fbform label{display:flex; gap:6px; align-items:flex-start; font-size:11.5px; color:#5B6380; margin-top:6px;}
+  .aa-fbform label input{width:auto; margin:2px 0 0;}
+  .aa-fbmsg{font-size:12px; margin-top:6px; color:var(--orange-deep);}
   .aa-basis{display:inline-block; font-size:12px; color:#5B6380; background:#F3F4F8; border-radius:8px; padding:5px 10px; margin-bottom:10px;}
   .aa-sec{font-size:15.5px; font-weight:900; margin:14px 0 8px; padding:6px 10px; border-radius:8px;}
   .aa-sec.nl{background:#EAF2FF; color:#1F4FA8;}
@@ -3169,6 +3184,7 @@ body.growon{ background:var(--g-navy); }
       <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="질문을 입력하세요...">
       <button type="button" id="aiChatSend" class="ai-chat-send">전송</button>
     </div>
+    <div style="font-size:11px; color:#7A809A; padding:0 14px 10px; line-height:1.5;">🔒 고객 이름·연락처·주민번호는 자동으로 지워져서 보내집니다. 결과는 확정 인수 답변이 아닙니다.</div>
   </div>
 </div>
 
@@ -4970,7 +4986,9 @@ body.growon{ background:var(--g-navy); }
 
   /* AI 답변을 읽기 쉬운 카드형으로 바꿔 보여준다 (손보/생보 구분, 회사 카드, 추천 이유, 설계사 체크리스트) */
   function aiFormatAnswer(text){
-    const esc = s => escapeHtml(String(s));
+    /* ==형광펜== → <mark>, **굵게** → <b>. escape 후 변환하므로 HTML 주입 없음 */
+    const esc = s => escapeHtml(String(s)).replace(/==([^=\n]{1,80})==/g, '<mark class="aa-hl">$1</mark>').replace(/\*\*([^*\n]{1,200})\*\*/g, '<b>$1</b>');
+    const plain = s => String(s).replace(/==([^=\n]{1,80})==/g, '$1').replace(/\*\*([^*\n]{1,200})\*\*/g, '$1');
     const lines = String(text || '').replace(/\r/g, '').split('\n');
     let html = '', inCheck = false, openCard = false;
     const closeCard = () => { if(openCard){ html += '</div>'; openCard = false; } };
@@ -4980,7 +4998,8 @@ body.growon{ background:var(--g-navy); }
     lines.forEach((raw, idx) => {
       const L = raw.trim();
       if(!L){ return; }
-      if(idx === 0 && /기준/.test(L) && L.length < 140){ html += '<div class="aa-basis">' + esc(L) + '</div>'; return; }
+      if(idx === 0 && /기준/.test(L) && L.length < 140){ html += '<div class="aa-basis">' + esc(plain(L)) + '</div>'; return; }
+      if(/^\*\*[^*]+\*\*$/.test(L) && !inCheck && !openCard){ html += '<div class="aa-concl">' + esc(L.replace(/^\*\*|\*\*$/g, '')) + '</div>'; return; }
       if(/^(손해보험|생명보험)\s*:?$/.test(L)){
         closeCard(); closeCheck();
         html += '<div class="aa-sec ' + (L.indexOf('손해') === 0 ? 'nl' : 'lf') + '">' + (L.indexOf('손해') === 0 ? '🛡️ ' : '💚 ') + esc(L.replace(/:$/, '')) + '</div>';
@@ -5040,6 +5059,98 @@ body.growon{ background:var(--g-navy); }
     return html;
   }
 
+  /* ===== 답변 아래 도구: 복사 2종 · 이어서 묻기 · 실제 결과 알려주기 ===== */
+  const AI_FEEDBACK_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-ai-feedback';
+  const AI_FOLLOWUPS = [
+    ['보험료 비교', '앞서 말한 조건으로 회사별 보험료를 비교해 줘. 자료에 있는 금액만 쓰고, 견적에 필요한 성별·나이·납입기간·만기 조건이 빠졌으면 먼저 짚어 줘.'],
+    ['부담보·감액 조건', '앞서 말한 조건으로 회사·담보별 부담보, 감액기간, 보장 제외 조건을 비교해 줘. 자료로 확인되는 것과 별도 심사가 필요한 것을 나눠 줘.'],
+    ['일반·간편심사 비교', '앞서 말한 조건에서 일반심사와 간편심사(3.N.5 등)의 고지 기간·보장 차이를 비교해 줘. 병력은 그대로 고지해야 한다는 전제로.'],
+    ['청구·서류', '앞서 말한 조건에서 보험금 청구 서류와 가입 시 사전심사 서류를 나눠서 정리해 줘.']
+  ];
+  /* 고객 이름·연락처·주민번호를 보내기 전에 지운다 */
+  const AI_SURNAME = '김이박최정강조윤장임한오서신권황안송류유홍전고문양손배백허남심노하곽성차주우구민진지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용예봉';
+  function aiMaskPII(s){
+    return String(s || '')
+      .replace(/\d{6}\s*-?\s*[1-4]\d{6}/g, '[주민번호 삭제]')
+      .replace(/01[016789][\s-]?\d{3,4}[\s-]?\d{4}/g, '[연락처 삭제]')
+      .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, '[이메일 삭제]')
+      .replace(new RegExp('(?<![가-힣])(?!고객|어머|아버|설계|보험|담당)([' + AI_SURNAME + '][가-힣]{1,2})(?=\\s?(고객님|고객|님|씨|어머님|아버님))', 'g'), '[이름 삭제]');
+  }
+  function aiPlainLines(text){
+    return String(text || '').replace(/\r/g, '').split('\n').map(l => l.replace(/==([^=\n]{1,80})==/g, '$1').replace(/\*\*([^*\n]{1,200})\*\*/g, '$1').trimEnd());
+  }
+  /* 고객 카톡용: 설계사 확인사항(▶ 이후)·내부 메모는 빼고 존댓말 안내 */
+  function aiCustomerText(text){
+    const out = [];
+    for(const l of aiPlainLines(text)){
+      if(/^▶/.test(l.trim())) break;
+      if(/^※/.test(l.trim())) continue;
+      if(/원수사 매니저/.test(l)) { out.push(l.replace(/\s*\((원수사 매니저 확인|가입 가능 여부 확인)\)/g, '').replace(/원수사 매니저/g, '보험사')); continue; }
+      out.push(l);
+    }
+    while(out.length && !out[out.length - 1].trim()) out.pop();
+    return '고객님, 문의하신 내용 정리해 드립니다.\n\n' + out.join('\n').trim() + '\n\n※ 정확한 가입 가능 여부·보험료·보장 내용은 상품설명서와 약관 기준으로 다시 안내드리겠습니다.';
+  }
+  /* 동료·단톡방용: 근거 줄 + 결론 + 형광펜 사실만 */
+  function aiColleagueText(text){
+    const lines = String(text || '').split('\n');
+    const basis = (lines[0] || '').replace(/[*=]/g, '').trim();
+    const concl = (lines.find(l => /^\s*\*\*[^*]+\*\*\s*$/.test(l)) || '').replace(/\*\*/g, '').trim();
+    const facts = Array.from(new Set((String(text).match(/==([^=\n]{1,80})==/g) || []).map(x => x.slice(2, -2).trim())));
+    return [basis, concl, facts.length ? facts.map(f => '· ' + f).join('\n') : ''].filter(Boolean).join('\n') + '\n(GROW ON AI 보험비서 · 확정 인수 답변 아님)';
+  }
+  async function aiCopy(btn, txt){
+    try{ await navigator.clipboard.writeText(txt); }
+    catch(e){ const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(_){} ta.remove(); }
+    const t0 = btn.textContent; btn.textContent = '✓ 복사됐어요'; setTimeout(() => { btn.textContent = t0; }, 1500);
+  }
+  function aiAddAnswerTools(div, text){
+    const q = (aiHist.length ? aiHist[aiHist.length - 1].q : '') || (document.getElementById('aiChatInput')?.dataset.lastq || '');
+    const box = document.createElement('div');
+    box.innerHTML = '<div class="aa-actions">'
+      + '<button type="button" class="aa-btn" data-act="cust">💬 고객 카톡용 복사</button>'
+      + '<button type="button" class="aa-btn" data-act="coll">👥 동료용 요약 복사</button>'
+      + '<button type="button" class="aa-btn fb" data-act="fb">📮 실제 결과 알려주기</button>'
+      + '</div>'
+      + '<div class="aa-follow"><span class="aa-follow-l">이어서 묻기</span>'
+      + AI_FOLLOWUPS.map((f, i) => '<button type="button" class="aa-btn" data-fu="' + i + '">' + escapeHtml(f[0]) + '</button>').join('')
+      + '</div>'
+      + '<div class="aa-fbform">'
+      + '<div style="font-size:12.5px; font-weight:800; color:var(--navy-2);">실제 결과·답변 오류 알려주기</div>'
+      + '<div style="font-size:11.5px; color:#6B7190; margin-top:2px;">고객 이름·연락처·증권번호는 적지 마세요. 대표가 확인한 뒤 다음 답변에 반영합니다.</div>'
+      + '<select class="fb-r"><option value="">결과 선택</option><option>승인</option><option>조건부 승인</option><option>인수 거절</option><option>보험금 지급</option><option>보험금 부지급</option><option>답변 오류</option><option>도움 됨</option></select>'
+      + '<input class="fb-c" placeholder="보험사 (예: KB손보)" maxlength="40">'
+      + '<textarea class="fb-d" placeholder="달랐던 조건이나 실제 결과를 한두 줄로 (예: 68세 3.2.5 간병인 20만 그대로 승인)" maxlength="600"></textarea>'
+      + '<label><input type="checkbox" class="fb-ok" checked> 개인정보를 뺀 사실만 다른 설계사 답변에 활용하는 데 동의합니다.</label>'
+      + '<button type="button" class="aa-btn fb" data-act="fbsend" style="margin-top:8px;">제보 보내기</button>'
+      + '<div class="aa-fbmsg"></div>'
+      + '</div>';
+    div.appendChild(box);
+    box.querySelector('[data-act="cust"]').addEventListener('click', e => aiCopy(e.currentTarget, aiCustomerText(text)));
+    box.querySelector('[data-act="coll"]').addEventListener('click', e => aiCopy(e.currentTarget, aiColleagueText(text)));
+    box.querySelector('[data-act="fb"]').addEventListener('click', () => box.querySelector('.aa-fbform').classList.toggle('open'));
+    box.querySelectorAll('[data-fu]').forEach(b => b.addEventListener('click', () => {
+      const input = document.getElementById('aiChatInput');
+      if(!input || input.disabled) return;
+      input.value = AI_FOLLOWUPS[Number(b.dataset.fu)][1];
+      input.focus();
+    }));
+    box.querySelector('[data-act="fbsend"]').addEventListener('click', async (e) => {
+      const btn = e.currentTarget, msg = box.querySelector('.aa-fbmsg');
+      const result = box.querySelector('.fb-r').value;
+      if(!result){ msg.textContent = '결과를 선택해 주세요.'; return; }
+      btn.disabled = true; msg.textContent = '보내는 중...';
+      let author = ''; try{ author = (typeof smWhoAmI === 'function' ? smWhoAmI() : '') || ''; }catch(_){}
+      try{
+        const res = await fetch(AI_FEEDBACK_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+          result, company: aiMaskPII(box.querySelector('.fb-c').value), detail: aiMaskPII(box.querySelector('.fb-d').value),
+          question: aiMaskPII(q), answer: String(text).slice(0, 3000), author, reuseOk: box.querySelector('.fb-ok').checked }) });
+        if(!res.ok) throw 0;
+        msg.textContent = '제보를 받았어요. 고맙습니다.'; box.querySelector('.aa-fbform').querySelectorAll('select,input,textarea').forEach(x => x.disabled = true);
+      }catch(_){ msg.textContent = '보내지 못했어요. 잠시 후 다시 눌러 주세요.'; btn.disabled = false; }
+    });
+  }
+
   function aiChatAddMsg(role, text, sources, answerType){
     const body = document.getElementById('aiChatBody');
     if(!body) return null;
@@ -5061,6 +5172,7 @@ body.growon{ background:var(--g-navy); }
       txt.innerHTML = aiFormatAnswer(text);
       div.appendChild(txt);
       div.classList.add('ai-msg-rich');
+      if(isDoc) aiAddAnswerTools(div, text);
     } else {
       div.textContent = text;
     }
@@ -5083,8 +5195,9 @@ body.growon{ background:var(--g-navy); }
     const input = document.getElementById('aiChatInput');
     const sendBtn = document.getElementById('aiChatSend');
     if(!input) return;
-    const q = input.value.trim();
+    const q = aiMaskPII(input.value.trim());
     if(!q) return;
+    input.dataset.lastq = q;
     aiChatAddMsg('user', q);
     input.value = '';
     input.disabled = true;
