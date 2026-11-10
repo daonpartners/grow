@@ -363,6 +363,7 @@
   .aa-btn.fb{border-color:#FCD9B6; background:#FFF7EE; color:var(--orange-deep);}
   .aa-follow{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
   .aa-follow-l{width:100%; font-size:11.5px; font-weight:800; color:#6B7190;}
+  .aa-errlink{display:block; margin-top:10px; background:none; border:none; padding:0; font-size:11.5px; color:#8A90A8; text-decoration:underline; cursor:pointer; font-family:inherit;}
   .aa-fbform{margin-top:10px; background:#fff; border:1px solid #E6E8F0; border-radius:10px; padding:10px; display:none;}
   .aa-fbform.open{display:block;}
   .aa-fbform select,.aa-fbform input,.aa-fbform textarea{width:100%; box-sizing:border-box; border:1px solid #DDE0EA; border-radius:8px; padding:7px 9px; font-size:13px; font-family:inherit; margin-top:6px;}
@@ -5059,7 +5060,7 @@ body.growon{ background:var(--g-navy); }
     return html;
   }
 
-  /* ===== 답변 아래 도구: 복사 2종 · 이어서 묻기 · 실제 결과 알려주기 ===== */
+  /* ===== 답변 아래 도구: 복사 2종 · 이어서 묻기 · 답변 오류 알려주기 ===== */
   const AI_FEEDBACK_URL = 'https://daonpartners.app.n8n.cloud/webhook/daon-ai-feedback';
   const AI_FOLLOWUPS = [
     ['보험료 비교', '앞서 말한 조건으로 회사별 보험료를 비교해 줘. 자료에 있는 금액만 쓰고, 견적에 필요한 성별·나이·납입기간·만기 조건이 빠졌으면 먼저 짚어 줘.'],
@@ -5110,19 +5111,16 @@ body.growon{ background:var(--g-navy); }
     box.innerHTML = '<div class="aa-actions">'
       + '<button type="button" class="aa-btn" data-act="cust">💬 고객 카톡용 복사</button>'
       + '<button type="button" class="aa-btn" data-act="coll">👥 동료용 요약 복사</button>'
-      + '<button type="button" class="aa-btn fb" data-act="fb">📮 실제 결과 알려주기</button>'
       + '</div>'
       + '<div class="aa-follow"><span class="aa-follow-l">이어서 묻기</span>'
       + AI_FOLLOWUPS.map((f, i) => '<button type="button" class="aa-btn" data-fu="' + i + '">' + escapeHtml(f[0]) + '</button>').join('')
       + '</div>'
+      + '<button type="button" class="aa-errlink" data-act="fb">답이 틀렸나요? 알려주기</button>'
       + '<div class="aa-fbform">'
-      + '<div style="font-size:12.5px; font-weight:800; color:var(--navy-2);">실제 결과·답변 오류 알려주기</div>'
-      + '<div style="font-size:11.5px; color:#6B7190; margin-top:2px;">고객 이름·연락처·증권번호는 적지 마세요. 대표가 확인한 뒤 다음 답변에 반영합니다.</div>'
-      + '<select class="fb-r"><option value="">결과 선택</option><option>승인</option><option>조건부 승인</option><option>인수 거절</option><option>보험금 지급</option><option>보험금 부지급</option><option>답변 오류</option><option>도움 됨</option></select>'
+      + '<input type="hidden" class="fb-r" value="답변 오류">'
       + '<input class="fb-c" placeholder="보험사 (예: KB손보)" maxlength="40">'
-      + '<textarea class="fb-d" placeholder="달랐던 조건이나 실제 결과를 한두 줄로 (예: 68세 3.2.5 간병인 20만 그대로 승인)" maxlength="600"></textarea>'
-      + '<label><input type="checkbox" class="fb-ok" checked> 개인정보를 뺀 사실만 다른 설계사 답변에 활용하는 데 동의합니다.</label>'
-      + '<button type="button" class="aa-btn fb" data-act="fbsend" style="margin-top:8px;">제보 보내기</button>'
+      + '<textarea class="fb-d" placeholder="틀린 부분을 한두 줄로 적어 주세요 (예: KB손보 간병인 한도는 15만원으로 바뀜)" maxlength="600"></textarea>'
+      + '<button type="button" class="aa-btn fb" data-act="fbsend" style="margin-top:8px;">보내기</button>'
       + '<div class="aa-fbmsg"></div>'
       + '</div>';
     div.appendChild(box);
@@ -5138,15 +5136,15 @@ body.growon{ background:var(--g-navy); }
     box.querySelector('[data-act="fbsend"]').addEventListener('click', async (e) => {
       const btn = e.currentTarget, msg = box.querySelector('.aa-fbmsg');
       const result = box.querySelector('.fb-r').value;
-      if(!result){ msg.textContent = '결과를 선택해 주세요.'; return; }
+      if(!box.querySelector('.fb-d').value.trim()){ msg.textContent = '틀린 부분을 적어 주세요.'; return; }
       btn.disabled = true; msg.textContent = '보내는 중...';
       let author = ''; try{ author = (typeof smWhoAmI === 'function' ? smWhoAmI() : '') || ''; }catch(_){}
       try{
         const res = await fetch(AI_FEEDBACK_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
           result, company: aiMaskPII(box.querySelector('.fb-c').value), detail: aiMaskPII(box.querySelector('.fb-d').value),
-          question: aiMaskPII(q), answer: String(text).slice(0, 3000), author, reuseOk: box.querySelector('.fb-ok').checked }) });
+          question: aiMaskPII(q), answer: String(text).slice(0, 3000), author, reuseOk: false }) });
         if(!res.ok) throw 0;
-        msg.textContent = '제보를 받았어요. 고맙습니다.'; box.querySelector('.aa-fbform').querySelectorAll('select,input,textarea').forEach(x => x.disabled = true);
+        msg.textContent = '받았어요. 확인 후 바로잡겠습니다.'; box.querySelector('.aa-fbform').querySelectorAll('input,textarea').forEach(x => x.disabled = true); btn.disabled = true;
       }catch(_){ msg.textContent = '보내지 못했어요. 잠시 후 다시 눌러 주세요.'; btn.disabled = false; }
     });
   }
