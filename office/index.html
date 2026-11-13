@@ -235,6 +235,19 @@ button{font:inherit;cursor:pointer}
   .av .n{font-size:15px}
   .emobar{position:fixed;bottom:12px;z-index:60}
 }
+.sheeth{display:none}.shopen{display:none}
+.side.flash .panel{animation:flash 1.2s ease-out}@keyframes flash{0%{background:#FFF1E4;box-shadow:inset 4px 0 0 #F58220}100%{background:#fff;box-shadow:none}}
+@media (max-width:700px){
+  .side{position:fixed;left:0;right:0;bottom:0;height:80vh;z-index:90;border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(14,42,71,.3);transform:translateY(105%);transition:transform .32s ease;display:flex;flex-direction:column;overflow:hidden;border-top:none}
+  .side.open{transform:none}
+  .side>h3,.side .who{display:none}
+  .sheeth{display:flex;align-items:center;gap:8px;padding:12px 14px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;flex:none}
+  .sheeth b{font-size:17px;flex:none}.sheeth .sm{flex:1;color:#cfe3f5;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sheeth button{flex:none;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:10px;padding:6px 10px;font-weight:800;font-size:13px}
+  .side .panel{flex:none;max-height:46%;overflow:auto}
+  .side .log{flex:1;height:auto;min-height:0}
+  .shopen.on{display:block;position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:70;background:#F58220;color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:800;box-shadow:0 6px 16px rgba(245,130,32,.45);white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -297,7 +310,9 @@ button{font:inherit;cursor:pointer}
           <p class="sm" style="margin:8px 0 0">저장한 캐릭터는 이 기기에 기억되고, 접속 중인 다른 사람에게도 바로 보입니다.</p></div></div>
     </div>
   </div>
-  <div class="side">
+  <button type="button" class="shopen" id="shOpen"></button>
+  <div class="side" id="side">
+    <div class="sheeth"><b id="shT">로비</b><span id="shS" class="sm"></span><button type="button" id="shClose">지도 보기 ▾</button></div>
     <h3>접속자</h3>
     <div class="who" id="who"></div>
     <div class="panel" id="panel"></div>
@@ -452,8 +467,8 @@ function updWhere(){ const r=curRoom(); $("#sRoom").textContent=r.name; $("#pRoo
 let SCHED=null;
 function meetUrl(room){ const L=(BOOT&&BOOT.links)||{}; if(L[room]&&L[room].url) return L[room].url; return "https://meet.jit.si/GrowOffice-"+(room==="edu"?"Lecture":"Meeting")+"-7k3qz"; }
 const head=()=>ME&&(ME.role==="manager"||ME.role==="admin");
-async function enterRoom(){ const r=curRoom(); renderPanel(r); TAB=r.id==="private"?"all":TAB; renderTabs();
-  if(isChatRoom(r.id)&&!LOGS[r.id]){ const x=await api({action:"chat_list",room:r.id}); if(x&&x.ok){ LOGS[r.id]=x.chat||[]; renderLog(); } } else renderLog(); }
+async function enterRoom(){ const r=curRoom(); renderPanel(r); TAB=r.id==="private"?"all":(isChatRoom(r.id)&&r.id!=="hall"?"room":TAB); renderTabs(); roomSheet(r);
+  if(isChatRoom(r.id)&&!LOGS[r.id]){ const x=await api({action:"chat_list",room:r.id}); if(x&&x.ok){ LOGS[r.id]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } else renderLog(); }
 function renderPanel(r){ const P=$("#panel"); let h="";
   if(r.id==="private"){ const att=BOOT&&BOOT.att;
     h=`<div class="ttl"><b>🔒 나만의 공간</b><span class="sm">다른 사람에게 안 보임</span></div>
@@ -534,7 +549,7 @@ function connect(){
         Object.keys(AV).forEach(id=>{ if(!seen.has(id)&&!AV[id].npc) drop(id); }); who(); })
       .on("broadcast",{event:"mv"},({payload:p})=>{ if(AV[p.id]){ avatar(p.id,{x:p.x,y:p.y}); lights(); } })
       .on("broadcast",{event:"chat"},({payload:p})=>{ addMsg(p); })
-      .on("broadcast",{event:"ping"},async ({payload:p})=>{ if(p.room===curId&&canEnter(ROOMS.find(r=>r.id===p.room))){ const x=await api({action:"chat_list",room:p.room}); if(x&&x.ok){ LOGS[p.room]=x.chat||[]; renderLog(); } } })
+      .on("broadcast",{event:"ping"},async ({payload:p})=>{ if(p.room===curId&&canEnter(ROOMS.find(r=>r.id===p.room))){ const x=await api({action:"chat_list",room:p.room}); if(x&&x.ok){ LOGS[p.room]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } })
       .on("broadcast",{event:"emo"},({payload:p})=>{ emo(p.id,p.e); })
       .on("broadcast",{event:"look"},({payload:p})=>{ if(AV[p.id]) avatar(p.id,{look:p.look||{}}); })
       .subscribe(st=>{ const c=$("#pConn"); if(st==="SUBSCRIBED"){ c.classList.remove("off"); c.querySelector("span").textContent="연결됨"; track(); }
@@ -584,6 +599,15 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   const r=LOBBY(); const spots=[[18,r.h-70],[r.w-70,r.h-70],[r.w/2-30,8],[18,90],[r.w-60,110]]; spots.forEach(([x,y],i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[i%T.deco.length]; e.style.fontSize=(i===2?50:40)+"px"; e.style.left=px(r.x+x); e.style.top=px(r.y+y); W.appendChild(e); });
   ROOMS.filter(x=>x.branch||x.team).forEach((x,i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[(i+1)%T.deco.length]; e.style.fontSize="26px"; e.style.left=px(x.x+x.w-40); e.style.top=px(x.y+8); W.appendChild(e); });
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<26;i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
+
+/* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
+function roomSheet(r){ const sd=$("#side"); if(!sd) return; $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
+  const ob=$("#shOpen"); if(ob) ob.innerHTML=r.id==="hall"?"":`💬 <b>${E(r.name)}</b> 열기 ▴`;
+  if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
+  if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
+  else { sd.classList.remove("flash"); void sd.offsetWidth; sd.classList.add("flash"); } }
+document.addEventListener("click",e=>{ if(e.target.closest("#shClose")){ $("#side").classList.remove("open"); const ob=$("#shOpen"); if(ob&&ob.innerHTML) ob.classList.add("on"); }
+  if(e.target.closest("#shOpen")){ $("#side").classList.add("open"); $("#shOpen").classList.remove("on"); } });
 
 /* ---- 바로 가기 ---- */
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-jump]"); if(!b||!ME) return; let id=b.dataset.jump; if(id==="mine"){ if(ME.role==="admin") return toast("관리자는 소속 지사가 없습니다."); id="br_"+short(ME.parent||ME.branch); }
