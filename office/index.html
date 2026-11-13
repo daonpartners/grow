@@ -197,6 +197,30 @@ button{font:inherit;cursor:pointer}
 .av .acc{display:none!important}
 .av.bot{transition:left 7s ease-in-out,top 7s ease-in-out}
 .av.me{pointer-events:auto;cursor:grab}.av.me,.av.bot{touch-action:none}.av.dragging{transition:none!important;cursor:grabbing;z-index:20;filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}
+
+/* 휴대폰 화면 */
+@media (max-width:700px){
+  html,body{height:auto;min-height:100%}
+  .top{height:52px;gap:6px;padding:0 8px;overflow-x:auto;white-space:nowrap;position:sticky;top:0;z-index:50}
+  .top .logo{width:30px;height:30px;font-size:14px;flex:none}.top h1{font-size:14px;flex:none}
+  .top .pill{padding:5px 9px;font-size:12px;flex:none}.top .t{display:none}
+  #pConn,#pRoom{display:none}.top .sp{flex:1}
+  .top .pill.btn{font-size:17px;padding:4px 9px}
+  .top a.home{flex:none;font-size:13px;padding:6px 4px}
+  .wrap{display:block;height:auto}
+  .stage{display:block}
+  .stats{display:flex;padding:8px 8px 0}.stats .stat{display:none}.stats #stSched{display:block;flex:1}
+  .mapbox{height:58vh;min-height:340px;margin:8px;border-radius:14px}
+  .emobar{bottom:6px;padding:3px 6px;gap:0}.emobar button{font-size:16px;padding:2px 3px}
+  .th-banner{font-size:11.5px;padding:4px 10px;top:6px}
+  .side{border-top:1px solid var(--line)}
+  .side h3{padding:10px 12px 4px}
+  .panel{max-height:none;overflow:visible;padding:10px 12px}
+  .log{height:320px;flex:none}
+  .modal{position:fixed!important;left:8px!important;right:8px!important;top:60px!important;bottom:8px!important;width:auto!important;max-width:none!important;transform:none!important;z-index:100}
+  #calBox .chb{grid-template-columns:1fr!important}.calg .d{min-height:52px;font-size:11px}.calg .e{font-size:9.5px}
+  .toast{position:fixed;top:64px;z-index:120}
+}
 </style>
 </head>
 <body>
@@ -207,10 +231,10 @@ button{font:inherit;cursor:pointer}
   <span class="pill off" id="pConn"><i></i><span>연결 중</span></span>
   <span class="pill" id="pRoom">📍 로비</span>
   <span class="sp"></span>
-  <button class="pill btn" type="button" id="btnCal">📅 일정 달력</button>
-  <button class="pill btn" type="button" id="btnChar">🎨 내 캐릭터</button>
-  <button class="pill btn" type="button" id="btnAi">🤖 보험비서 AI</button>
-  <a href="/">← GROW ON</a>
+  <button class="pill btn" type="button" id="btnCal">📅<span class="t"> 일정 달력</span></button>
+  <button class="pill btn" type="button" id="btnChar">🎨<span class="t"> 내 캐릭터</span></button>
+  <button class="pill btn" type="button" id="btnAi">🤖<span class="t"> 보험비서 AI</span></button>
+  <a href="/" class="home">←<span class="t"> GROW ON</span></a>
 </div>
 <div class="wrap">
   <div class="stage">
@@ -324,7 +348,11 @@ ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),wid
 function roomAt(x,y){ for(const r of ROOMS){ if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h) return r; } return null; }
 function canEnter(r){ if(!r||!r.branch) return true; if(!ME) return false; return ME.role==="admin"||r.branch===short(ME.branch)||r.branch===short(ME.parent); }
 const MB=$("#mapbox"); let SC=1;
-function fit(){ SC=Math.min(MB.clientWidth/1600,MB.clientHeight/950); W.style.transform=`translate(${(MB.clientWidth-1600*SC)/2}px,${(MB.clientHeight-950*SC)/2}px) scale(${SC})`; }
+const MOB=()=>window.matchMedia("(max-width:700px)").matches;
+function fit(){ const w=MB.clientWidth, h=MB.clientHeight;
+  if(MOB()){ SC=Math.max(h/950,w/1600); let p0=null; try{ p0=pos; }catch(_){} const px0=p0?p0.x:800, py0=p0?p0.y:475;
+    const tx=Math.min(0,Math.max(w-1600*SC,w/2-px0*SC)), ty=Math.min(0,Math.max(h-950*SC,h/2-py0*SC)); W.style.transform=`translate(${tx}px,${ty}px) scale(${SC})`; return; }
+  SC=Math.min(w/1600,h/950); W.style.transform=`translate(${(w-1600*SC)/2}px,${(h-950*SC)/2}px) scale(${SC})`; }
 window.addEventListener("resize",fit); fit();
 
 /* ---- 아바타 ---- */
@@ -373,7 +401,7 @@ function toast(t){ const o=$("#toast"); o.textContent=t; o.classList.add("on"); 
 function moveTo(nx,ny,send){
   nx=Math.max(24,Math.min(1576,nx)); ny=Math.max(24,Math.min(926,ny));
   const r=roomAt(nx,ny); if(!canEnter(r)){ if(!moveTo.w||Date.now()-moveTo.w>1500){ toast(r.name+"는 소속 설계사만 들어갈 수 있습니다."); moveTo.w=Date.now(); } return false; }
-  pos.x=nx; pos.y=ny; avatar(ME.uid,{x:nx,y:ny}); const id=(r&&r.id)||"hall"; if(id!==curId){ curId=id; enterRoom(); } updWhere(); lights(); if(send!==false) sendMove(); return true; }
+  pos.x=nx; pos.y=ny; avatar(ME.uid,{x:nx,y:ny}); if(MOB()) fit(); const id=(r&&r.id)||"hall"; if(id!==curId){ curId=id; enterRoom(); } updWhere(); lights(); if(send!==false) sendMove(); return true; }
 const keys={}; let target=null;
 /* 끌어서 옮기기: 내 캐릭터·보험비서 로봇을 마우스(손가락)로 끌어 원하는 자리에 놓음 */
 let DRAG=null, DRAGEND=0;
