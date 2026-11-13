@@ -452,7 +452,11 @@ function dragEnd(){ if(!DRAG) return; const D=DRAG; DRAG=null; D.el.classList.re
 W.addEventListener("pointerup",dragEnd); W.addEventListener("pointercancel",dragEnd);
 document.addEventListener("keydown",e=>{ if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)) return; const k=e.key.toLowerCase(); if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){ keys[k]=1; target=null; e.preventDefault(); } });
 document.addEventListener("keyup",e=>{ keys[e.key.toLowerCase()]=0; });
-MB.addEventListener("click",e=>{ if(Date.now()-DRAGEND<350) return; if(e.target.closest(".where,.emobar,.kiosk,.modal,.av.bot")) return; const rc=W.getBoundingClientRect(); target={x:(e.clientX-rc.left)/SC,y:(e.clientY-rc.top)/SC}; });
+MB.addEventListener("click",e=>{ if(Date.now()-DRAGEND<350) return; if(e.target.closest(".where,.emobar,.kiosk,.modal,.av.bot")) return; const rc=W.getBoundingClientRect(); const tx=(e.clientX-rc.left)/SC, ty=(e.clientY-rc.top)/SC;
+  const tr=roomAt(tx,ty); if(tr&&!canEnter(tr)){ target=null; return toast(tr.name+"는 소속 설계사만 들어갈 수 있습니다."); }
+  /* 가는 길에 못 들어가는 지사 방이 있으면 걸어가지 않고 바로 그 자리로 이동 */
+  let blocked=false; for(let k=1;k<=24;k++){ const r2=roomAt(pos.x+(tx-pos.x)*k/24,pos.y+(ty-pos.y)*k/24); if(r2&&!canEnter(r2)){ blocked=true; break; } }
+  if(blocked){ target=null; moveTo(tx,ty); return; } target={x:tx,y:ty}; });
 setInterval(()=>{ if(!ME) return; const sp=7; let dx=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0), dy=(keys.arrowdown||keys.s?1:0)-(keys.arrowup||keys.w?1:0);
   if(!dx&&!dy&&target){ const vx=target.x-pos.x, vy=target.y-pos.y, d=Math.hypot(vx,vy); if(d<sp) target=null; else { dx=vx/d; dy=vy/d; } }
   if(dx||dy){ const n=Math.hypot(dx,dy)||1; if(!moveTo(pos.x+dx/n*sp,pos.y+dy/n*sp)) target=null; } },33);
