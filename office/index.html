@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* GROW 오피스 (2026-11-13)
-   그로우사업부 가상사무실: 공용공간(로비·교육장·회의실·커피존·영업지원) + 영업부(온라인영업팀·행사팀·사업자영업팀) + 지사별 사무실 6곳
+   그로우사업부 가상사무실: 공용공간(로비·교육장·회의실·커피존·영업지원) + 영업부(온라인영업팀·행사팀·사업자영업팀) + 나만의 공간(들어가면 다른 사람에게 안 보임, 보잇 CRM·내 DB 조회 바로가기) + 지사별 사무실 6곳
    - 입장: GROW ON에서 설계사(사번) 또는 관리자 로그인 후 같은 탭에서 이동 → sessionStorage growMe / growName·growBranch 사용
    - 실시간: Supabase Realtime(보잇 프로젝트) 채널 'grow-office' — presence(접속자·위치) + broadcast(이동·채팅·이모지). 채팅은 저장하지 않음(접속 중인 사람만 봄)
    - 지사 사무실은 그 지사 소속만 들어감(관리자·사업부 총괄은 전체). 지사 사무실 채팅은 그 방 안에 있는 사람에게만 보임 */
@@ -51,6 +51,7 @@ button{font:inherit;cursor:pointer}
 .kiosk{background:#26303b;border-radius:10px;border:3px solid #9aa6b3;display:grid;place-items:center;color:#9ff0d9;font-size:11px;font-weight:800;pointer-events:auto;cursor:pointer}
 .lectern{background:#C8955E;border-radius:6px}
 .av{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;z-index:5;transition:left .12s linear,top .12s linear}
+.priv{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border-radius:18px;padding:22px 26px;z-index:6;box-shadow:0 12px 40px rgba(14,42,71,.3);text-align:center;min-width:300px;display:none}.priv.on{display:block}.priv h4{margin:0 0 4px;font-size:18px;color:var(--navy)}.priv p{margin:0 0 14px;font-size:13px;color:var(--muted)}.priv a{display:block;margin-top:8px;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;color:#fff;background:var(--navy)}.priv a.o{background:var(--orange)}
 .av .b{width:44px;height:44px;border-radius:50%;background:var(--c,#1F8A7A);color:#fff;display:grid;place-items:center;font-weight:900;font-size:16px;border:3px solid #fff;box-shadow:0 4px 8px rgba(0,0,0,.3)}
 .av.me .b{box-shadow:0 0 0 4px rgba(245,130,32,.55),0 4px 8px rgba(0,0,0,.3)}
 .av .n{position:absolute;top:-26px;left:50%;transform:translateX(-50%);white-space:nowrap;background:rgba(14,42,71,.92);color:#fff;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px}
@@ -107,6 +108,7 @@ button{font:inherit;cursor:pointer}
       <div class="where" id="where"></div>
       <div class="emobar" id="emobar"></div>
       <div class="toast" id="toast"></div>
+      <div class="priv" id="priv"><h4>🔒 나만의 공간</h4><p>이 방에 있는 동안 다른 사람에게 내 모습이 보이지 않습니다.</p><a href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 CRM 열기 ↗</a><a class="o" href="/#v=fclookup">내 DB 조회</a></div>
     </div>
   </div>
   <div class="side">
@@ -145,9 +147,9 @@ BR.forEach((b,i)=>ROOMS.push({id:"br"+i,name:b[0],sub:"지사장 "+b[2],x:40+i*2
 ROOMS.push({id:"edu",name:"교육장",sub:"강의·교육",x:40,y:360,w:420,h:300,c:"#2D7FF9",floor:"carpet"});
 ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:500,y:360,w:600,h:300,c:"#14B8A6",floor:"marble"});
 ROOMS.push({id:"meet",name:"회의실",sub:"지사장 회의·미팅",x:1140,y:360,w:420,h:300,c:"#D97706",floor:"wood"});
-[["online","온라인영업팀","영업부 · 블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","영업부 · 산모교실·아파트·펫 등","#F97316","wood"],["biz","사업자영업팀","영업부 · 소상공인·기업","#10B981","wood"],["cafe","커피존","잠깐 쉬어가기","#EC4899","tile"],["desk","영업지원 데스크","영업센터·자료센터","#8B5CF6","tile"]]
-  .forEach((t,i)=>ROOMS.push({id:t[0],name:t[1],sub:t[2],x:40+i*306,y:730,w:288,h:240,c:t[3],floor:t[4],team:i<3}));
-const LINKS={edu:[["교육 일정","/#v=schedule"],["영업전략·소식지","/#v=salesstrategy"]],lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],meet:[["일정달력","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"],["내 DB 조회","/#v=fclookup"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],cafe:[],desk:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"],["내 DB 조회","/#v=fclookup"]]};
+[["online","온라인영업팀","영업부 · 블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","영업부 · 산모교실·아파트·펫 등","#F97316","wood"],["biz","사업자영업팀","영업부 · 소상공인·기업","#10B981","wood"],["cafe","커피존","잠깐 쉬어가기","#EC4899","tile"],["desk","영업지원 데스크","영업센터·자료센터","#8B5CF6","tile"],["private","나만의 공간","다른 사람에게 보이지 않음","#0E2A47","carpet"]]
+  .forEach((t,i)=>ROOMS.push({id:t[0],name:t[1],sub:t[2],x:40+i*256,y:730,w:240,h:240,c:t[3],floor:t[4],team:i<3}));
+const LINKS={edu:[["교육 일정","/#v=schedule"],["영업전략·소식지","/#v=salesstrategy"]],lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],meet:[["일정달력","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"],["내 DB 조회","/#v=fclookup"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],cafe:[],private:[["보잇 CRM ↗","https://boit.ai.kr/"],["내 DB 조회","/#v=fclookup"]],desk:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"],["내 DB 조회","/#v=fclookup"]]};
 function el(cls,css,html){ const d=document.createElement("div"); d.className=cls; Object.assign(d.style,css||{}); if(html!=null) d.innerHTML=html; return d; }
 const px=v=>v+"px";
 ROOMS.forEach(r=>{ const d=el("room "+r.floor,{left:px(r.x),top:px(r.y),width:px(r.w),height:px(r.h)}); d.style.setProperty("--c",r.c);
@@ -166,9 +168,10 @@ ROOMS.forEach(r=>{ const d=el("room "+r.floor,{left:px(r.x),top:px(r.y),width:px
   if(r.id==="lobby"){ F("sofa",150,70,300,44); F("sofa",150,180,300,44); F("table",270,118,56,56); F("plant",20,20); F("plant",r.w-54,20); F("plant",20,r.h-54);
     const k=F("kiosk",r.w-120,r.h-80,80,60,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); location.href="/#v=notice"; }); }
   if(r.id==="meet"){ F("table",120,80,180,110); [[110,60],[180,50],[250,60],[110,195],[180,205],[250,195],[95,125],[300,125]].forEach(([x,y])=>F("chair",x,y)); F("board",20,22,90,40,"회의 안건"); }
-  if(r.team){ [[24,40],[150,40],[24,130],[150,130]].forEach(([x,y])=>{ F("desk",x,y,74,46); F("chair",x+24,y+52); }); }
-  if(r.id==="cafe"){ F("counter",20,30,140,46); F("table",190,60,50,50); F("table",120,140,50,50); F("table",210,150,50,50); F("plant",r.w-48,r.h-60); }
-  if(r.id==="desk"){ F("counter",40,40,200,46); F("chair",90,96); F("chair",170,96); F("plant",20,r.h-56); }
+  if(r.team){ [[16,40],[130,40],[16,130],[130,130]].forEach(([x,y])=>{ F("desk",x,y,74,46); F("chair",x+24,y+52); }); }
+  if(r.id==="cafe"){ F("counter",16,30,130,46); F("table",170,60,46,46); F("table",100,140,46,46); F("table",170,150,46,46); F("plant",r.w-46,14); }
+  if(r.id==="desk"){ F("counter",30,40,180,46); F("chair",70,96); F("chair",150,96); F("plant",16,r.h-56); }
+  if(r.id==="private"){ F("desk",40,44,100,50); F("chair",78,100); F("sofa",30,150,120,36); F("plant",r.w-50,20); }
 });
 function roomAt(x,y){ for(const r of ROOMS){ if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h) return r; } return null; }
 function canEnter(r){ return !r||!r.branch||ME.admin||r.branch===ME.branch; }
@@ -184,7 +187,8 @@ function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(id===ME.id?" me
   Object.assign(a,info); a.el.style.left=px(a.x); a.el.style.top=px(a.y);
   a.el.querySelector(".b").textContent=String(a.name||"?").slice(0,1); a.el.querySelector(".b").style.background=BCOL[a.branch]||"#1F8A7A";
   a.el.querySelector(".n").innerHTML=E(a.name)+(a.branch?`<em>${E(a.branch.replace("지사",""))}</em>`:"");
-  a.el.querySelector(".st").className="st "+(a.st||"on"); return a; }
+  a.el.querySelector(".st").className="st "+(a.st||"on");
+  const pr=roomAt(a.x,a.y); a.priv=!!(pr&&pr.id==="private"); a.el.style.display=(a.priv&&id!==ME.id)?"none":""; return a; }
 function drop(id){ const a=AV[id]; if(a){ a.el.remove(); delete AV[id]; } }
 function say(id,text){ const a=AV[id]; if(!a) return; let s=a.el.querySelector(".say"); if(!s){ s=el("say"); a.el.appendChild(s); } s.textContent=text; clearTimeout(a.sayT); a.sayT=setTimeout(()=>s.remove(),6000); }
 function emo(id,e){ const a=AV[id]; if(!a) return; const s=el("emo",{},E(e)); a.el.appendChild(s); setTimeout(()=>s.remove(),1700); }
@@ -197,7 +201,8 @@ const ST={on:"근무중",busy:"상담중",away:"자리비움"};
 function toast(t){ const o=$("#toast"); o.textContent=t; o.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>o.classList.remove("on"),1800); }
 function updWhere(){ const r=roomAt(pos.x,pos.y)||{name:"복도",id:"hall"}; $("#sRoom").textContent=r.name; $("#pRoom").textContent="📍 "+r.name;
   const L=LINKS[r.id]||(r.branch?[["지사 공지·게시판","/#v=notice"]]:[]); $("#where").innerHTML=`<b>${E(r.name)}</b>${L.length?L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):`<span style="color:#6B7A8C">${E(r.sub||"공용 통로")}</span>`}`;
-  const here=Object.values(AV).filter(a=>{ const q=roomAt(a.x,a.y); return (q&&q.id)===(r.id); }).length; $("#sHere").textContent=here+"명"; }
+  const here=r.id==="private"?1:Object.values(AV).filter(a=>{ const q=roomAt(a.x,a.y); return (q&&q.id)===(r.id); }).length; $("#sHere").textContent=here+"명";
+  $("#priv").classList.toggle("on",r.id==="private"); }
 function moveTo(nx,ny,send){
   nx=Math.max(24,Math.min(1576,nx)); ny=Math.max(24,Math.min(976,ny));
   const r=roomAt(nx,ny); if(!canEnter(r)){ if(!moveTo.warned||Date.now()-moveTo.warned>1500){ toast(r.name+"는 소속 설계사만 들어갈 수 있습니다."); moveTo.warned=Date.now(); } return false; }
@@ -215,7 +220,7 @@ let ch=null, lastSent=0, pend=false;
 function sendMove(){ if(!ch) return; const now=Date.now(); if(now-lastSent<90){ if(!pend){ pend=true; setTimeout(()=>{ pend=false; sendMove(); },100); } return; } lastSent=now; ch.send({type:"broadcast",event:"mv",payload:{id:ME.id,x:Math.round(pos.x),y:Math.round(pos.y)}}); }
 function track(){ if(ch) ch.track({id:ME.id,name:ME.name,branch:ME.branch,x:Math.round(pos.x),y:Math.round(pos.y),st:myst,at:Date.now()}); }
 function who(){ const L=Object.values(AV); $("#pCnt").textContent="👥 "+L.length+"명"; $("#sCnt").textContent=L.length+"명";
-  $("#who").innerHTML=L.map(a=>`<span class="${a.el.classList.contains("me")?"me":""}">${E(a.name)}${a.branch?" · "+E(a.branch.replace("지사","")):""} ${a.st==="busy"?"🔴":a.st==="away"?"🟡":"🟢"}</span>`).join(""); updWhere(); }
+  $("#who").innerHTML=L.map(a=>`<span class="${a.el.classList.contains("me")?"me":""}">${E(a.name)}${a.branch?" · "+E(a.branch.replace("지사","")):""} ${a.priv?"🔒":a.st==="busy"?"🔴":a.st==="away"?"🟡":"🟢"}</span>`).join(""); updWhere(); }
 try{
   const sb=window.supabase.createClient(SB_URL,SB_KEY,{realtime:{params:{eventsPerSecond:20}}});
   ch=sb.channel("grow-office",{config:{presence:{key:ME.id},broadcast:{self:false}}});
@@ -239,7 +244,7 @@ function renderLog(){ const L=LOG.filter(visible); $("#log").innerHTML=L.length?
 function addMsg(m){ // 지사 사무실 채팅은 그 방 안에 있을 때만 받음
   if(m.scope!=="all"&&m.scope!==curId()) return; LOG.push(m); if(LOG.length>200) LOG.shift(); say(m.id,m.text); renderLog(); }
 function sysMsg(t){ LOG.push({sys:true,text:t}); renderLog(); }
-$("#send").addEventListener("submit",e=>{ e.preventDefault(); const t=$("#msg").value.trim(); if(!t) return; $("#msg").value="";
+$("#send").addEventListener("submit",e=>{ e.preventDefault(); const t=$("#msg").value.trim(); if(!t) return; if(TAB==="room"&&curId()==="private"){ toast("나만의 공간에서는 방 채팅이 없습니다. 전체 채팅을 이용하세요."); return; } $("#msg").value="";
   const r=roomAt(pos.x,pos.y); const now=new Date(); const m={id:ME.id,name:ME.name,branch:ME.branch,text:t.slice(0,300),scope:TAB==="all"?"all":curId(),room:r?r.name:"복도",t:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0")};
   addMsg(m); if(ch) ch.send({type:"broadcast",event:"chat",payload:m}); });
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ TAB=b.dataset.tab; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); renderLog(); }));
