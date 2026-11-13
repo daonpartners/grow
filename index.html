@@ -3896,6 +3896,8 @@ body.growon{ background:var(--g-navy); }
       const newEv = { id: evId, title: title, cat: cat, dateStart: dateStart, time: time, place: place, author: smWhoAmI() };
       if(editing) schedule[scheduleFormIdx] = newEv;
       else schedule.push(newEv);
+      /* 같은 기기의 GROW 오피스 달력에 바로 보이도록 잠시 기억 (서버 반영 전까지 최대 15분) */
+      try{ const P = JSON.parse(localStorage.getItem('growSchedPending')||'[]').filter(x => x && x.ev && x.ev.id !== evId && Date.now()-x.at < 900000); P.push({ ev:newEv, at:Date.now() }); localStorage.setItem('growSchedPending', JSON.stringify(P)); }catch(_){}
       scheduleCloseForm(); closeDayModal();
       const evDate = new Date(dateStart + 'T00:00:00');
       const now = new Date();

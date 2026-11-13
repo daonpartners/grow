@@ -139,7 +139,7 @@ button{font:inherit;cursor:pointer}
 .fw{position:absolute;z-index:4;pointer-events:none;font-size:34px;animation:fw 1.8s ease-out infinite;opacity:0}@keyframes fw{0%{transform:scale(.2);opacity:0}30%{opacity:1}100%{transform:scale(1.4) translateY(-30px);opacity:0}}
 #calBox{left:16px;right:16px;top:16px;bottom:64px}
 .calh{display:flex;align-items:center;gap:8px;margin-bottom:8px}.calh b{flex:1;text-align:center;font-size:17px;color:var(--navy)}.calh button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font-weight:800}
-.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.calg .w{font-size:12px;font-weight:800;text-align:center;color:var(--muted);padding:2px}.calg .w:first-child{color:#e05a4f}.calg .w:last-child{color:#3B82F6}
+.calg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.calg .d{min-width:0}.calg .w{font-size:12px;font-weight:800;text-align:center;color:var(--muted);padding:2px}.calg .w:first-child{color:#e05a4f}.calg .w:last-child{color:#3B82F6}
 .calg .d{min-height:74px;border:1px solid var(--line);border-radius:8px;padding:4px;font-size:12px;cursor:pointer;background:#fff;overflow:hidden}.calg .d.o{opacity:.4}.calg .d.t{border:2px solid #F58220}.calg .d.s{background:#FFF6EC}
 .calg .d>span{font-weight:800}.calg .e{display:block;margin-top:2px;padding:1px 4px;border-radius:4px;color:#fff;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .calleg{margin-top:8px;font-size:12px;color:var(--muted)}.calleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px 0 10px;vertical-align:-1px}
@@ -200,7 +200,8 @@ button{font:inherit;cursor:pointer}
 
 /* 휴대폰 화면 */
 @media (max-width:700px){
-  html,body{height:auto;min-height:100%}
+  html,body{height:auto;min-height:100%;overflow-x:hidden;max-width:100%}
+  #calBox .chb{display:block!important}#calBox .chb>div+div{margin-top:12px}.calh b{font-size:15px}
   .top{height:52px;gap:6px;padding:0 8px;overflow-x:auto;white-space:nowrap;position:sticky;top:0;z-index:50}
   .top .logo{width:30px;height:30px;font-size:14px;flex:none}.top h1{font-size:14px;flex:none}
   .top .pill{padding:5px 9px;font-size:12px;flex:none}.top .t{display:none}
@@ -479,7 +480,7 @@ function renderPanel(r){ const P=$("#panel"); let h="";
   else if(r.id==="event"){ h=`<div class="ttl"><b>행사팀 · 행사 일정</b><a class="sm" href="/#v=schedule">전체 일정 ›</a></div><div id="evList" class="sm" style="margin-top:6px">불러오는 중…</div>`; loadSched(); }
   else if(r.id!=="hall"){ const L=LINKS[r.id]||[]; h=`<div class="ttl"><b>${E(r.name)}</b><span class="sm">${E(r.sub||"")}</span></div>${L.map(([t,u])=>`<a class="pbtn l" href="${u}">${t} ›</a>`).join("")}`; }
   P.innerHTML=h; P.style.display=h?"":"none"; if(r.id==="private") renderTodo(); }
-async function loadSched(){ if(!SCHED){ try{ const j=await (await fetch("/board/schedule.json",{cache:"no-store"})).json(); SCHED=(j.items||[]).filter(x=>/행사/.test(x.cat||"")||/행사|페어|교실|아파트|펫/.test(x.title||"")); }catch(e){ SCHED=[]; } }
+async function loadSched(){ if(!SCHED){ try{ const j=await (await fetch("/board/schedule.json?t="+Date.now(),{cache:"no-store"})).json(); SCHED=(j.items||[]).filter(x=>/행사/.test(x.cat||"")||/행사|페어|교실|아파트|펫/.test(x.title||"")); }catch(e){ SCHED=[]; } }
   const box=$("#evList"); if(!box) return; const t=new Date(Date.now()+9*3600000).toISOString().slice(0,10);
   const up=SCHED.filter(x=>(x.dateEnd||x.dateStart)>=t).sort((a,b)=>a.dateStart.localeCompare(b.dateStart)).slice(0,8), past=SCHED.filter(x=>(x.dateEnd||x.dateStart)<t).sort((a,b)=>b.dateStart.localeCompare(a.dateStart)).slice(0,3);
   const row=(x,p)=>`<div class="ev${p?" past":""}"><i>${E(x.dateStart.slice(5).replace("-","/"))}</i><div><b>${E(x.title)}</b>${x.place?`<br><span class="sm">${E(x.place)}${x.time?" · "+E(x.time):""}</span>`:""}</div></div>`;
@@ -546,8 +547,8 @@ let GMBUSY=false; const NEWSQ=[];
 function seenGet(){ try{ return JSON.parse(localStorage.getItem("growSeen_"+ME.uid)||"null"); }catch(e){ return null; } }
 function seenSet(v){ try{ localStorage.setItem("growSeen_"+ME.uid,JSON.stringify(v)); }catch(e){} }
 async function checkNews(first){ const today=new Date(Date.now()+9*3600000).toISOString().slice(0,10); let N=[],S=[];
-  try{ N=((await (await fetch("/board/notices.json",{cache:"no-store"})).json()).items||[]); }catch(e){}
-  try{ S=((await (await fetch("/board/schedule.json",{cache:"no-store"})).json()).items||[]); }catch(e){}
+  try{ N=((await (await fetch("/board/notices.json?t="+Date.now(),{cache:"no-store"})).json()).items||[]); }catch(e){}
+  try{ S=((await (await fetch("/board/schedule.json?t="+Date.now(),{cache:"no-store"})).json()).items||[]); }catch(e){}
   const B=(BOOT&&BOOT.notices)||[]; const seen=seenGet(); const ids={n:N.map(x=>String(x.id)),s:S.map(x=>String(x.id)),b:B.map(x=>String(x.id))};
   if(!seen){ seenSet(Object.assign(ids,{today:""})); }
   else{ const o={n:new Set(seen.n||[]),s:new Set(seen.s||[]),b:new Set(seen.b||[])};
@@ -593,7 +594,10 @@ document.addEventListener("click",e=>{ const b=e.target.closest("[data-jump]"); 
 let ALLS=null, calM=null, calSel="";
 const CATC={LIVE:"#2D7FF9","교육":"#12A388","행사":"#F58220","회의":"#8B5CF6"};
 const kday=()=>new Date(Date.now()+9*3600000).toISOString().slice(0,10);
-async function loadAll(){ try{ ALLS=((await (await fetch("/board/schedule.json",{cache:"no-store"})).json()).items||[]).filter(x=>x&&x.dateStart); }catch(e){ ALLS=ALLS||[]; } nextCard(); }
+async function loadAll(){ try{ ALLS=((await (await fetch("/board/schedule.json?t="+Date.now(),{cache:"no-store"})).json()).items||[]).filter(x=>x&&x.dateStart); }catch(e){ ALLS=ALLS||[]; }
+  /* 이 기기의 GROW ON에서 방금 등록한 일정(서버 반영 전)도 함께 표시 */
+  try{ const ids=new Set(ALLS.map(x=>String(x.id))); JSON.parse(localStorage.getItem("growSchedPending")||"[]").forEach(p=>{ if(p&&p.ev&&p.ev.dateStart&&Date.now()-p.at<900000&&!ids.has(String(p.ev.id))) ALLS.push(p.ev); }); }catch(_){}
+  nextCard(); if($("#calBox").classList.contains("on")&&calM) calRender(); }
 function evOn(d){ return (ALLS||[]).filter(x=>x.dateStart<=d&&(x.dateEnd||x.dateStart)>=d).sort((a,b)=>String(a.time||"").localeCompare(String(b.time||""))); }
 function nextCard(){ const t=kday(); const up=(ALLS||[]).filter(x=>(x.dateEnd||x.dateStart)>=t).sort((a,b)=>a.dateStart.localeCompare(b.dateStart)); const b=$("#sNext"); if(!b) return;
   b.textContent=up.length?(up[0].dateStart<=t?"오늘 ":up[0].dateStart.slice(5).replace("-","/")+" ")+up[0].title+(up.length>1?` 외 ${up.length-1}건`:""):"예정된 일정 없음"; }
@@ -607,13 +611,15 @@ function calDay(){ const d=calSel||kday(); const L=evOn(d); $("#calDayT").textCo
   const up=(ALLS||[]).filter(x=>(x.dateEnd||x.dateStart)>=kday()).sort((a,b)=>a.dateStart.localeCompare(b.dateStart)).slice(0,6);
   h+=`<div class="sm" style="margin:14px 0 6px;font-weight:800">다가오는 일정</div>`+(up.length?up.map(x=>`<div class="cev" style="--c:${CATC[x.cat]||"#64748B"}"><b>${E(x.dateStart.slice(5).replace("-","/"))} ${E(x.title)}</b><small>${E(x.cat||"")}${x.time?" · "+E(x.time):""}${x.place?" · "+E(x.place):""}</small></div>`).join(""):'<p class="sm">예정된 일정이 없습니다.</p>');
   $("#calDay").innerHTML=h; }
-async function openCal(){ $("#calBox").classList.add("on"); if(!ALLS) await loadAll(); const t=kday(); calM=[+t.slice(0,4),+t.slice(5,7)-1]; calSel=t; calRender(); }
+async function openCal(){ $("#calBox").classList.add("on"); await loadAll(); const t=kday(); calM=[+t.slice(0,4),+t.slice(5,7)-1]; calSel=t; calRender(); }
 $("#btnCal").addEventListener("click",openCal); $("#stSched").addEventListener("click",openCal);
 $("#calPrev").addEventListener("click",()=>{ calM=calM[1]?[calM[0],calM[1]-1]:[calM[0]-1,11]; calRender(); });
 $("#calNext").addEventListener("click",()=>{ calM=calM[1]<11?[calM[0],calM[1]+1]:[calM[0]+1,0]; calRender(); });
 $("#calToday").addEventListener("click",()=>{ const t=kday(); calM=[+t.slice(0,4),+t.slice(5,7)-1]; calSel=t; calRender(); });
 document.addEventListener("click",e=>{ const c=e.target.closest("[data-cd]"); if(!c) return; calSel=c.dataset.cd; calRender(); });
-loadAll(); setInterval(loadAll,10*60000);
+loadAll(); setInterval(()=>{ if(document.visibilityState==="visible") loadAll(); },60000);
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ loadAll(); if(typeof checkNews==="function"&&ME) checkNews(false); } });
+window.addEventListener("storage",e=>{ if(e.key==="growSchedPending") loadAll(); });
 
 /* ---- 홈페이지 화면을 오피스 안에서 열기 ---- */
 function openPage(u,t){ $("#pgF").src=u; $("#pgOut").href=u; $("#pgT").textContent=t||"GROW ON"; $("#pgBox").classList.add("on"); }
@@ -690,7 +696,7 @@ $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$(
   BOOT=b; ME=b.me; TODO=Array.isArray(b.todo)?b.todo:[];
   Object.keys(b.chat||{}).forEach(k=>{ LOGS[k]=b.chat[k]; });
   LOOK=loadLook(); buildMap(); avatar(ME.uid,{x:pos.x,y:pos.y,name:ME.name,branch:ME.branch,look:LOOK});
-  npcTick(); setInterval(npcTick,3500); decorate(); birthday(); setTimeout(()=>checkNews(true),2500); setInterval(()=>checkNews(false),5*60000);
+  npcTick(); setInterval(npcTick,3500); decorate(); birthday(); setTimeout(()=>checkNews(true),2500); setInterval(()=>checkNews(false),2*60000);
   $("#sAtt").textContent=b.att?"출근 "+b.att:"출근 전";
   enterRoom(); updWhere(); who(); connect();
   if(!b.att) setTimeout(()=>toast("오늘 출근 체크는 '나만의 공간'에서 할 수 있어요."),1200);
