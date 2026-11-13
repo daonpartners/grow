@@ -196,6 +196,7 @@ button{font:inherit;cursor:pointer}
 .chprev .av.spr{margin-top:56px}
 .av .acc{display:none!important}
 .av.bot{transition:left 7s ease-in-out,top 7s ease-in-out}
+.av.me{pointer-events:auto;cursor:grab}.av.me,.av.bot{touch-action:none}.av.dragging{transition:none!important;cursor:grabbing;z-index:20;filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}
 </style>
 </head>
 <body>
@@ -328,7 +329,7 @@ window.addEventListener("resize",fit); fit();
 
 /* ---- 아바타 ---- */
 const AV={};
-function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid?" me":"")+(info&&info.npc?" npc":"")+(info&&info.bot?" bot":""),{}); d.innerHTML=`<div class="n"></div><div class="b"></div><span class="acc"></span>`; W.appendChild(d); a=AV[id]={el:d}; if(info&&info.bot) d.addEventListener("click",e=>{ e.stopPropagation(); openAi(); }); if(info&&info.guide){ d.classList.add("guide"); d.addEventListener("click",e=>{ e.stopPropagation(); $("#gdBox").classList.add("on"); }); } }
+function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid?" me":"")+(info&&info.npc?" npc":"")+(info&&info.bot?" bot":""),{}); d.innerHTML=`<div class="n"></div><div class="b"></div><span class="acc"></span>`; W.appendChild(d); a=AV[id]={el:d}; if(info&&info.bot) d.addEventListener("click",e=>{ e.stopPropagation(); if(Date.now()-DRAGEND<350) return; openAi(); }); if(info&&info.guide){ d.classList.add("guide"); d.addEventListener("click",e=>{ e.stopPropagation(); $("#gdBox").classList.add("on"); }); } }
   Object.assign(a,info); a.el.style.left=px(a.x); a.el.style.top=px(a.y);
   const bb=a.el.querySelector(".b"), lk=a.look||{}; const face=a.icon||(lk.f&&lk.f!=="A"&&lk.f!=="IMG"?lk.f:"");
   const img=okImg(lk.img)&&lk.f==="IMG"?lk.img:"";
@@ -372,9 +373,19 @@ function moveTo(nx,ny,send){
   const r=roomAt(nx,ny); if(!canEnter(r)){ if(!moveTo.w||Date.now()-moveTo.w>1500){ toast(r.name+"는 소속 설계사만 들어갈 수 있습니다."); moveTo.w=Date.now(); } return false; }
   pos.x=nx; pos.y=ny; avatar(ME.uid,{x:nx,y:ny}); const id=(r&&r.id)||"hall"; if(id!==curId){ curId=id; enterRoom(); } updWhere(); lights(); if(send!==false) sendMove(); return true; }
 const keys={}; let target=null;
+/* 끌어서 옮기기: 내 캐릭터·보험비서 로봇을 마우스(손가락)로 끌어 원하는 자리에 놓음 */
+let DRAG=null, DRAGEND=0;
+W.addEventListener("pointerdown",e=>{ const el=e.target.closest(".av.me,.av.bot"); if(!el||!ME) return; const id=el.classList.contains("bot")?"aibot":ME.uid; const a=AV[id]; if(!a) return;
+  DRAG={id,el,sx:e.clientX,sy:e.clientY,ox:a.x,oy:a.y,moved:false}; try{ el.setPointerCapture(e.pointerId); }catch(_){} e.preventDefault(); });
+W.addEventListener("pointermove",e=>{ if(!DRAG) return; const dx=(e.clientX-DRAG.sx)/SC, dy=(e.clientY-DRAG.sy)/SC; if(!DRAG.moved&&Math.hypot(dx,dy)<6) return;
+  DRAG.moved=true; DRAG.el.classList.add("dragging"); DRAG.x=Math.max(24,Math.min(1576,DRAG.ox+dx)); DRAG.y=Math.max(24,Math.min(926,DRAG.oy+dy)); DRAG.el.style.left=px(DRAG.x); DRAG.el.style.top=px(DRAG.y); });
+function dragEnd(){ if(!DRAG) return; const D=DRAG; DRAG=null; D.el.classList.remove("dragging"); if(!D.moved) return; DRAGEND=Date.now();
+  if(D.id==="aibot"){ const n=NPC.find(x=>x.id==="aibot"); const r=roomAt(D.x,D.y); if(r) n.room=r.id; n.cur=[D.x,D.y]; n.next=Date.now()+60000; avatar("aibot",{x:D.x,y:D.y}); lights(); toast("보험비서를 옮겼습니다. 1분 뒤부터 그 근처를 돌아다닙니다."); }
+  else { target=null; if(!moveTo(D.x,D.y)) avatar(ME.uid,{x:pos.x,y:pos.y}); } }
+W.addEventListener("pointerup",dragEnd); W.addEventListener("pointercancel",dragEnd);
 document.addEventListener("keydown",e=>{ if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)) return; const k=e.key.toLowerCase(); if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){ keys[k]=1; target=null; e.preventDefault(); } });
 document.addEventListener("keyup",e=>{ keys[e.key.toLowerCase()]=0; });
-MB.addEventListener("click",e=>{ if(e.target.closest(".where,.emobar,.kiosk,.modal,.av.bot")) return; const rc=W.getBoundingClientRect(); target={x:(e.clientX-rc.left)/SC,y:(e.clientY-rc.top)/SC}; });
+MB.addEventListener("click",e=>{ if(Date.now()-DRAGEND<350) return; if(e.target.closest(".where,.emobar,.kiosk,.modal,.av.bot")) return; const rc=W.getBoundingClientRect(); target={x:(e.clientX-rc.left)/SC,y:(e.clientY-rc.top)/SC}; });
 setInterval(()=>{ if(!ME) return; const sp=7; let dx=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0), dy=(keys.arrowdown||keys.s?1:0)-(keys.arrowup||keys.w?1:0);
   if(!dx&&!dy&&target){ const vx=target.x-pos.x, vy=target.y-pos.y, d=Math.hypot(vx,vy); if(d<sp) target=null; else { dx=vx/d; dy=vy/d; } }
   if(dx||dy){ const n=Math.hypot(dx,dy)||1; if(!moveTo(pos.x+dx/n*sp,pos.y+dy/n*sp)) target=null; } },33);
