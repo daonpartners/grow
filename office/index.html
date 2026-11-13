@@ -322,9 +322,9 @@ button{font:inherit;cursor:pointer}
     </div>
   </div>
   <button type="button" class="shopen" id="shOpen"></button>
-  <button type="button" class="homebtn" id="homeBtn">🏠 로비로</button>
+  <button type="button" class="homebtn" id="homeBtn">🏠 홈</button>
   <div class="side" id="side">
-    <div class="sheeth"><b id="shT">로비</b><span id="shS" class="sm"></span><button type="button" id="shLobby">🏠 로비</button><button type="button" id="shClose">지도 ▾</button></div>
+    <div class="sheeth"><b id="shT">로비</b><span id="shS" class="sm"></span><button type="button" id="shLobby">🏠 홈</button><button type="button" id="shClose" title="창 내리기" aria-label="창 내리기">▾</button></div>
     <h3>접속자</h3>
     <div class="who" id="who"></div>
     <div class="panel" id="panel"></div>
@@ -622,7 +622,7 @@ function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn
   if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
   if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
   else { sd.classList.remove("flash"); void sd.offsetWidth; sd.classList.add("flash"); } }
-document.addEventListener("click",e=>{ if(e.target.closest("#shLobby")){ const lb=document.querySelector('[data-jump="lobby"]'); if(lb) lb.click(); return; }
+document.addEventListener("click",e=>{ if(e.target.closest("#shLobby")){ const lb=document.querySelector('[data-jump="lobby"]'); if(lb) lb.click(); $("#side").classList.remove("open"); window.scrollTo({top:0,behavior:"smooth"}); return; }
   if(e.target.closest("#homeBtn")){ const lb=document.querySelector('[data-jump="lobby"]'); if(lb) lb.click(); $("#side").classList.remove("open"); return; }
   if(e.target.closest("#shClose")){ $("#side").classList.remove("open"); const ob=$("#shOpen"); if(ob&&ob.innerHTML) ob.classList.add("on"); }
   if(e.target.closest("#shOpen")){ $("#side").classList.add("open"); $("#shOpen").classList.remove("on"); } });
