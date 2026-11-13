@@ -597,15 +597,15 @@ const THEMES={
   chuseok:{t:"🌕 풍성한 한가위 보내세요",fall:"🍂",deco:["🌕","🍡","🌾","🏮"]},
   spring:{t:"🌸 봄 · 새 출발 응원합니다",fall:"🌸",deco:["🌸","🌷","🌼"]},
   summer:{t:"🌊 시원한 여름 보내세요",fall:"",deco:["🌴","🍉","🏖️","🍧"]},
-  autumn:{t:"🍁 결실의 가을",fall:"🍁",deco:["🍁","🍂","🌰"]}};
+  autumn:{t:"🍁 결실의 가을",fall:"🍁",deco:["🍁","🍂"]}};
 function themeOf(d){ const md=d.slice(5); for(const [k,a,b] of LUNAR) if(d>=a&&d<=b) return k;
   if(md>="12-01"&&md<="12-26") return "xmas"; if(md>="12-27"||md<="01-07") return "newyear";
   if(md>="03-20"&&md<="04-30") return "spring"; if(md>="07-01"&&md<="08-31") return "summer"; if(md>="10-15"&&md<="11-15") return "autumn"; return ""; }
 function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remove()); const d=new Date(Date.now()+9*3600000).toISOString().slice(0,10); const k=themeOf(d), T=THEMES[k]; const bn=$("#thBanner");
   if(!T){ bn.classList.remove("on"); return; } bn.textContent=T.t; bn.classList.add("on");
-  const r=LOBBY(); const spots=[[18,r.h-70],[r.w-70,r.h-70],[r.w/2-30,8],[18,90],[r.w-60,110]]; spots.forEach(([x,y],i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[i%T.deco.length]; e.style.fontSize=(i===2?50:40)+"px"; e.style.left=px(r.x+x); e.style.top=px(r.y+y); W.appendChild(e); });
+  const r=LOBBY(); const spots=[[18,r.h-70],[r.w-70,r.h-70],[18,90],[r.w-60,110]]; spots.forEach(([x,y],i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[i%T.deco.length]; e.style.fontSize=(MOBL?28:36)+"px"; e.style.left=px(r.x+x); e.style.top=px(r.y+y); W.appendChild(e); });
   ROOMS.filter(x=>x.branch||x.team).forEach((x,i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[(i+1)%T.deco.length]; e.style.fontSize="26px"; e.style.left=px(x.x+x.w-40); e.style.top=px(x.y+8); W.appendChild(e); });
-  if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<26;i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
+  if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<(MOBL?12:26);i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
 
 /* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
 function roomSheet(r){ const sd=$("#side"); if(!sd) return; sd.classList.toggle("nochat",r.id==="private"); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
