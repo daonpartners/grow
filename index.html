@@ -1120,7 +1120,7 @@ body.growon{ background:var(--g-navy); }
 .rstack a:last-child{border-bottom:none;} .rstack a:hover{background:#EEF3F9;}
 .gmain{background:#fff; border-radius:12px; padding:18px; min-height:600px;}
 .gmain .panel{background:transparent; border:none; box-shadow:none; padding:0; margin:0;}
-.gstrip{display:grid; grid-template-columns:1fr 1fr 1.1fr; gap:11px; margin-bottom:13px;}
+.gstrip{display:grid; grid-template-columns:1fr 1fr 1.1fr 1fr; gap:11px; margin-bottom:13px;}
 .gview{display:none;} .gview.on{display:block;}
 
   /* ---------- 제도안내(그로우 소개) ---------- */
@@ -1329,6 +1329,7 @@ body.growon{ background:var(--g-navy); }
       <button class="gbtn" data-view="notice">그로우 공지사항</button>
       <button class="gbtn" data-view="salesstrategy">이달의 영업전략<small>및 소식지</small></button>
       <button class="gbtn" data-view="schedule">일정달력<small>그로우사업부 일정</small></button>
+      <a class="gbtn" href="/office/" style="text-decoration:none;background:#0E2A47;color:#fff;">🏢 GROW 오피스<small style="color:rgba(255,255,255,.8)">가상사무실</small></a>
     </div>
     <div class="gmain">
       <div class="gview on" id="view-home"></div>
@@ -5641,6 +5642,8 @@ body.growon{ background:var(--g-navy); }
   document.querySelectorAll('[data-view]').forEach(el=>{
     el.addEventListener('click',e=>{ e.preventDefault(); showView(el.dataset.view); });
   });
+  /* GROW 오피스 등 다른 페이지에서 /#v=보기이름 으로 들어오면 그 화면을 연다 */
+  (function(){ const m=/[#&]v=([a-z]+)/.exec(location.hash||''); if(m && document.getElementById('view-'+m[1])) setTimeout(()=>showView(m[1]),0); })();
 
   function renderGrowDaily(){
     return;
@@ -9622,6 +9625,7 @@ const limitCompareData = {};
     document.getElementById('fcWho').textContent = d2.branch + ' · ' + d2.name + '님';
     document.getElementById('fcCount').textContent = '· 배정 ' + list.length + '건' + window.pgFcSum(list);
     FC_CRED = { branch: d2.branch, name: d2.name, sabun: sb, ver }; FC_KEY = d2.myKey || null; FC_LIST = list;
+    try{ sessionStorage.setItem('growMe', JSON.stringify({ name: d2.name, branch: d2.branch, sabun: sb })); }catch(e){}
     window.FC_CRED_GET = () => FC_CRED; window.FC_LIST_GET = () => FC_LIST;
     window.FC_REDRAW = () => { fcRenderList(FC_LIST); document.getElementById('fcCount').textContent = '· 배정 ' + FC_LIST.length + '건' + window.pgFcSum(FC_LIST); };
     FC_PRIV = null; fcRenderList(list); fcKeyUi();
@@ -9669,7 +9673,7 @@ const limitCompareData = {};
 
   const _fco = document.getElementById('fcOut');
   if(_fco) _fco.addEventListener('click', () => {
-    try{ sessionStorage.removeItem('fcAuth'); }catch(e){}
+    try{ sessionStorage.removeItem('fcAuth'); sessionStorage.removeItem('growMe'); }catch(e){}
     fcAutoSet(null);
     FC_PRIV = null; FC_KEY = null; FC_LIST = []; FC_CRED = null; fcKeyUi();
     document.getElementById('fcBody').style.display = 'none';
