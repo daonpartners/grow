@@ -248,6 +248,9 @@ button{font:inherit;cursor:pointer}
   .side .log{flex:1;height:auto;min-height:0}
   .shopen.on{display:block;position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:70;background:#F58220;color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:800;box-shadow:0 6px 16px rgba(245,130,32,.45);white-space:nowrap}
 }
+.side.nochat .tabs,.side.nochat .log,.side.nochat .send{display:none!important}
+.side.nochat .panel{max-height:none!important;flex:1!important;overflow:auto;border-bottom:none}
+.send input{min-width:0}
 </style>
 </head>
 <body>
@@ -605,7 +608,7 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<26;i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
 
 /* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
-function roomSheet(r){ const sd=$("#side"); if(!sd) return; $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
+function roomSheet(r){ const sd=$("#side"); if(!sd) return; sd.classList.toggle("nochat",r.id==="private"); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
   const ob=$("#shOpen"); if(ob) ob.innerHTML=r.id==="hall"?"":`💬 <b>${E(r.name)}</b> 열기 ▴`;
   if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
   if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
