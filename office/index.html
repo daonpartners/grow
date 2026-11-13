@@ -137,6 +137,13 @@ button{font:inherit;cursor:pointer}
 .deco{position:absolute;pointer-events:none;z-index:3;filter:drop-shadow(0 3px 3px rgba(0,0,0,.2));line-height:1}
 .cake{position:absolute;z-index:4;pointer-events:none;text-align:center}.cake b{display:block;font-size:64px;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}.cake span{display:inline-block;margin-top:4px;background:linear-gradient(90deg,#F58220,#EC4899);color:#fff;font-weight:900;font-size:15px;padding:6px 14px;border-radius:999px;white-space:nowrap}
 .fw{position:absolute;z-index:4;pointer-events:none;font-size:34px;animation:fw 1.8s ease-out infinite;opacity:0}@keyframes fw{0%{transform:scale(.2);opacity:0}30%{opacity:1}100%{transform:scale(1.4) translateY(-30px);opacity:0}}
+#calBox{left:16px;right:16px;top:16px;bottom:64px}
+.calh{display:flex;align-items:center;gap:8px;margin-bottom:8px}.calh b{flex:1;text-align:center;font-size:17px;color:var(--navy)}.calh button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font-weight:800}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.calg .w{font-size:12px;font-weight:800;text-align:center;color:var(--muted);padding:2px}.calg .w:first-child{color:#e05a4f}.calg .w:last-child{color:#3B82F6}
+.calg .d{min-height:74px;border:1px solid var(--line);border-radius:8px;padding:4px;font-size:12px;cursor:pointer;background:#fff;overflow:hidden}.calg .d.o{opacity:.4}.calg .d.t{border:2px solid #F58220}.calg .d.s{background:#FFF6EC}
+.calg .d>span{font-weight:800}.calg .e{display:block;margin-top:2px;padding:1px 4px;border-radius:4px;color:#fff;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calleg{margin-top:8px;font-size:12px;color:var(--muted)}.calleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px 0 10px;vertical-align:-1px}
+.cev{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px}.cev b{display:block}.cev small{color:var(--muted)}
 #gdBox{left:50%;top:16px;bottom:64px;transform:translateX(-50%);width:560px;max-width:calc(100% - 32px)}
 .gd h4{margin:14px 0 4px;color:var(--navy);font-size:14.5px}.gd p{margin:0;font-size:13.5px;line-height:1.65;color:#334}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
@@ -199,6 +206,7 @@ button{font:inherit;cursor:pointer}
   <span class="pill off" id="pConn"><i></i><span>연결 중</span></span>
   <span class="pill" id="pRoom">📍 로비</span>
   <span class="sp"></span>
+  <button class="pill btn" type="button" id="btnCal">📅 일정 달력</button>
   <button class="pill btn" type="button" id="btnChar">🎨 내 캐릭터</button>
   <button class="pill btn" type="button" id="btnAi">🤖 보험비서 AI</button>
   <a href="/">← GROW ON</a>
@@ -208,7 +216,7 @@ button{font:inherit;cursor:pointer}
     <div class="stats">
       <div class="stat"><span>현재 위치</span><b id="sRoom">로비</b></div>
       <div class="stat"><span>접속 인원</span><b id="sCnt">0명</b></div>
-      <div class="stat"><span>같은 방</span><b id="sHere">0명</b></div>
+      <div class="stat" id="stSched" style="cursor:pointer;flex:1.6;border:2px solid #F58220"><span>📅 다가오는 일정 · 눌러서 달력 보기</span><b id="sNext" style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">불러오는 중…</b></div>
       <div class="stat"><span>오늘 출근</span><b id="sAtt">-</b></div>
     </div>
     <div class="mapbox" id="mapbox">
@@ -226,6 +234,10 @@ button{font:inherit;cursor:pointer}
       <div class="modal" id="hiBox"><div class="mh"><span style="font-size:18px">📝</span><b>회의 기록</b><button type="button" data-close="hiBox">✕</button></div>
         <div class="tabs" style="padding:10px 14px 0"><button type="button" class="on" data-ht="min">회의록</button><button type="button" data-ht="chat">지난 회의 채팅</button><button type="button" data-ht="new">회의록 쓰기</button></div>
         <div class="chb" id="hiBody" style="flex:1"></div></div>
+      <div class="modal" id="calBox"><div class="mh"><span style="font-size:18px">📅</span><b>그로우 일정 달력</b><a href="/#v=schedule" style="color:#fff;font-size:12.5px;font-weight:800;text-decoration:none;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:4px 8px">전체 일정 화면</a><button type="button" data-close="calBox">✕</button></div>
+        <div class="chb" style="flex:1;display:grid;grid-template-columns:1.6fr 1fr;gap:14px"><div><div class="calh"><button type="button" id="calPrev">◀</button><b id="calT"></b><button type="button" id="calNext">▶</button><button type="button" id="calToday" style="font-size:12px">오늘</button></div><div class="calg" id="calG"></div>
+          <div class="calleg"><i style="background:#2D7FF9"></i>LIVE <i style="background:#12A388"></i>교육 <i style="background:#F58220"></i>행사 <i style="background:#8B5CF6"></i>회의</div></div>
+          <div><b id="calDayT" style="color:var(--navy)"></b><div id="calDay" style="margin-top:8px"></div></div></div></div>
       <div class="modal" id="gdBox"><div class="mh"><span style="font-size:18px">💁</span><b>GROW 오피스 사용법</b><button type="button" data-close="gdBox">✕</button></div><div class="chb gd" style="flex:1">
         <h4>🚶 움직이기</h4><p>방향키·WASD로 걷거나, 가고 싶은 바닥을 누르면 그 자리로 갑니다. 방에 들어가면 오른쪽 안내판이 그 방 기능으로 바뀝니다.</p>
         <h4>🏢 지사 방</h4><p>내 지사 방만 들어갈 수 있습니다. 지사 공지판과 지사 채팅은 소속만 보고, 저장됩니다. 지사장은 공지를 올리고 오늘 출근 명단을 봅니다.</p>
@@ -371,7 +383,7 @@ setInterval(()=>{ if(!ME) return; const sp=7; let dx=(keys.arrowright||keys.d?1:
 function curRoom(){ return ROOMS.find(r=>r.id===curId)||{id:"hall",name:"복도",sub:"공용 통로"}; }
 function updWhere(){ const r=curRoom(); $("#sRoom").textContent=r.name; $("#pRoom").textContent="📍 "+r.name;
   const L=LINKS[r.id]||[]; $("#where").innerHTML=`<b>${E(r.name)}</b>${L.length?L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):`<span style="color:#6B7A8C">${E(r.sub||"")}</span>`}`;
-  const here=r.id==="private"?1:Object.values(AV).filter(a=>!a.npc&&a.room===r.id).length; $("#sHere").textContent=here+"명"; }
+  const here=r.id==="private"?1:Object.values(AV).filter(a=>!a.npc&&a.room===r.id).length; const sh=$("#sHere"); if(sh) sh.textContent=here+"명"; }
 
 /* ---- 방 안내판 (오른쪽) ---- */
 let SCHED=null;
@@ -509,6 +521,32 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   const r=LOBBY(); const spots=[[18,r.h-70],[r.w-70,r.h-70],[r.w/2-30,8],[18,90],[r.w-60,110]]; spots.forEach(([x,y],i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[i%T.deco.length]; e.style.fontSize=(i===2?50:40)+"px"; e.style.left=px(r.x+x); e.style.top=px(r.y+y); W.appendChild(e); });
   ROOMS.filter(x=>x.branch||x.team).forEach((x,i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[(i+1)%T.deco.length]; e.style.fontSize="26px"; e.style.left=px(x.x+x.w-40); e.style.top=px(x.y+8); W.appendChild(e); });
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<26;i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
+
+/* ---- 일정 달력 ---- */
+let ALLS=null, calM=null, calSel="";
+const CATC={LIVE:"#2D7FF9","교육":"#12A388","행사":"#F58220","회의":"#8B5CF6"};
+const kday=()=>new Date(Date.now()+9*3600000).toISOString().slice(0,10);
+async function loadAll(){ try{ ALLS=((await (await fetch("/board/schedule.json",{cache:"no-store"})).json()).items||[]).filter(x=>x&&x.dateStart); }catch(e){ ALLS=ALLS||[]; } nextCard(); }
+function evOn(d){ return (ALLS||[]).filter(x=>x.dateStart<=d&&(x.dateEnd||x.dateStart)>=d).sort((a,b)=>String(a.time||"").localeCompare(String(b.time||""))); }
+function nextCard(){ const t=kday(); const up=(ALLS||[]).filter(x=>(x.dateEnd||x.dateStart)>=t).sort((a,b)=>a.dateStart.localeCompare(b.dateStart)); const b=$("#sNext"); if(!b) return;
+  b.textContent=up.length?(up[0].dateStart<=t?"오늘 ":up[0].dateStart.slice(5).replace("-","/")+" ")+up[0].title+(up.length>1?` 외 ${up.length-1}건`:""):"예정된 일정 없음"; }
+function calRender(){ const [Y,M]=calM; $("#calT").textContent=Y+"년 "+(M+1)+"월"; const first=new Date(Date.UTC(Y,M,1)), st=first.getUTCDay(), t=kday(); let h="일월화수목금토".split("").map(w=>`<div class="w">${w}</div>`).join("");
+  const nd=new Date(Date.UTC(Y,M+1,0)).getUTCDate(), cells=Math.ceil((st+nd)/7)*7;
+  for(let i=0;i<cells;i++){ const dt=new Date(Date.UTC(Y,M,1-st+i)); const d=dt.toISOString().slice(0,10); const E2=evOn(d);
+    h+=`<div class="d${dt.getUTCMonth()!==M?" o":""}${d===t?" t":""}${d===calSel?" s":""}" data-cd="${d}"><span>${dt.getUTCDate()}</span>${E2.slice(0,2).map(x=>`<i class="e" style="background:${CATC[x.cat]||"#64748B"}">${E(x.title)}</i>`).join("")}${E2.length>2?`<i class="e" style="background:#94A3B8">+${E2.length-2}</i>`:""}</div>`; }
+  $("#calG").innerHTML=h; calDay(); }
+function calDay(){ const d=calSel||kday(); const L=evOn(d); $("#calDayT").textContent=d.slice(5).replace("-","월 ")+"일 일정"+(L.length?` (${L.length})`:"");
+  let h=L.length?L.map(x=>`<div class="cev" style="--c:${CATC[x.cat]||"#64748B"}"><b>${E(x.title)}</b><small>${E(x.cat||"")}${x.time?" · "+E(x.time):""}${x.place?" · "+E(x.place):""}${x.dateEnd&&x.dateEnd!==x.dateStart?" · ~"+E(x.dateEnd.slice(5)):""}</small></div>`).join(""):'<p class="sm">이 날 일정이 없습니다.</p>';
+  const up=(ALLS||[]).filter(x=>(x.dateEnd||x.dateStart)>=kday()).sort((a,b)=>a.dateStart.localeCompare(b.dateStart)).slice(0,6);
+  h+=`<div class="sm" style="margin:14px 0 6px;font-weight:800">다가오는 일정</div>`+(up.length?up.map(x=>`<div class="cev" style="--c:${CATC[x.cat]||"#64748B"}"><b>${E(x.dateStart.slice(5).replace("-","/"))} ${E(x.title)}</b><small>${E(x.cat||"")}${x.time?" · "+E(x.time):""}${x.place?" · "+E(x.place):""}</small></div>`).join(""):'<p class="sm">예정된 일정이 없습니다.</p>');
+  $("#calDay").innerHTML=h; }
+async function openCal(){ $("#calBox").classList.add("on"); if(!ALLS) await loadAll(); const t=kday(); calM=[+t.slice(0,4),+t.slice(5,7)-1]; calSel=t; calRender(); }
+$("#btnCal").addEventListener("click",openCal); $("#stSched").addEventListener("click",openCal);
+$("#calPrev").addEventListener("click",()=>{ calM=calM[1]?[calM[0],calM[1]-1]:[calM[0]-1,11]; calRender(); });
+$("#calNext").addEventListener("click",()=>{ calM=calM[1]<11?[calM[0],calM[1]+1]:[calM[0]+1,0]; calRender(); });
+$("#calToday").addEventListener("click",()=>{ const t=kday(); calM=[+t.slice(0,4),+t.slice(5,7)-1]; calSel=t; calRender(); });
+document.addEventListener("click",e=>{ const c=e.target.closest("[data-cd]"); if(!c) return; calSel=c.dataset.cd; calRender(); });
+loadAll(); setInterval(loadAll,10*60000);
 
 /* ---- 홈페이지 화면을 오피스 안에서 열기 ---- */
 function openPage(u,t){ $("#pgF").src=u; $("#pgOut").href=u; $("#pgT").textContent=t||"GROW ON"; $("#pgBox").classList.add("on"); }
