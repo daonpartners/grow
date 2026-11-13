@@ -14,7 +14,7 @@
    - 저장: 채팅(전체·방별)·지사 공지·출근·할 일 → n8n 데이터 표. 지사 방 채팅·공지는 서버가 소속만 허용
    - 실시간: Supabase Realtime(보잇 프로젝트) 채널 'grow-office' — 접속자·이동·이모지·전체/팀 채팅 즉시 표시. 지사 방 채팅은 내용 대신 '새 글' 신호만 보내고 각자 서버에서 받아 옴
    - 화상회의: 회의실·교육장 버튼(기본 Jitsi, 지사장이 줌·미트 주소로 바꿀 수 있음). 행사팀 방: board/schedule.json 행사 일정
-   - 분위기: 사람이 있는 방은 불이 켜지고, 그로우매니저·다오니가 움직임. 그로우매니저를 누르면 사용법.
+   - 분위기: 사람이 있는 방은 불이 켜지고, 그로우매니저가 움직임. 그로우매니저를 누르면 사용법.
    - 그로우매니저 알림: 새 공지(/board/notices.json)·새 일정·행사(/board/schedule.json)·지사 공지·오늘 일정·생일을 내 옆으로 와서 알려 줌(본 목록은 이 기기에 기억)
    - 생일: 내 캐릭터 창에서 월·일 등록(서버 저장) → 당일 라운지에 케이크·폭죽
    - 절기 꾸미기 자동: 크리스마스·새해·설·추석·봄·여름·가을 (설·추석 날짜는 LUNAR 표에 해마다 추가) 근무 상태 표시는 없음
@@ -334,7 +334,7 @@ function emo(id,e){ const a=AV[id]; if(!a) return; const s=el("emo",{},E(e)); a.
 function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit) occ[a.room]=1; }); ROOMS.forEach(r=>{ const on=!!occ[r.id]&&(r.id!=="private"||(ME&&AV[ME.uid]&&AV[ME.uid].room==="private")); RE[r.id].classList.toggle("lit",on); RE[r.id].classList.toggle("dark",!on); }); }
 
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
-const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"npc3",name:"다오니",icon:"🐳",room:"lobby",walk:true},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"lobby",lit:true,bot:true,fixed:true,home:[452,150]}];
+const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"lobby",lit:true,bot:true,fixed:true,home:[452,150]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.id==="npc2"&&GMBUSY&&AV[ME&&ME.uid]){ const a=AV[ME.uid]; return [a.x+55,a.y+10]; }
   if(n.room==="hall"){ const lanes=[[40+Math.random()*1520,320],[40+Math.random()*1520,695],[480,320+Math.random()*380],[1120,320+Math.random()*380]]; return lanes[Math.floor(Math.random()*lanes.length)]; }
@@ -343,7 +343,6 @@ function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   return [r.x+40+Math.random()*(r.w-80),r.y+50+Math.random()*(r.h-100)]; }
 function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,sprite:n.sprite,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
 const NPCSAY=["오늘도 화이팅이에요!","출근 체크 잊지 마세요 :)"];
-setInterval(()=>{ const n=NPC.find(x=>x.id==="npc3"); if(!n||GMBUSY) return; say(n.id,NPCSAY[Math.floor(Math.random()*NPCSAY.length)]); },18000);
 const BOTSAY=["궁금한 약관·청구, 저에게 물어보세요!","저를 누르면 바로 질문할 수 있어요 🤖","상품·서류·업무 절차 다 물어보세요"]; let botN=0;
 setInterval(()=>{ if(AV.aibot&&!$("#aiBox").classList.contains("on")) say("aibot",BOTSAY[botN++%BOTSAY.length]); },9000);
 
