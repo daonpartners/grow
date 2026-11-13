@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* GROW 오피스 (2026-11-13)
-   그로우사업부 가상사무실: 공용공간(로비·교육장·회의실·커피존·공지) + 지사별 사무실 6곳
+   그로우사업부 가상사무실: 공용공간(로비·교육장·회의실·커피존·영업지원) + 영업부(온라인영업팀·행사팀·사업자영업팀) + 지사별 사무실 6곳
    - 입장: GROW ON에서 설계사(사번) 또는 관리자 로그인 후 같은 탭에서 이동 → sessionStorage growMe / growName·growBranch 사용
    - 실시간: Supabase Realtime(보잇 프로젝트) 채널 'grow-office' — presence(접속자·위치) + broadcast(이동·채팅·이모지). 채팅은 저장하지 않음(접속 중인 사람만 봄)
    - 지사 사무실은 그 지사 소속만 들어감(관리자·사업부 총괄은 전체). 지사 사무실 채팅은 그 방 안에 있는 사람에게만 보임 */
@@ -27,29 +27,29 @@ button{font:inherit;cursor:pointer}
 .stage{position:relative;overflow:hidden;display:flex;flex-direction:column}
 .stats{display:flex;gap:10px;padding:12px 14px 0}
 .stat{background:#fff;border-radius:12px;padding:10px 14px;flex:1;box-shadow:0 1px 2px rgba(0,0,0,.05)}.stat span{font-size:12px;color:var(--muted)}.stat b{display:block;font-size:17px;margin-top:2px}
-.mapbox{flex:1;position:relative;margin:12px 14px 14px;border-radius:18px;overflow:hidden;background:#2b2a27;box-shadow:inset 0 0 0 6px #3a352d}
-#world{position:absolute;left:0;top:0;width:1600px;height:1000px;transform-origin:0 0;background:#d9cdb8;
-  background-image:linear-gradient(rgba(0,0,0,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.035) 1px,transparent 1px);background-size:40px 40px}
-.room{position:absolute;border:6px solid #6d5a45;border-radius:14px;box-shadow:inset 0 0 0 3px rgba(255,255,255,.25),0 6px 14px rgba(0,0,0,.18)}
+.mapbox{flex:1;position:relative;margin:12px 14px 14px;border-radius:18px;overflow:hidden;background:#EAF4F2;box-shadow:inset 0 0 0 1px #d5e6e2}
+#world{position:absolute;left:0;top:0;width:1600px;height:1080px;transform-origin:0 0;background:#F7F4EE;
+  background-image:linear-gradient(rgba(0,0,0,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.025) 1px,transparent 1px);background-size:40px 40px}
+.room{position:absolute;border:7px solid #fff;border-radius:16px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 8px 18px rgba(30,60,80,.12)}.room::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--c);border-radius:8px 8px 0 0;opacity:.85}
 .room .tag{position:absolute;left:50%;top:-18px;transform:translateX(-50%);background:#fff;border:2px solid var(--c,#1F8A7A);color:var(--c,#1F8A7A);font-weight:800;font-size:14px;padding:5px 12px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.15);z-index:2}
 .room .sub{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:11.5px;color:rgba(0,0,0,.5);font-weight:700}
 .room .lock{position:absolute;right:10px;top:10px;font-size:12px;background:rgba(0,0,0,.45);color:#fff;border-radius:6px;padding:2px 7px}
-.door{position:absolute;background:#d9cdb8;z-index:1}
-.wood{background:#c9a77c;background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 46px),repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 22px)}
-.carpet{background:#2f5d57;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:10px 10px}
-.marble{background:#ece6db;background-image:linear-gradient(135deg,rgba(0,0,0,.025) 25%,transparent 25% 50%,rgba(0,0,0,.025) 50% 75%,transparent 75%);background-size:60px 60px}
-.tile{background:#efe7d9;background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px);background-size:32px 32px}
+.door{position:absolute;background:#F7F4EE;z-index:1}
+.wood{background:#F1DDBF;background-image:repeating-linear-gradient(90deg,rgba(150,100,50,.07) 0 2px,transparent 2px 46px)}
+.carpet{background:#D6ECFA;background-image:radial-gradient(rgba(255,255,255,.6) 1px,transparent 1px);background-size:10px 10px}
+.marble{background:#FFFDF8;background-image:linear-gradient(135deg,rgba(0,0,0,.025) 25%,transparent 25% 50%,rgba(0,0,0,.025) 50% 75%,transparent 75%);background-size:60px 60px}
+.tile{background:#FDF3E7;background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px);background-size:32px 32px}
 .f{position:absolute;pointer-events:none}
-.desk{background:#7a5a3c;border-radius:8px;box-shadow:0 4px 0 #5b4129,0 6px 10px rgba(0,0,0,.2)}
-.desk::after{content:"";position:absolute;left:50%;top:6px;width:34px;height:20px;margin-left:-17px;background:#1d2733;border-radius:3px;box-shadow:0 0 0 2px #46525f}
-.chair{width:26px;height:26px;border-radius:50%;background:#1f4d46;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25)}
-.sofa{background:#255a52;border-radius:12px;box-shadow:inset 0 -8px 0 rgba(0,0,0,.2),0 4px 8px rgba(0,0,0,.2)}
-.table{background:#8b6b4a;border-radius:50%;box-shadow:0 4px 0 #5f4630,0 6px 10px rgba(0,0,0,.25)}
-.plant{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#79b86b,#2f6d35 70%);box-shadow:0 0 0 5px #6d4f35}
-.counter{background:#5c4636;border-radius:10px;box-shadow:inset 0 6px 0 #8a6d55}
-.board{background:#fff;border:4px solid #3a4a5c;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#3a4a5c}
+.desk{background:#C8955E;border-radius:8px;box-shadow:0 4px 0 #A6763F,0 6px 10px rgba(0,0,0,.12)}
+.desk::after{content:"";position:absolute;left:50%;top:6px;width:34px;height:20px;margin-left:-17px;background:#2F3B4A;border-radius:3px;box-shadow:0 0 0 2px #e8edf2}
+.chair{width:26px;height:26px;border-radius:50%;background:#26B39A;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25)}
+.sofa{background:#2FB59E;border-radius:12px;box-shadow:inset 0 -8px 0 rgba(0,0,0,.2),0 4px 8px rgba(0,0,0,.2)}
+.table{background:#D9A66B;border-radius:50%;box-shadow:0 4px 0 #B07F45,0 6px 10px rgba(0,0,0,.12)}
+.plant{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#9BE07F,#3FA34D 70%);box-shadow:0 0 0 5px #E9D2B0}
+.counter{background:#B98250;border-radius:10px;box-shadow:inset 0 6px 0 #E0B887}
+.board{background:#fff;border:4px solid #5B8DEF;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#3a4a5c}
 .kiosk{background:#26303b;border-radius:10px;border:3px solid #9aa6b3;display:grid;place-items:center;color:#9ff0d9;font-size:11px;font-weight:800;pointer-events:auto;cursor:pointer}
-.lectern{background:#6d5a45;border-radius:6px}
+.lectern{background:#C8955E;border-radius:6px}
 .av{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;z-index:5;transition:left .12s linear,top .12s linear}
 .av .b{width:44px;height:44px;border-radius:50%;background:var(--c,#1F8A7A);color:#fff;display:grid;place-items:center;font-weight:900;font-size:16px;border:3px solid #fff;box-shadow:0 4px 8px rgba(0,0,0,.3)}
 .av.me .b{box-shadow:0 0 0 4px rgba(245,130,32,.55),0 4px 8px rgba(0,0,0,.3)}
@@ -61,11 +61,11 @@ button{font:inherit;cursor:pointer}
 .av .say::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-top-color:#fff;border-bottom:0}
 .av .emo{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);font-size:30px;animation:up 1.6s ease-out forwards}
 @keyframes up{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-40px)}}
-.hint{position:absolute;left:14px;bottom:16px;background:rgba(14,42,71,.85);color:#fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;z-index:3}
-.where{position:absolute;right:14px;bottom:16px;background:#fff;border-radius:12px;padding:10px 14px;font-size:13px;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:260px}
-.where b{display:block;font-size:15px;color:var(--navy)}.where a{display:inline-block;margin-top:6px;margin-right:6px;font-weight:700;color:var(--teal);font-size:12.5px}
-.emobar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:6px;background:rgba(14,42,71,.88);padding:8px 12px;border-radius:999px;z-index:3}
-.emobar button{background:none;border:none;font-size:24px;padding:2px 4px;border-radius:8px}.emobar button:hover{background:rgba(255,255,255,.15)}
+.hint{position:absolute;left:14px;bottom:12px;background:rgba(14,42,71,.85);color:#fff;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;z-index:3}
+.where{position:absolute;right:14px;bottom:12px;background:#fff;border-radius:999px;padding:7px 14px;font-size:12.5px;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.15);max-width:46%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.where b{font-size:13.5px;color:var(--navy);margin-right:8px}.where a{margin-left:8px;font-weight:700;color:var(--teal);font-size:12.5px}
+.emobar{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:4px;background:rgba(14,42,71,.88);padding:5px 10px;border-radius:999px;z-index:3}
+.emobar button{background:none;border:none;font-size:20px;padding:2px 4px;border-radius:8px}.emobar button:hover{background:rgba(255,255,255,.15)}
 .toast{position:absolute;left:50%;top:60px;transform:translateX(-50%);background:#1b2333;color:#fff;padding:9px 16px;border-radius:10px;font-size:13.5px;z-index:9;opacity:0;transition:opacity .2s;pointer-events:none}.toast.on{opacity:1}
 .side{background:#fff;border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
 .side h3{margin:0;font-size:14px;padding:14px 16px 8px;color:var(--navy)}
@@ -125,7 +125,7 @@ button{font:inherit;cursor:pointer}
 const SB_URL="https://lobdowpxujgiadrtxklb.supabase.co", SB_KEY="sb_publishable_3mJ3y2GqpQWMIzwgzV7yVg_M_HCdTzW";
 const $=s=>document.querySelector(s);
 const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const BR=[["광명지사","#2F6E63","황경호"],["다온지사","#C25B2A","김화진"],["동행지사","#3A5BA0","허준"],["도약지사","#8A5A2B","박진근"],["혁신지사","#6B4BA0","양길성"],["리치로드맵지사","#A33F5F","곽현진"]];
+const BR=[["광명지사","#12A388","황경호"],["다온지사","#F58220","김화진"],["동행지사","#3B82F6","허준"],["도약지사","#E5A00D","박진근"],["혁신지사","#8B5CF6","양길성"],["리치로드맵지사","#EC4899","곽현진"]];
 const BCOL=Object.fromEntries(BR.map(b=>[b[0],b[1]]));
 
 /* ---- 내 정보 (GROW ON 로그인) ---- */
@@ -142,12 +142,12 @@ const MYC=BCOL[ME.branch]||"#1F8A7A";
 const W=$("#world");
 const ROOMS=[]; // {id,name,x,y,w,h,branch,c}
 BR.forEach((b,i)=>ROOMS.push({id:"br"+i,name:b[0],sub:"지사장 "+b[2],x:40+i*258,y:40,w:238,h:250,branch:b[0],c:b[1],floor:"wood"}));
-ROOMS.push({id:"edu",name:"교육장 · 다온아카데미",sub:"강의·교육",x:40,y:360,w:420,h:330,c:"#2C5AA0",floor:"carpet"});
-ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:500,y:360,w:600,h:420,c:"#1F8A7A",floor:"marble"});
-ROOMS.push({id:"meet",name:"회의실",sub:"지사장 회의·미팅",x:1140,y:360,w:420,h:330,c:"#8A5A2B",floor:"wood"});
-ROOMS.push({id:"cafe",name:"커피존",sub:"잠깐 쉬어가기",x:40,y:730,w:420,h:230,c:"#A33F5F",floor:"tile"});
-ROOMS.push({id:"desk",name:"영업지원 데스크",sub:"영업센터·자료센터",x:1140,y:730,w:420,h:230,c:"#C25B2A",floor:"tile"});
-const LINKS={edu:[["교육 일정","/#v=schedule"],["영업전략·소식지","/#v=salesstrategy"]],lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],meet:[["일정달력","/#v=schedule"]],cafe:[],desk:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"],["내 DB 조회","/#v=fclookup"]]};
+ROOMS.push({id:"edu",name:"교육장",sub:"강의·교육",x:40,y:360,w:420,h:300,c:"#2D7FF9",floor:"carpet"});
+ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:500,y:360,w:600,h:300,c:"#14B8A6",floor:"marble"});
+ROOMS.push({id:"meet",name:"회의실",sub:"지사장 회의·미팅",x:1140,y:360,w:420,h:300,c:"#D97706",floor:"wood"});
+[["online","온라인영업팀","영업부 · 블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","영업부 · 산모교실·아파트·펫 등","#F97316","wood"],["biz","사업자영업팀","영업부 · 소상공인·기업","#10B981","wood"],["cafe","커피존","잠깐 쉬어가기","#EC4899","tile"],["desk","영업지원 데스크","영업센터·자료센터","#8B5CF6","tile"]]
+  .forEach((t,i)=>ROOMS.push({id:t[0],name:t[1],sub:t[2],x:40+i*306,y:730,w:288,h:240,c:t[3],floor:t[4],team:i<3}));
+const LINKS={edu:[["교육 일정","/#v=schedule"],["영업전략·소식지","/#v=salesstrategy"]],lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],meet:[["일정달력","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"],["내 DB 조회","/#v=fclookup"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],cafe:[],desk:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"],["내 DB 조회","/#v=fclookup"]]};
 function el(cls,css,html){ const d=document.createElement("div"); d.className=cls; Object.assign(d.style,css||{}); if(html!=null) d.innerHTML=html; return d; }
 const px=v=>v+"px";
 ROOMS.forEach(r=>{ const d=el("room "+r.floor,{left:px(r.x),top:px(r.y),width:px(r.w),height:px(r.h)}); d.style.setProperty("--c",r.c);
@@ -156,25 +156,26 @@ ROOMS.forEach(r=>{ const d=el("room "+r.floor,{left:px(r.x),top:px(r.y),width:px
   W.appendChild(d);
   // 문: 지사 사무실은 아래쪽, 나머지는 로비 쪽
   const dw=70; if(r.branch) W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y+r.h-6),width:px(dw),height:px(6)}));
-  if(r.id==="edu"||r.id==="cafe") W.appendChild(el("door",{left:px(r.x+r.w-6),top:px(r.y+r.h/2-dw/2),width:px(6),height:px(dw)}));
-  if(r.id==="meet"||r.id==="desk") W.appendChild(el("door",{left:px(r.x),top:px(r.y+r.h/2-dw/2),width:px(6),height:px(dw)}));
-  if(r.id==="lobby"){ W.appendChild(el("door",{left:px(r.x),top:px(r.y+150),width:px(6),height:px(dw)})); W.appendChild(el("door",{left:px(r.x+r.w-6),top:px(r.y+150),width:px(6),height:px(dw)})); W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y),width:px(120),height:px(6)})); W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y+r.h-6),width:px(120),height:px(6)})); }
+  if(r.id==="edu"||r.id==="meet") W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y+r.h-6),width:px(dw),height:px(6)}));
+  if(r.y===730) W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y),width:px(dw),height:px(6)}));
+  if(r.id==="lobby"){ W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y),width:px(120),height:px(6)})); W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y+r.h-6),width:px(120),height:px(6)})); }
   // 가구
   const F=(cls,x,y,w,h,html)=>{ const f=el("f "+cls,{left:px(r.x+x),top:px(r.y+y),width:w?px(w):"",height:h?px(h):""},html); W.appendChild(f); return f; };
   if(r.branch){ [[30,40],[134,40],[30,130],[134,130]].forEach(([x,y])=>{ F("desk",x,y,74,46); F("chair",x+24,y+52); }); F("plant",r.w-48,r.h-60); }
-  if(r.id==="edu"){ F("board",130,22,160,46,"강의 화면"); F("lectern",195,80,30,22); for(let row=0;row<3;row++) for(let c=0;c<5;c++) F("chair",60+c*62,130+row*58); F("plant",14,r.h-50); }
-  if(r.id==="lobby"){ F("sofa",150,120,300,46); F("sofa",150,250,300,46); F("table",270,180,60,60); F("plant",20,20); F("plant",r.w-54,20); F("plant",20,r.h-54); F("plant",r.w-54,r.h-54);
-    const k=F("kiosk",r.w/2-40,r.h-90,80,60,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); location.href="/#v=notice"; }); }
-  if(r.id==="meet"){ F("table",120,90,180,120); [[110,70],[180,60],[250,70],[110,215],[180,225],[250,215],[95,140],[300,140]].forEach(([x,y])=>F("chair",x,y)); F("board",20,22,90,40,"회의 안건"); }
-  if(r.id==="cafe"){ F("counter",20,30,170,50); F("table",250,60,56,56); F("table",320,140,56,56); F("table",230,150,56,56); F("plant",r.w-50,14); }
-  if(r.id==="desk"){ F("counter",100,40,220,50); F("chair",150,100); F("chair",250,100); F("plant",20,r.h-56); }
+  if(r.id==="edu"){ F("board",130,22,160,46,"강의 화면"); F("lectern",195,80,30,22); for(let row=0;row<3;row++) for(let c=0;c<5;c++) F("chair",60+c*62,125+row*50); F("plant",14,r.h-50); }
+  if(r.id==="lobby"){ F("sofa",150,70,300,44); F("sofa",150,180,300,44); F("table",270,118,56,56); F("plant",20,20); F("plant",r.w-54,20); F("plant",20,r.h-54);
+    const k=F("kiosk",r.w-120,r.h-80,80,60,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); location.href="/#v=notice"; }); }
+  if(r.id==="meet"){ F("table",120,80,180,110); [[110,60],[180,50],[250,60],[110,195],[180,205],[250,195],[95,125],[300,125]].forEach(([x,y])=>F("chair",x,y)); F("board",20,22,90,40,"회의 안건"); }
+  if(r.team){ [[24,40],[150,40],[24,130],[150,130]].forEach(([x,y])=>{ F("desk",x,y,74,46); F("chair",x+24,y+52); }); }
+  if(r.id==="cafe"){ F("counter",20,30,140,46); F("table",190,60,50,50); F("table",120,140,50,50); F("table",210,150,50,50); F("plant",r.w-48,r.h-60); }
+  if(r.id==="desk"){ F("counter",40,40,200,46); F("chair",90,96); F("chair",170,96); F("plant",20,r.h-56); }
 });
 function roomAt(x,y){ for(const r of ROOMS){ if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h) return r; } return null; }
 function canEnter(r){ return !r||!r.branch||ME.admin||r.branch===ME.branch; }
 
 /* ---- 화면 크기 ---- */
 const MB=$("#mapbox"); let SC=1;
-function fit(){ SC=Math.min(MB.clientWidth/1600,MB.clientHeight/1000); W.style.transform=`translate(${(MB.clientWidth-1600*SC)/2}px,${(MB.clientHeight-1000*SC)/2}px) scale(${SC})`; }
+function fit(){ SC=Math.min(MB.clientWidth/1600,MB.clientHeight/1080); W.style.transform=`translate(${(MB.clientWidth-1600*SC)/2}px,${(MB.clientHeight-1080*SC)/2}px) scale(${SC})`; }
 window.addEventListener("resize",fit); fit();
 
 /* ---- 아바타 ---- */
@@ -195,7 +196,7 @@ avatar(ME.id,{x:pos.x,y:pos.y,name:ME.name,branch:ME.branch,st:myst});
 const ST={on:"근무중",busy:"상담중",away:"자리비움"};
 function toast(t){ const o=$("#toast"); o.textContent=t; o.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>o.classList.remove("on"),1800); }
 function updWhere(){ const r=roomAt(pos.x,pos.y)||{name:"복도",id:"hall"}; $("#sRoom").textContent=r.name; $("#pRoom").textContent="📍 "+r.name;
-  const L=LINKS[r.id]||(r.branch?[["지사 공지·게시판","/#v=notice"]]:[]); $("#where").innerHTML=`<b>${E(r.name)}</b>${r.sub?E(r.sub):"공용 통로"}${L.length?"<br>"+L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):""}`;
+  const L=LINKS[r.id]||(r.branch?[["지사 공지·게시판","/#v=notice"]]:[]); $("#where").innerHTML=`<b>${E(r.name)}</b>${L.length?L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):`<span style="color:#6B7A8C">${E(r.sub||"공용 통로")}</span>`}`;
   const here=Object.values(AV).filter(a=>{ const q=roomAt(a.x,a.y); return (q&&q.id)===(r.id); }).length; $("#sHere").textContent=here+"명"; }
 function moveTo(nx,ny,send){
   nx=Math.max(24,Math.min(1576,nx)); ny=Math.max(24,Math.min(976,ny));
