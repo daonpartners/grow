@@ -159,7 +159,7 @@ button{font:inherit;cursor:pointer}
 .mcard{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;font-size:13.5px;line-height:1.6;white-space:pre-wrap}.mcard b{font-size:14.5px;color:var(--navy)}.mcard small{display:block;color:var(--muted);margin-top:4px}.mcard button{float:right;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:12px;padding:2px 8px}
 #chBox{left:50%;top:50%;transform:translate(-50%,-50%);width:520px;max-width:calc(100% - 32px);max-height:calc(100% - 32px)}
 .chb{padding:16px;overflow:auto}
-.chprev{display:flex;align-items:center;justify-content:center;height:110px;background:#F6F8FB;border-radius:14px;margin-bottom:12px;position:relative}
+.chprev{display:flex;align-items:center;justify-content:center;height:150px;background:#F6F8FB;border-radius:14px;margin-bottom:12px;position:relative}
 .chprev .av{position:relative;left:auto;top:auto;margin:30px 0 0;transform:scale(1.6)}
 .chg{margin-top:10px}.chg b{display:block;font-size:13px;color:var(--navy);margin-bottom:6px}
 .chopts{display:flex;flex-wrap:wrap;gap:6px}
@@ -168,6 +168,28 @@ button{font:inherit;cursor:pointer}
 .chopts button.c{border-radius:50%}
 
 
+
+/* 3D 그림 방·캐릭터 */
+#world{background-color:#EDE3D3!important;background-image:linear-gradient(rgba(120,90,50,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(120,90,50,.06) 1px,transparent 1px)!important;background-size:60px 60px!important}
+.mapbox{background:#E4D8C4}
+.door{background:#EDE3D3}
+.room.art{border:0;background:rgba(255,250,240,.55)!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75),0 6px 16px rgba(90,60,30,.10);border-radius:22px}
+.room.art::before{height:5px;border-radius:22px 22px 0 0}
+.room.art::after{content:"";position:absolute;left:6px;right:6px;top:12px;bottom:22px;background:var(--art) center/contain no-repeat;filter:drop-shadow(0 12px 14px rgba(70,45,20,.28));transition:filter .4s}
+.room.art.dark::after{filter:drop-shadow(0 12px 14px rgba(70,45,20,.2)) brightness(.78) saturate(.85)}
+.room.art .sub{bottom:4px;color:rgba(70,45,20,.6)}
+.room.art .tag{z-index:3}
+.av .b.spr{width:46px;height:60px;margin:-24px 0 0 -1px;background:none!important;border:0;border-radius:0;box-shadow:none!important;display:block}
+.av .b.spr img{width:100%;height:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 5px 3px rgba(40,25,10,.35))}
+.av.spr .n{top:-44px}.av.spr .acc{top:-40px;right:-6px}
+.av.me.spr .b.spr::after{content:"";position:absolute;left:50%;bottom:-4px;width:44px;height:12px;margin-left:-22px;border-radius:50%;background:rgba(245,130,32,.45);box-shadow:0 0 0 2px rgba(245,130,32,.8);z-index:-1}
+.av.bot .b.spr{width:80px;height:96px;margin:-52px 0 0 -18px;animation:float 2.6s ease-in-out infinite}
+.av.bot .b.spr img{filter:drop-shadow(0 0 12px rgba(20,184,166,.9)) drop-shadow(0 8px 6px rgba(0,0,0,.25))}
+.av.bot.spr .n{top:-74px}.av.bot.spr::before{margin-top:-80px}.av.bot.spr .say{bottom:86px}.av.spr .say{bottom:62px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.av.guide .b.spr{width:52px;height:66px;margin:-30px 0 0 -4px}
+.chopts button img{display:block}
+.chprev .av.spr{margin-top:56px}
 </style>
 </head>
 <body>
@@ -257,10 +279,11 @@ let ME=null, BOOT=null;
 /* ---- 지도 ---- */
 const W=$("#world"); const ROOMS=[];
 BR.forEach((b,i)=>ROOMS.push({id:"br_"+b[0],name:b[0]+"지사",sub:"지사장 "+b[2],x:40+i*258,y:40,w:238,h:250,branch:b[0],c:b[1],floor:"wood"}));
-ROOMS.push({id:"edu",name:"교육·회의실",sub:"줌 강의 · 화상회의 · 회의 기록",x:40,y:360,w:740,h:300,c:"#2D7FF9",floor:"carpet"});
-ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:820,y:360,w:740,h:300,c:"#14B8A6",floor:"marble"});
+ROOMS.push({id:"edu",name:"교육·회의실",sub:"줌 강의 · 화상회의 · 회의 기록",x:40,y:360,w:740,h:320,c:"#2D7FF9",floor:"carpet"});
+ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:820,y:360,w:740,h:320,c:"#14B8A6",floor:"marble"});
 [["online","온라인영업팀","영업부 · 블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","영업부 · 산모교실·아파트·펫 등","#F97316","wood"],["biz","사업자영업팀","영업부 · 소상공인·기업","#10B981","wood"],["cafe","커피존","잠깐 쉬어가기","#EC4899","tile"],["desk","영업지원 데스크","보험사 정보·영업센터·영업전략","#8B5CF6","tile"],["private","나만의 공간","다른 사람에게 보이지 않음","#0E2A47","carpet"]]
   .forEach((t,i)=>ROOMS.push({id:t[0],name:t[1],sub:t[2],x:40+i*256,y:730,w:240,h:240,c:t[3],floor:t[4],team:i<3}));
+function artOf(r){ if(r.branch) return "room_branch"; return ({edu:"room_edu",lobby:"room_lobby",online:"room_team",event:"room_team",biz:"room_team",cafe:"room_cafe",desk:"room_desk",private:"room_private"})[r.id]||""; }
 const LINKS={lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],edu:[["교육·회의 일정","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],desk:[["보험사 정보","/#v=insurers"],["영업센터","/#v=salescenter"],["영업전략","/#v=salesstrategy"]]};
 function el(cls,css,html){ const d=document.createElement("div"); d.className=cls; Object.assign(d.style,css||{}); if(html!=null) d.innerHTML=html; return d; }
 const px=v=>v+"px"; const RE={};
@@ -273,6 +296,9 @@ ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),wid
   if(r.y===730) W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y),width:px(dw),height:px(6)}));
   if(r.id==="lobby"){ W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y),width:px(120),height:px(6)})); W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y+r.h-6),width:px(120),height:px(6)})); }
   const F=(cls,x,y,w,h,html)=>{ const f=el("f "+cls,{left:px(r.x+x),top:px(r.y+y),width:w?px(w):"",height:h?px(h):""},html); W.appendChild(f); return f; };
+  const art=artOf(r); if(art){ d.classList.add("art"); d.style.setProperty("--art",`url(art/${art}.webp)`);
+    if(r.id==="lobby"){ const k=F("kiosk",r.w-110,r.h-74,80,56,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); openPage("/#v=notice","그로우 공지사항"); }); }
+    return; }
   if(r.branch){ [[30,40],[134,40],[30,130],[134,130]].forEach(([x,y])=>{ F("desk",x,y,74,46); F("chair",x+24,y+52); }); F("plant",r.w-48,r.h-60); }
   if(r.id==="edu"){ F("board",130,22,160,46,"강의 화면"); F("lectern",195,80,30,22); for(let row=0;row<3;row++) for(let c=0;c<5;c++) F("chair",60+c*62,125+row*50); F("plant",14,r.h-50);
     F("table",470,95,180,100); [[460,72],[530,62],[600,72],[460,200],[530,210],[600,200],[445,135],[665,135]].forEach(([x,y])=>F("chair",x,y)); F("board",470,22,180,40,"회의 안건"); F("plant",r.w-48,r.h-56); }
@@ -296,7 +322,11 @@ function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid
   Object.assign(a,info); a.el.style.left=px(a.x); a.el.style.top=px(a.y);
   const bb=a.el.querySelector(".b"), lk=a.look||{}; const face=a.icon||(lk.f&&lk.f!=="A"&&lk.f!=="IMG"?lk.f:"");
   const img=okImg(lk.img)&&lk.f==="IMG"?lk.img:"";
-  bb.textContent=img?"":(face||String(a.name||"?").slice(0,1)); bb.classList.toggle("face",!!face&&!img); if(!a.npc){ bb.style.background=lk.c||BCOL[short(a.branch)]||"#1F8A7A"; if(img){ bb.style.backgroundImage=`url("${img}")`; bb.style.backgroundSize="cover"; bb.style.backgroundPosition="center"; } }
+  const spr=a.sprite||(lk.f&&/^S:/.test(lk.f)&&SPR.indexOf(lk.f.slice(2))>=0?lk.f.slice(2):"");
+  a.el.classList.toggle("spr",!!spr); bb.classList.toggle("spr",!!spr);
+  if(spr){ if(bb.dataset.s!==spr){ bb.dataset.s=spr; bb.innerHTML=`<img src="art/${spr}.webp" alt="">`; } if(!a.npc){ bb.style.background=""; bb.style.backgroundImage=""; } }
+  else { if(bb.dataset.s){ bb.dataset.s=""; bb.innerHTML=""; }
+  bb.textContent=img?"":(face||String(a.name||"?").slice(0,1)); bb.classList.toggle("face",!!face&&!img); if(!a.npc){ bb.style.background=lk.c||BCOL[short(a.branch)]||"#1F8A7A"; if(img){ bb.style.backgroundImage=`url("${img}")`; bb.style.backgroundSize="cover"; bb.style.backgroundPosition="center"; } } }
   a.el.querySelector(".acc").textContent=lk.a&&lk.a!=="-"?lk.a:"";
   a.el.querySelector(".n").innerHTML=E(a.name)+(a.branch?`<em>${E(short(a.branch))}</em>`:"");
   const pr=roomAt(a.x,a.y); a.room=pr?pr.id:"hall"; a.el.style.display=(a.room==="private"&&!(ME&&id===ME.uid))?"none":""; return a; }
@@ -307,14 +337,14 @@ function emo(id,e){ const a=AV[id]; if(!a) return; const s=el("emo",{},E(e)); a.
 function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit) occ[a.room]=1; }); ROOMS.forEach(r=>{ const on=!!occ[r.id]&&(r.id!=="private"||(ME&&AV[ME.uid]&&AV[ME.uid].room==="private")); RE[r.id].classList.toggle("lit",on); RE[r.id].classList.toggle("dark",!on); }); }
 
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
-const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",room:"desk",lit:true,guide:true,home:[120,110]},{id:"npc3",name:"다오니",icon:"🐳",room:"lobby",walk:true},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",room:"lobby",lit:true,bot:true,fixed:true,home:[120,150]}];
+const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[120,110]},{id:"npc3",name:"다오니",icon:"🐳",room:"lobby",walk:true},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"lobby",lit:true,bot:true,fixed:true,home:[120,150]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.id==="npc2"&&GMBUSY&&AV[ME&&ME.uid]){ const a=AV[ME.uid]; return [a.x+55,a.y+10]; }
   if(n.room==="hall"){ const lanes=[[40+Math.random()*1520,320],[40+Math.random()*1520,695],[480,320+Math.random()*380],[1120,320+Math.random()*380]]; return lanes[Math.floor(Math.random()*lanes.length)]; }
   if(n.fixed) return [r.x+n.home[0],r.y+n.home[1]];
   if(!n.walk) return [r.x+n.home[0]+(Math.random()*40-20),r.y+n.home[1]+(Math.random()*20-10)];
   return [r.x+40+Math.random()*(r.w-80),r.y+50+Math.random()*(r.h-100)]; }
-function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
+function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,sprite:n.sprite,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
 const NPCSAY=["오늘도 화이팅이에요!","출근 체크 잊지 마세요 :)"];
 setInterval(()=>{ const n=NPC.find(x=>x.id==="npc3"); if(!n||GMBUSY) return; say(n.id,NPCSAY[Math.floor(Math.random()*NPCSAY.length)]); },18000);
 const BOTSAY=["궁금한 약관·청구, 저에게 물어보세요!","저를 누르면 바로 질문할 수 있어요 🤖","상품·서류·업무 절차 다 물어보세요"]; let botN=0;
@@ -498,7 +528,8 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.dataset&&t.dataset.mdel){ if(!confirm("이 회의록을 지울까요?")) return; const r=await api({action:"notice_del",id:t.dataset.mdel}); if(r&&r.ok){ await openHist(); await reboot(); } else toast((r&&r.error)||"실패했습니다."); } });
 
 /* ---- 내 캐릭터 꾸미기 ---- */
-const FACES=["A","🧑‍💼","👩‍💼","👨‍💼","👩🏻","🧔","👩‍🦱","👨‍🦳","🐳","🐻","🦊","🐰","🐱","🐶","🐼","🐯"];
+const SPR=["ch_m_suit","ch_f_suit","ch_m_casual","ch_f_casual","ch_m_glasses","ch_f_short","ch_m_senior","ch_f_senior"];
+const FACES=SPR.map(x=>"S:"+x).concat(["A","🧑‍💼","👩‍💼","👨‍💼","👩🏻","🧔","👩‍🦱","👨‍🦳","🐳","🐻","🦊","🐰","🐱","🐶","🐼","🐯"]);
 const COLORS=["","#F58220","#12A388","#3B82F6","#8B5CF6","#EC4899","#E5A00D","#EF4444","#0E2A47","#64748B"];
 const ACCS=["-","🎩","👑","🧢","🎀","👓","🌸","⭐","🎧","💼"];
 let LOOK={}, DRAFT={};
@@ -511,8 +542,9 @@ document.addEventListener("change",e=>{ if(!e.target||e.target.id!=="chFile") re
   im.onerror=()=>{ URL.revokeObjectURL(u); toast("이 이미지를 읽지 못했습니다."); }; im.src=u; });
 function loadLook(){ try{ return JSON.parse(localStorage.getItem("growLook_"+ME.uid)||"{}")||{}; }catch(e){ return {}; } }
 function chRender(){ const P=$("#chPrev"); P.innerHTML=""; const d=el("av",{}); d.innerHTML=`<div class="n">${E(ME.name)}<em>${E(short(ME.branch))}</em></div><div class="b"></div><span class="acc"></span>`; P.appendChild(d);
-  const img=DRAFT.f==="IMG"&&okImg(DRAFT.img)?DRAFT.img:""; const face=DRAFT.f&&DRAFT.f!=="A"&&!img?DRAFT.f:""; const bb=d.querySelector(".b"); bb.textContent=img?"":(face||ME.name.slice(0,1)); bb.classList.toggle("face",!!face); bb.style.background=DRAFT.c||BCOL[short(ME.branch)]||"#1F8A7A"; if(img){ bb.style.backgroundImage=`url("${img}")`; bb.style.backgroundSize="cover"; bb.style.backgroundPosition="center"; } d.querySelector(".acc").textContent=DRAFT.a&&DRAFT.a!=="-"?DRAFT.a:"";
-  $("#chFace").innerHTML=(okImg(DRAFT.img)?[`<button type="button" data-chf="IMG" class="${DRAFT.f==="IMG"?"on":""}" style="background:url('${DRAFT.img}') center/cover"></button>`]:[]).concat(FACES.map(f=>`<button type="button" data-chf="${f}" class="${(DRAFT.f||"A")===f?"on":""}">${f==="A"?E(ME.name.slice(0,1)):f}</button>`)).join("");
+  const sp=DRAFT.f&&/^S:/.test(DRAFT.f)?DRAFT.f.slice(2):""; if(sp){ d.classList.add("spr"); const b0=d.querySelector(".b"); b0.classList.add("spr"); b0.innerHTML=`<img src="art/${sp}.webp" alt="">`; d.querySelector(".acc").textContent=DRAFT.a&&DRAFT.a!=="-"?DRAFT.a:""; }
+  const img=DRAFT.f==="IMG"&&okImg(DRAFT.img)?DRAFT.img:""; const face=sp?"":(DRAFT.f&&DRAFT.f!=="A"&&!img?DRAFT.f:""); const bb=d.querySelector(".b"); if(!sp){ bb.textContent=img?"":(face||ME.name.slice(0,1)); bb.classList.toggle("face",!!face); } if(!sp) bb.style.background=DRAFT.c||BCOL[short(ME.branch)]||"#1F8A7A"; if(img){ bb.style.backgroundImage=`url("${img}")`; bb.style.backgroundSize="cover"; bb.style.backgroundPosition="center"; } d.querySelector(".acc").textContent=DRAFT.a&&DRAFT.a!=="-"?DRAFT.a:"";
+  $("#chFace").innerHTML=(okImg(DRAFT.img)?[`<button type="button" data-chf="IMG" class="${DRAFT.f==="IMG"?"on":""}" style="background:url('${DRAFT.img}') center/cover"></button>`]:[]).concat(FACES.map(f=>`<button type="button" data-chf="${f}" class="${(DRAFT.f||"A")===f?"on":""}">${f==="A"?E(ME.name.slice(0,1)):(/^S:/.test(f)?`<img src="art/${f.slice(2)}.webp" alt="" style="height:36px">`:f)}</button>`)).join("");
   $("#chColor").innerHTML=COLORS.map(c=>`<button type="button" class="c ${(DRAFT.c||"")===c?"on":""}" data-chc="${c}" style="background:${c||BCOL[short(ME.branch)]||"#1F8A7A"}" title="${c?"":"지사 색"}"></button>`).join("");
   $("#chAcc").innerHTML=ACCS.map(a=>`<button type="button" data-cha="${a}" class="${(DRAFT.a||"-")===a?"on":""}">${a==="-"?"✕":a}</button>`).join(""); }
 function bdFill(){ const v=(BOOT&&BOOT.bday)||""; const [m,d]=v?v.split("-"):["",""]; $("#bdM").innerHTML='<option value="">월</option>'+Array.from({length:12},(_,i)=>{ const x=String(i+1).padStart(2,"0"); return `<option value="${x}" ${x===m?"selected":""}>${i+1}월</option>`; }).join(""); $("#bdD").innerHTML='<option value="">일</option>'+Array.from({length:31},(_,i)=>{ const x=String(i+1).padStart(2,"0"); return `<option value="${x}" ${x===d?"selected":""}>${i+1}일</option>`; }).join(""); }
