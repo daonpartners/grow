@@ -251,6 +251,14 @@ button{font:inherit;cursor:pointer}
 .side.nochat .tabs,.side.nochat .log,.side.nochat .send{display:none!important}
 .side.nochat .panel{max-height:none!important;flex:1!important;overflow:auto;border-bottom:none}
 .send input{min-width:0}
+.att span{word-break:keep-all;line-height:1.45}.att button{flex:none;white-space:nowrap}
+.trow{display:flex;gap:6px;margin-top:8px}.trow input{flex:1;min-width:0}.trow button{flex:none;white-space:nowrap}
+.pbtn{word-break:keep-all}
+.panel{word-break:keep-all}
+.ttl .sm{white-space:nowrap}
+.homebtn{position:fixed;z-index:65;right:16px;bottom:16px;background:#14B8A6;color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:800;font-size:14px;box-shadow:0 6px 16px rgba(20,184,166,.45);display:none}
+.homebtn.on{display:block}
+@media (max-width:700px){ .homebtn{bottom:64px;right:10px;padding:9px 13px;font-size:13px} .shopen.on~.homebtn{bottom:118px} .sheeth button{padding:6px 9px} }
 </style>
 </head>
 <body>
@@ -314,8 +322,9 @@ button{font:inherit;cursor:pointer}
     </div>
   </div>
   <button type="button" class="shopen" id="shOpen"></button>
+  <button type="button" class="homebtn" id="homeBtn">🏠 로비로</button>
   <div class="side" id="side">
-    <div class="sheeth"><b id="shT">로비</b><span id="shS" class="sm"></span><button type="button" id="shClose">지도 보기 ▾</button></div>
+    <div class="sheeth"><b id="shT">로비</b><span id="shS" class="sm"></span><button type="button" id="shLobby">🏠 로비</button><button type="button" id="shClose">지도 ▾</button></div>
     <h3>접속자</h3>
     <div class="who" id="who"></div>
     <div class="panel" id="panel"></div>
@@ -479,7 +488,7 @@ async function enterRoom(){ const r=curRoom(); renderPanel(r); TAB=r.id==="priva
 function renderPanel(r){ const P=$("#panel"); let h="";
   if(r.id==="private"){ const att=BOOT&&BOOT.att;
     h=`<div class="ttl"><b>🔒 나만의 공간</b><span class="sm">다른 사람에게 안 보임</span></div>
-      <div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를 아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
+      <div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를<br>아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
       <a class="pbtn" href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 CRM 열기 ↗</a><a class="pbtn o" href="/#v=fclookup">내 DB 조회</a>
       <h3 style="margin-top:12px;font-size:14px;color:var(--navy)">오늘 할 일</h3><div class="todo" id="todo"></div>
       <div class="trow"><input id="todoIn" maxlength="80" placeholder="할 일 추가 (Enter)"><button type="button" id="todoAdd">추가</button></div>`; }
@@ -608,12 +617,14 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<(MOBL?12:26);i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
 
 /* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
-function roomSheet(r){ const sd=$("#side"); if(!sd) return; sd.classList.toggle("nochat",r.id==="private"); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
+function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="private"); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
   const ob=$("#shOpen"); if(ob) ob.innerHTML=r.id==="hall"?"":`💬 <b>${E(r.name)}</b> 열기 ▴`;
   if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
   if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
   else { sd.classList.remove("flash"); void sd.offsetWidth; sd.classList.add("flash"); } }
-document.addEventListener("click",e=>{ if(e.target.closest("#shClose")){ $("#side").classList.remove("open"); const ob=$("#shOpen"); if(ob&&ob.innerHTML) ob.classList.add("on"); }
+document.addEventListener("click",e=>{ if(e.target.closest("#shLobby")){ const lb=document.querySelector('[data-jump="lobby"]'); if(lb) lb.click(); return; }
+  if(e.target.closest("#homeBtn")){ const lb=document.querySelector('[data-jump="lobby"]'); if(lb) lb.click(); $("#side").classList.remove("open"); return; }
+  if(e.target.closest("#shClose")){ $("#side").classList.remove("open"); const ob=$("#shOpen"); if(ob&&ob.innerHTML) ob.classList.add("on"); }
   if(e.target.closest("#shOpen")){ $("#side").classList.add("open"); $("#shOpen").classList.remove("on"); } });
 
 /* ---- 바로 가기 ---- */
