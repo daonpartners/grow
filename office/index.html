@@ -221,6 +221,19 @@ button{font:inherit;cursor:pointer}
   #calBox .chb{grid-template-columns:1fr!important}.calg .d{min-height:52px;font-size:11px}.calg .e{font-size:9.5px}
   .toast{position:fixed;top:64px;z-index:120}
 }
+.jump{display:flex;gap:6px;align-items:center;padding:8px 14px 0;overflow-x:auto;white-space:nowrap}
+.jump span{font-size:12.5px;font-weight:800;color:var(--navy);flex:none}
+.jump button{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ink)}
+.jump button[data-jump="mine"]{background:#FFF1E4;border-color:#F58220;color:#b25a0e}
+.room.mine{box-shadow:0 0 0 4px #F58220,0 0 22px rgba(245,130,32,.55)!important}
+.minetag{position:absolute;right:8px;bottom:22px;background:#F58220;color:#fff;font-weight:900;font-size:13px;padding:3px 10px;border-radius:999px;z-index:3;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+@media (max-width:700px){
+  .jump{padding:8px 8px 0}
+  .mapbox{height:auto;min-height:0}
+  .room .tag{font-size:17px;padding:4px 12px}.room .sub{font-size:13px}.minetag{font-size:17px}
+  .av .n{font-size:15px}
+  .emobar{position:fixed;bottom:12px;z-index:60}
+}
 </style>
 </head>
 <body>
@@ -244,6 +257,7 @@ button{font:inherit;cursor:pointer}
       <div class="stat" id="stSched" style="cursor:pointer;flex:1.6;border:2px solid #F58220"><span>📅 다가오는 일정 · 눌러서 달력 보기</span><b id="sNext" style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">불러오는 중…</b></div>
       <div class="stat"><span>오늘 출근</span><b id="sAtt">-</b></div>
     </div>
+    <div class="jump" id="jump"><span>📍 바로 가기</span><button type="button" data-jump="mine">⭐ 내 지사</button><button type="button" data-jump="lobby">로비</button><button type="button" data-jump="edu">교육·회의실</button><button type="button" data-jump="desk">영업지원 데스크</button><button type="button" data-jump="online">온라인영업팀</button><button type="button" data-jump="event">행사팀</button><button type="button" data-jump="biz">사업자영업팀</button><button type="button" data-jump="private">나만의 공간</button></div>
     <div class="mapbox" id="mapbox">
       <div id="world"></div>
       <div class="hint">방향키 · WASD 이동 / 바닥 클릭 이동</div>
@@ -318,17 +332,25 @@ ROOMS.push({id:"edu",name:"교육·회의실",sub:"줌 강의 · 화상회의 ·
 ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:656,y:340,w:904,h:280,c:"#14B8A6",floor:"marble"});
 [["online","온라인영업팀","영업부 · 블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","영업부 · 산모교실·아파트·펫 등","#F97316","wood"],["biz","사업자영업팀","영업부 · 소상공인·기업","#10B981","wood"],["desk","영업지원 데스크","보험사 정보·영업센터·영업전략","#8B5CF6","tile"],["private","나만의 공간","다른 사람에게 보이지 않음","#0E2A47","carpet"]]
   .forEach((t,i)=>{ const X=[40,314,588,862,1214], Wd=[258,258,258,336,346]; ROOMS.push({id:t[0],name:t[1],sub:t[2],x:X[i],y:690,w:Wd[i],h:220,c:t[3],floor:t[4],team:i<3}); });
+/* 휴대폰: 세로로 긴 배치(2줄)로 바꿔 사무실 전체가 잘리지 않게 보여 줌 */
+const MOBL=window.matchMedia("(max-width:700px)").matches;
+const WD=MOBL?{w:540,h:2080}:{w:1600,h:950};
+const LANES=MOBL?{y:[740,1300],x:[60,480]}:{y:[310,655],x:[80,1520]};
+if(MOBL){ const M={"br_광명":[20,20,240,220],"br_다온":[280,20,240,220],"br_동행":[20,260,240,220],"br_도약":[280,260,240,220],"br_혁신":[20,500,240,220],"br_리치로드맵":[280,500,240,220],
+  edu:[20,760,500,240],lobby:[20,1040,500,240],online:[20,1320,240,220],event:[280,1320,240,220],biz:[20,1580,240,220],desk:[280,1580,240,220],private:[20,1840,500,220]};
+  ROOMS.forEach(r=>{ const m=M[r.id]; if(m){ r.x=m[0]; r.y=m[1]; r.w=m[2]; r.h=m[3]; } }); }
 function artOf(r){ return ({edu:"flat_edu",lobby:"flat_lobby",desk:"flat_desk",private:"flat_private"})[r.id]||""; }
 const LINKS={lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],edu:[["교육·회의 일정","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],desk:[["보험사 정보","/#v=insurers"],["영업센터","/#v=salescenter"],["영업전략","/#v=salesstrategy"]]};
 function el(cls,css,html){ const d=document.createElement("div"); d.className=cls; Object.assign(d.style,css||{}); if(html!=null) d.innerHTML=html; return d; }
 const px=v=>v+"px"; const RE={};
-function buildMap(){
+function buildMap(){ W.style.width=WD.w+"px"; W.style.height=WD.h+"px";
 ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),width:px(r.w),height:px(r.h)}); d.style.setProperty("--c",r.c); RE[r.id]=d;
   d.appendChild(el("tag",{},E(r.name))); d.appendChild(el("lamp")); if(r.sub) d.appendChild(el("sub",{},E(r.sub)));
   if(r.branch&&!canEnter(r)) d.appendChild(el("lock",{},"소속만"));
+  if(r.branch&&ME&&ME.role!=="admin"&&r.branch===short(ME.parent||ME.branch)){ d.classList.add("mine"); d.appendChild(el("minetag",{},"⭐ 내 지사")); }
   W.appendChild(d);
   const dw=70; if(r.branch||r.id==="edu") W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y+r.h-6),width:px(dw),height:px(6)}));
-  if(r.y===690) W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y),width:px(dw),height:px(6)}));
+  if(!MOBL&&r.y===690) W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y),width:px(dw),height:px(6)}));
   if(r.id==="lobby"){ W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y),width:px(120),height:px(6)})); W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y+r.h-6),width:px(120),height:px(6)})); }
   const F=(cls,x,y,w,h,html)=>{ const f=el("f "+cls,{left:px(r.x+x),top:px(r.y+y),width:w?px(w):"",height:h?px(h):""},html); W.appendChild(f); return f; };
   const art=artOf(r); if(art){ d.classList.add("art"); d.style.setProperty("--art",`url(art/${art}.webp)`);
@@ -350,8 +372,7 @@ function canEnter(r){ if(!r||!r.branch) return true; if(!ME) return false; retur
 const MB=$("#mapbox"); let SC=1;
 const MOB=()=>window.matchMedia("(max-width:700px)").matches;
 function fit(){ const w=MB.clientWidth, h=MB.clientHeight;
-  if(MOB()){ SC=Math.max(h/950,w/1600); let p0=null; try{ p0=pos; }catch(_){} const px0=p0?p0.x:800, py0=p0?p0.y:475;
-    const tx=Math.min(0,Math.max(w-1600*SC,w/2-px0*SC)), ty=Math.min(0,Math.max(h-950*SC,h/2-py0*SC)); W.style.transform=`translate(${tx}px,${ty}px) scale(${SC})`; return; }
+  if(MOBL){ SC=w/WD.w; const hh=Math.round(WD.h*SC); if(MB.style.height!==hh+"px") MB.style.height=hh+"px"; W.style.transform=`scale(${SC})`; return; }
   SC=Math.min(w/1600,h/950); W.style.transform=`translate(${(w-1600*SC)/2}px,${(h-950*SC)/2}px) scale(${SC})`; }
 window.addEventListener("resize",fit); fit();
 
@@ -376,13 +397,13 @@ function emo(id,e){ const a=AV[id]; if(!a) return; const s=el("emo",{},E(e)); a.
 function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit) occ[a.room]=1; }); ROOMS.forEach(r=>{ const on=!!occ[r.id]&&(r.id!=="private"||(ME&&AV[ME.uid]&&AV[ME.uid].room==="private")); RE[r.id].classList.toggle("lit",on); RE[r.id].classList.toggle("dark",!on); }); }
 
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
-const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"hall",lit:true,bot:true,slow:true,home:[800,655]}];
+const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"hall",lit:true,bot:true,slow:true,home:[LANES.x[0]+(LANES.x[1]-LANES.x[0])/2,LANES.y[1]]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.id==="npc2"&&GMBUSY&&AV[ME&&ME.uid]){ const a=AV[ME.uid]; return [a.x+55,a.y+10]; }
   if(n.fixed) return [r.x+n.home[0],r.y+n.home[1]];
   if(n.slow&&n.room==="hall"){ const now=Date.now(); if(!n.cur) n.cur=n.home.slice(); if(n.next&&now<n.next) return n.cur; n.next=now+9000+Math.random()*5000;
-    const ly=Math.abs(n.cur[1]-310)<Math.abs(n.cur[1]-655)?310:655; const step=(80+Math.random()*160)*(Math.random()<.5?-1:1); let x=n.cur[0]+step; if(x<80||x>1520) x=n.cur[0]-step;
-    n.cur=[Math.max(80,Math.min(1520,x)),ly+(Math.random()*16-8)]; return n.cur; }
+    const ly=Math.abs(n.cur[1]-LANES.y[0])<Math.abs(n.cur[1]-LANES.y[1])?LANES.y[0]:LANES.y[1]; const step=(60+Math.random()*(MOBL?100:160))*(Math.random()<.5?-1:1); let x=n.cur[0]+step; if(x<LANES.x[0]||x>LANES.x[1]) x=n.cur[0]-step;
+    n.cur=[Math.max(LANES.x[0],Math.min(LANES.x[1],x)),ly+(Math.random()*12-6)]; return n.cur; }
   if(n.slow){ const now=Date.now(); if(!n.cur) n.cur=[r.x+n.home[0],r.y+n.home[1]];
     if(n.next&&now<n.next) return n.cur; n.next=now+9000+Math.random()*5000;
     const ang=Math.random()*Math.PI*2, d=60+Math.random()*120; const x=Math.max(r.x+50,Math.min(r.x+r.w-50,n.cur[0]+Math.cos(ang)*d)), y=Math.max(r.y+70,Math.min(r.y+r.h-40,n.cur[1]+Math.sin(ang)*d*.6));
@@ -399,16 +420,16 @@ const start=ROOMS.find(r=>r.id==="lobby");
 let pos={x:start.x+start.w/2+(Math.random()*120-60),y:start.y+start.h/2+40}, curId="lobby";
 function toast(t){ const o=$("#toast"); o.textContent=t; o.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>o.classList.remove("on"),1800); }
 function moveTo(nx,ny,send){
-  nx=Math.max(24,Math.min(1576,nx)); ny=Math.max(24,Math.min(926,ny));
+  nx=Math.max(24,Math.min(WD.w-24,nx)); ny=Math.max(24,Math.min(WD.h-24,ny));
   const r=roomAt(nx,ny); if(!canEnter(r)){ if(!moveTo.w||Date.now()-moveTo.w>1500){ toast(r.name+"는 소속 설계사만 들어갈 수 있습니다."); moveTo.w=Date.now(); } return false; }
-  pos.x=nx; pos.y=ny; avatar(ME.uid,{x:nx,y:ny}); if(MOB()) fit(); const id=(r&&r.id)||"hall"; if(id!==curId){ curId=id; enterRoom(); } updWhere(); lights(); if(send!==false) sendMove(); return true; }
+  pos.x=nx; pos.y=ny; avatar(ME.uid,{x:nx,y:ny}); const id=(r&&r.id)||"hall"; if(id!==curId){ curId=id; enterRoom(); } updWhere(); lights(); if(send!==false) sendMove(); return true; }
 const keys={}; let target=null;
 /* 끌어서 옮기기: 내 캐릭터·보험비서 로봇을 마우스(손가락)로 끌어 원하는 자리에 놓음 */
 let DRAG=null, DRAGEND=0;
 W.addEventListener("pointerdown",e=>{ const el=e.target.closest(".av.me,.av.bot"); if(!el||!ME) return; const id=el.classList.contains("bot")?"aibot":ME.uid; const a=AV[id]; if(!a) return;
   DRAG={id,el,sx:e.clientX,sy:e.clientY,ox:a.x,oy:a.y,moved:false}; try{ el.setPointerCapture(e.pointerId); }catch(_){} e.preventDefault(); });
 W.addEventListener("pointermove",e=>{ if(!DRAG) return; const dx=(e.clientX-DRAG.sx)/SC, dy=(e.clientY-DRAG.sy)/SC; if(!DRAG.moved&&Math.hypot(dx,dy)<6) return;
-  DRAG.moved=true; DRAG.el.classList.add("dragging"); DRAG.x=Math.max(24,Math.min(1576,DRAG.ox+dx)); DRAG.y=Math.max(24,Math.min(926,DRAG.oy+dy)); DRAG.el.style.left=px(DRAG.x); DRAG.el.style.top=px(DRAG.y); });
+  DRAG.moved=true; DRAG.el.classList.add("dragging"); DRAG.x=Math.max(24,Math.min(WD.w-24,DRAG.ox+dx)); DRAG.y=Math.max(24,Math.min(WD.h-24,DRAG.oy+dy)); DRAG.el.style.left=px(DRAG.x); DRAG.el.style.top=px(DRAG.y); });
 function dragEnd(){ if(!DRAG) return; const D=DRAG; DRAG=null; D.el.classList.remove("dragging"); if(!D.moved) return; DRAGEND=Date.now();
   if(D.id==="aibot"){ const n=NPC.find(x=>x.id==="aibot"); const r=roomAt(D.x,D.y); n.room=r?r.id:"hall"; n.cur=[D.x,D.y]; n.next=Date.now()+60000; avatar("aibot",{x:D.x,y:D.y}); lights(); toast("보험비서를 옮겼습니다. 1분 뒤부터 그 근처를 돌아다닙니다."); }
   else { target=null; if(!moveTo(D.x,D.y)) avatar(ME.uid,{x:pos.x,y:pos.y}); } }
@@ -562,6 +583,11 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   const r=LOBBY(); const spots=[[18,r.h-70],[r.w-70,r.h-70],[r.w/2-30,8],[18,90],[r.w-60,110]]; spots.forEach(([x,y],i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[i%T.deco.length]; e.style.fontSize=(i===2?50:40)+"px"; e.style.left=px(r.x+x); e.style.top=px(r.y+y); W.appendChild(e); });
   ROOMS.filter(x=>x.branch||x.team).forEach((x,i)=>{ const e=document.createElement("div"); e.className="deco"; e.textContent=T.deco[(i+1)%T.deco.length]; e.style.fontSize="26px"; e.style.left=px(x.x+x.w-40); e.style.top=px(x.y+8); W.appendChild(e); });
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<26;i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
+
+/* ---- 바로 가기 ---- */
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-jump]"); if(!b||!ME) return; let id=b.dataset.jump; if(id==="mine"){ if(ME.role==="admin") return toast("관리자는 소속 지사가 없습니다."); id="br_"+short(ME.parent||ME.branch); }
+  const r=ROOMS.find(x=>x.id===id); if(!r) return toast("방을 찾지 못했습니다."); target=null;
+  if(moveTo(r.x+r.w/2+(Math.random()*40-20),r.y+r.h*0.62)){ const a=AV[ME.uid]; if(MOBL&&a) a.el.scrollIntoView({behavior:"smooth",block:"center"}); } });
 
 /* ---- 일정 달력 ---- */
 let ALLS=null, calM=null, calSel="";
