@@ -14,7 +14,9 @@
    - 저장: 채팅(전체·방별)·지사 공지·출근·할 일 → n8n 데이터 표. 지사 방 채팅·공지는 서버가 소속만 허용
    - 실시간: Supabase Realtime(보잇 프로젝트) 채널 'grow-office' — 접속자·이동·이모지·전체/팀 채팅 즉시 표시. 지사 방 채팅은 내용 대신 '새 글' 신호만 보내고 각자 서버에서 받아 옴
    - 화상회의: 회의실·교육장 버튼(기본 Jitsi, 지사장이 줌·미트 주소로 바꿀 수 있음). 행사팀 방: board/schedule.json 행사 일정
-   - 분위기: 사람이 있는 방은 불이 켜지고, 도우미 캐릭터(바리스타·안내·다오니·청소 로봇)가 돌아다님. 근무 상태 표시는 없음 */
+   - 분위기: 사람이 있는 방은 불이 켜지고, 도우미 캐릭터(바리스타·안내·다오니·청소 로봇)가 돌아다님. 근무 상태 표시는 없음
+   - 보험비서 AI: 로비 로봇·상단 버튼 → GROW ON 보험도우미와 같은 서버(daon-ai-v2), 고객 이름·연락처·주민번호 자동 삭제 후 전송
+   - 내 캐릭터: 얼굴·색상·소품 선택 → 이 기기(localStorage growLook_<uid>)에 저장 + 접속자에게 실시간 전달 */
 :root{--navy:#0E2A47;--navy2:#16385E;--teal:#1F8A7A;--orange:#F58220;--ink:#1B2333;--muted:#6B7A8C;--line:#E3E7EE;--bg:#F4F1EA}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:var(--bg)}
@@ -115,6 +117,35 @@ button{font:inherit;cursor:pointer}
 .ev{display:flex;gap:10px;align-items:flex-start;border-bottom:1px dashed var(--line);padding:7px 0;font-size:13px}.ev:last-child{border-bottom:none}
 .ev i{font-style:normal;min-width:62px;font-weight:800;color:var(--orange)}.ev.past i{color:var(--muted)}
 .pill.btn{cursor:pointer}
+.top .pill.btn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:13px;font-weight:800}
+.av .acc{position:absolute;right:-10px;top:-14px;font-size:20px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+.av .b.face{font-size:24px}
+.av.bot{cursor:pointer;pointer-events:auto;z-index:6}.av.bot .b{width:52px;height:52px;margin:-4px;background:linear-gradient(135deg,#2D7FF9,#14B8A6)!important;color:#fff!important;font-size:26px!important;box-shadow:0 0 0 4px rgba(45,127,249,.25),0 0 18px rgba(20,184,166,.6)!important;animation:pulse 2.4s ease-in-out infinite}
+.av.bot .n{background:linear-gradient(90deg,#2D7FF9,#14B8A6)!important;color:#fff!important;border:none}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.modal{position:absolute;z-index:20;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(14,42,71,.35);display:none;flex-direction:column;overflow:hidden}
+.modal.on{display:flex}
+.modal .mh{display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff}
+.modal .mh b{flex:1;font-size:15px}.modal .mh button{background:none;border:none;color:#fff;font-size:20px;line-height:1}
+#aiBox{right:16px;top:16px;bottom:64px;width:400px;max-width:calc(100% - 32px)}
+.aibody{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#F6F8FB}
+.aim{max-width:88%;padding:10px 12px;border-radius:12px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.aim.u{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+.aim.b{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.aim .bd{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;margin-bottom:6px;background:#FFF1E4;color:#b25a0e}.aim .bd.g{background:#E6F0FF;color:#1d5fc4}
+.aim .src{margin-top:8px;font-size:11.5px;color:var(--muted)}.aim .src a{color:var(--teal)}
+.aiform{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line)}.aiform input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}.aiform button{background:var(--navy);color:#fff;border:none;border-radius:10px;padding:0 14px;font-weight:800;white-space:nowrap}
+.aihint{font-size:11.5px;color:var(--muted);padding:0 12px 10px}
+#chBox{left:50%;top:50%;transform:translate(-50%,-50%);width:520px;max-width:calc(100% - 32px);max-height:calc(100% - 32px)}
+.chb{padding:16px;overflow:auto}
+.chprev{display:flex;align-items:center;justify-content:center;height:110px;background:#F6F8FB;border-radius:14px;margin-bottom:12px;position:relative}
+.chprev .av{position:relative;left:auto;top:auto;margin:30px 0 0;transform:scale(1.6)}
+.chg{margin-top:10px}.chg b{display:block;font-size:13px;color:var(--navy);margin-bottom:6px}
+.chopts{display:flex;flex-wrap:wrap;gap:6px}
+.chopts button{width:42px;height:42px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:22px;display:grid;place-items:center;padding:0}
+.chopts button.on{border-color:var(--orange);box-shadow:0 0 0 3px rgba(245,130,32,.2)}
+.chopts button.c{border-radius:50%}
+
 
 </style>
 </head>
@@ -126,6 +157,8 @@ button{font:inherit;cursor:pointer}
   <span class="pill off" id="pConn"><i></i><span>연결 중</span></span>
   <span class="pill" id="pRoom">📍 로비</span>
   <span class="sp"></span>
+  <button class="pill btn" type="button" id="btnChar">🎨 내 캐릭터</button>
+  <button class="pill btn" type="button" id="btnAi">🤖 보험비서 AI</button>
   <a href="/">← GROW ON</a>
 </div>
 <div class="wrap">
@@ -142,6 +175,17 @@ button{font:inherit;cursor:pointer}
       <div class="where" id="where"></div>
       <div class="emobar" id="emobar"></div>
       <div class="toast" id="toast"></div>
+      <div class="modal" id="aiBox"><div class="mh"><span style="font-size:22px">🤖</span><b>보험비서 AI</b><button type="button" id="aiNew" title="새로 질문" style="font-size:13px;font-weight:800;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:4px 8px">새 질문</button><button type="button" data-close="aiBox">✕</button></div>
+        <div class="aibody" id="aiBody"><div class="aim b">안녕하세요, 보험비서 AI입니다. 약관·상품·청구·업무 절차를 물어보세요.<br>사내 자료가 있으면 근거와 함께 답하고, 없으면 일반 지식(참고용)으로 답합니다.</div></div>
+        <form class="aiform" id="aiForm"><input id="aiIn" maxlength="500" placeholder="질문을 입력하세요" autocomplete="off"><button>질문</button></form>
+        <div class="aihint">고객 이름·연락처·주민번호는 자동으로 지워서 보냅니다. 답변은 참고용이며 약관·상품설명서로 확인하세요.</div></div>
+      <div class="modal" id="chBox"><div class="mh"><span style="font-size:20px">🎨</span><b>내 캐릭터 꾸미기</b><button type="button" data-close="chBox">✕</button></div>
+        <div class="chb"><div class="chprev" id="chPrev"></div>
+          <div class="chg"><b>캐릭터</b><div class="chopts" id="chFace"></div></div>
+          <div class="chg"><b>색상</b><div class="chopts" id="chColor"></div></div>
+          <div class="chg"><b>소품</b><div class="chopts" id="chAcc"></div></div>
+          <button class="pbtn o" type="button" id="chSave" style="margin-top:14px">저장하기</button>
+          <p class="sm" style="margin:8px 0 0">저장한 캐릭터는 이 기기에 기억되고, 접속 중인 다른 사람에게도 바로 보입니다.</p></div></div>
     </div>
   </div>
   <div class="side">
@@ -212,9 +256,11 @@ window.addEventListener("resize",fit); fit();
 
 /* ---- 아바타 ---- */
 const AV={};
-function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid?" me":"")+(info&&info.npc?" npc":""),{}); d.innerHTML=`<div class="n"></div><div class="b"></div>`; W.appendChild(d); a=AV[id]={el:d}; }
+function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid?" me":"")+(info&&info.npc?" npc":"")+(info&&info.bot?" bot":""),{}); d.innerHTML=`<div class="n"></div><div class="b"></div><span class="acc"></span>`; W.appendChild(d); a=AV[id]={el:d}; if(info&&info.bot) d.addEventListener("click",e=>{ e.stopPropagation(); openAi(); }); }
   Object.assign(a,info); a.el.style.left=px(a.x); a.el.style.top=px(a.y);
-  const bb=a.el.querySelector(".b"); bb.textContent=a.icon||String(a.name||"?").slice(0,1); if(!a.npc) bb.style.background=BCOL[short(a.branch)]||"#1F8A7A";
+  const bb=a.el.querySelector(".b"), lk=a.look||{}; const face=a.icon||(lk.f&&lk.f!=="A"?lk.f:"");
+  bb.textContent=face||String(a.name||"?").slice(0,1); bb.classList.toggle("face",!!face); if(!a.npc) bb.style.background=lk.c||BCOL[short(a.branch)]||"#1F8A7A";
+  a.el.querySelector(".acc").textContent=lk.a&&lk.a!=="-"?lk.a:"";
   a.el.querySelector(".n").innerHTML=E(a.name)+(a.branch?`<em>${E(short(a.branch))}</em>`:"");
   const pr=roomAt(a.x,a.y); a.room=pr?pr.id:"hall"; a.el.style.display=(a.room==="private"&&!(ME&&id===ME.uid))?"none":""; return a; }
 function drop(id){ const a=AV[id]; if(a){ a.el.remove(); delete AV[id]; } }
@@ -224,13 +270,13 @@ function emo(id,e){ const a=AV[id]; if(!a) return; const s=el("emo",{},E(e)); a.
 function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit) occ[a.room]=1; }); ROOMS.forEach(r=>{ const on=!!occ[r.id]&&(r.id!=="private"||(ME&&AV[ME.uid]&&AV[ME.uid].room==="private")); RE[r.id].classList.toggle("lit",on); RE[r.id].classList.toggle("dark",!on); }); }
 
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
-const NPC=[{id:"npc1",name:"바리스타",icon:"☕",room:"cafe",lit:true,home:[60,100]},{id:"npc2",name:"안내 데스크",icon:"💁",room:"desk",lit:true,home:[120,110]},{id:"npc3",name:"다오니",icon:"🐳",room:"lobby",walk:true},{id:"npc4",name:"청소 로봇",icon:"🤖",room:"hall",walk:true}];
+const NPC=[{id:"npc1",name:"바리스타",icon:"☕",room:"cafe",lit:true,home:[60,100]},{id:"npc2",name:"안내 데스크",icon:"💁",room:"desk",lit:true,home:[120,110]},{id:"npc3",name:"다오니",icon:"🐳",room:"lobby",walk:true},{id:"npc4",name:"청소 로봇",icon:"🧹",room:"hall",walk:true},{id:"aibot",name:"보험비서 AI · 눌러서 질문",icon:"🤖",room:"lobby",lit:true,bot:true,home:[90,150]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.room==="hall"){ const lanes=[[40+Math.random()*1520,320],[40+Math.random()*1520,695],[480,320+Math.random()*380],[1120,320+Math.random()*380]]; return lanes[Math.floor(Math.random()*lanes.length)]; }
   if(!n.walk) return [r.x+n.home[0]+(Math.random()*40-20),r.y+n.home[1]+(Math.random()*20-10)];
   return [r.x+40+Math.random()*(r.w-80),r.y+50+Math.random()*(r.h-100)]; }
-function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
-const NPCSAY=["오늘도 화이팅이에요!","커피 한 잔 어떠세요?","공지 확인하셨나요?","출근 체크 잊지 마세요 :)","행사팀 일정 나왔어요!"];
+function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
+const NPCSAY=["오늘도 화이팅이에요!","커피 한 잔 어떠세요?","공지 확인하셨나요?","출근 체크 잊지 마세요 :)","행사팀 일정 나왔어요!","보험비서 AI에게 약관 질문해 보세요 🤖"];
 setInterval(()=>{ const n=NPC[Math.floor(Math.random()*NPC.length)]; say(n.id,NPCSAY[Math.floor(Math.random()*NPCSAY.length)]); },18000);
 
 /* ---- 이동 ---- */
@@ -244,7 +290,7 @@ function moveTo(nx,ny,send){
 const keys={}; let target=null;
 document.addEventListener("keydown",e=>{ if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)) return; const k=e.key.toLowerCase(); if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){ keys[k]=1; target=null; e.preventDefault(); } });
 document.addEventListener("keyup",e=>{ keys[e.key.toLowerCase()]=0; });
-MB.addEventListener("click",e=>{ if(e.target.closest(".where,.emobar,.kiosk")) return; const rc=W.getBoundingClientRect(); target={x:(e.clientX-rc.left)/SC,y:(e.clientY-rc.top)/SC}; });
+MB.addEventListener("click",e=>{ if(e.target.closest(".where,.emobar,.kiosk,.modal,.av.bot")) return; const rc=W.getBoundingClientRect(); target={x:(e.clientX-rc.left)/SC,y:(e.clientY-rc.top)/SC}; });
 setInterval(()=>{ if(!ME) return; const sp=7; let dx=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0), dy=(keys.arrowdown||keys.s?1:0)-(keys.arrowup||keys.w?1:0);
   if(!dx&&!dy&&target){ const vx=target.x-pos.x, vy=target.y-pos.y, d=Math.hypot(vx,vy); if(d<sp) target=null; else { dx=vx/d; dy=vy/d; } }
   if(dx||dy){ const n=Math.hypot(dx,dy)||1; if(!moveTo(pos.x+dx/n*sp,pos.y+dy/n*sp)) target=null; } },33);
@@ -323,23 +369,62 @@ $("#emobar").addEventListener("click",e=>{ const b=e.target.closest("[data-e]");
 /* ---- 실시간 (접속자·이동) ---- */
 let ch=null, lastSent=0, pend=false;
 function sendMove(){ if(!ch) return; const now=Date.now(); if(now-lastSent<90){ if(!pend){ pend=true; setTimeout(()=>{ pend=false; sendMove(); },100); } return; } lastSent=now; ch.send({type:"broadcast",event:"mv",payload:{id:ME.uid,x:Math.round(pos.x),y:Math.round(pos.y)}}); }
-function track(){ if(ch) ch.track({id:ME.uid,name:ME.name,branch:ME.branch,x:Math.round(pos.x),y:Math.round(pos.y),at:Date.now()}); }
+function track(){ if(ch) ch.track({id:ME.uid,name:ME.name,branch:ME.branch,look:LOOK,x:Math.round(pos.x),y:Math.round(pos.y),at:Date.now()}); }
 function who(){ const L=Object.values(AV).filter(a=>!a.npc); $("#pCnt").textContent="👥 "+L.length+"명"; $("#sCnt").textContent=L.length+"명";
   $("#who").innerHTML=L.map(a=>`<span class="${a.el.classList.contains("me")?"me":""}">${E(a.name)}${a.branch?" · "+E(short(a.branch)):""}${a.room==="private"?" 🔒":""}</span>`).join(""); updWhere(); lights(); }
 function connect(){
   try{ const sb=window.supabase.createClient(SB_URL,SB_KEY,{realtime:{params:{eventsPerSecond:20}}});
     ch=sb.channel("grow-office",{config:{presence:{key:ME.uid},broadcast:{self:false}}});
     ch.on("presence",{event:"sync"},()=>{ const s=ch.presenceState(); const seen=new Set([ME.uid]);
-        Object.keys(s).forEach(k=>{ const p=s[k][0]; if(!p||p.id===ME.uid) return; seen.add(p.id); const a=AV[p.id]; avatar(p.id,{name:p.name,branch:p.branch,x:a?a.x:p.x,y:a?a.y:p.y}); });
+        Object.keys(s).forEach(k=>{ const p=s[k][0]; if(!p||p.id===ME.uid) return; seen.add(p.id); const a=AV[p.id]; avatar(p.id,{name:p.name,branch:p.branch,look:p.look||{},x:a?a.x:p.x,y:a?a.y:p.y}); });
         Object.keys(AV).forEach(id=>{ if(!seen.has(id)&&!AV[id].npc) drop(id); }); who(); })
       .on("broadcast",{event:"mv"},({payload:p})=>{ if(AV[p.id]){ avatar(p.id,{x:p.x,y:p.y}); lights(); } })
       .on("broadcast",{event:"chat"},({payload:p})=>{ addMsg(p); })
       .on("broadcast",{event:"ping"},async ({payload:p})=>{ if(p.room===curId&&canEnter(ROOMS.find(r=>r.id===p.room))){ const x=await api({action:"chat_list",room:p.room}); if(x&&x.ok){ LOGS[p.room]=x.chat||[]; renderLog(); } } })
       .on("broadcast",{event:"emo"},({payload:p})=>{ emo(p.id,p.e); })
+      .on("broadcast",{event:"look"},({payload:p})=>{ if(AV[p.id]) avatar(p.id,{look:p.look||{}}); })
       .subscribe(st=>{ const c=$("#pConn"); if(st==="SUBSCRIBED"){ c.classList.remove("off"); c.querySelector("span").textContent="연결됨"; track(); }
         else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED"){ c.classList.add("off"); c.querySelector("span").textContent="연결 끊김"; } });
     setInterval(track,4000);
   }catch(e){ $("#pConn span").textContent="연결 실패"; } }
+
+/* ---- 내 캐릭터 꾸미기 ---- */
+const FACES=["A","🧑‍💼","👩‍💼","👨‍💼","👩🏻","🧔","👩‍🦱","👨‍🦳","🐳","🐻","🦊","🐰","🐱","🐶","🐼","🐯"];
+const COLORS=["","#F58220","#12A388","#3B82F6","#8B5CF6","#EC4899","#E5A00D","#EF4444","#0E2A47","#64748B"];
+const ACCS=["-","🎩","👑","🧢","🎀","👓","🌸","⭐","🎧","💼"];
+let LOOK={}, DRAFT={};
+function loadLook(){ try{ return JSON.parse(localStorage.getItem("growLook_"+ME.uid)||"{}")||{}; }catch(e){ return {}; } }
+function chRender(){ const P=$("#chPrev"); P.innerHTML=""; const d=el("av",{}); d.innerHTML=`<div class="n">${E(ME.name)}<em>${E(short(ME.branch))}</em></div><div class="b"></div><span class="acc"></span>`; P.appendChild(d);
+  const face=DRAFT.f&&DRAFT.f!=="A"?DRAFT.f:""; const bb=d.querySelector(".b"); bb.textContent=face||ME.name.slice(0,1); bb.classList.toggle("face",!!face); bb.style.background=DRAFT.c||BCOL[short(ME.branch)]||"#1F8A7A"; d.querySelector(".acc").textContent=DRAFT.a&&DRAFT.a!=="-"?DRAFT.a:"";
+  $("#chFace").innerHTML=FACES.map(f=>`<button type="button" data-chf="${f}" class="${(DRAFT.f||"A")===f?"on":""}">${f==="A"?E(ME.name.slice(0,1)):f}</button>`).join("");
+  $("#chColor").innerHTML=COLORS.map(c=>`<button type="button" class="c ${(DRAFT.c||"")===c?"on":""}" data-chc="${c}" style="background:${c||BCOL[short(ME.branch)]||"#1F8A7A"}" title="${c?"":"지사 색"}"></button>`).join("");
+  $("#chAcc").innerHTML=ACCS.map(a=>`<button type="button" data-cha="${a}" class="${(DRAFT.a||"-")===a?"on":""}">${a==="-"?"✕":a}</button>`).join(""); }
+$("#btnChar").addEventListener("click",()=>{ if(!ME) return; DRAFT=Object.assign({},LOOK); chRender(); $("#chBox").classList.add("on"); });
+document.addEventListener("click",e=>{ const t=e.target.closest("[data-chf],[data-chc],[data-cha],[data-close]"); if(!t) return;
+  if(t.dataset.close){ $("#"+t.dataset.close).classList.remove("on"); return; }
+  if(t.dataset.chf!=null) DRAFT.f=t.dataset.chf; if(t.dataset.chc!=null) DRAFT.c=t.dataset.chc; if(t.dataset.cha!=null) DRAFT.a=t.dataset.cha; chRender(); });
+$("#chSave").addEventListener("click",()=>{ LOOK=Object.assign({},DRAFT); try{ localStorage.setItem("growLook_"+ME.uid,JSON.stringify(LOOK)); }catch(e){} avatar(ME.uid,{look:LOOK}); track(); if(ch) ch.send({type:"broadcast",event:"look",payload:{id:ME.uid,look:LOOK}}); $("#chBox").classList.remove("on"); toast("캐릭터를 바꿨습니다."); });
+
+/* ---- 보험비서 AI (GROW ON 보험도우미와 같은 서버) ---- */
+const AI_API="https://daonpartners.app.n8n.cloud/webhook/daon-ai-v2";
+const SURN="김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노하곽성차주우구민진나지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국";
+const aiHist=[];
+function mask(s){ return String(s||"").replace(/\d{6}\s*-?\s*[1-4]\d{6}/g,"[주민번호 삭제]").replace(/01[016789][\s-]?\d{3,4}[\s-]?\d{4}/g,"[연락처 삭제]").replace(/[\w.+-]+@[\w-]+\.[\w.]+/g,"[이메일 삭제]").replace(new RegExp("(?<![가-힣])(?!고객|어머|아버|설계|보험|담당)(["+SURN+"][가-힣]{1,2})(?=\\s?(고객님|고객|님|씨|어머님|아버님))","g"),"[이름 삭제]"); }
+function aiAdd(role,text,src,type){ const b=$("#aiBody"); const d=document.createElement("div"); d.className="aim "+(role==="u"?"u":"b");
+  if(role!=="u"&&type){ const g=document.createElement("span"); g.className="bd"+(type==="document"?"":" g"); g.textContent=type==="document"?"📄 사내 자료 근거":"💡 일반 지식 (참고용)"; d.appendChild(g); d.appendChild(document.createElement("br")); }
+  const t=document.createElement("span"); t.textContent=String(text||"").replace(/\*\*([^*\n]{1,200})\*\*/g,"$1").replace(/==([^=\n]{1,80})==/g,"$1"); d.appendChild(t);
+  const S=(Array.isArray(src)?src:[]).slice(0,4); if(S.length){ const s=document.createElement("div"); s.className="src"; s.innerHTML="참고 자료: "+S.map(x=>{ const ti=E(x.title||x.name||"자료"), u=x.url||x.link||""; return /^https?:\/\//.test(u)?`<a href="${E(u)}" target="_blank" rel="noopener">${ti}</a>`:ti; }).join(" · "); d.appendChild(s); }
+  b.appendChild(d); b.scrollTop=b.scrollHeight; return d; }
+function openAi(){ $("#aiBox").classList.add("on"); setTimeout(()=>{ const i=$("#aiIn"); if(i) i.focus(); },50); }
+$("#btnAi").addEventListener("click",openAi);
+$("#aiNew").addEventListener("click",()=>{ aiHist.length=0; $("#aiBody").innerHTML=""; aiAdd("b","새 질문을 시작합니다. 무엇이 궁금하세요?"); });
+$("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$("#aiIn"); const q=mask(i.value.trim()); if(!q) return; i.value=""; aiAdd("u",q);
+  const L=aiAdd("b","보험비서가 자료를 확인하고 있습니다… 0초"); const t0=Date.now(); const tk=setInterval(()=>{ L.lastChild.textContent="보험비서가 자료를 확인하고 있습니다… "+Math.round((Date.now()-t0)/1000)+"초"; },1000);
+  i.disabled=true; if(AV.aibot) say("aibot","찾아보는 중이에요…");
+  try{ const r=await fetch(AI_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q,history:aiHist.slice(-2)})}); const d=await r.json().catch(()=>({}));
+    L.remove(); if(d.success&&d.answer){ aiHist.push({q,a:String(d.answer).slice(0,1500)}); if(aiHist.length>4) aiHist.shift(); aiAdd("b",d.answer,d.sources,d.answerType); } else aiAdd("b",d.answer||"답변을 가져오지 못했습니다. 잠시 후 다시 질문해 주세요."); }
+  catch(err){ L.remove(); aiAdd("b","네트워크 오류로 답변을 가져오지 못했습니다."); }
+  finally{ clearInterval(tk); i.disabled=false; i.focus(); } });
 
 /* ---- 시작 ---- */
 (async function(){
@@ -348,7 +433,7 @@ function connect(){
   if(!b||!b.ok){ gate((b&&b.error)||"입장 확인에 실패했습니다."); return; }
   BOOT=b; ME=b.me; TODO=Array.isArray(b.todo)?b.todo:[];
   Object.keys(b.chat||{}).forEach(k=>{ LOGS[k]=b.chat[k]; });
-  buildMap(); avatar(ME.uid,{x:pos.x,y:pos.y,name:ME.name,branch:ME.branch});
+  LOOK=loadLook(); buildMap(); avatar(ME.uid,{x:pos.x,y:pos.y,name:ME.name,branch:ME.branch,look:LOOK});
   npcTick(); setInterval(npcTick,3500);
   $("#sAtt").textContent=b.att?"출근 "+b.att:"출근 전";
   enterRoom(); updWhere(); who(); connect();
