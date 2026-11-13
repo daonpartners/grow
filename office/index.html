@@ -188,6 +188,7 @@ button{font:inherit;cursor:pointer}
 .chopts button img{display:block}
 .chprev .av.spr{margin-top:56px}
 .av .acc{display:none!important}
+.av.bot{transition:left 7s ease-in-out,top 7s ease-in-out}
 </style>
 </head>
 <body>
@@ -334,11 +335,15 @@ function emo(id,e){ const a=AV[id]; if(!a) return; const s=el("emo",{},E(e)); a.
 function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit) occ[a.room]=1; }); ROOMS.forEach(r=>{ const on=!!occ[r.id]&&(r.id!=="private"||(ME&&AV[ME.uid]&&AV[ME.uid].room==="private")); RE[r.id].classList.toggle("lit",on); RE[r.id].classList.toggle("dark",!on); }); }
 
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
-const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"lobby",lit:true,bot:true,fixed:true,home:[452,150]}];
+const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"lobby",lit:true,bot:true,slow:true,home:[452,150]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.id==="npc2"&&GMBUSY&&AV[ME&&ME.uid]){ const a=AV[ME.uid]; return [a.x+55,a.y+10]; }
   if(n.room==="hall"){ const lanes=[[40+Math.random()*1520,320],[40+Math.random()*1520,695],[480,320+Math.random()*380],[1120,320+Math.random()*380]]; return lanes[Math.floor(Math.random()*lanes.length)]; }
   if(n.fixed) return [r.x+n.home[0],r.y+n.home[1]];
+  if(n.slow){ const now=Date.now(); if(!n.cur) n.cur=[r.x+n.home[0],r.y+n.home[1]];
+    if(n.next&&now<n.next) return n.cur; n.next=now+9000+Math.random()*5000;
+    const ang=Math.random()*Math.PI*2, d=60+Math.random()*120; const x=Math.max(r.x+50,Math.min(r.x+r.w-50,n.cur[0]+Math.cos(ang)*d)), y=Math.max(r.y+70,Math.min(r.y+r.h-40,n.cur[1]+Math.sin(ang)*d*.6));
+    n.cur=[x,y]; return n.cur; }
   if(!n.walk) return [r.x+n.home[0]+(Math.random()*40-20),r.y+n.home[1]+(Math.random()*20-10)];
   return [r.x+40+Math.random()*(r.w-80),r.y+50+Math.random()*(r.h-100)]; }
 function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,sprite:n.sprite,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
