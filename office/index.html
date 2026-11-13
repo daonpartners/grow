@@ -19,7 +19,7 @@
    - 생일: 내 캐릭터 창에서 월·일 등록(서버 저장) → 당일 라운지에 케이크·폭죽
    - 절기 꾸미기 자동: 크리스마스·새해·설·추석·봄·여름·가을 (설·추석 날짜는 LUNAR 표에 해마다 추가) 근무 상태 표시는 없음
    - 보험비서 AI: 로비 로봇·상단 버튼 → GROW ON 보험도우미와 같은 서버(daon-ai-v2), 고객 이름·연락처·주민번호 자동 삭제 후 전송
-   - 내 캐릭터: 얼굴·색상·소품 선택 → 이 기기(localStorage growLook_<uid>)에 저장 + 접속자에게 실시간 전달 */
+   - 내 캐릭터: 캐릭터·색상 선택 → 이 기기(localStorage growLook_<uid>)에 저장 + 접속자에게 실시간 전달 */
 :root{--navy:#0E2A47;--navy2:#16385E;--teal:#1F8A7A;--orange:#F58220;--ink:#1B2333;--muted:#6B7A8C;--line:#E3E7EE;--bg:#F4F1EA}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:var(--bg)}
@@ -187,6 +187,7 @@ button{font:inherit;cursor:pointer}
 .av.guide .b.spr{width:52px;height:66px;margin:-30px 0 0 -4px}
 .chopts button img{display:block}
 .chprev .av.spr{margin-top:56px}
+.av .acc{display:none!important}
 </style>
 </head>
 <body>
@@ -231,7 +232,7 @@ button{font:inherit;cursor:pointer}
         <h4>🧭 영업지원 데스크 · 영업부 방</h4><p>보험사 정보·영업센터·영업전략 같은 GROW ON 화면이 오피스 안에서 바로 열립니다. 행사팀 방에는 행사 일정이 보입니다.</p>
         <h4>🔒 나만의 공간</h4><p>출근 체크, 오늘 할 일, 보잇 CRM, 내 DB 조회. 다른 사람에게는 보이지 않습니다.</p>
         <h4>🤖 보험비서 AI</h4><p>로비의 로봇이나 위쪽 버튼을 누르면 질문할 수 있습니다. 고객 이름·연락처·주민번호는 자동으로 지워서 보내며, 답변은 약관·상품설명서로 꼭 확인하세요.</p>
-        <h4>🎨 내 캐릭터</h4><p>위쪽 "내 캐릭터"에서 얼굴·색상·소품을 고르거나 사진을 올릴 수 있습니다. 이 기기에 저장되고 접속자에게 바로 보입니다.</p>
+        <h4>🎨 내 캐릭터</h4><p>위쪽 "내 캐릭터"에서 캐릭터·색상을 고르거나 사진을 올릴 수 있습니다. 이 기기에 저장되고 접속자에게 바로 보입니다.</p>
         <h4>💬 채팅 · 이모지</h4><p>오른쪽 아래 채팅창에서 전체 채팅과 지금 있는 방 채팅을 고릅니다. 아래 이모지를 누르면 내 캐릭터 위에 떠오릅니다.</p></div></div>
       <div class="modal" id="chBox"><div class="mh"><span style="font-size:20px">🎨</span><b>내 캐릭터 꾸미기</b><button type="button" data-close="chBox">✕</button></div>
         <div class="chb"><div class="chprev" id="chPrev"></div>
@@ -239,7 +240,6 @@ button{font:inherit;cursor:pointer}
           <div class="chg"><b>내 사진·이미지 올리기</b><div class="chup"><label>📷 사진 선택<input type="file" id="chFile" accept="image/*" hidden></label><span class="sm" id="chFileTx">얼굴이 가운데 오는 사진이 좋습니다 (작게 줄여 저장)</span></div></div>
           <div class="chg"><b>내 생일 (선택)</b><div class="chup"><select id="bdM"></select><select id="bdD"></select><button class="pbtn l" type="button" id="bdSave" style="width:auto;margin:0;padding:8px 14px">생일 저장</button></div><p class="sm" style="margin:4px 0 0">월·일만 저장합니다. 생일 당일 라운지에 케이크와 축하 메시지가 뜹니다. 비워 두면 표시되지 않습니다.</p></div>
           <div class="chg"><b>색상</b><div class="chopts" id="chColor"></div></div>
-          <div class="chg"><b>소품</b><div class="chopts" id="chAcc"></div></div>
           <button class="pbtn o" type="button" id="chSave" style="margin-top:14px">저장하기</button>
           <p class="sm" style="margin:8px 0 0">저장한 캐릭터는 이 기기에 기억되고, 접속 중인 다른 사람에게도 바로 보입니다.</p></div></div>
     </div>
@@ -542,14 +542,14 @@ function chRender(){ const P=$("#chPrev"); P.innerHTML=""; const d=el("av",{}); 
   const img=DRAFT.f==="IMG"&&okImg(DRAFT.img)?DRAFT.img:""; const face=sp?"":(DRAFT.f&&DRAFT.f!=="A"&&!img?DRAFT.f:""); const bb=d.querySelector(".b"); if(!sp){ bb.textContent=img?"":(face||ME.name.slice(0,1)); bb.classList.toggle("face",!!face); } if(!sp) bb.style.background=DRAFT.c||BCOL[short(ME.branch)]||"#1F8A7A"; if(img){ bb.style.backgroundImage=`url("${img}")`; bb.style.backgroundSize="cover"; bb.style.backgroundPosition="center"; } d.querySelector(".acc").textContent=DRAFT.a&&DRAFT.a!=="-"?DRAFT.a:"";
   $("#chFace").innerHTML=(okImg(DRAFT.img)?[`<button type="button" data-chf="IMG" class="${DRAFT.f==="IMG"?"on":""}" style="background:url('${DRAFT.img}') center/cover"></button>`]:[]).concat(FACES.map(f=>`<button type="button" data-chf="${f}" class="${(DRAFT.f||"A")===f?"on":""}">${f==="A"?E(ME.name.slice(0,1)):(/^S:/.test(f)?`<img src="art/${f.slice(2)}.webp" alt="" style="height:36px">`:f)}</button>`)).join("");
   $("#chColor").innerHTML=COLORS.map(c=>`<button type="button" class="c ${(DRAFT.c||"")===c?"on":""}" data-chc="${c}" style="background:${c||BCOL[short(ME.branch)]||"#1F8A7A"}" title="${c?"":"지사 색"}"></button>`).join("");
-  $("#chAcc").innerHTML=ACCS.map(a=>`<button type="button" data-cha="${a}" class="${(DRAFT.a||"-")===a?"on":""}">${a==="-"?"✕":a}</button>`).join(""); }
+}
 function bdFill(){ const v=(BOOT&&BOOT.bday)||""; const [m,d]=v?v.split("-"):["",""]; $("#bdM").innerHTML='<option value="">월</option>'+Array.from({length:12},(_,i)=>{ const x=String(i+1).padStart(2,"0"); return `<option value="${x}" ${x===m?"selected":""}>${i+1}월</option>`; }).join(""); $("#bdD").innerHTML='<option value="">일</option>'+Array.from({length:31},(_,i)=>{ const x=String(i+1).padStart(2,"0"); return `<option value="${x}" ${x===d?"selected":""}>${i+1}일</option>`; }).join(""); }
 $("#bdSave").addEventListener("click",async()=>{ const m=$("#bdM").value, d=$("#bdD").value; if((m&&!d)||(!m&&d)) return toast("월과 일을 모두 고르거나 둘 다 비워 주세요."); const r=await api({action:"bday_set",md:m?m+"-"+d:""}); if(r&&r.ok){ BOOT.bday=r.bday; BOOT.bdays=r.bdays||[]; birthday(); toast(r.bday?"생일을 저장했습니다.":"생일을 지웠습니다."); } else toast((r&&r.error)||"실패했습니다."); });
 $("#btnChar").addEventListener("click",()=>{ if(!ME) return; DRAFT=Object.assign({},LOOK); chRender(); bdFill(); $("#chBox").classList.add("on"); });
 document.addEventListener("click",e=>{ const t=e.target.closest("[data-chf],[data-chc],[data-cha],[data-close]"); if(!t) return;
   if(t.dataset.close){ $("#"+t.dataset.close).classList.remove("on"); return; }
   if(t.dataset.chf!=null) DRAFT.f=t.dataset.chf; if(t.dataset.chc!=null) DRAFT.c=t.dataset.chc; if(t.dataset.cha!=null) DRAFT.a=t.dataset.cha; chRender(); });
-$("#chSave").addEventListener("click",()=>{ LOOK=Object.assign({},DRAFT); try{ localStorage.setItem("growLook_"+ME.uid,JSON.stringify(LOOK)); }catch(e){} avatar(ME.uid,{look:LOOK}); track(); if(ch) ch.send({type:"broadcast",event:"look",payload:{id:ME.uid,look:LOOK}}); $("#chBox").classList.remove("on"); toast("캐릭터를 바꿨습니다."); });
+$("#chSave").addEventListener("click",()=>{ LOOK=Object.assign({},DRAFT); delete LOOK.a; try{ localStorage.setItem("growLook_"+ME.uid,JSON.stringify(LOOK)); }catch(e){} avatar(ME.uid,{look:LOOK}); track(); if(ch) ch.send({type:"broadcast",event:"look",payload:{id:ME.uid,look:LOOK}}); $("#chBox").classList.remove("on"); toast("캐릭터를 바꿨습니다."); });
 
 /* ---- 보험비서 AI (GROW ON 보험도우미와 같은 서버) ---- */
 const AI_API="https://daonpartners.app.n8n.cloud/webhook/daon-ai-v2";
