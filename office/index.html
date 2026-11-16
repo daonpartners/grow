@@ -423,7 +423,7 @@ function gate(msg){ const g=document.createElement("div"); g.className="gate doo
     }catch(err){ bt.disabled=false; m("오류가 발생했습니다. 다시 시도하세요."); } });
 }
 if(!CR){ gate(); return; }
-async function api(body){ try{ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({},CR,body))}); return await r.json(); }catch(e){ return {ok:false,error:"서버에 연결하지 못했습니다."}; } }
+async function api(body){ try{ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({},CR,body))}); return await r.json(); }catch(e){ return {ok:false,net:true,error:"서버에 연결하지 못했습니다."}; } }
 let ME=null, BOOT=null;
 
 /* ---- 지도 ---- */
@@ -839,6 +839,7 @@ $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$(
 (async function(){
   $("#pConn span").textContent="확인 중";
   const b=await api({action:"boot"});
+  if(b&&b.net){ gate("서버에 연결하지 못했습니다. 잠시 후 새로고침해 주세요. (자동 입장은 유지됩니다)"); return; }
   if(!b||!b.ok){ try{ sessionStorage.removeItem("fcAuth"); sessionStorage.removeItem("growAdminCode"); localStorage.removeItem("growFcAuto"); }catch(_){} gate((b&&b.error)||"입장 확인에 실패했습니다. 다시 로그인하세요."); return; }
   BOOT=b; ME=b.me; TODO=Array.isArray(b.todo)?b.todo:[];
   /* 자동 입장(7일 기억)으로 들어온 지사장·관리자: 관리자센터 권한 정보를 다시 받아 둠 */
