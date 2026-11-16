@@ -91,13 +91,22 @@ button{font:inherit;cursor:pointer}
 .stsel{display:flex;gap:6px;padding:0 16px 10px}.stsel button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 0;font-size:12px;font-weight:700}.stsel button.on{border-color:var(--teal);color:var(--teal);background:#EEF6F4}
 .gate{position:fixed;inset:0;background:rgba(14,42,71,.75);display:flex;align-items:center;justify-content:center;padding:16px;z-index:200}
 .gate div{background:#fff;border-radius:18px;padding:24px 22px;width:100%;max-width:420px;text-align:center;line-height:1.6;word-break:keep-all}
-.gate.door{background:radial-gradient(ellipse at 50% 30%,#1d4a77,#0E2A47 70%);overflow:auto;align-items:flex-start}
+.gate.door{background:linear-gradient(180deg,#26313d 0,#33404e 62%,#8d877c 62%,#a39d92 100%);overflow:auto;align-items:flex-start;padding:16px 10px}
 .gate.door div{background:none;padding:0;max-width:none;border-radius:0}
-.gate .dr-wrap{display:flex;flex-direction:column;align-items:center;gap:0;width:100%;max-width:380px;margin:auto}
-.gate .dr-sign{background:#F58220;color:#fff;font-weight:900;letter-spacing:.12em;padding:8px 22px;border-radius:10px;text-align:center;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,.25)}.gate .dr-sign small{display:block;font-size:11px;letter-spacing:.05em;font-weight:700;opacity:.9}
-.gate .dr{display:flex;gap:4px;width:220px;height:190px;margin:14px 0 -6px;padding:8px 8px 0;background:#5b4636;border-radius:10px 10px 0 0}
-.gate .dr i{flex:1;background:linear-gradient(180deg,#8a6a4f,#6e523c);border-radius:4px 4px 0 0;position:relative;box-shadow:inset 0 0 0 6px rgba(0,0,0,.12)}
-.gate .dr i::after{content:"";position:absolute;top:50%;width:8px;height:26px;border-radius:4px;background:#E8C25A}.gate .dr i:first-child::after{right:8px}.gate .dr i:last-child::after{left:8px}
+.gate.door .dr-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:600px;margin:auto}
+.gate .dr-sign{width:100%;background:linear-gradient(180deg,#123457,#0E2A47)!important;border:3px solid #F58220!important;border-radius:12px!important;padding:12px 10px!important;text-align:center;color:#fff;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.gate .dr-sign small{display:block;font-size:clamp(12px,3.4vw,16px);font-weight:700;letter-spacing:.08em;opacity:.92}
+.gate .dr-sign b{display:block;font-size:clamp(26px,8vw,40px);font-weight:900;color:#F9A350;letter-spacing:.06em;line-height:1.25}
+.gate .dr-sign span{display:block;font-size:11px;letter-spacing:.32em;opacity:.7;margin-top:2px}
+.gate .dr-glass{position:relative;width:100%;height:min(60vh,560px);margin-top:16px;display:flex;gap:6px;padding:10px 10px 0!important;background:#c3cbd4!important;border-radius:8px 8px 0 0!important;box-shadow:0 18px 40px rgba(0,0,0,.35);overflow:hidden;cursor:pointer}
+.gate .dr-glass::before{content:"";position:absolute;inset:10px 10px 0;background:var(--art) center/cover;filter:saturate(.9) brightness(1.02)}
+.gate .dr-glass i{flex:1;position:relative;z-index:1;border:5px solid #aeb8c3;border-bottom:0;background:linear-gradient(112deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.12) 30%,rgba(255,255,255,0) 46%,rgba(255,255,255,.22) 62%,rgba(255,255,255,.04) 100%),rgba(160,200,228,.28);backdrop-filter:blur(1.5px);transition:transform .8s cubic-bezier(.6,0,.2,1)}
+.gate .dr-glass i::after{content:"";position:absolute;top:34%;width:7px;height:30%;border-radius:4px;background:linear-gradient(90deg,#e9edf1,#9aa6b2);box-shadow:0 2px 6px rgba(0,0,0,.3)}.gate .dr-glass i:first-child::after{right:10px}.gate .dr-glass i:last-of-type::after{left:10px}
+.gate .dr-glass.open i:first-child{transform:translateX(-104%)}.gate .dr-glass.open i:last-of-type{transform:translateX(104%)}
+.gate .dr-in{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);background:#F58220;color:#fff;border:0;border-radius:999px;padding:16px 46px;font:inherit;font-size:20px;font-weight:900;box-shadow:0 10px 26px rgba(0,0,0,.35);cursor:pointer}
+.gate .dr-glass.open .dr-in{display:none}
+.gate .dr-glass .dr-card{position:absolute!important;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88%,380px)}
+.gate .dr-floor{width:104%;height:14px;background:#6f6a62!important;border-radius:3px!important}
 .gate .dr-card{background:#fff!important;border-radius:16px!important;padding:18px!important;width:100%;box-shadow:0 14px 40px rgba(0,0,0,.3);text-align:center}
 .gate .dr-new{display:flex;flex-direction:column;gap:8px}.gate .dr-new p{margin:0;font-size:13px;color:#1b2333;text-align:left;line-height:1.5}.gate .dr-new[hidden]{display:none}.gate .dr-tabs{display:flex;gap:6px;margin-bottom:12px}.gate .dr-tabs button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px;font-weight:800;color:var(--muted)}.gate .dr-tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .gate form{display:flex;flex-direction:column;gap:8px}.gate form input:not([type=checkbox]){font:inherit;font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;width:100%}
@@ -372,6 +381,7 @@ const short=s=>String(s||"").replace(/지사$/,"");
 /* ---- 로그인 정보 (GROW ON 같은 창) → 서버 확인 ---- */
 function cred(){ try{ const a=JSON.parse(sessionStorage.getItem("fcAuth")||"null"); if(a&&a.sabun&&a.ver) return {sabun:a.sabun,ver:a.ver}; }catch(e){}
   try{ const c=sessionStorage.getItem("growAdminCode"); if(c) return {code:c}; }catch(e){}
+  try{ if(sessionStorage.getItem("growLeft")==="1") return null; }catch(e){}
   try{ const v=JSON.parse(localStorage.getItem("growFcAuto")||"null"); if(v&&v.sabun&&v.ver&&Date.now()-v.at<7*86400000){ sessionStorage.setItem("fcAuth",JSON.stringify({sabun:v.sabun,ver:v.ver})); return {sabun:v.sabun,ver:v.ver}; } }catch(e){}
   return null; }
 const CR=cred();
@@ -391,18 +401,25 @@ async function keyMake(pw){ const kp=await crypto.subtle.generateKey({name:"RSA-
   return { pub:b64(spki), wrapped:JSON.stringify({v:1,salt:b64(salt),iv:b64(iv),key:b64(ct)}) }; }
 const pwBad=p=>{ p=String(p||""); if(p.length<8) return "비밀번호를 8자 이상 입력해 주세요."; if(!/[0-9]/.test(p)||!/[a-z]/.test(p)||!/[^A-Za-z0-9]/.test(p)) return "비밀번호는 숫자·영소문자·특수문자(예: ! @ # $ % *)를 모두 넣어 주세요."; if(/(.)\1{3,}/.test(p)) return "같은 글자를 4번 이상 반복할 수 없습니다."; return ""; };
 const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(r=>r.json()).catch(()=>null);
-function saveLogin(sb,ver,r,remember){ SKEYS.forEach(k=>sessionStorage.removeItem(k));
+function saveLogin(sb,ver,r,remember){ SKEYS.forEach(k=>sessionStorage.removeItem(k)); try{ sessionStorage.removeItem("growLeft"); }catch(_){}
   sessionStorage.setItem("fcAuth",JSON.stringify({sabun:sb,ver})); sessionStorage.setItem("growMe",JSON.stringify({name:r.name,branch:r.branch,sabun:sb}));
   const a=r.admin; if(a){ sessionStorage.setItem("growAdmin","1"); sessionStorage.setItem("growRole",a.role); sessionStorage.setItem("growBranch",a.branch||""); sessionStorage.setItem("growName",a.name||""); sessionStorage.setItem("growLabel",a.label||"");
     if(a.role==="masteradmin") sessionStorage.setItem("growCanManageEdu","1"); if(a.code) sessionStorage.setItem("growAdminCode",a.code); }
   try{ if(remember) localStorage.setItem("growFcAuto",JSON.stringify({at:Date.now(),sabun:sb,ver})); else localStorage.removeItem("growFcAuto"); }catch(_){} }
+function autoInfo(){ try{ const v=JSON.parse(localStorage.getItem("growFcAuto")||"null"); if(v&&v.sabun&&v.ver&&Date.now()-v.at<7*86400000) return v; }catch(e){} return null; }
 function gate(msg){ const g=document.createElement("div"); g.className="gate door";
-  g.innerHTML=`<div class="dr-wrap"><div class="dr-sign">GROW OFFICE<small>그로우사업부 가상사무실</small></div><div class="dr"><i></i><i></i></div>
-  <div class="dr-card"><form id="gFc"><input id="gSb" inputmode="numeric" autocomplete="username" placeholder="사번" maxlength="12"><input id="gPw" type="password" autocomplete="current-password" placeholder="비밀번호">
+  g.innerHTML=`<div class="dr-wrap"><div class="dr-sign"><small>미래에셋금융서비스</small><b>그로우사업부</b><span>GROW OFFICE</span></div>
+  <div class="dr-glass" id="gDoor" style="--art:url(art/flat_lobby.webp)"><i></i><i></i><button type="button" class="dr-in" id="gIn">입장</button>
+  <div class="dr-card" id="gCard" hidden><form id="gFc"><input id="gSb" inputmode="numeric" autocomplete="username" placeholder="사번" maxlength="12"><input id="gPw" type="password" autocomplete="current-password" placeholder="비밀번호">
    <div id="gNew" class="dr-new" hidden><p id="gNewT"></p><input id="gPw2" type="password" autocomplete="new-password" placeholder="비밀번호 한 번 더"></div>
    <label class="dr-rm"><input type="checkbox" id="gRm" checked> 이 기기에서 7일간 자동 입장</label><button class="dr-go">입장하기</button></form>
-   <p class="dr-msg" id="gMsg">${msg?E(msg):""}</p><p class="dr-sub">설계사·지사장·관리자 모두 사번으로 입장 · 처음이면 비밀번호를 여기서 정합니다</p></div></div>`;
+   <p class="dr-msg" id="gMsg">${msg?E(msg):""}</p><p class="dr-sub">처음이면 비밀번호를 여기서 정합니다</p></div></div><div class="dr-floor"></div></div>`;
   document.body.appendChild(g);
+  const D=g.querySelector("#gDoor"), CD=g.querySelector("#gCard");
+  const openDoor=()=>{ D.classList.add("open"); setTimeout(()=>{ CD.hidden=false; const i=g.querySelector("#gSb"); if(i) i.focus(); },msg?0:550); };
+  g.querySelector("#gIn").addEventListener("click",e=>{ e.stopPropagation(); const v=autoInfo(); if(v&&!msg){ D.classList.add("open"); try{ sessionStorage.removeItem("growLeft"); sessionStorage.setItem("fcAuth",JSON.stringify({sabun:v.sabun,ver:v.ver})); }catch(_){} setTimeout(()=>location.reload(),600); return; } openDoor(); });
+  D.addEventListener("click",e=>{ if(!D.classList.contains("open")&&!e.target.closest(".dr-card")) g.querySelector("#gIn").click(); });
+  if(msg) openDoor();
   const m=t=>{ g.querySelector("#gMsg").textContent=t||""; }, NEW=g.querySelector("#gNew"), bt=g.querySelector(".dr-go");
   g.querySelector("#gSb").addEventListener("input",()=>{ NEW.hidden=true; bt.textContent="입장하기"; m(""); });
   g.querySelector("#gFc").addEventListener("submit",async e=>{ e.preventDefault(); const sb=g.querySelector("#gSb").value.replace(/\D/g,""), pw=g.querySelector("#gPw").value, rm=g.querySelector("#gRm").checked;
@@ -582,7 +599,8 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       <p class="sm" style="margin:10px 0 0">이 방 채팅은 ${E(r.name)} 소속만 보고 쓸 수 있으며 저장됩니다.</p>`; }
   else if(r.id==="desk"){ const att=BOOT&&BOOT.att;
     h=`<div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를<br>아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
-      <div class="mz"><h4>📱 보잇 BOIT</h4><a class="pbtn o" href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 열기 ↗</a><a class="pbtn l" href="/#v=fclookup" style="margin-top:6px">내 DB 조회</a></div>
+      <div class="mz"><h4>📥 배분 DB 조회</h4><a class="pbtn g" href="/#v=fclookup">배분 DB 조회</a></div>
+      <div class="mz"><h4>📱 보잇 BOIT</h4><a class="pbtn o" href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 열기 ↗</a></div>
       <div class="mz"><h4>🧭 영업 지원</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=salescenter">영업센터</a><a class="pbtn l" href="/#v=salesstrategy">영업전략</a><a class="pbtn l" href="/#v=datacenter">자료센터</a></div></div>
       <div class="mz"><h4>✅ 오늘 할 일</h4><div class="todo" id="todo"></div><div class="trow"><input id="todoIn" maxlength="80" placeholder="할 일 추가 (Enter)"><button type="button" id="todoAdd">추가</button></div></div>`; }
   else if(r.team){ const k=TT[r.id]||"n"; const tab=(v,t)=>`<button type="button" data-tt="${v}" class="${k===v?"on":""}">${t}</button>`; let body="";
@@ -852,8 +870,8 @@ function tlRender(){ const adm=isAdm();
 $("#btnTl").addEventListener("click",()=>{ tlRender(); $("#tlBox").classList.add("on"); });
 $("#tlBody").addEventListener("click",e=>{ const b=e.target.closest("[data-tl]"); if(!b) return; const u=b.dataset.tl; $("#tlBox").classList.remove("on");
   if(u==="ai"){ openAi(); return; } if(/^https?:/.test(u)){ window.open(u,"_blank","noopener"); return; } openPage(u,b.dataset.tt); });
-$("#btnOut").addEventListener("click",()=>{ if(!confirm("GROW 오피스에서 나갈까요? (이 기기 자동 입장도 해제)")) return;
-  SKEYS.forEach(k=>sessionStorage.removeItem(k)); try{ localStorage.removeItem("growFcAuto"); }catch(_){} location.reload(); });
+$("#btnOut").addEventListener("click",()=>{ const off=confirm("이 기기의 7일 자동 입장도 해제할까요?\n\n확인: 자동 입장 해제 후 나가기\n취소: 자동 입장 유지하고 현관으로");
+  SKEYS.forEach(k=>sessionStorage.removeItem(k)); try{ if(off) localStorage.removeItem("growFcAuto"); else sessionStorage.setItem("growLeft","1"); }catch(_){} location.reload(); });
 $("#aiNew").addEventListener("click",()=>{ aiHist.length=0; $("#aiBody").innerHTML=""; aiAdd("b","새 질문을 시작합니다. 무엇이 궁금하세요?"); });
 $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$("#aiIn"); const q=mask(i.value.trim()); if(!q) return; i.value=""; aiAdd("u",q);
   const L=aiAdd("b","보험비서가 자료를 확인하고 있습니다… 0초"); const t0=Date.now(); const tk=setInterval(()=>{ L.lastChild.textContent="보험비서가 자료를 확인하고 있습니다… "+Math.round((Date.now()-t0)/1000)+"초"; },1000);
@@ -868,7 +886,7 @@ $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$(
   $("#pConn span").textContent="확인 중";
   const b=await api({action:"boot"});
   if(b&&b.net){ gate("서버에 연결하지 못했습니다. 잠시 후 새로고침해 주세요. (자동 입장은 유지됩니다)"); return; }
-  if(!b||!b.ok){ try{ sessionStorage.removeItem("fcAuth"); sessionStorage.removeItem("growAdminCode"); localStorage.removeItem("growFcAuto"); }catch(_){} gate((b&&b.error)||"입장 확인에 실패했습니다. 다시 로그인하세요."); return; }
+  if(!b||!b.ok){ try{ sessionStorage.removeItem("fcAuth"); sessionStorage.removeItem("growAdminCode"); if(b&&/로그인 확인에 실패/.test(b.error||"")) localStorage.removeItem("growFcAuto"); }catch(_){} gate((b&&b.error)||"입장 확인에 실패했습니다. 다시 로그인하세요."); return; }
   BOOT=b; ME=b.me; TODO=Array.isArray(b.todo)?b.todo:[];
   /* 자동 입장(7일 기억)으로 들어온 지사장·관리자: 관리자센터 권한 정보를 다시 받아 둠 */
   if((ME.role==="admin"||ME.role==="manager")&&sessionStorage.getItem("growAdmin")!=="1"){ try{ const a=JSON.parse(sessionStorage.getItem("fcAuth")||"null"); if(a&&a.sabun&&a.ver) post(ADM_SRV,{action:"fcview",sabun:a.sabun,ver:a.ver}).then(r=>{ if(r&&r.success&&r.admin){ let rm=false; try{ rm=!!localStorage.getItem("growFcAuto"); }catch(_){} saveLogin(a.sabun,a.ver,r,rm); } }); }catch(_){} }
