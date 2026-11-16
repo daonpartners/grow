@@ -594,7 +594,7 @@ const isAdm=()=>head()||sessionStorage.getItem("growAdmin")==="1";
 let MZ="lect", MCHAT=false;
 /* 로비 공지: 사이트 공지 파일. 게스트는 '외부 공개' 표시된 공지만 */
 let PUBN=null, LOPEN=null, PUBL=false, LZ="nt";
-function lobbyZone(k){ LZ=k; const r=ROOMS.find(x=>x.id==="lobby"); if(curId!=="lobby"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); roomSheet(r); }
+function lobbyZone(k){ if(k==="br"){ const r=ROOMS.find(x=>x.id==="lobby"); if(curId!=="lobby"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } openPage("/#v=home","전국 지사 안내"); return; } LZ=k; const r=ROOMS.find(x=>x.id==="lobby"); if(curId!=="lobby"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); roomSheet(r); }
 async function loadPubN(){ if(PUBL) return; PUBL=true; try{ const r=await fetch("/board/notices.json?t="+Date.now(),{cache:"no-store"}); const d=await r.json(); const L=Array.isArray(d)?d:(d.items||[]); PUBN=L.slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||String(b.sortKey||b.date||"").localeCompare(String(a.sortKey||a.date||""))); }catch(e){ PUBN=[]; } if(curId==="lobby") renderPanel(curRoom()); }
 /* 영업팀 방: 탭(n 공지·b 게시판·c 채팅방), 글 목록 */
 const TT={}, BD={}; let BOPEN=null, BEDIT=null, BNEW=false, BCTX={room:"",k:"n"}, ST="online";
@@ -684,7 +684,7 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.id==="mtHist"){ HT="min"; openHist(); }
   if(t.id==="mnNew"){ HT="new"; MEDIT=null; openHist(); }
   if(t.closest&&t.closest("[data-lopen]")){ const i=Number(t.closest("[data-lopen]").dataset.lopen); LOPEN=LOPEN===i?null:i; renderPanel(curRoom()); }
-  if(t.dataset&&t.dataset.lz){ LZ=t.dataset.lz; renderPanel(curRoom()); }
+  if(t.dataset&&t.dataset.lz){ if(t.dataset.lz==="br") return openPage("/#v=home","전국 지사 안내"); LZ=t.dataset.lz; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.st){ salesZone(t.dataset.st); }
   if(t.dataset&&t.dataset.tt){ const r=curRoom(); TT[teamKey(r)]=t.dataset.tt; BOPEN=null; BEDIT=null; BNEW=false; renderPanel(r); roomSheet(r); if(t.dataset.tt==="c"){ TAB="room"; ensureLog(); } }

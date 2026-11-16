@@ -1265,6 +1265,7 @@ body.growon{ background:var(--g-navy); }
 #colRight .gbtn{text-align:center;}
 /* GROW 오피스 안(창 속 창)에서 열릴 때: 홈 화면 틀을 숨기고 해당 화면만 보여 줌 */
 html.embed .growon-hd,html.embed #colLeft,html.embed #colRight,html.embed .gstrip,html.embed .scrim,html.embed .drawer,html.embed .ai-float-btn,html.embed .biz-support-float-btn,html.embed #admOut{display:none!important}
+html.embed #view-home .home-extra{display:none!important}
 html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!important}
 /* 좁은 화면(휴대폰·오피스 안 창)에서 글자가 세로로 찌그러지지 않게 */
 @media(max-width:560px){
@@ -5581,7 +5582,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
           ${gBranches.map((b,i)=>`<div class="branch" data-bi="${i}"><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.manager||'')} · ${escapeHtml(b.phone||'')}</span></div>`).join('')}
         </div>
       </div>
-      <div style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
+      <div class="home-extra" style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
         <div class="panel-eyebrow">Schedule</div>
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; margin-bottom:12px;">
           <h2 class="panel-title" style="font-size:17px; margin:0; white-space:nowrap;">그로우사업부 일정</h2>
@@ -5593,7 +5594,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
         </div>
         <div id="homeSchedList"></div>
       </div>
-      <div style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
+      <div class="home-extra" style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
         <div class="panel-eyebrow">Grow Album</div>
         <h2 class="panel-title" style="font-size:17px;">그로우앨범</h2>
         <div class="alb-grid" id="albGridMini"></div>
