@@ -582,7 +582,7 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       <p class="sm" style="margin:10px 0 0">이 방 채팅은 ${E(r.name)} 소속만 보고 쓸 수 있으며 저장됩니다.</p>`; }
   else if(r.id==="desk"){ const att=BOOT&&BOOT.att;
     h=`<div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를<br>아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
-      <div class="mz"><h4>📱 보잇 BOIT</h4><a class="pbtn o" href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 열기 ↗</a><div class="agrid" style="margin-top:6px"><a class="pbtn l" href="https://boit.ai.kr/#customers" target="_blank" rel="noopener">내 보험 불러오기 ↗</a><a class="pbtn l" href="/#v=fclookup">내 DB 조회</a></div></div>
+      <div class="mz"><h4>📱 보잇 BOIT</h4><a class="pbtn o" href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 열기 ↗</a><a class="pbtn l" href="/#v=fclookup" style="margin-top:6px">내 DB 조회</a></div>
       <div class="mz"><h4>🧭 영업 지원</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=salescenter">영업센터</a><a class="pbtn l" href="/#v=salesstrategy">영업전략</a><a class="pbtn l" href="/#v=datacenter">자료센터</a></div></div>
       <div class="mz"><h4>✅ 오늘 할 일</h4><div class="todo" id="todo"></div><div class="trow"><input id="todoIn" maxlength="80" placeholder="할 일 추가 (Enter)"><button type="button" id="todoAdd">추가</button></div></div>`; }
   else if(r.team){ const k=TT[r.id]||"n"; const tab=(v,t)=>`<button type="button" data-tt="${v}" class="${k===v?"on":""}">${t}</button>`; let body="";
