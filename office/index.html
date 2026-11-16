@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* GROW 오피스 v2 (2026-11-13)
-   그로우사업부 가상사무실: 지사 사무실 6곳 + 교육장·로비·회의실 + 영업부(온라인·행사·사업자) + 영업지원 + 나만의 공간
+   그로우사업부 가상사무실: 지사 사무실 6곳 + 교육장·로비·회의실 + 영업부(온라인·행사·사업자) + 영업지원 데스크
    - 입장: GROW ON 같은 창의 로그인(설계사 사번 fcAuth / 관리자 growAdminCode)을 n8n 'GROW 오피스 API'(grow-office)가 서버에서 확인
    - 저장: 채팅(전체·방별)·지사 공지·출근·할 일 → n8n 데이터 표. 지사 방 채팅·공지는 서버가 소속만 허용
    - 실시간: Supabase Realtime(보잇 프로젝트) 채널 'grow-office' — 접속자·이동·이모지·전체/팀 채팅 즉시 표시. 지사 방 채팅은 내용 대신 '새 글' 신호만 보내고 각자 서버에서 받아 옴
@@ -306,7 +306,7 @@ button{font:inherit;cursor:pointer}
       <div class="stat" id="stSched" style="cursor:pointer;flex:1.6;border:2px solid #F58220"><span>📅 다가오는 일정 · 눌러서 달력 보기</span><b id="sNext" style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">불러오는 중…</b></div>
       <div class="stat"><span>오늘 출근</span><b id="sAtt">-</b></div>
     </div>
-    <div class="jump" id="jump"><span>📍 바로 가기</span><button type="button" data-jump="mine">⭐ 내 지사</button><button type="button" data-jump="lobby">로비</button><button type="button" data-jump="edu">미팅룸</button><button type="button" data-jump="desk">영업지원 데스크</button><button type="button" data-jump="online">온라인영업팀</button><button type="button" data-jump="event">행사팀</button><button type="button" data-jump="biz">사업자영업팀</button><button type="button" data-jump="private">나만의 공간</button></div>
+    <div class="jump" id="jump"><span>📍 바로 가기</span><button type="button" data-jump="mine">⭐ 내 지사</button><button type="button" data-jump="lobby">로비</button><button type="button" data-jump="edu">미팅룸</button><button type="button" data-jump="desk">영업지원 데스크</button><button type="button" data-jump="online">온라인영업팀</button><button type="button" data-jump="event">행사팀</button><button type="button" data-jump="biz">사업자영업팀</button></div>
     <div class="mapbox" id="mapbox">
       <div id="world"></div>
       <div class="hint">방향키 · WASD 이동 / 바닥 클릭 이동</div>
@@ -331,8 +331,8 @@ button{font:inherit;cursor:pointer}
         <h4>🚶 움직이기</h4><p>방향키·WASD로 걷거나, 가고 싶은 바닥을 누르면 그 자리로 갑니다. 방에 들어가면 오른쪽 안내판이 그 방 기능으로 바뀝니다.</p>
         <h4>🏢 지사 방</h4><p>내 지사 방만 들어갈 수 있습니다. 지사 공지판과 지사 채팅은 소속만 보고, 저장됩니다. 지사장은 공지를 올리고 오늘 출근 명단을 봅니다.</p>
         <h4>🎓 미팅룸</h4><p>줌 강의·화상회의 입장 버튼, 실시간 회의 채팅, 회의록 쓰기·지난 회의 기록 열람이 있습니다. 강의·회의 주소는 지사장이 바꿀 수 있습니다.</p>
-        <h4>🧭 영업지원 데스크 · 영업부 방</h4><p>보험사 업무지원·영업센터·영업전략 같은 GROW ON 화면이 오피스 안에서 바로 열립니다. 행사팀 방에는 행사 일정이 보입니다.</p>
-        <h4>🔒 나만의 공간</h4><p>출근 체크, 오늘 할 일, 보잇 CRM, 내 DB 조회. 다른 사람에게는 보이지 않습니다.</p>
+        <h4>👥 영업팀 방 (온라인·행사·사업자)</h4><p>공지 · 게시판 · 채팅방. 게시판은 누구나 글을 쓰고, 본인 글은 수정·삭제할 수 있습니다.</p>
+        <h4>🧭 영업지원 데스크</h4><p>출근 체크, 보잇, 내 DB 조회, 보험사 업무지원·영업센터, 오늘 할 일.</p>
         <h4>🤖 보험비서 AI</h4><p>복도(공용 통로)의 로봇이나 위쪽 버튼을 누르면 질문할 수 있습니다. 고객 이름·연락처·주민번호는 자동으로 지워서 보내며, 답변은 약관·상품설명서로 꼭 확인하세요.</p>
         <h4>🎨 내 캐릭터</h4><p>위쪽 "내 캐릭터"에서 캐릭터·색상을 고르거나 사진을 올릴 수 있습니다. 이 기기에 저장되고 접속자에게 바로 보입니다.</p>
         <h4>💬 채팅 · 이모지</h4><p>오른쪽 아래 채팅창에서 전체 채팅과 지금 있는 방 채팅을 고릅니다. 아래 이모지를 누르면 내 캐릭터 위에 떠오릅니다.</p></div></div>
@@ -431,14 +431,14 @@ const W=$("#world"); const ROOMS=[];
 BR.forEach((b,i)=>ROOMS.push({id:"br_"+b[0],name:b[0]+"지사",sub:"지사장 "+b[2],x:40+i*258,y:40,w:238,h:240,branch:b[0],c:b[1],floor:"wood"}));
 ROOMS.push({id:"edu",name:"미팅룸",sub:"교육장 · 회의실 · 관리자방",x:40,y:340,w:600,h:280,c:"#2D7FF9",floor:"carpet"});
 ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:656,y:340,w:904,h:280,c:"#14B8A6",floor:"marble"});
-[["online","온라인영업팀","블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","산모교실·아파트·펫","#F97316","wood"],["biz","사업자영업팀","소상공인·기업","#10B981","wood"],["desk","영업지원 데스크","보험사 업무지원·영업센터·영업전략","#8B5CF6","tile"],["private","나만의 공간","다른 사람에게 보이지 않음","#0E2A47","carpet"]]
-  .forEach((t,i)=>{ const X=[40,314,588,862,1214], Wd=[258,258,258,336,346]; ROOMS.push({id:t[0],name:t[1],sub:t[2],x:X[i],y:690,w:Wd[i],h:220,c:t[3],floor:t[4],team:i<3}); });
+[["online","온라인영업팀","블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","산모교실·아파트·펫","#F97316","wood"],["biz","사업자영업팀","소상공인·기업","#10B981","wood"],["desk","영업지원 데스크","보험사 업무지원·영업센터·영업전략","#8B5CF6","tile"]]
+  .forEach((t,i)=>{ const X=[40,314,588,862], Wd=[258,258,258,698]; ROOMS.push({id:t[0],name:t[1],sub:t[2],x:X[i],y:690,w:Wd[i],h:220,c:t[3],floor:t[4],team:i<3}); });
 /* 휴대폰: 세로로 긴 배치(2줄)로 바꿔 사무실 전체가 잘리지 않게 보여 줌 */
 const MOBL=window.matchMedia("(max-width:700px)").matches;
 const WD=MOBL?{w:540,h:2080}:{w:1600,h:950};
 const LANES=MOBL?{y:[740,1300],x:[60,480]}:{y:[310,655],x:[80,1520]};
 if(MOBL){ const M={"br_광명":[20,20,240,220],"br_다온":[280,20,240,220],"br_동행":[20,260,240,220],"br_도약":[280,260,240,220],"br_혁신":[20,500,240,220],"br_리치로드맵":[280,500,240,220],
-  edu:[20,760,500,240],lobby:[20,1040,500,240],online:[20,1320,240,220],event:[280,1320,240,220],biz:[20,1580,240,220],desk:[280,1580,240,220],private:[20,1840,500,220]};
+  edu:[20,760,500,240],lobby:[20,1040,500,240],online:[20,1320,240,220],event:[280,1320,240,220],biz:[150,1580,240,220],desk:[20,1840,500,240]};
   ROOMS.forEach(r=>{ const m=M[r.id]; if(m){ r.x=m[0]; r.y=m[1]; r.w=m[2]; r.h=m[3]; } }); }
 function artOf(r){ return ({edu:"flat_edu",lobby:"flat_lobby",desk:"flat_desk",private:"flat_private"})[r.id]||""; }
 const LINKS={lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],edu:[["교육·회의 일정","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],desk:[["보험사 업무지원","/#v=insurers"],["영업센터","/#v=salescenter"],["영업전략","/#v=salesstrategy"]]};
@@ -561,6 +561,9 @@ function meetUrl(room){ const L=(BOOT&&BOOT.links)||{}; if(L[room]&&L[room].url)
 const head=()=>ME&&(ME.role==="manager"||ME.role==="admin");
 const isAdm=()=>head()||sessionStorage.getItem("growAdmin")==="1";
 let MZ="lect", MCHAT=false;
+/* 영업팀 방: 탭(n 공지·b 게시판·c 채팅방), 글 목록 */
+const TT={}, BD={}; let BOPEN=null, BEDIT=null, BNEW=false;
+async function loadBoard(room,k){ const r=await api({action:"board_list",room,kind:k}); BD[room+k]=r&&r.ok?r.items||[]:[]; if(curId===room) renderPanel(curRoom()); }
 function meetZone(k){ const r=ROOMS.find(x=>x.id==="edu"); MZ=k; if(curId!=="edu"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); }
 async function enterRoom(){ const r=curRoom(); renderPanel(r); TAB=r.id==="private"?"all":(isChatRoom(r.id)&&r.id!=="hall"?"room":TAB); renderTabs(); roomSheet(r);
   if(isChatRoom(r.id)&&!LOGS[r.id]){ const x=await api({action:"chat_list",room:r.id}); if(x&&x.ok){ LOGS[r.id]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } else renderLog(); }
@@ -577,6 +580,19 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       ${head()?`<div class="nform"><input id="nT" maxlength="60" placeholder="공지 제목"><textarea id="nB" rows="3" maxlength="1000" placeholder="공지 내용"></textarea><button class="pbtn g" type="button" id="nPost">공지 올리기</button></div>`:""}
       ${head()&&BOOT&&BOOT.attList?`<h3 style="margin-top:12px;font-size:14px;color:var(--navy)">오늘 출근 (${BOOT.attList.length}명)</h3><div class="sm">${BOOT.attList.map(a=>E(a.name)+" "+E(a.at)).join(" · ")||"아직 없음"}</div>`:""}
       <p class="sm" style="margin:10px 0 0">이 방 채팅은 ${E(r.name)} 소속만 보고 쓸 수 있으며 저장됩니다.</p>`; }
+  else if(r.id==="desk"){ const att=BOOT&&BOOT.att;
+    h=`<div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를<br>아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
+      <div class="mz"><h4>📱 보잇 BOIT</h4><a class="pbtn o" href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 열기 ↗</a><div class="agrid" style="margin-top:6px"><a class="pbtn l" href="https://boit.ai.kr/#customers" target="_blank" rel="noopener">내 보험 불러오기 ↗</a><a class="pbtn l" href="/#v=fclookup">내 DB 조회</a></div></div>
+      <div class="mz"><h4>🧭 영업 지원</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=salescenter">영업센터</a><a class="pbtn l" href="/#v=salesstrategy">영업전략</a><a class="pbtn l" href="/#v=datacenter">자료센터</a></div></div>
+      <div class="mz"><h4>✅ 오늘 할 일</h4><div class="todo" id="todo"></div><div class="trow"><input id="todoIn" maxlength="80" placeholder="할 일 추가 (Enter)"><button type="button" id="todoAdd">추가</button></div></div>`; }
+  else if(r.team){ const k=TT[r.id]||"n"; const tab=(v,t)=>`<button type="button" data-tt="${v}" class="${k===v?"on":""}">${t}</button>`; let body="";
+    if(k==="c") body=`<p class="sm" style="margin:10px 2px 0">아래 채팅창에서 ${E(r.name)} 사람들과 대화합니다. 대화는 저장됩니다.</p>`;
+    else { const L=BD[r.id+k]; const canW=k==="b"||head(); const ED=BEDIT;
+      if(canW&&(BNEW||ED)) body=`<div class="nform" style="margin-top:8px">${ED?`<p class="sm" style="margin:0">✏️ 글 수정</p>`:""}<input id="bdT" maxlength="80" placeholder="제목" value="${ED?E(ED.title):""}"><textarea id="bdB" rows="7" maxlength="4000" placeholder="${k==="n"?"공지 내용":"내용 (고객 개인정보는 적지 마세요)"}">${ED?E(ED.body):""}</textarea><div class="agrid"><button class="pbtn g" type="button" id="bdSave">${ED?"수정 저장":"등록"}</button><button class="pbtn" type="button" id="bdCancel">취소</button></div></div>`;
+      else if(canW) body=`<button class="pbtn g" type="button" id="bdNew" style="margin-top:8px">＋ ${k==="n"?"공지 쓰기":"글쓰기"}</button>`;
+      if(!L){ body+=`<p class="sm">불러오는 중…</p>`; loadBoard(r.id,k); }
+      else body+=L.length?`<div class="mnlist" style="margin-top:8px">${L.map(m=>{ const on=String(m.id)===String(BOPEN); return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-bopen="${m.id}"><i>${E(String(m.at).slice(5,10).replace("-","/"))}</i><b>${E(m.title)}</b><span>${E(String(m.name).replace(/ \(.*\)$/,""))}</span></button>${on?`<div class="mnbody">${E(m.body)}<div class="mnft"><small>${E(m.name)} · ${E(m.at)}</small>${m.mine||ME.role==="admin"?`<span><button type="button" data-bedit="${m.id}" style="color:var(--navy)">수정</button> <button type="button" data-bdel="${m.id}">삭제</button></span>`:""}</div></div>`:""}</div>`; }).join("")}</div>`:`<p class="sm" style="margin-top:8px">${k==="n"?"등록된 공지가 없습니다.":"아직 글이 없습니다. 첫 글을 남겨 보세요."}</p>`; }
+    h=`<div class="mtabs" style="margin-top:0">${tab("n","📢 공지")}${tab("b","📝 게시판")}${tab("c","💬 채팅방")}</div>${body}<div class="agrid" style="margin-top:10px">${(LINKS[r.id]||[]).map(([t,u])=>`<a class="pbtn l" href="${u}">${t}</a>`).join("")}</div>`; }
   else if(r.id==="edu"){ const LK=(BOOT&&BOOT.links)||{}; const M=(BOOT&&BOOT.minutes)||[]; const MT=(BOOT&&BOOT.meets)||[];
     const setTxt=k=>LK[k]?(LK[k].pw?`회의 ID <b>${E(LK[k].mid||"")}</b> · 암호 <b>${E(LK[k].pw)}</b>`:`${E(LK[k].by)} · ${E(LK[k].at)} 설정`):"기본 방(Jitsi)";
     const tab=(k,t)=>`<button type="button" data-mz="${k}" class="${MZ===k?"on":""}">${t}</button>`;
@@ -596,7 +612,7 @@ function renderPanel(r){ const P=$("#panel"); let h="";
     h=`<div class="mtabs" style="margin-top:0">${tab("lect","🎓 교육장")}${tab("meet","🎥 회의실")}${tab("adm","🔐 관리자방")}</div>${body}<button type="button" class="pbtn l" id="mzChat" style="margin-top:10px">${MCHAT?"💬 미팅룸 채팅 닫기":"💬 미팅룸 채팅 열기"}</button>`; }
   else if(r.id==="event"){ h=`<div class="ttl"><b>행사팀 · 행사 일정</b><a class="sm" href="/#v=schedule">전체 일정 ›</a></div><div id="evList" class="sm" style="margin-top:6px">불러오는 중…</div>`; loadSched(); }
   else if(r.id!=="hall"){ const L=LINKS[r.id]||[]; h=`<div class="ttl"><b>${E(r.name)}</b><span class="sm">${E(r.sub||"")}</span></div>${L.map(([t,u])=>`<a class="pbtn l" href="${u}">${t} ›</a>`).join("")}`; }
-  P.innerHTML=h; P.style.display=h?"":"none"; if(r.id==="private") renderTodo(); }
+  P.innerHTML=h; P.style.display=h?"":"none"; if(r.id==="private"||r.id==="desk") renderTodo(); }
 async function loadSched(){ if(!SCHED){ try{ const j=await (await fetch("/board/schedule.json?t="+Date.now(),{cache:"no-store"})).json(); SCHED=(j.items||[]).filter(x=>/행사/.test(x.cat||"")||/행사|페어|교실|아파트|펫/.test(x.title||"")); }catch(e){ SCHED=[]; } }
   const box=$("#evList"); if(!box) return; const t=new Date(Date.now()+9*3600000).toISOString().slice(0,10);
   const up=SCHED.filter(x=>(x.dateEnd||x.dateStart)>=t).sort((a,b)=>a.dateStart.localeCompare(b.dateStart)).slice(0,8), past=SCHED.filter(x=>(x.dateEnd||x.dateStart)<t).sort((a,b)=>b.dateStart.localeCompare(a.dateStart)).slice(0,3);
@@ -617,6 +633,15 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.id==="mtHist"){ HT="min"; openHist(); }
   if(t.id==="mnNew"){ HT="new"; MEDIT=null; openHist(); }
   if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
+  if(t.dataset&&t.dataset.tt){ const r=curRoom(); TT[r.id]=t.dataset.tt; BOPEN=null; BEDIT=null; BNEW=false; renderPanel(r); roomSheet(r); if(t.dataset.tt==="c"){ TAB="room"; renderTabs(); renderLog(); } }
+  if(t.closest&&t.closest("[data-bopen]")){ const id=t.closest("[data-bopen]").dataset.bopen; BOPEN=String(BOPEN)===id?null:id; renderPanel(curRoom()); }
+  if(t.id==="bdNew"){ BNEW=true; BEDIT=null; renderPanel(curRoom()); const i=$("#bdT"); if(i) i.focus(); }
+  if(t.id==="bdCancel"){ BNEW=false; BEDIT=null; renderPanel(curRoom()); }
+  if(t.dataset&&t.dataset.bedit){ const r=curRoom(), k=TT[r.id]||"n"; BEDIT=(BD[r.id+k]||[]).find(m=>String(m.id)===t.dataset.bedit)||null; BNEW=false; renderPanel(r); }
+  if(t.id==="bdSave"){ const r=curRoom(), k=TT[r.id]||"n"; const ti=($("#bdT").value||"").trim(), bo=($("#bdB").value||"").trim(); if(!ti) return toast("제목을 적어 주세요."); t.disabled=true;
+    const x=await api(BEDIT?{action:"board_edit",id:BEDIT.id,title:ti,body:bo}:{action:"board_post",room:r.id,kind:k,title:ti,body:bo}); t.disabled=false;
+    if(x&&x.ok){ toast(BEDIT?"수정했습니다.":"등록했습니다."); BEDIT=null; BNEW=false; BOPEN=null; delete BD[r.id+k]; renderPanel(r); } else toast((x&&x.error)||"실패했습니다."); }
+  if(t.dataset&&t.dataset.bdel){ if(!confirm("이 글을 지울까요?")) return; const r=curRoom(), k=TT[r.id]||"n"; const x=await api({action:"board_del",id:t.dataset.bdel}); if(x&&x.ok){ BOPEN=null; delete BD[r.id+k]; renderPanel(r); toast("삭제했습니다."); } else toast((x&&x.error)||"실패했습니다."); }
   if(t.id==="mzChat"){ MCHAT=!MCHAT; $("#side").classList.toggle("nochat",!MCHAT); renderPanel(curRoom()); if(MCHAT){ TAB="room"; renderTabs(); renderLog(); } }
   if(t.dataset&&t.dataset.lk){ const k=t.dataset.lk; const u=($(k==="edu"?"#lkEdu":"#lkMeet").value||"").trim(); const r=await api({action:"link_set",room:k,url:u}); if(r&&r.ok){ BOOT.links=r.links||{}; renderPanel(curRoom()); toast(u?"회의 주소를 바꿨습니다.":"기본 회의방으로 되돌렸습니다."); } else toast((r&&r.error)||"실패했습니다."); }
 });
@@ -708,7 +733,7 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<(MOBL?12:26);i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
 
 /* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
-function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="private"||(r.id==="edu"&&!MCHAT)); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
+function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="private"||r.id==="desk"||(r.id==="edu"&&!MCHAT)||(!!r.team&&(TT[r.id]||"n")!=="c")); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
   const ob=$("#shOpen"); if(ob) ob.innerHTML=r.id==="hall"?"":`💬 <b>${E(r.name)}</b> 열기 ▴`;
   if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
   if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
@@ -820,8 +845,8 @@ $("#btnAi").addEventListener("click",openAi);
 /* ---- 업무 메뉴: GROW ON 기능을 오피스 안 창으로 (같은 로그인) · 보잇은 새 창 ---- */
 function tlRender(){ const adm=isAdm();
   const G=[["내 업무",[["내 DB 조회","배정 고객·진행 기록","/#v=fclookup"],["영업센터","영업 도구 모음","/#v=salescenter"],["리포트 생성","보장분석·지문 리포트","/report/"],["보험비서 AI","약관·상품 질문","ai"]]],
-    ["자료",[["자료센터","서식·자료 내려받기","/#v=datacenter"],["영업전략","월별 판매자료","/#v=salesstrategy"],["보험사 업무지원","보험회사 전산·연락처","/#v=insurers"],["공지사항","","/#v=notice"],["일정","교육·행사","/#v=schedule"]]],
-    ["보잇",[["보잇 BOIT","고객관리·보상청구 (새 창)","https://boit.ai.kr/"],["내 보험 불러오기","보잇 › 고객 (새 창)","https://boit.ai.kr/#customers"]]]];
+    ["자료",[["자료센터","서식·자료 내려받기","/#v=datacenter"],["영업전략","월별 판매자료","/#v=salesstrategy"],["보험사 업무지원","보험회사 전산·연락처","/#v=insurers"],["공지사항","","/#v=notice"],["일정","교육·행사","/#v=schedule"]]]];
+
   if(adm) G[0][1].push(["관리자센터","DB 배정·게시물","/#v=admin"]);
   $("#tlBody").innerHTML=G.map(([h,L])=>`<h4>${h}</h4>`+L.map(([t,d,u])=>`<button type="button" data-tl="${E(u)}" data-tt="${E(t)}">${E(t)}${d?`<small>${E(d)}</small>`:""}</button>`).join("")).join(""); }
 $("#btnTl").addEventListener("click",()=>{ tlRender(); $("#tlBox").classList.add("on"); });
@@ -852,7 +877,7 @@ $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$(
   npcTick(); setInterval(npcTick,3500); decorate(); birthday(); setTimeout(()=>checkNews(true),2500); setInterval(()=>checkNews(false),2*60000);
   $("#sAtt").textContent=b.att?"출근 "+b.att:"출근 전";
   enterRoom(); updWhere(); who(); connect();
-  if(!b.att) setTimeout(()=>toast("오늘 출근 체크는 '나만의 공간'에서 할 수 있어요."),1200);
+  if(!b.att) setTimeout(()=>toast("오늘 출근 체크는 '영업지원 데스크'에서 할 수 있어요."),1200);
 })();
 setInterval(()=>{ if(BOOT) $("#sAtt").textContent=BOOT.att?"출근 "+BOOT.att:"출근 전"; },2000);
 })();
