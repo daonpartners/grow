@@ -575,7 +575,7 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       ${head()&&BOOT&&BOOT.attList?`<h3 style="margin-top:12px;font-size:14px;color:var(--navy)">오늘 출근 (${BOOT.attList.length}명)</h3><div class="sm">${BOOT.attList.map(a=>E(a.name)+" "+E(a.at)).join(" · ")||"아직 없음"}</div>`:""}
       <p class="sm" style="margin:10px 0 0">이 방 채팅은 ${E(r.name)} 소속만 보고 쓸 수 있으며 저장됩니다.</p>`; }
   else if(r.id==="edu"){ const LK=(BOOT&&BOOT.links)||{}; const M=(BOOT&&BOOT.minutes)||[]; const MT=(BOOT&&BOOT.meets)||[];
-    const setTxt=k=>LK[k]?`${E(LK[k].by)} · ${E(LK[k].at)} 설정`:"기본 방(Jitsi)";
+    const setTxt=k=>LK[k]?(LK[k].pw?`회의 ID <b>${E(LK[k].mid||"")}</b> · 암호 <b>${E(LK[k].pw)}</b>`:`${E(LK[k].by)} · ${E(LK[k].at)} 설정`):"기본 방(Jitsi)";
     h=`<div class="ttl"><b>🏢 미팅룸</b><span class="sm">교육장 · 회의실 · 관리자방</span></div>
       <div class="mz" id="mz_lect"><h4>🎓 교육장</h4><a class="pbtn o" href="${E(meetUrl("edu"))}" target="_blank" rel="noopener">줌 강의 입장</a><p class="sm" style="margin:4px 0 0">${setTxt("edu")}</p>
         ${head()?`<div class="nform"><input id="lkEdu" maxlength="300" placeholder="줌 강의 주소 (https://zoom.us/…)" value="${E(LK.edu?LK.edu.url:"")}"><button class="pbtn l" type="button" data-lk="edu">강의 주소 저장</button></div>`:""}</div>
