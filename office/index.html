@@ -91,6 +91,7 @@ button{font:inherit;cursor:pointer}
 .stsel{display:flex;gap:6px;padding:0 16px 10px}.stsel button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 0;font-size:12px;font-weight:700}.stsel button.on{border-color:var(--teal);color:var(--teal);background:#EEF6F4}
 .gate{position:fixed;inset:0;background:rgba(14,42,71,.75);display:flex;align-items:center;justify-content:center;padding:16px;z-index:200}
 .gate div{background:#fff;border-radius:18px;padding:24px 22px;width:100%;max-width:420px;text-align:center;line-height:1.6;word-break:keep-all}
+body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:not([data-jump="lobby"]),body.guest #stSched,body.guest .chip-att,body.guest .stat:has(#sAtt){display:none!important}
 .gate.door{background:linear-gradient(180deg,#26313d 0,#33404e 62%,#8d877c 62%,#a39d92 100%);overflow:auto;align-items:flex-start;padding:16px 10px}
 .gate.door div{background:none;padding:0;max-width:none;border-radius:0}
 .gate.door .dr-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:600px;margin:auto}
@@ -104,7 +105,8 @@ button{font:inherit;cursor:pointer}
 .gate .dr-glass i::after{content:"";position:absolute;top:34%;width:7px;height:30%;border-radius:4px;background:linear-gradient(90deg,#e9edf1,#9aa6b2);box-shadow:0 2px 6px rgba(0,0,0,.3)}.gate .dr-glass i:first-child::after{right:10px}.gate .dr-glass i:last-of-type::after{left:10px}
 .gate .dr-glass.open i:first-child{transform:translateX(-104%)}.gate .dr-glass.open i:last-of-type{transform:translateX(104%)}
 .gate .dr-in{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);background:#F58220;color:#fff;border:0;border-radius:999px;padding:16px 46px;font:inherit;font-size:20px;font-weight:900;box-shadow:0 10px 26px rgba(0,0,0,.35);cursor:pointer}
-.gate .dr-glass.open .dr-in{display:none}
+.gate .dr-guest{position:absolute;z-index:2;left:50%;top:calc(50% + 52px);transform:translateX(-50%);background:rgba(255,255,255,.92);color:#0E2A47;border:0;border-radius:999px;padding:10px 22px;font:inherit;font-size:14.5px;font-weight:800;box-shadow:0 6px 16px rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}
+.gate .dr-glass.open .dr-in,.gate .dr-glass.open .dr-guest{display:none}
 .gate .dr-glass .dr-card{position:absolute!important;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88%,380px)}
 .gate .dr-floor{width:104%;height:14px;background:#6f6a62!important;border-radius:3px!important}
 .gate .dr-card{background:#fff!important;border-radius:16px!important;padding:18px!important;width:100%;box-shadow:0 14px 40px rgba(0,0,0,.3);text-align:center}
@@ -379,7 +381,8 @@ const BCOL=Object.fromEntries(BR.map(b=>[b[0],b[1]]));
 const short=s=>String(s||"").replace(/지사$/,"");
 
 /* ---- 로그인 정보 (GROW ON 같은 창) → 서버 확인 ---- */
-function cred(){ try{ const a=JSON.parse(sessionStorage.getItem("fcAuth")||"null"); if(a&&a.sabun&&a.ver) return {sabun:a.sabun,ver:a.ver}; }catch(e){}
+const GUEST=(()=>{ try{ return sessionStorage.getItem("growGuest")==="1"; }catch(e){ return false; } })();
+function cred(){ if(GUEST) return {guest:1}; try{ const a=JSON.parse(sessionStorage.getItem("fcAuth")||"null"); if(a&&a.sabun&&a.ver) return {sabun:a.sabun,ver:a.ver}; }catch(e){}
   try{ const c=sessionStorage.getItem("growAdminCode"); if(c) return {code:c}; }catch(e){}
   try{ if(sessionStorage.getItem("growLeft")==="1") return null; }catch(e){}
   try{ const v=JSON.parse(localStorage.getItem("growFcAuto")||"null"); if(v&&v.sabun&&v.ver&&Date.now()-v.at<7*86400000){ sessionStorage.setItem("fcAuth",JSON.stringify({sabun:v.sabun,ver:v.ver})); return {sabun:v.sabun,ver:v.ver}; } }catch(e){}
@@ -409,7 +412,7 @@ function saveLogin(sb,ver,r,remember){ SKEYS.forEach(k=>sessionStorage.removeIte
 function autoInfo(){ try{ const v=JSON.parse(localStorage.getItem("growFcAuto")||"null"); if(v&&v.sabun&&v.ver&&Date.now()-v.at<7*86400000) return v; }catch(e){} return null; }
 function gate(msg){ const g=document.createElement("div"); g.className="gate door";
   g.innerHTML=`<div class="dr-wrap"><div class="dr-sign"><small>미래에셋금융서비스</small><b>그로우사업부</b><span>GROW OFFICE</span></div>
-  <div class="dr-glass" id="gDoor" style="--art:url(art/flat_lobby.webp)"><i></i><i></i><button type="button" class="dr-in" id="gIn">입장</button>
+  <div class="dr-glass" id="gDoor" style="--art:url(art/flat_lobby.webp)"><i></i><i></i><button type="button" class="dr-in" id="gIn">입장</button><button type="button" class="dr-guest" id="gGuest">게스트로 둘러보기</button>
   <div class="dr-card" id="gCard" hidden><form id="gFc"><input id="gSb" inputmode="numeric" autocomplete="username" placeholder="사번" maxlength="12"><input id="gPw" type="password" autocomplete="current-password" placeholder="비밀번호">
    <div id="gNew" class="dr-new" hidden><p id="gNewT"></p><input id="gPw2" type="password" autocomplete="new-password" placeholder="비밀번호 한 번 더"></div>
    <label class="dr-rm"><input type="checkbox" id="gRm" checked> 이 기기에서 7일간 자동 입장</label><button class="dr-go">입장하기</button></form>
@@ -417,8 +420,9 @@ function gate(msg){ const g=document.createElement("div"); g.className="gate doo
   document.body.appendChild(g);
   const D=g.querySelector("#gDoor"), CD=g.querySelector("#gCard");
   const openDoor=()=>{ D.classList.add("open"); setTimeout(()=>{ CD.hidden=false; const i=g.querySelector("#gSb"); if(i) i.focus(); },msg?0:550); };
+  g.querySelector("#gGuest").addEventListener("click",e=>{ e.stopPropagation(); D.classList.add("open"); try{ sessionStorage.setItem("growGuest","1"); sessionStorage.removeItem("growLeft"); }catch(_){} setTimeout(()=>location.reload(),600); });
   g.querySelector("#gIn").addEventListener("click",e=>{ e.stopPropagation(); const v=autoInfo(); if(v&&!msg){ D.classList.add("open"); try{ sessionStorage.removeItem("growLeft"); sessionStorage.setItem("fcAuth",JSON.stringify({sabun:v.sabun,ver:v.ver})); }catch(_){} setTimeout(()=>location.reload(),600); return; } openDoor(); });
-  D.addEventListener("click",e=>{ if(!D.classList.contains("open")&&!e.target.closest(".dr-card")) g.querySelector("#gIn").click(); });
+  D.addEventListener("click",e=>{ if(!D.classList.contains("open")&&!e.target.closest(".dr-card,.dr-guest")) g.querySelector("#gIn").click(); });
   if(msg) openDoor();
   const m=t=>{ g.querySelector("#gMsg").textContent=t||""; }, NEW=g.querySelector("#gNew"), bt=g.querySelector(".dr-go");
   g.querySelector("#gSb").addEventListener("input",()=>{ NEW.hidden=true; bt.textContent="입장하기"; m(""); });
@@ -440,7 +444,7 @@ function gate(msg){ const g=document.createElement("div"); g.className="gate doo
     }catch(err){ bt.disabled=false; m("오류가 발생했습니다. 다시 시도하세요."); } });
 }
 if(!CR){ gate(); return; }
-async function api(body){ try{ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({},CR,body))}); return await r.json(); }catch(e){ return {ok:false,net:true,error:"서버에 연결하지 못했습니다."}; } }
+async function api(body){ if(GUEST) return {ok:false,error:"게스트는 이용할 수 없습니다. 사업부 소속은 사번으로 입장하세요."}; try{ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({},CR,body))}); return await r.json(); }catch(e){ return {ok:false,net:true,error:"서버에 연결하지 못했습니다."}; } }
 let ME=null, BOOT=null;
 
 /* ---- 지도 ---- */
@@ -464,7 +468,7 @@ const px=v=>v+"px"; const RE={};
 function buildMap(){ W.style.width=WD.w+"px"; W.style.height=WD.h+"px";
 ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),width:px(r.w),height:px(r.h)}); d.style.setProperty("--c",r.c); RE[r.id]=d;
   d.appendChild(el("tag",{},E(r.name))); d.appendChild(el("lamp")); if(r.sub) d.appendChild(el("sub",{},E(r.sub)));
-  if(r.branch&&!canEnter(r)) d.appendChild(el("lock",{},"소속만"));
+  if(!canEnter(r)) d.appendChild(el("lock",{},"소속만"));
   if(r.branch&&ME&&ME.role!=="admin"&&r.branch===short(ME.parent||ME.branch)){ d.classList.add("mine"); d.appendChild(el("minetag",{},"⭐ 내 지사")); }
   W.appendChild(d);
   const dw=70; if(r.branch||r.id==="edu") W.appendChild(el("door",{left:px(r.x+r.w/2-dw/2),top:px(r.y+r.h-6),width:px(dw),height:px(6)}));
@@ -489,7 +493,7 @@ ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),wid
 });
 }
 function roomAt(x,y){ for(const r of ROOMS){ if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h) return r; } return null; }
-function canEnter(r){ if(!r||!r.branch) return true; if(!ME) return false; return ME.role==="admin"||r.branch===short(ME.branch)||r.branch===short(ME.parent); }
+function canEnter(r){ if(ME&&ME.role==="guest") return !r||r.id==="lobby"; if(!r||!r.branch) return true; if(!ME) return false; return ME.role==="admin"||r.branch===short(ME.branch)||r.branch===short(ME.parent); }
 const MB=$("#mapbox"); let SC=1;
 const MOB=()=>window.matchMedia("(max-width:700px)").matches;
 function fit(){ const w=MB.clientWidth, h=MB.clientHeight;
@@ -542,7 +546,7 @@ let pos={x:start.x+start.w/2+(Math.random()*120-60),y:start.y+start.h/2+40}, cur
 function toast(t){ const o=$("#toast"); o.textContent=t; o.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>o.classList.remove("on"),1800); }
 function moveTo(nx,ny,send){
   nx=Math.max(24,Math.min(WD.w-24,nx)); ny=Math.max(24,Math.min(WD.h-24,ny));
-  const r=roomAt(nx,ny); if(!canEnter(r)){ if(!moveTo.w||Date.now()-moveTo.w>1500){ toast(r.name+"는 소속 설계사만 들어갈 수 있습니다."); moveTo.w=Date.now(); } return false; }
+  const r=roomAt(nx,ny); if(!canEnter(r)){ if(!moveTo.w||Date.now()-moveTo.w>1500){ toast(r.name+(ME&&ME.role==="guest"?"는 사업부 소속만 들어갈 수 있습니다.":"는 소속 설계사만 들어갈 수 있습니다.")); moveTo.w=Date.now(); } return false; }
   pos.x=nx; pos.y=ny; avatar(ME.uid,{x:nx,y:ny}); const id=(r&&r.id)||"hall"; if(id!==curId){ curId=id; enterRoom(); } updWhere(); lights(); if(send!==false) sendMove(); return true; }
 const keys={}; let target=null;
 /* 끌어서 옮기기: 내 캐릭터·보험비서 로봇을 마우스(손가락)로 끌어 원하는 자리에 놓음 */
@@ -558,7 +562,7 @@ W.addEventListener("pointerup",dragEnd); W.addEventListener("pointercancel",drag
 document.addEventListener("keydown",e=>{ if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)) return; const k=e.key.toLowerCase(); if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){ keys[k]=1; target=null; e.preventDefault(); } });
 document.addEventListener("keyup",e=>{ keys[e.key.toLowerCase()]=0; });
 MB.addEventListener("click",e=>{ if(Date.now()-DRAGEND<350) return; if(e.target.closest(".where,.emobar,.kiosk,.modal,.av.bot")) return; const rc=W.getBoundingClientRect(); const tx=(e.clientX-rc.left)/SC, ty=(e.clientY-rc.top)/SC;
-  const tr=roomAt(tx,ty); if(tr&&!canEnter(tr)){ target=null; return toast(tr.name+"는 소속 설계사만 들어갈 수 있습니다."); }
+  const tr=roomAt(tx,ty); if(tr&&!canEnter(tr)){ target=null; return toast(tr.name+(ME&&ME.role==="guest"?"는 사업부 소속만 들어갈 수 있습니다.":"는 소속 설계사만 들어갈 수 있습니다.")); }
   /* 가는 길에 못 들어가는 지사 방이 있으면 걸어가지 않고 바로 그 자리로 이동 */
   let blocked=false; for(let k=1;k<=24;k++){ const r2=roomAt(pos.x+(tx-pos.x)*k/24,pos.y+(ty-pos.y)*k/24); if(r2&&!canEnter(r2)){ blocked=true; break; } }
   if(blocked){ target=null; moveTo(tx,ty); return; } target={x:tx,y:ty}; });
@@ -569,7 +573,7 @@ setInterval(()=>{ if(!ME) return; const sp=7; let dx=(keys.arrowright||keys.d?1:
 /* ---- 위치 표시 ---- */
 function curRoom(){ return ROOMS.find(r=>r.id===curId)||{id:"hall",name:"복도",sub:"공용 통로"}; }
 function updWhere(){ const r=curRoom(); $("#sRoom").textContent=r.name; $("#pRoom").textContent="📍 "+r.name;
-  const L=LINKS[r.id]||[]; $("#where").innerHTML=`<b>${E(r.name)}</b>${L.length?L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):`<span style="color:#6B7A8C">${E(r.sub||"")}</span>`}`;
+  const L=GUEST?[]:(LINKS[r.id]||[]); $("#where").innerHTML=`<b>${E(r.name)}</b>${L.length?L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):`<span style="color:#6B7A8C">${E(r.sub||"")}</span>`}`;
   const here=r.id==="private"?1:Object.values(AV).filter(a=>!a.npc&&a.room===r.id).length; const sh=$("#sHere"); if(sh) sh.textContent=here+"명"; }
 
 /* ---- 방 안내판 (오른쪽) ---- */
@@ -578,6 +582,9 @@ function meetUrl(room){ const L=(BOOT&&BOOT.links)||{}; if(L[room]&&L[room].url)
 const head=()=>ME&&(ME.role==="manager"||ME.role==="admin");
 const isAdm=()=>head()||sessionStorage.getItem("growAdmin")==="1";
 let MZ="lect", MCHAT=false;
+/* 로비 공지: 사이트 공지 파일. 게스트는 '외부 공개' 표시된 공지만 */
+let PUBN=null, LOPEN=null, PUBL=false;
+async function loadPubN(){ if(PUBL) return; PUBL=true; try{ const r=await fetch("/board/notices.json?t="+Date.now(),{cache:"no-store"}); const d=await r.json(); const L=Array.isArray(d)?d:(d.items||[]); PUBN=L.slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||String(b.sortKey||b.date||"").localeCompare(String(a.sortKey||a.date||""))); }catch(e){ PUBN=[]; } if(curId==="lobby") renderPanel(curRoom()); }
 /* 영업팀 방: 탭(n 공지·b 게시판·c 채팅방), 글 목록 */
 const TT={}, BD={}; let BOPEN=null, BEDIT=null, BNEW=false;
 async function loadBoard(room,k){ const r=await api({action:"board_list",room,kind:k}); BD[room+k]=r&&r.ok?r.items||[]:[]; if(curId===room) renderPanel(curRoom()); }
@@ -597,6 +604,13 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       ${head()?`<div class="nform"><input id="nT" maxlength="60" placeholder="공지 제목"><textarea id="nB" rows="3" maxlength="1000" placeholder="공지 내용"></textarea><button class="pbtn g" type="button" id="nPost">공지 올리기</button></div>`:""}
       ${head()&&BOOT&&BOOT.attList?`<h3 style="margin-top:12px;font-size:14px;color:var(--navy)">오늘 출근 (${BOOT.attList.length}명)</h3><div class="sm">${BOOT.attList.map(a=>E(a.name)+" "+E(a.at)).join(" · ")||"아직 없음"}</div>`:""}
       <p class="sm" style="margin:10px 0 0">이 방 채팅은 ${E(r.name)} 소속만 보고 쓸 수 있으며 저장됩니다.</p>`; }
+  else if(r.id==="lobby"){ const g=ME&&ME.role==="guest"; const N=(PUBN||[]).filter(n=>!g||n.pub).slice(0,g?10:5);
+    if(!PUBN) loadPubN();
+    h=`<div class="mz"><h4>🏢 회사소개</h4><div class="agrid"><a class="pbtn l" href="/#v=guide">제도안내</a><a class="pbtn l" href="/#v=business">사업소개</a></div></div>
+      <div class="mz"><h4>📍 지사소개</h4><a class="pbtn l" href="/#v=home">전국 지사 안내</a></div>
+      <div class="mz"><h4>📢 공지사항</h4>${!PUBN?`<p class="sm">불러오는 중…</p>`:N.length?`<div class="mnlist">${N.map((n,i)=>{ const on=LOPEN===i; return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-lopen="${i}"><i>${E(String(n.date||"").slice(5,10).replace(".","/"))}</i><b>${n.pinned?"📌 ":""}${E(n.title)}</b><span>${E(n.tag||"")}</span></button>${on?`<div class="mnbody">${E(n.content||"")}${(n.images||[]).length?`<div class="agrid" style="margin-top:8px">${n.images.map(u=>`<img src="${E(u)}" style="width:100%;border-radius:8px" loading="lazy">`).join("")}</div>`:""}</div>`:""}</div>`; }).join("")}</div>`:`<p class="sm">${g?"외부에 공개된 공지가 없습니다.":"등록된 공지가 없습니다."}</p>`}${g?"":`<a class="pbtn l" href="/#v=notice" style="margin-top:6px">공지 전체 보기</a>`}</div>
+      <div class="mz"><h4>🔗 업무링크</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=recruit">파트너 지원</a></div></div>
+      ${g?`<p class="sm" style="margin:8px 2px 0">게스트로 둘러보는 중입니다. 다른 방은 사업부 소속만 들어갈 수 있습니다.</p>`:`<a class="pbtn l" href="/#v=album">그로우앨범</a>`}`; }
   else if(r.id==="desk"){ const att=BOOT&&BOOT.att;
     h=`<div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를<br>아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
       <div class="mz"><h4>📥 배분 DB 조회</h4><a class="pbtn g" href="/#v=fclookup">배분 DB 조회</a></div>
@@ -650,6 +664,7 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.id==="mtChat"){ TAB="room"; renderTabs(); renderLog(); const m=$("#msg"); if(m) m.focus(); }
   if(t.id==="mtHist"){ HT="min"; openHist(); }
   if(t.id==="mnNew"){ HT="new"; MEDIT=null; openHist(); }
+  if(t.closest&&t.closest("[data-lopen]")){ const i=Number(t.closest("[data-lopen]").dataset.lopen); LOPEN=LOPEN===i?null:i; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.tt){ const r=curRoom(); TT[r.id]=t.dataset.tt; BOPEN=null; BEDIT=null; BNEW=false; renderPanel(r); roomSheet(r); if(t.dataset.tt==="c"){ TAB="room"; renderTabs(); renderLog(); } }
   if(t.closest&&t.closest("[data-bopen]")){ const id=t.closest("[data-bopen]").dataset.bopen; BOPEN=String(BOPEN)===id?null:id; renderPanel(curRoom()); }
@@ -751,7 +766,7 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<(MOBL?12:26);i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
 
 /* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
-function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="private"||r.id==="desk"||(r.id==="edu"&&!MCHAT)||(!!r.team&&(TT[r.id]||"n")!=="c")); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
+function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="lobby"||r.id==="private"||r.id==="desk"||(r.id==="edu"&&!MCHAT)||(!!r.team&&(TT[r.id]||"n")!=="c")); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
   const ob=$("#shOpen"); if(ob) ob.innerHTML=r.id==="hall"?"":`💬 <b>${E(r.name)}</b> 열기 ▴`;
   if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
   if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
@@ -799,7 +814,8 @@ window.addEventListener("storage",e=>{ if(e.key==="growSchedPending") loadAll();
 
 /* ---- 홈페이지 화면을 오피스 안에서 열기 ---- */
 function openPage(u,t){ $("#pgF").src=u; $("#pgOut").href=u; $("#pgT").textContent=t||"GROW ON"; $("#pgBox").classList.add("on"); }
-document.addEventListener("click",e=>{ const a=e.target.closest('a[href^="/#v="]'); if(!a||e.ctrlKey||e.metaKey) return; e.preventDefault(); e.stopPropagation(); openPage(a.getAttribute("href"),a.textContent.replace(/[›↗]/g,"").trim()); },true);
+const GUEST_OK=["guide","business","home","insurers","recruit"];
+document.addEventListener("click",e=>{ const a=e.target.closest('a[href^="/#v="]'); if(!a||e.ctrlKey||e.metaKey) return; e.preventDefault(); e.stopPropagation(); if(GUEST){ const v=(/v=([a-z]+)/.exec(a.getAttribute("href"))||[])[1]; if(GUEST_OK.indexOf(v)<0) return toast("사업부 소속만 볼 수 있습니다."); } openPage(a.getAttribute("href"),a.textContent.replace(/[›↗]/g,"").trim()); },true);
 
 /* ---- 회의 기록 ---- */
 let HT="min", HIST=null, MOPEN=null, MQ="", MEDIT=null;
@@ -858,7 +874,7 @@ function aiAdd(role,text,src,type){ const b=$("#aiBody"); const d=document.creat
   const t=document.createElement("span"); t.textContent=String(text||"").replace(/\*\*([^*\n]{1,200})\*\*/g,"$1").replace(/==([^=\n]{1,80})==/g,"$1"); d.appendChild(t);
   const S=(Array.isArray(src)?src:[]).slice(0,4); if(S.length){ const s=document.createElement("div"); s.className="src"; s.innerHTML="참고 자료: "+S.map(x=>{ const ti=E(x.title||x.name||"자료"), u=x.url||x.link||""; return /^https?:\/\//.test(u)?`<a href="${E(u)}" target="_blank" rel="noopener">${ti}</a>`:ti; }).join(" · "); d.appendChild(s); }
   b.appendChild(d); b.scrollTop=b.scrollHeight; return d; }
-function openAi(){ $("#aiBox").classList.add("on"); setTimeout(()=>{ const i=$("#aiIn"); if(i) i.focus(); },50); }
+function openAi(){ if(GUEST) return toast("보험비서 AI는 사업부 소속만 쓸 수 있습니다."); $("#aiBox").classList.add("on"); setTimeout(()=>{ const i=$("#aiIn"); if(i) i.focus(); },50); }
 $("#btnAi").addEventListener("click",openAi);
 /* ---- 업무 메뉴: GROW ON 기능을 오피스 안 창으로 (같은 로그인) · 보잇은 새 창 ---- */
 function tlRender(){ const adm=isAdm();
@@ -870,7 +886,7 @@ function tlRender(){ const adm=isAdm();
 $("#btnTl").addEventListener("click",()=>{ tlRender(); $("#tlBox").classList.add("on"); });
 $("#tlBody").addEventListener("click",e=>{ const b=e.target.closest("[data-tl]"); if(!b) return; const u=b.dataset.tl; $("#tlBox").classList.remove("on");
   if(u==="ai"){ openAi(); return; } if(/^https?:/.test(u)){ window.open(u,"_blank","noopener"); return; } openPage(u,b.dataset.tt); });
-$("#btnOut").addEventListener("click",()=>{ const off=confirm("이 기기의 7일 자동 입장도 해제할까요?\n\n확인: 자동 입장 해제 후 나가기\n취소: 자동 입장 유지하고 현관으로");
+$("#btnOut").addEventListener("click",()=>{ if(GUEST){ try{ sessionStorage.removeItem("growGuest"); }catch(_){} location.reload(); return; } const off=confirm("이 기기의 7일 자동 입장도 해제할까요?\n\n확인: 자동 입장 해제 후 나가기\n취소: 자동 입장 유지하고 현관으로");
   SKEYS.forEach(k=>sessionStorage.removeItem(k)); try{ if(off) localStorage.removeItem("growFcAuto"); else sessionStorage.setItem("growLeft","1"); }catch(_){} location.reload(); });
 $("#aiNew").addEventListener("click",()=>{ aiHist.length=0; $("#aiBody").innerHTML=""; aiAdd("b","새 질문을 시작합니다. 무엇이 궁금하세요?"); });
 $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$("#aiIn"); const q=mask(i.value.trim()); if(!q) return; i.value=""; aiAdd("u",q);
@@ -884,7 +900,8 @@ $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$(
 /* ---- 시작 ---- */
 (async function(){
   $("#pConn span").textContent="확인 중";
-  const b=await api({action:"boot"});
+  const b=GUEST?{ok:true,me:{uid:"guest"+Math.random().toString(36).slice(2,7),name:"게스트",branch:"",parent:"",role:"guest"},links:{},meets:[],notices:[],minutes:[],chat:{},bdays:[],todo:[],attList:[],att:""}:await api({action:"boot"});
+  if(GUEST){ document.body.classList.add("guest"); $("#pConn span").textContent="게스트"; }
   if(b&&b.net){ gate("서버에 연결하지 못했습니다. 잠시 후 새로고침해 주세요. (자동 입장은 유지됩니다)"); return; }
   if(!b||!b.ok){ try{ sessionStorage.removeItem("fcAuth"); sessionStorage.removeItem("growAdminCode"); if(b&&/로그인 확인에 실패/.test(b.error||"")) localStorage.removeItem("growFcAuto"); }catch(_){} gate((b&&b.error)||"입장 확인에 실패했습니다. 다시 로그인하세요."); return; }
   BOOT=b; ME=b.me; TODO=Array.isArray(b.todo)?b.todo:[];
@@ -892,10 +909,10 @@ $("#aiForm").addEventListener("submit",async e=>{ e.preventDefault(); const i=$(
   if((ME.role==="admin"||ME.role==="manager")&&sessionStorage.getItem("growAdmin")!=="1"){ try{ const a=JSON.parse(sessionStorage.getItem("fcAuth")||"null"); if(a&&a.sabun&&a.ver) post(ADM_SRV,{action:"fcview",sabun:a.sabun,ver:a.ver}).then(r=>{ if(r&&r.success&&r.admin){ let rm=false; try{ rm=!!localStorage.getItem("growFcAuto"); }catch(_){} saveLogin(a.sabun,a.ver,r,rm); } }); }catch(_){} }
   Object.keys(b.chat||{}).forEach(k=>{ LOGS[k]=b.chat[k]; });
   LOOK=loadLook(); buildMap(); avatar(ME.uid,{x:pos.x,y:pos.y,name:ME.name,branch:ME.branch,look:LOOK});
-  npcTick(); setInterval(npcTick,3500); decorate(); birthday(); setTimeout(()=>checkNews(true),2500); setInterval(()=>checkNews(false),2*60000);
+  npcTick(); setInterval(npcTick,3500); decorate(); if(!GUEST){ birthday(); setTimeout(()=>checkNews(true),2500); setInterval(()=>checkNews(false),2*60000); }
   $("#sAtt").textContent=b.att?"출근 "+b.att:"출근 전";
-  enterRoom(); updWhere(); who(); connect();
-  if(!b.att) setTimeout(()=>toast("오늘 출근 체크는 '영업지원 데스크'에서 할 수 있어요."),1200);
+  enterRoom(); updWhere(); who(); if(!GUEST) connect();
+  if(!GUEST&&!b.att) setTimeout(()=>toast("오늘 출근 체크는 '영업지원 데스크'에서 할 수 있어요."),1200);
 })();
 setInterval(()=>{ if(BOOT) $("#sAtt").textContent=BOOT.att?"출근 "+BOOT.att:"출근 전"; },2000);
 })();

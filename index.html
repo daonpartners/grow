@@ -2886,6 +2886,10 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       <input type="checkbox" id="noticeFormPinned" style="width:16px; height:16px;">
       <label style="margin:0;">상단 고정</label>
     </div>
+    <div class="sm-form-row" style="display:flex; align-items:center; gap:8px;">
+      <input type="checkbox" id="noticeFormPub" style="width:16px; height:16px;">
+      <label for="noticeFormPub" style="margin:0;">외부 공개 <span style="color:var(--slate); font-weight:500;">(GROW 오피스 게스트도 로비에서 봄 · 상품·수수료·시책 내용은 공개 금지)</span></label>
+    </div>
     <div class="sm-form-row">
       <label>이미지 첨부 (선택)</label>
       <input type="file" id="noticeFormFiles" multiple accept="image/*">
@@ -3341,7 +3345,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       <div class="notice${n.pinned ? ' pinned' : ''}" data-idx="${idx}">
         <span class="tag ${n.tag}">${escapeHtml(n.tag)}</span>
         <div class="notice-body" style="cursor:pointer;" data-openidx="${idx}"><div class="notice-title">${escapeHtml(n.title)}</div><div class="notice-meta">${escapeHtml(n.date)}${n.author ? ' · ' + escapeHtml(n.author) : ''}</div></div>
-        ${n.pinned ? '<span class="pin-mark">상단고정</span>' : ''}
+        ${n.pinned ? '<span class="pin-mark">상단고정</span>' : ''}${n.pub && canEdit ? '<span class="pin-mark" style="color:#14806f">외부공개</span>' : ''}
         ${canEdit ? `<button type="button" class="sm-edit" data-neidx="${idx}" onclick="event.stopPropagation()">수정</button>
         <button type="button" class="sm-del" data-ndidx="${idx}" onclick="event.stopPropagation()">삭제</button>` : ''}
       </div>
@@ -3365,13 +3369,15 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       el.addEventListener('click', () => noticeDelete(Number(el.dataset.ndidx)));
     });
   }
+  function growGuest(){ try{ return sessionStorage.getItem('growGuest') === '1'; }catch(e){ return false; } }
+  if(growGuest()) notices = notices.filter(n => n.pub);
   async function loadNotices(){
     try{
       const res = await fetch(NOTICE_JSON + '?t=' + Date.now(), { cache:'no-store' });
       if(res.ok){
         const data = await res.json();
         const rows = Array.isArray(data) ? data : (data.items || []);
-        if(rows.length) notices = rows.slice().sort((a,b) => String(b.sortKey||b.date||'').localeCompare(String(a.sortKey||a.date||'')));
+        if(rows.length) notices = rows.filter(n => !growGuest() || n.pub).slice().sort((a,b) => String(b.sortKey||b.date||'').localeCompare(String(a.sortKey||a.date||'')));
       }
     }catch(e){ /* 초기 하드코딩 값 유지 */ }
     renderNotices(notices);
@@ -3432,6 +3438,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
     document.getElementById('noticeFormTitleInput').value = n ? (n.title || '') : '';
     document.getElementById('noticeFormContent').value = n ? (n.content || '') : '';
     document.getElementById('noticeFormPinned').checked = !!(n && n.pinned);
+    document.getElementById('noticeFormPub').checked = !!(n && n.pub);
     document.getElementById('noticeFormFiles').value = '';
     document.getElementById('noticeFormFileHint').textContent = editing
       ? '새로 선택하면 기존 이미지를 대체합니다. 비워두면 기존 이미지를 유지합니다.'
@@ -3451,6 +3458,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
     const tag = document.getElementById('noticeFormTag').value;
     const content = document.getElementById('noticeFormContent').value.trim();
     const pinned = document.getElementById('noticeFormPinned').checked;
+    const pub = document.getElementById('noticeFormPub').checked;
     const fileEl = document.getElementById('noticeFormFiles');
     const files = fileEl.files ? Array.from(fileEl.files) : [];
     const editing = noticeFormIdx !== null;
@@ -3467,7 +3475,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       const payload = {
         action: editing ? 'update' : 'create',
         id: nid,
-        tag: tag, title: title, content: content, pinned: pinned,
+        tag: tag, title: title, content: content, pinned: pinned, pub: pub,
         author: smWhoAmI()
       };
       if(files.length){
@@ -3485,7 +3493,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       const y = now.toISOString().slice(0,10);
       const existing = editing ? notices[noticeFormIdx] : null;
       const images = files.length ? files.map(f => URL.createObjectURL(f)) : (existing ? (existing.images || []) : []);
-      const newNotice = { id: nid, tag: tag, title: title, content: content, pinned: pinned, author: smWhoAmI(), date: y.replace(/-/g,'.') + ' 게시', sortKey: y, images: images };
+      const newNotice = { id: nid, tag: tag, title: title, content: content, pinned: pinned, pub: pub, author: smWhoAmI(), date: y.replace(/-/g,'.') + ' 게시', sortKey: y, images: images };
       if(editing) notices[noticeFormIdx] = newNotice;
       else notices.unshift(newNotice);
       noticeCloseForm();
