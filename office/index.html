@@ -48,6 +48,7 @@ button{font:inherit;cursor:pointer}
 .marble{background:#FFFDF8;background-image:linear-gradient(135deg,rgba(0,0,0,.025) 25%,transparent 25% 50%,rgba(0,0,0,.025) 50% 75%,transparent 75%);background-size:60px 60px}
 .tile{background:#FDF3E7;background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px);background-size:32px 32px}
 .f{position:absolute;pointer-events:none}
+.mtabs2{margin-top:6px!important}.mtabs4{grid-template-columns:repeat(4,1fr)!important}@media(max-width:700px){.mtabs4{grid-template-columns:repeat(2,1fr)!important}}
 .mtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.mtabs button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 4px;font:inherit;font-weight:800;font-size:13.5px;color:var(--navy);cursor:pointer}.mtabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}.mset{margin-top:8px}.mset summary{cursor:pointer;font-size:12.5px;font-weight:700;color:#5B6B80}.agrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.agrid .pbtn{margin:0}
 .mz{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;transition:box-shadow .3s}.mz.hl{box-shadow:0 0 0 3px #F58220}.mz h4{margin:0 0 6px;font-size:14px;color:var(--navy)}.mrow{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px dashed var(--line)}.mrow>div{flex:1;min-width:0}.pbtn.sm2{width:auto;margin:0;padding:6px 10px;font-size:12.5px}
 .f.zone{display:grid;place-items:center;background:rgba(255,255,255,.92);border:2px solid #2D7FF9;color:#1d4fa8;border-radius:999px;font-weight:900;font-size:13px;cursor:pointer;z-index:3;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.18)}
@@ -317,7 +318,7 @@ body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:n
       <div class="stat" id="stSched" style="cursor:pointer;flex:1.6;border:2px solid #F58220"><span>📅 다가오는 일정 · 눌러서 달력 보기</span><b id="sNext" style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">불러오는 중…</b></div>
       <div class="stat"><span>오늘 출근</span><b id="sAtt">-</b></div>
     </div>
-    <div class="jump" id="jump"><span>📍 바로 가기</span><button type="button" data-jump="mine">⭐ 내 지사</button><button type="button" data-jump="lobby">로비</button><button type="button" data-jump="edu">미팅룸</button><button type="button" data-jump="desk">영업지원 데스크</button><button type="button" data-jump="online">온라인영업팀</button><button type="button" data-jump="event">행사팀</button><button type="button" data-jump="biz">사업자영업팀</button></div>
+    <div class="jump" id="jump"><span>📍 바로 가기</span><button type="button" data-jump="mine">⭐ 내 지사</button><button type="button" data-jump="lobby">로비</button><button type="button" data-jump="edu">그로우라운지</button><button type="button" data-jump="desk">영업지원 데스크</button><button type="button" data-jump="sales">영업팀</button></div>
     <div class="mapbox" id="mapbox">
       <div id="world"></div>
       <div class="hint">방향키 · WASD 이동 / 바닥 클릭 이동</div>
@@ -341,7 +342,7 @@ body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:n
       <div class="modal" id="gdBox"><div class="mh"><span style="font-size:18px">💁</span><b>GROW 오피스 사용법</b><button type="button" data-close="gdBox">✕</button></div><div class="chb gd" style="flex:1">
         <h4>🚶 움직이기</h4><p>방향키·WASD로 걷거나, 가고 싶은 바닥을 누르면 그 자리로 갑니다. 방에 들어가면 오른쪽 안내판이 그 방 기능으로 바뀝니다.</p>
         <h4>🏢 지사 방</h4><p>내 지사 방만 들어갈 수 있습니다. 지사 공지판과 지사 채팅은 소속만 보고, 저장됩니다. 지사장은 공지를 올리고 오늘 출근 명단을 봅니다.</p>
-        <h4>🎓 미팅룸</h4><p>줌 강의·화상회의 입장 버튼, 실시간 회의 채팅, 회의록 쓰기·지난 회의 기록 열람이 있습니다. 강의·회의 주소는 지사장이 바꿀 수 있습니다.</p>
+        <h4>🎓 그로우라운지</h4><p>오피스공지(지사장·관리자 등록), 줌 강의·화상회의 입장 버튼, 실시간 회의 채팅, 회의록 쓰기·지난 회의 기록 열람이 있습니다. 강의·회의 주소는 지사장이 바꿀 수 있습니다.</p>
         <h4>👥 영업팀 방 (온라인·행사·사업자)</h4><p>공지 · 게시판 · 채팅방. 게시판은 누구나 글을 쓰고, 본인 글은 수정·삭제할 수 있습니다.</p>
         <h4>🧭 영업지원 데스크</h4><p>출근 체크, 보잇, 내 DB 조회, 보험사 업무지원·영업센터, 오늘 할 일.</p>
         <h4>🤖 보험비서 AI</h4><p>복도(공용 통로)의 로봇이나 위쪽 버튼을 누르면 질문할 수 있습니다. 고객 이름·연락처·주민번호는 자동으로 지워서 보내며, 답변은 약관·상품설명서로 꼭 확인하세요.</p>
@@ -450,16 +451,18 @@ let ME=null, BOOT=null;
 /* ---- 지도 ---- */
 const W=$("#world"); const ROOMS=[];
 BR.forEach((b,i)=>ROOMS.push({id:"br_"+b[0],name:b[0]+"지사",sub:"지사장 "+b[2],x:40+i*258,y:40,w:238,h:240,branch:b[0],c:b[1],floor:"wood"}));
-ROOMS.push({id:"edu",name:"미팅룸",sub:"교육장 · 회의실 · 관리자방",x:40,y:340,w:600,h:280,c:"#2D7FF9",floor:"carpet"});
+ROOMS.push({id:"edu",name:"그로우라운지",sub:"교육장 · 회의실 · 오피스공지 · 관리자방",x:40,y:340,w:600,h:280,c:"#2D7FF9",floor:"carpet"});
 ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:656,y:340,w:904,h:280,c:"#14B8A6",floor:"marble"});
-[["online","온라인영업팀","블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","산모교실·아파트·펫","#F97316","wood"],["biz","사업자영업팀","소상공인·기업","#10B981","wood"],["desk","영업지원 데스크","보험사 업무지원·영업센터·영업전략","#8B5CF6","tile"]]
-  .forEach((t,i)=>{ const X=[40,314,588,862], Wd=[258,258,258,698]; ROOMS.push({id:t[0],name:t[1],sub:t[2],x:X[i],y:690,w:Wd[i],h:220,c:t[3],floor:t[4],team:i<3}); });
+/* 영업팀: 한 방 안에 온라인영업팀·행사팀·사업자영업팀 (팀마다 공지·게시판·채팅방은 따로) */
+const STEAMS=[["online","온라인영업팀","💻","#2D7FF9"],["event","행사팀","🎉","#F97316"],["biz","사업자영업팀","🏪","#10B981"]];
+ROOMS.push({id:"sales",name:"영업팀",sub:"온라인 · 행사 · 사업자",x:40,y:690,w:806,h:220,c:"#2D7FF9",floor:"wood",team:true});
+ROOMS.push({id:"desk",name:"영업지원 데스크",sub:"보험사 업무지원·영업센터·영업전략",x:862,y:690,w:698,h:220,c:"#8B5CF6",floor:"tile"});
 /* 휴대폰: 세로로 긴 배치(2줄)로 바꿔 사무실 전체가 잘리지 않게 보여 줌 */
 const MOBL=window.matchMedia("(max-width:700px)").matches;
 const WD=MOBL?{w:540,h:2080}:{w:1600,h:950};
 const LANES=MOBL?{y:[740,1300],x:[60,480]}:{y:[310,655],x:[80,1520]};
 if(MOBL){ const M={"br_광명":[20,20,240,220],"br_다온":[280,20,240,220],"br_동행":[20,260,240,220],"br_도약":[280,260,240,220],"br_혁신":[20,500,240,220],"br_리치로드맵":[280,500,240,220],
-  edu:[20,760,500,240],lobby:[20,1040,500,240],online:[20,1320,240,220],event:[280,1320,240,220],biz:[150,1580,240,220],desk:[20,1840,500,240]};
+  edu:[20,760,500,240],lobby:[20,1040,500,240],sales:[20,1320,500,500],desk:[20,1840,500,240]};
   ROOMS.forEach(r=>{ const m=M[r.id]; if(m){ r.x=m[0]; r.y=m[1]; r.w=m[2]; r.h=m[3]; } }); }
 function artOf(r){ return ({edu:"flat_edu",lobby:"flat_lobby",desk:"flat_desk",private:"flat_private"})[r.id]||""; }
 const LINKS={lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],edu:[["교육·회의 일정","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],desk:[["보험사 업무지원","/#v=insurers"],["영업센터","/#v=salescenter"],["영업전략","/#v=salesstrategy"]]};
@@ -476,7 +479,7 @@ ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),wid
   if(r.id==="lobby"){ W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y),width:px(120),height:px(6)})); W.appendChild(el("door",{left:px(r.x+r.w/2-60),top:px(r.y+r.h-6),width:px(120),height:px(6)})); }
   const F=(cls,x,y,w,h,html)=>{ const f=el("f "+cls,{left:px(r.x+x),top:px(r.y+y),width:w?px(w):"",height:h?px(h):""},html); W.appendChild(f); return f; };
   const art=artOf(r); if(art){ d.classList.add("art"); d.style.setProperty("--art",`url(art/${art}.webp)`);
-    if(r.id==="edu"){ [["🎓 교육장","lect",0.08],["🎥 회의실","meet",0.40],["🔐 관리자방","adm",0.72]].forEach(([t,k,fx])=>{ const z=F("zone",Math.round(r.w*fx),Math.round(r.h*0.18),Math.round(r.w*0.22),30,t); z.style.pointerEvents="auto"; z.addEventListener("click",e=>{ e.stopPropagation(); if(typeof meetZone==="function") meetZone(k); }); }); }
+    if(r.id==="edu"){ [["🎓 교육장","lect",0.03],["🎥 회의실","meet",0.27],["📢 오피스공지","ntc",0.51],["🔐 관리자방","adm",0.75]].forEach(([t,k,fx])=>{ const z=F("zone",Math.round(r.w*fx),Math.round(r.h*0.18),Math.round(r.w*0.22),30,t); z.style.pointerEvents="auto"; z.addEventListener("click",e=>{ e.stopPropagation(); if(typeof meetZone==="function") meetZone(k); }); }); }
     if(r.id==="lobby"){ const k=F("kiosk",r.w-110,r.h-74,80,56,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); openPage("/#v=notice","그로우 공지사항"); }); }
     return; }
   if(r.branch){ const ox=Math.round((r.w-14-178)/2); [[ox,30],[ox+104,30],[ox,100],[ox+104,100]].forEach(([x,y])=>{ F("desk",x,y,74,42); F("chair",x+24,y+46); }); }
@@ -484,9 +487,10 @@ ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),wid
     F("table",470,95,180,100); [[460,72],[530,62],[600,72],[460,200],[530,210],[600,200],[445,135],[665,135]].forEach(([x,y])=>F("chair",x,y)); F("board",470,22,180,40,"회의 안건"); F("plant",r.w-48,r.h-56); }
   if(r.id==="lobby"){ F("sofa",r.w/2-150,70,300,44); F("sofa",r.w/2-150,180,300,44); F("table",r.w/2-28,118,56,56); F("plant",20,20); F("plant",r.w-54,20); F("plant",20,r.h-54);
     const k=F("kiosk",r.w-120,r.h-80,80,60,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); openPage("/#v=notice","그로우 공지사항"); }); }
-  if(r.team){ const ox=Math.round((r.w-14-178)/2); const rg=F("rug",ox-10,20,198,150); rg.style.background=`color-mix(in srgb,${r.c} 13%,transparent)`;
-    [[ox,30],[ox+104,30],[ox,100],[ox+104,100]].forEach(([x,y])=>{ F("desk",x,y,74,42); F("chair",x+24,y+46); });
-    F("tico",ox+72,72,34,34,({online:"💻",event:"🎉",biz:"🏪"})[r.id]||"⭐"); }
+  if(r.team){ const P=MOBL?[[40,56],[282,56],[161,290]]:STEAMS.map((t,i)=>[Math.round(i*r.w/3+(r.w/3-178)/2),62]);
+    STEAMS.forEach(([id,nm,ic,c],i)=>{ const [ox,oy]=P[i]; const rg=F("rug",ox-10,oy-10,198,150); rg.style.background=`color-mix(in srgb,${c} 15%,transparent)`;
+      [[ox,oy],[ox+104,oy],[ox,oy+70],[ox+104,oy+70]].forEach(([x,y])=>{ F("desk",x,y,74,42); F("chair",x+24,y+46); }); F("tico",ox+72,oy+42,34,34,ic);
+      const z=F("zone",ox-4,oy-40,186,28,ic+" "+nm); z.style.pointerEvents="auto"; z.style.borderColor=c; z.addEventListener("click",e=>{ e.stopPropagation(); if(typeof salesZone==="function") salesZone(id); }); }); }
   if(r.id==="cafe"){ F("counter",16,30,130,46); F("table",170,60,46,46); F("table",100,140,46,46); F("table",170,150,46,46); F("plant",r.w-46,14); }
   if(r.id==="desk"){ F("counter",30,40,180,46); F("chair",70,96); F("chair",150,96); F("plant",16,r.h-56); }
   if(r.id==="private"){ F("desk",40,44,100,50); F("chair",78,100); F("sofa",30,150,120,36); F("plant",r.w-50,20); }
@@ -573,7 +577,7 @@ setInterval(()=>{ if(!ME) return; const sp=7; let dx=(keys.arrowright||keys.d?1:
 /* ---- 위치 표시 ---- */
 function curRoom(){ return ROOMS.find(r=>r.id===curId)||{id:"hall",name:"복도",sub:"공용 통로"}; }
 function updWhere(){ const r=curRoom(); $("#sRoom").textContent=r.name; $("#pRoom").textContent="📍 "+r.name;
-  const L=GUEST?[]:(LINKS[r.id]||[]); $("#where").innerHTML=`<b>${E(r.name)}</b>${L.length?L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):`<span style="color:#6B7A8C">${E(r.sub||"")}</span>`}`;
+  const L=GUEST?[]:(LINKS[teamKey(r)]||[]); $("#where").innerHTML=`<b>${E(r.name)}</b>${L.length?L.map(([t,u])=>`<a href="${u}">${t} ›</a>`).join(""):`<span style="color:#6B7A8C">${E(r.sub||"")}</span>`}`;
   const here=r.id==="private"?1:Object.values(AV).filter(a=>!a.npc&&a.room===r.id).length; const sh=$("#sHere"); if(sh) sh.textContent=here+"명"; }
 
 /* ---- 방 안내판 (오른쪽) ---- */
@@ -586,11 +590,21 @@ let MZ="lect", MCHAT=false;
 let PUBN=null, LOPEN=null, PUBL=false;
 async function loadPubN(){ if(PUBL) return; PUBL=true; try{ const r=await fetch("/board/notices.json?t="+Date.now(),{cache:"no-store"}); const d=await r.json(); const L=Array.isArray(d)?d:(d.items||[]); PUBN=L.slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||String(b.sortKey||b.date||"").localeCompare(String(a.sortKey||a.date||""))); }catch(e){ PUBN=[]; } if(curId==="lobby") renderPanel(curRoom()); }
 /* 영업팀 방: 탭(n 공지·b 게시판·c 채팅방), 글 목록 */
-const TT={}, BD={}; let BOPEN=null, BEDIT=null, BNEW=false;
-async function loadBoard(room,k){ const r=await api({action:"board_list",room,kind:k}); BD[room+k]=r&&r.ok?r.items||[]:[]; if(curId===room) renderPanel(curRoom()); }
+const TT={}, BD={}; let BOPEN=null, BEDIT=null, BNEW=false, BCTX={room:"",k:"n"}, ST="online";
+const teamKey=r=>r&&r.id==="sales"?ST:(r?r.id:"");
+const chatRoomId=()=>curId==="sales"?ST:curId;
+function boardHtml(room,k){ BCTX={room,k}; const L=BD[room+k]; const canW=k==="b"||head(); const ED=BEDIT; let body="";
+  if(canW&&(BNEW||ED)) body=`<div class="nform" style="margin-top:8px">${ED?`<p class="sm" style="margin:0">✏️ 글 수정</p>`:""}<input id="bbT" maxlength="80" placeholder="제목" value="${ED?E(ED.title):""}"><textarea id="bbB" rows="7" maxlength="4000" placeholder="${k==="n"?"공지 내용":"내용 (고객 개인정보는 적지 마세요)"}">${ED?E(ED.body):""}</textarea><div class="agrid"><button class="pbtn g" type="button" id="bbSave">${ED?"수정 저장":"등록"}</button><button class="pbtn" type="button" id="bbCancel">취소</button></div></div>`;
+  else if(canW) body=`<button class="pbtn g" type="button" id="bbNew" style="margin-top:8px">＋ ${k==="n"?"공지 쓰기":"글쓰기"}</button>`;
+  if(!L){ body+=`<p class="sm">불러오는 중…</p>`; loadBoard(room,k); }
+  else body+=L.length?`<div class="mnlist" style="margin-top:8px">${L.map(m=>{ const on=String(m.id)===String(BOPEN); return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-bopen="${m.id}"><i>${E(String(m.at).slice(5,10).replace("-","/"))}</i><b>${E(m.title)}</b><span>${E(String(m.name).replace(/ \(.*\)$/,""))}</span></button>${on?`<div class="mnbody">${E(m.body)}<div class="mnft"><small>${E(m.name)} · ${E(m.at)}</small>${m.mine||ME.role==="admin"?`<span><button type="button" data-bedit="${m.id}" style="color:var(--navy)">수정</button> <button type="button" data-bdel="${m.id}">삭제</button></span>`:""}</div></div>`:""}</div>`; }).join("")}</div>`:`<p class="sm" style="margin-top:8px">${k==="n"?"등록된 공지가 없습니다.":"아직 글이 없습니다. 첫 글을 남겨 보세요."}</p>`;
+  return body; }
+async function ensureLog(){ const id=chatRoomId(); if(!LOGS[id]){ const x=await api({action:"chat_list",room:id}); LOGS[id]=x&&x.ok&&Array.isArray(x.chat)?x.chat:[]; } renderTabs(); renderLog(); }
+function salesZone(id){ ST=id; BOPEN=null; BEDIT=null; BNEW=false; const r=ROOMS.find(x=>x.id==="sales"); if(curId!=="sales"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.6); } renderPanel(r); roomSheet(r); if((TT[ST]||"n")==="c"){ TAB="room"; ensureLog(); } }
+async function loadBoard(room,k){ const r=await api({action:"board_list",room,kind:k}); BD[room+k]=r&&r.ok?r.items||[]:[]; if(BCTX.room===room) renderPanel(curRoom()); }
 function meetZone(k){ const r=ROOMS.find(x=>x.id==="edu"); MZ=k; if(curId!=="edu"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); }
 async function enterRoom(){ const r=curRoom(); renderPanel(r); TAB=r.id==="private"?"all":(isChatRoom(r.id)&&r.id!=="hall"?"room":TAB); renderTabs(); roomSheet(r);
-  if(isChatRoom(r.id)&&!LOGS[r.id]){ const x=await api({action:"chat_list",room:r.id}); if(x&&x.ok){ LOGS[r.id]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } else renderLog(); }
+  if(isChatRoom(r.id)){ const id=chatRoomId(); if(!LOGS[id]){ const x=await api({action:"chat_list",room:id}); if(x&&x.ok){ LOGS[id]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } else renderLog(); } else renderLog(); }
 function renderPanel(r){ const P=$("#panel"); let h="";
   if(r.id==="private"){ const att=BOOT&&BOOT.att;
     h=`<div class="ttl"><b>🔒 나만의 공간</b><span class="sm">다른 사람에게 안 보임</span></div>
@@ -617,14 +631,10 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       <div class="mz"><h4>📱 보잇 BOIT</h4><a class="pbtn o" href="https://boit.ai.kr/" target="_blank" rel="noopener">보잇 열기 ↗</a></div>
       <div class="mz"><h4>🧭 영업 지원</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=salescenter">영업센터</a><a class="pbtn l" href="/#v=salesstrategy">영업전략</a><a class="pbtn l" href="/#v=datacenter">자료센터</a></div></div>
       <div class="mz"><h4>✅ 오늘 할 일</h4><div class="todo" id="todo"></div><div class="trow"><input id="todoIn" maxlength="80" placeholder="할 일 추가 (Enter)"><button type="button" id="todoAdd">추가</button></div></div>`; }
-  else if(r.team){ const k=TT[r.id]||"n"; const tab=(v,t)=>`<button type="button" data-tt="${v}" class="${k===v?"on":""}">${t}</button>`; let body="";
-    if(k==="c") body=`<p class="sm" style="margin:10px 2px 0">아래 채팅창에서 ${E(r.name)} 사람들과 대화합니다. 대화는 저장됩니다.</p>`;
-    else { const L=BD[r.id+k]; const canW=k==="b"||head(); const ED=BEDIT;
-      if(canW&&(BNEW||ED)) body=`<div class="nform" style="margin-top:8px">${ED?`<p class="sm" style="margin:0">✏️ 글 수정</p>`:""}<input id="bdT" maxlength="80" placeholder="제목" value="${ED?E(ED.title):""}"><textarea id="bdB" rows="7" maxlength="4000" placeholder="${k==="n"?"공지 내용":"내용 (고객 개인정보는 적지 마세요)"}">${ED?E(ED.body):""}</textarea><div class="agrid"><button class="pbtn g" type="button" id="bdSave">${ED?"수정 저장":"등록"}</button><button class="pbtn" type="button" id="bdCancel">취소</button></div></div>`;
-      else if(canW) body=`<button class="pbtn g" type="button" id="bdNew" style="margin-top:8px">＋ ${k==="n"?"공지 쓰기":"글쓰기"}</button>`;
-      if(!L){ body+=`<p class="sm">불러오는 중…</p>`; loadBoard(r.id,k); }
-      else body+=L.length?`<div class="mnlist" style="margin-top:8px">${L.map(m=>{ const on=String(m.id)===String(BOPEN); return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-bopen="${m.id}"><i>${E(String(m.at).slice(5,10).replace("-","/"))}</i><b>${E(m.title)}</b><span>${E(String(m.name).replace(/ \(.*\)$/,""))}</span></button>${on?`<div class="mnbody">${E(m.body)}<div class="mnft"><small>${E(m.name)} · ${E(m.at)}</small>${m.mine||ME.role==="admin"?`<span><button type="button" data-bedit="${m.id}" style="color:var(--navy)">수정</button> <button type="button" data-bdel="${m.id}">삭제</button></span>`:""}</div></div>`:""}</div>`; }).join("")}</div>`:`<p class="sm" style="margin-top:8px">${k==="n"?"등록된 공지가 없습니다.":"아직 글이 없습니다. 첫 글을 남겨 보세요."}</p>`; }
-    h=`<div class="mtabs" style="margin-top:0">${tab("n","📢 공지")}${tab("b","📝 게시판")}${tab("c","💬 채팅방")}</div>${body}<div class="agrid" style="margin-top:10px">${(LINKS[r.id]||[]).map(([t,u])=>`<a class="pbtn l" href="${u}">${t}</a>`).join("")}</div>`; }
+  else if(r.team){ const k=TT[ST]||"n"; const T=STEAMS.find(x=>x[0]===ST); const tab=(v,t)=>`<button type="button" data-tt="${v}" class="${k===v?"on":""}">${t}</button>`;
+    const body=k==="c"?`<p class="sm" style="margin:10px 2px 0">아래 채팅창에서 ${E(T[1])} 사람들과 대화합니다. 대화는 저장됩니다.</p>`:boardHtml(ST,k);
+    h=`<div class="mtabs" style="margin-top:0">${STEAMS.map(([id,nm,ic])=>`<button type="button" data-st="${id}" class="${ST===id?"on":""}">${ic} ${nm}</button>`).join("")}</div>
+      <div class="mtabs mtabs2">${tab("n","📢 공지")}${tab("b","📝 게시판")}${tab("c","💬 채팅방")}</div>${body}<div class="agrid" style="margin-top:10px">${(LINKS[ST]||[]).map(([t,u])=>`<a class="pbtn l" href="${u}">${t}</a>`).join("")}</div>`; }
   else if(r.id==="edu"){ const LK=(BOOT&&BOOT.links)||{}; const M=(BOOT&&BOOT.minutes)||[]; const MT=(BOOT&&BOOT.meets)||[];
     const setTxt=k=>LK[k]?(LK[k].pw?`회의 ID <b>${E(LK[k].mid||"")}</b> · 암호 <b>${E(LK[k].pw)}</b>`:`${E(LK[k].by)} · ${E(LK[k].at)} 설정`):"기본 방(Jitsi)";
     const tab=(k,t)=>`<button type="button" data-mz="${k}" class="${MZ===k?"on":""}">${t}</button>`;
@@ -639,9 +649,10 @@ function renderPanel(r){ const P=$("#panel"); let h="";
         ${head()?`<details class="mset"><summary>기본 회의실 주소 바꾸기</summary><div class="nform"><input id="lkMeet" maxlength="300" placeholder="기본 회의실 주소 (줌·구글 미트)" value="${E(LK.meet?LK.meet.url:"")}"><button class="pbtn l" type="button" data-lk="meet">저장</button></div></details>`:""}</div>
       <div class="mz"><h4>📝 회의록</h4><button class="pbtn" type="button" id="mnNew">회의록 쓰기</button><button class="pbtn l" type="button" id="mtHist">회의록 전체 목록</button>
         ${M.length?`<div class="mnlist" style="margin-top:8px">${M.slice(0,5).map(m=>`<div class="mnrow"><button type="button" class="mnhd" data-mnopen="${m.id}"><i>${E(String(m.at).slice(5,10).replace("-","/"))}</i><b>${E(m.title)}</b><span>${E(String(m.name).replace(/ \(.*\)$/,""))}</span></button></div>`).join("")}</div>`:""}</div>`;
+    else if(MZ==="ntc") body=`<div class="mz"><h4>📢 오피스공지</h4>${boardHtml("edu","n")}</div>`;
     else body=isAdm()?`<div class="mz"><h4>🔐 관리자방</h4><div class="agrid">${[["event","📋 행사신청"],["db","🗂️ DB신청"],["eventdb","📂 DB관리",1],["album","🖼️ 앨범관리"],["branch","👥 지사관리",1]].filter(x=>!x[2]||head()).map(x=>`<a class="pbtn l" href="/#v=admin&t=${x[0]}">${x[1]}</a>`).join("")}</div></div>`
       :`<div class="mz"><h4>🔐 관리자방</h4><p class="sm" style="margin:0">지사장·지점장·관리자만 들어갈 수 있습니다.</p></div>`;
-    h=`<div class="mtabs" style="margin-top:0">${tab("lect","🎓 교육장")}${tab("meet","🎥 회의실")}${tab("adm","🔐 관리자방")}</div>${body}<button type="button" class="pbtn l" id="mzChat" style="margin-top:10px">${MCHAT?"💬 미팅룸 채팅 닫기":"💬 미팅룸 채팅 열기"}</button>`; }
+    h=`<div class="mtabs mtabs4" style="margin-top:0">${tab("lect","🎓 교육장")}${tab("meet","🎥 회의실")}${tab("ntc","📢 오피스공지")}${tab("adm","🔐 관리자방")}</div>${body}<button type="button" class="pbtn l" id="mzChat" style="margin-top:10px">${MCHAT?"💬 라운지 채팅 닫기":"💬 라운지 채팅 열기"}</button>`; }
   else if(r.id==="event"){ h=`<div class="ttl"><b>행사팀 · 행사 일정</b><a class="sm" href="/#v=schedule">전체 일정 ›</a></div><div id="evList" class="sm" style="margin-top:6px">불러오는 중…</div>`; loadSched(); }
   else if(r.id!=="hall"){ const L=LINKS[r.id]||[]; h=`<div class="ttl"><b>${E(r.name)}</b><span class="sm">${E(r.sub||"")}</span></div>${L.map(([t,u])=>`<a class="pbtn l" href="${u}">${t} ›</a>`).join("")}`; }
   P.innerHTML=h; P.style.display=h?"":"none"; if(r.id==="private"||r.id==="desk") renderTodo(); }
@@ -666,15 +677,16 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.id==="mnNew"){ HT="new"; MEDIT=null; openHist(); }
   if(t.closest&&t.closest("[data-lopen]")){ const i=Number(t.closest("[data-lopen]").dataset.lopen); LOPEN=LOPEN===i?null:i; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
-  if(t.dataset&&t.dataset.tt){ const r=curRoom(); TT[r.id]=t.dataset.tt; BOPEN=null; BEDIT=null; BNEW=false; renderPanel(r); roomSheet(r); if(t.dataset.tt==="c"){ TAB="room"; renderTabs(); renderLog(); } }
+  if(t.dataset&&t.dataset.st){ salesZone(t.dataset.st); }
+  if(t.dataset&&t.dataset.tt){ const r=curRoom(); TT[teamKey(r)]=t.dataset.tt; BOPEN=null; BEDIT=null; BNEW=false; renderPanel(r); roomSheet(r); if(t.dataset.tt==="c"){ TAB="room"; ensureLog(); } }
   if(t.closest&&t.closest("[data-bopen]")){ const id=t.closest("[data-bopen]").dataset.bopen; BOPEN=String(BOPEN)===id?null:id; renderPanel(curRoom()); }
-  if(t.id==="bdNew"){ BNEW=true; BEDIT=null; renderPanel(curRoom()); const i=$("#bdT"); if(i) i.focus(); }
-  if(t.id==="bdCancel"){ BNEW=false; BEDIT=null; renderPanel(curRoom()); }
-  if(t.dataset&&t.dataset.bedit){ const r=curRoom(), k=TT[r.id]||"n"; BEDIT=(BD[r.id+k]||[]).find(m=>String(m.id)===t.dataset.bedit)||null; BNEW=false; renderPanel(r); }
-  if(t.id==="bdSave"){ const r=curRoom(), k=TT[r.id]||"n"; const ti=($("#bdT").value||"").trim(), bo=($("#bdB").value||"").trim(); if(!ti) return toast("제목을 적어 주세요."); t.disabled=true;
-    const x=await api(BEDIT?{action:"board_edit",id:BEDIT.id,title:ti,body:bo}:{action:"board_post",room:r.id,kind:k,title:ti,body:bo}); t.disabled=false;
-    if(x&&x.ok){ toast(BEDIT?"수정했습니다.":"등록했습니다."); BEDIT=null; BNEW=false; BOPEN=null; delete BD[r.id+k]; renderPanel(r); } else toast((x&&x.error)||"실패했습니다."); }
-  if(t.dataset&&t.dataset.bdel){ if(!confirm("이 글을 지울까요?")) return; const r=curRoom(), k=TT[r.id]||"n"; const x=await api({action:"board_del",id:t.dataset.bdel}); if(x&&x.ok){ BOPEN=null; delete BD[r.id+k]; renderPanel(r); toast("삭제했습니다."); } else toast((x&&x.error)||"실패했습니다."); }
+  if(t.id==="bbNew"){ BNEW=true; BEDIT=null; renderPanel(curRoom()); const i=$("#bbT"); if(i) i.focus(); }
+  if(t.id==="bbCancel"){ BNEW=false; BEDIT=null; renderPanel(curRoom()); }
+  if(t.dataset&&t.dataset.bedit){ const r=curRoom(), k=BCTX.k; BEDIT=(BD[BCTX.room+k]||[]).find(m=>String(m.id)===t.dataset.bedit)||null; BNEW=false; renderPanel(r); }
+  if(t.id==="bbSave"){ const r=curRoom(), k=BCTX.k, room=BCTX.room; const ti=($("#bbT").value||"").trim(), bo=($("#bbB").value||"").trim(); if(!ti) return toast("제목을 적어 주세요."); t.disabled=true;
+    const x=await api(BEDIT?{action:"board_edit",id:BEDIT.id,title:ti,body:bo}:{action:"board_post",room,kind:k,title:ti,body:bo}); t.disabled=false;
+    if(x&&x.ok){ toast(BEDIT?"수정했습니다.":"등록했습니다."); BEDIT=null; BNEW=false; BOPEN=null; delete BD[room+k]; renderPanel(r); } else toast((x&&x.error)||"실패했습니다."); }
+  if(t.dataset&&t.dataset.bdel){ if(!confirm("이 글을 지울까요?")) return; const r=curRoom(), k=BCTX.k; const x=await api({action:"board_del",id:t.dataset.bdel}); if(x&&x.ok){ BOPEN=null; delete BD[BCTX.room+k]; renderPanel(r); toast("삭제했습니다."); } else toast((x&&x.error)||"실패했습니다."); }
   if(t.id==="mzChat"){ MCHAT=!MCHAT; $("#side").classList.toggle("nochat",!MCHAT); renderPanel(curRoom()); if(MCHAT){ TAB="room"; renderTabs(); renderLog(); } }
   if(t.dataset&&t.dataset.lk){ const k=t.dataset.lk; const u=($(k==="edu"?"#lkEdu":"#lkMeet").value||"").trim(); const r=await api({action:"link_set",room:k,url:u}); if(r&&r.ok){ BOOT.links=r.links||{}; renderPanel(curRoom()); toast(u?"회의 주소를 바꿨습니다.":"기본 회의방으로 되돌렸습니다."); } else toast((r&&r.error)||"실패했습니다."); }
 });
@@ -685,13 +697,13 @@ async function reboot(){ const b=await api({action:"boot"}); if(b&&b.ok){ BOOT=b
 /* ---- 채팅 (저장됨) ---- */
 let TAB="all"; const LOGS={}; const SYS=[];
 function isChatRoom(id){ return id!=="private"&&id!=="hall"; }
-function renderTabs(){ const r=curRoom(); const rb=$('[data-tab="room"]'); rb.textContent=isChatRoom(r.id)?r.name+" 채팅":"이 방 채팅"; rb.disabled=!isChatRoom(r.id); if(!isChatRoom(r.id)&&TAB==="room") TAB="all"; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x.dataset.tab===TAB)); }
-function renderLog(){ const room=TAB==="all"?"all":curId; const L=(LOGS[room]||[]).concat(TAB==="all"?SYS:[]).sort((a,b)=>String(a.at).localeCompare(String(b.at)));
+function renderTabs(){ const r=curRoom(); const rb=$('[data-tab="room"]'); rb.textContent=isChatRoom(r.id)?(r.id==="sales"?STEAMS.find(x=>x[0]===ST)[1]:r.name)+" 채팅":"이 방 채팅"; rb.disabled=!isChatRoom(r.id); if(!isChatRoom(r.id)&&TAB==="room") TAB="all"; document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x.dataset.tab===TAB)); }
+function renderLog(){ const room=TAB==="all"?"all":chatRoomId(); const L=(LOGS[room]||[]).concat(TAB==="all"?SYS:[]).sort((a,b)=>String(a.at).localeCompare(String(b.at)));
   $("#log").innerHTML=L.length?L.map(m=>m.sys?`<div class="msg sys">${E(m.text)}</div>`:`<div class="msg"><b>${E(m.name)}</b><small>${E(short(m.branch))} · ${E(String(m.at).slice(5))}</small><br>${E(m.text)}</div>`).join(""):'<div class="empty">'+(TAB==="all"?"아직 대화가 없습니다.":"이 방에서 오간 대화가 없습니다.")+'</div>';
   const g=$("#log"); g.scrollTop=g.scrollHeight; }
 function sysMsg(t){ const n=new Date(Date.now()+9*3600000).toISOString().replace("T"," ").slice(0,16); SYS.push({sys:true,text:t,at:n}); if(SYS.length>30) SYS.shift(); renderLog(); }
-function addMsg(m){ (LOGS[m.room]=LOGS[m.room]||[]).push(m); if(LOGS[m.room].length>200) LOGS[m.room].shift(); if(AV[m.uid]&&(m.room==="all"||m.room===curId)) say(m.uid,m.text); renderLog(); }
-$("#send").addEventListener("submit",async e=>{ e.preventDefault(); const t=$("#msg").value.trim(); if(!t||!ME) return; const room=TAB==="all"?"all":curId;
+function addMsg(m){ (LOGS[m.room]=LOGS[m.room]||[]).push(m); if(LOGS[m.room].length>200) LOGS[m.room].shift(); if(AV[m.uid]&&(m.room==="all"||m.room===chatRoomId())) say(m.uid,m.text); renderLog(); }
+$("#send").addEventListener("submit",async e=>{ e.preventDefault(); const t=$("#msg").value.trim(); if(!t||!ME) return; const room=TAB==="all"?"all":chatRoomId();
   if(!isChatRoom(room)&&room!=="all") return toast("이 방에서는 채팅을 쓸 수 없습니다."); $("#msg").value="";
   const r=await api({action:"chat_post",room,text:t}); if(!(r&&r.ok)) return toast((r&&r.error)||"보내지 못했습니다.");
   const m=Object.assign({},r.msg); addMsg(m);
@@ -714,7 +726,7 @@ function connect(){
         Object.keys(AV).forEach(id=>{ if(!seen.has(id)&&!AV[id].npc) drop(id); }); who(); })
       .on("broadcast",{event:"mv"},({payload:p})=>{ if(AV[p.id]){ avatar(p.id,{x:p.x,y:p.y}); lights(); } })
       .on("broadcast",{event:"chat"},({payload:p})=>{ addMsg(p); })
-      .on("broadcast",{event:"ping"},async ({payload:p})=>{ if(p.room===curId&&canEnter(ROOMS.find(r=>r.id===p.room))){ const x=await api({action:"chat_list",room:p.room}); if(x&&x.ok){ LOGS[p.room]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } })
+      .on("broadcast",{event:"ping"},async ({payload:p})=>{ if(p.room===chatRoomId()&&canEnter(ROOMS.find(r=>r.id===p.room))){ const x=await api({action:"chat_list",room:p.room}); if(x&&x.ok){ LOGS[p.room]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } })
       .on("broadcast",{event:"emo"},({payload:p})=>{ emo(p.id,p.e); })
       .on("broadcast",{event:"look"},({payload:p})=>{ if(AV[p.id]) avatar(p.id,{look:p.look||{}}); })
       .subscribe(st=>{ const c=$("#pConn"); if(st==="SUBSCRIBED"){ c.classList.remove("off"); c.querySelector("span").textContent="연결됨"; track(); }
@@ -766,7 +778,7 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<(MOBL?12:26);i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
 
 /* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
-function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="lobby"||r.id==="private"||r.id==="desk"||(r.id==="edu"&&!MCHAT)||(!!r.team&&(TT[r.id]||"n")!=="c")); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
+function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="lobby"||r.id==="private"||r.id==="desk"||(r.id==="edu"&&!MCHAT)||(!!r.team&&(TT[ST]||"n")!=="c")); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
   const ob=$("#shOpen"); if(ob) ob.innerHTML=r.id==="hall"?"":`💬 <b>${E(r.name)}</b> 열기 ▴`;
   if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
   if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
@@ -826,7 +838,7 @@ function renderHist(){ document.querySelectorAll("[data-ht]").forEach(b=>b.class
   if(HT==="min"){ const q=MQ.trim(); const M=(HIST.minutes||[]).filter(m=>!q||(m.title+" "+m.body+" "+m.name).indexOf(q)>=0);
     B.innerHTML=`<input id="mnQ" class="mnq" placeholder="회의록 검색 (제목·내용·작성자)" value="${E(MQ)}"><p class="sm" style="margin:4px 0 8px">전체 ${(HIST.minutes||[]).length}건${q?` · 검색 ${M.length}건`:""} · 눌러서 내용 보기</p>`+(M.length?`<div class="mnlist">${M.map(m=>{ const on=String(m.id)===String(MOPEN); return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-mnopen="${m.id}"><i>${E(String(m.at).slice(0,10))}</i><b>${E(m.title)}</b><span>${E(m.name)}</span></button>${on?`<div class="mnbody">${E(m.body)}<div class="mnft"><small>${E(m.at)}</small>${(ME.role==="admin"||String(m.name).indexOf(ME.name+" (")===0)?`<span><button type="button" data-mnedit="${m.id}" style="color:var(--navy)">수정</button> <button type="button" data-mndel="${m.id}">삭제</button></span>`:""}</div></div>`:""}</div>`; }).join("")}</div>`:'<p class="sm">'+(q?"검색 결과가 없습니다.":"저장된 회의록이 없습니다. \"회의록 쓰기\"에서 남겨 주세요.")+'</p>'); return; }
   const C=HIST.chat||[]; let d="", h=""; C.forEach(m=>{ const day=String(m.at).slice(0,10); if(day!==d){ d=day; h+=`<div class="hday">${E(day)}</div>`; } h+=`<div class="msg"><b>${E(m.name)}</b><small>${E(short(m.branch))} · ${E(String(m.at).slice(11))}</small><br>${E(m.text)}</div>`; });
-  B.innerHTML=h||'<p class="sm">미팅룸 채팅 기록이 없습니다.</p>'; }
+  B.innerHTML=h||'<p class="sm">라운지 채팅 기록이 없습니다.</p>'; }
 document.addEventListener("click",async e=>{ const t=e.target;
   if(t.dataset&&t.dataset.ht){ HT=t.dataset.ht; if(HT!=="new") MEDIT=null; renderHist(); }
   if(t.dataset&&t.dataset.mnedit){ MEDIT=((HIST&&HIST.minutes)||[]).find(m=>String(m.id)===t.dataset.mnedit)||null; if(MEDIT){ HT="new"; renderHist(); } }
