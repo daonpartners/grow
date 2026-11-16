@@ -470,7 +470,7 @@ function el(cls,css,html){ const d=document.createElement("div"); d.className=cl
 const px=v=>v+"px"; const RE={};
 function buildMap(){ W.style.width=WD.w+"px"; W.style.height=WD.h+"px";
 ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),width:px(r.w),height:px(r.h)}); d.style.setProperty("--c",r.c); RE[r.id]=d;
-  d.appendChild(el("tag",{},E(r.name))); d.appendChild(el("lamp")); if(r.sub) d.appendChild(el("sub",{},E(r.sub)));
+  d.appendChild(el("tag",{},E(r.name))); d.appendChild(el("lamp")); if(r.sub&&r.branch) d.appendChild(el("sub",{},E(r.sub)));
   if(!canEnter(r)) d.appendChild(el("lock",{},"소속만"));
   if(r.branch&&ME&&ME.role!=="admin"&&r.branch===short(ME.parent||ME.branch)){ d.classList.add("mine"); d.appendChild(el("minetag",{},"⭐ 내 지사")); }
   W.appendChild(d);
@@ -480,7 +480,8 @@ ROOMS.forEach(r=>{ const d=el("room dark "+r.floor,{left:px(r.x),top:px(r.y),wid
   const F=(cls,x,y,w,h,html)=>{ const f=el("f "+cls,{left:px(r.x+x),top:px(r.y+y),width:w?px(w):"",height:h?px(h):""},html); W.appendChild(f); return f; };
   const art=artOf(r); if(art){ d.classList.add("art"); d.style.setProperty("--art",`url(art/${art}.webp)`);
     if(r.id==="edu"){ [["🎓 교육장","lect",0.03],["🎥 회의실","meet",0.27],["📢 공지판","ntc",0.51],["🔐 관리자방","adm",0.75]].forEach(([t,k,fx])=>{ const z=F("zone",Math.round(r.w*fx),Math.round(r.h*0.18),Math.round(r.w*0.22),30,t); z.style.pointerEvents="auto"; z.addEventListener("click",e=>{ e.stopPropagation(); if(typeof meetZone==="function") meetZone(k); }); }); }
-    if(r.id==="lobby"){ const k=F("kiosk",r.w-110,r.h-74,80,56,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); openPage("/#v=notice","그로우 공지사항"); }); }
+    if(r.id==="lobby"){ [["🏢 회사소개","co",0.03],["📍 지사소개","br",0.27],["📢 공지사항","nt",0.51],["🔗 업무링크","lk",0.75]].forEach(([t,k,fx])=>{ const z=F("zone",Math.round(r.w*fx),Math.round(r.h*0.18),Math.round(r.w*0.22),30,t); z.style.pointerEvents="auto"; z.style.borderColor="#14B8A6"; z.style.color="#0f766e"; z.addEventListener("click",e=>{ e.stopPropagation(); if(typeof lobbyZone==="function") lobbyZone(k); }); });
+      const k=F("kiosk",r.w-110,r.h-74,80,56,"공지<br>보기"); k.addEventListener("click",e=>{ e.stopPropagation(); openPage("/#v=notice","그로우 공지사항"); }); }
     return; }
   if(r.branch){ const ox=Math.round((r.w-14-178)/2); [[ox,30],[ox+104,30],[ox,100],[ox+104,100]].forEach(([x,y])=>{ F("desk",x,y,74,42); F("chair",x+24,y+46); }); }
   if(r.id==="edu"){ F("board",130,22,160,46,"강의 화면"); F("lectern",195,80,30,22); for(let row=0;row<3;row++) for(let c=0;c<5;c++) F("chair",60+c*62,125+row*50); F("plant",14,r.h-50);
@@ -592,7 +593,8 @@ const head=()=>ME&&(ME.role==="manager"||ME.role==="admin");
 const isAdm=()=>head()||sessionStorage.getItem("growAdmin")==="1";
 let MZ="lect", MCHAT=false;
 /* 로비 공지: 사이트 공지 파일. 게스트는 '외부 공개' 표시된 공지만 */
-let PUBN=null, LOPEN=null, PUBL=false;
+let PUBN=null, LOPEN=null, PUBL=false, LZ="nt";
+function lobbyZone(k){ LZ=k; const r=ROOMS.find(x=>x.id==="lobby"); if(curId!=="lobby"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); roomSheet(r); }
 async function loadPubN(){ if(PUBL) return; PUBL=true; try{ const r=await fetch("/board/notices.json?t="+Date.now(),{cache:"no-store"}); const d=await r.json(); const L=Array.isArray(d)?d:(d.items||[]); PUBN=L.slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||String(b.sortKey||b.date||"").localeCompare(String(a.sortKey||a.date||""))); }catch(e){ PUBN=[]; } if(curId==="lobby") renderPanel(curRoom()); }
 /* 영업팀 방: 탭(n 공지·b 게시판·c 채팅방), 글 목록 */
 const TT={}, BD={}; let BOPEN=null, BEDIT=null, BNEW=false, BCTX={room:"",k:"n"}, ST="online";
@@ -624,12 +626,13 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       ${head()&&BOOT&&BOOT.attList?`<h3 style="margin-top:12px;font-size:14px;color:var(--navy)">오늘 출근 (${BOOT.attList.length}명)</h3><div class="sm">${BOOT.attList.map(a=>E(a.name)+" "+E(a.at)).join(" · ")||"아직 없음"}</div>`:""}
       <p class="sm" style="margin:10px 0 0">이 방 채팅은 ${E(r.name)} 소속만 보고 쓸 수 있으며 저장됩니다.</p>`; }
   else if(r.id==="lobby"){ const g=ME&&ME.role==="guest"; const N=(PUBN||[]).filter(n=>!g||n.pub).slice(0,g?10:5);
-    if(!PUBN) loadPubN();
-    h=`<div class="mz"><h4>🏢 회사소개</h4><div class="agrid"><a class="pbtn l" href="/#v=guide">제도안내</a><a class="pbtn l" href="/#v=business">사업소개</a></div></div>
-      <div class="mz"><h4>📍 지사소개</h4><a class="pbtn l" href="/#v=home">전국 지사 안내</a></div>
-      <div class="mz"><h4>📢 공지사항</h4>${!PUBN?`<p class="sm">불러오는 중…</p>`:N.length?`<div class="mnlist">${N.map((n,i)=>{ const on=LOPEN===i; return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-lopen="${i}"><i>${E(String(n.date||"").slice(5,10).replace(".","/"))}</i><b>${n.pinned?"📌 ":""}${E(n.title)}</b><span>${E(n.tag||"")}</span></button>${on?`<div class="mnbody">${E(n.content||"")}${(n.images||[]).length?`<div class="agrid" style="margin-top:8px">${n.images.map(u=>`<img src="${E(u)}" style="width:100%;border-radius:8px" loading="lazy">`).join("")}</div>`:""}</div>`:""}</div>`; }).join("")}</div>`:`<p class="sm">${g?"외부에 공개된 공지가 없습니다.":"등록된 공지가 없습니다."}</p>`}${g?"":`<a class="pbtn l" href="/#v=notice" style="margin-top:6px">공지 전체 보기</a>`}</div>
-      <div class="mz"><h4>🔗 업무링크</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=recruit">파트너 지원</a></div></div>
-      ${g?`<p class="sm" style="margin:8px 2px 0">게스트로 둘러보는 중입니다. 다른 방은 사업부 소속만 들어갈 수 있습니다.</p>`:`<a class="pbtn l" href="/#v=album">그로우앨범</a>`}`; }
+    const tab=(k,t)=>`<button type="button" data-lz="${k}" class="${LZ===k?"on":""}">${t}</button>`; let body="";
+    if(LZ==="co") body=`<div class="mz"><h4>🏢 회사소개</h4><div class="agrid"><a class="pbtn l" href="/#v=guide">제도안내</a><a class="pbtn l" href="/#v=business">사업소개</a></div></div>`;
+    else if(LZ==="br") body=`<div class="mz"><h4>📍 지사소개</h4><a class="pbtn l" href="/#v=home">전국 지사 안내</a></div>`;
+    else if(LZ==="nt"){ if(!PUBN) loadPubN();
+      body=`<div class="mz"><h4>📢 공지사항</h4>${!PUBN?`<p class="sm">불러오는 중…</p>`:N.length?`<div class="mnlist">${N.map((n,i)=>{ const on=LOPEN===i; return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-lopen="${i}"><i>${E(String(n.date||"").slice(5,10).replace(".","/"))}</i><b>${n.pinned?"📌 ":""}${E(n.title)}</b><span>${E(n.tag||"")}</span></button>${on?`<div class="mnbody">${E(n.content||"")}${(n.images||[]).length?`<div class="agrid" style="margin-top:8px">${n.images.map(u=>`<img src="${E(u)}" style="width:100%;border-radius:8px" loading="lazy">`).join("")}</div>`:""}</div>`:""}</div>`; }).join("")}</div>`:`<p class="sm">${g?"외부에 공개된 공지가 없습니다.":"등록된 공지가 없습니다."}</p>`}${g?"":`<a class="pbtn l" href="/#v=notice" style="margin-top:6px">공지 전체 보기</a>`}</div>`; }
+    else body=`<div class="mz"><h4>🔗 업무링크</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=recruit">파트너 지원</a>${g?"":`<a class="pbtn l" href="/#v=album">그로우앨범</a>`}</div></div>`;
+    h=`<div class="mtabs mtabs4" style="margin-top:0">${tab("co","🏢 회사소개")}${tab("br","📍 지사소개")}${tab("nt","📢 공지사항")}${tab("lk","🔗 업무링크")}</div>${body}${g?`<p class="sm" style="margin:8px 2px 0">게스트로 둘러보는 중입니다. 다른 방은 사업부 소속만 들어갈 수 있습니다.</p>`:""}`; }
   else if(r.id==="desk"){ const att=BOOT&&BOOT.att;
     h=`<div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를<br>아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
       <div class="mz"><h4>📥 배분 DB 조회</h4><a class="pbtn g" href="/#v=fclookup">배분 DB 조회</a></div>
@@ -681,6 +684,7 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.id==="mtHist"){ HT="min"; openHist(); }
   if(t.id==="mnNew"){ HT="new"; MEDIT=null; openHist(); }
   if(t.closest&&t.closest("[data-lopen]")){ const i=Number(t.closest("[data-lopen]").dataset.lopen); LOPEN=LOPEN===i?null:i; renderPanel(curRoom()); }
+  if(t.dataset&&t.dataset.lz){ LZ=t.dataset.lz; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.st){ salesZone(t.dataset.st); }
   if(t.dataset&&t.dataset.tt){ const r=curRoom(); TT[teamKey(r)]=t.dataset.tt; BOPEN=null; BEDIT=null; BNEW=false; renderPanel(r); roomSheet(r); if(t.dataset.tt==="c"){ TAB="room"; ensureLog(); } }
