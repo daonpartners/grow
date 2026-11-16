@@ -280,7 +280,7 @@ body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:n
   .sheeth button{flex:none;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:10px;padding:6px 10px;font-weight:800;font-size:13px}
   .side .panel{flex:none;max-height:46%;overflow:auto}
   .side .log{flex:1;height:auto;min-height:0}
-  .shopen.on{display:block;position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:70;background:#F58220;color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:800;box-shadow:0 6px 16px rgba(245,130,32,.45);white-space:nowrap}
+  .shopen.on{display:none!important;position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:70;background:#F58220;color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:800;box-shadow:0 6px 16px rgba(245,130,32,.45);white-space:nowrap}
 }
 .side.nochat .tabs,.side.nochat .log,.side.nochat .send{display:none!important}
 .side.nochat .panel{max-height:none!important;flex:1!important;overflow:auto;border-bottom:none}
@@ -566,6 +566,7 @@ W.addEventListener("pointerup",dragEnd); W.addEventListener("pointercancel",drag
 document.addEventListener("keydown",e=>{ if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)) return; const k=e.key.toLowerCase(); if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){ keys[k]=1; target=null; e.preventDefault(); } });
 document.addEventListener("keyup",e=>{ keys[e.key.toLowerCase()]=0; });
 MB.addEventListener("click",e=>{ if(Date.now()-DRAGEND<350) return; if(e.target.closest(".where,.emobar,.kiosk,.modal,.av.bot")) return; const rc=W.getBoundingClientRect(); const tx=(e.clientX-rc.left)/SC, ty=(e.clientY-rc.top)/SC;
+  { const hr=roomAt(tx,ty); const sd=$("#side"); if(MOBL&&ME&&hr&&hr.id===curId&&sd&&!sd.classList.contains("open")){ sd.classList.add("open"); } }
   const tr=roomAt(tx,ty); if(tr&&!canEnter(tr)){ target=null; return toast(tr.name+(ME&&ME.role==="guest"?"는 사업부 소속만 들어갈 수 있습니다.":"는 소속 설계사만 들어갈 수 있습니다.")); }
   /* 가는 길에 못 들어가는 지사 방이 있으면 걸어가지 않고 바로 그 자리로 이동 */
   let blocked=false; for(let k=1;k<=24;k++){ const r2=roomAt(pos.x+(tx-pos.x)*k/24,pos.y+(ty-pos.y)*k/24); if(r2&&!canEnter(r2)){ blocked=true; break; } }
