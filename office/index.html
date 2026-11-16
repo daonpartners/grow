@@ -560,7 +560,7 @@ let SCHED=null;
 function meetUrl(room){ const L=(BOOT&&BOOT.links)||{}; if(L[room]&&L[room].url) return L[room].url; return "https://meet.jit.si/GrowOffice-"+(room==="edu"?"Lecture":"Meeting")+"-7k3qz"; }
 const head=()=>ME&&(ME.role==="manager"||ME.role==="admin");
 const isAdm=()=>head()||sessionStorage.getItem("growAdmin")==="1";
-let MZ="lect";
+let MZ="lect", MCHAT=false;
 function meetZone(k){ const r=ROOMS.find(x=>x.id==="edu"); MZ=k; if(curId!=="edu"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); }
 async function enterRoom(){ const r=curRoom(); renderPanel(r); TAB=r.id==="private"?"all":(isChatRoom(r.id)&&r.id!=="hall"?"room":TAB); renderTabs(); roomSheet(r);
   if(isChatRoom(r.id)&&!LOGS[r.id]){ const x=await api({action:"chat_list",room:r.id}); if(x&&x.ok){ LOGS[r.id]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } else renderLog(); }
@@ -593,7 +593,7 @@ function renderPanel(r){ const P=$("#panel"); let h="";
         ${M.length?`<div class="mnlist" style="margin-top:8px">${M.slice(0,5).map(m=>`<div class="mnrow"><button type="button" class="mnhd" data-mnopen="${m.id}"><i>${E(String(m.at).slice(5,10).replace("-","/"))}</i><b>${E(m.title)}</b><span>${E(String(m.name).replace(/ \(.*\)$/,""))}</span></button></div>`).join("")}</div>`:""}</div>`;
     else body=isAdm()?`<div class="mz"><h4>🔐 관리자방</h4><div class="agrid">${[["event","📋 행사신청"],["db","🗂️ DB신청"],["eventdb","📂 DB관리",1],["album","🖼️ 앨범관리"],["branch","👥 지사관리",1]].filter(x=>!x[2]||head()).map(x=>`<a class="pbtn l" href="/#v=admin&t=${x[0]}">${x[1]}</a>`).join("")}</div></div>`
       :`<div class="mz"><h4>🔐 관리자방</h4><p class="sm" style="margin:0">지사장·지점장·관리자만 들어갈 수 있습니다.</p></div>`;
-    h=`<div class="mtabs" style="margin-top:0">${tab("lect","🎓 교육장")}${tab("meet","🎥 회의실")}${tab("adm","🔐 관리자방")}</div>${body}`; }
+    h=`<div class="mtabs" style="margin-top:0">${tab("lect","🎓 교육장")}${tab("meet","🎥 회의실")}${tab("adm","🔐 관리자방")}</div>${body}<button type="button" class="pbtn l" id="mzChat" style="margin-top:10px">${MCHAT?"💬 미팅룸 채팅 닫기":"💬 미팅룸 채팅 열기"}</button>`; }
   else if(r.id==="event"){ h=`<div class="ttl"><b>행사팀 · 행사 일정</b><a class="sm" href="/#v=schedule">전체 일정 ›</a></div><div id="evList" class="sm" style="margin-top:6px">불러오는 중…</div>`; loadSched(); }
   else if(r.id!=="hall"){ const L=LINKS[r.id]||[]; h=`<div class="ttl"><b>${E(r.name)}</b><span class="sm">${E(r.sub||"")}</span></div>${L.map(([t,u])=>`<a class="pbtn l" href="${u}">${t} ›</a>`).join("")}`; }
   P.innerHTML=h; P.style.display=h?"":"none"; if(r.id==="private") renderTodo(); }
@@ -617,6 +617,7 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.id==="mtHist"){ HT="min"; openHist(); }
   if(t.id==="mnNew"){ HT="new"; MEDIT=null; openHist(); }
   if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
+  if(t.id==="mzChat"){ MCHAT=!MCHAT; $("#side").classList.toggle("nochat",!MCHAT); renderPanel(curRoom()); if(MCHAT){ TAB="room"; renderTabs(); renderLog(); } }
   if(t.dataset&&t.dataset.lk){ const k=t.dataset.lk; const u=($(k==="edu"?"#lkEdu":"#lkMeet").value||"").trim(); const r=await api({action:"link_set",room:k,url:u}); if(r&&r.ok){ BOOT.links=r.links||{}; renderPanel(curRoom()); toast(u?"회의 주소를 바꿨습니다.":"기본 회의방으로 되돌렸습니다."); } else toast((r&&r.error)||"실패했습니다."); }
 });
 document.addEventListener("change",e=>{ const t=e.target; if(t.dataset&&t.dataset.ti!=null){ TODO[+t.dataset.ti].d=t.checked; renderTodo(); saveTodo(); } });
@@ -707,7 +708,7 @@ function decorate(){ document.querySelectorAll(".deco,.fall").forEach(x=>x.remov
   if(T.fall){ const f=document.createElement("div"); f.className="fall"; let h=""; for(let i=0;i<(MOBL?12:26);i++) h+=`<i style="left:${Math.round(Math.random()*100)}%;font-size:${14+Math.round(Math.random()*14)}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*18}s;opacity:${.5+Math.random()*.5}">${T.fall}</i>`; f.innerHTML=h; W.appendChild(f); } }
 
 /* ---- 방에 들어가면 그 방 화면(공지·버튼·채팅)이 뜸: 휴대폰은 아래에서 올라오는 창, PC는 오른쪽 안내판 강조 ---- */
-function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="private"); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
+function roomSheet(r){ const sd=$("#side"); if(!sd) return; const hb=$("#homeBtn"); if(hb) hb.classList.toggle("on",!!ME&&r.id!=="lobby"); sd.classList.toggle("nochat",r.id==="private"||(r.id==="edu"&&!MCHAT)); $("#shT").textContent=r.id==="hall"?"복도":r.name; $("#shS").textContent=r.sub||"";
   const ob=$("#shOpen"); if(ob) ob.innerHTML=r.id==="hall"?"":`💬 <b>${E(r.name)}</b> 열기 ▴`;
   if(!ME||r.id==="hall"){ sd.classList.remove("open"); if(ob) ob.classList.remove("on"); return; }
   if(MOBL){ if(!roomSheet.n){ roomSheet.n=1; if(ob) ob.classList.add("on"); return; } sd.classList.add("open"); if(ob) ob.classList.remove("on"); }
