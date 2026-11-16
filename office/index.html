@@ -48,6 +48,7 @@ button{font:inherit;cursor:pointer}
 .marble{background:#FFFDF8;background-image:linear-gradient(135deg,rgba(0,0,0,.025) 25%,transparent 25% 50%,rgba(0,0,0,.025) 50% 75%,transparent 75%);background-size:60px 60px}
 .tile{background:#FDF3E7;background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px);background-size:32px 32px}
 .f{position:absolute;pointer-events:none}
+.mtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.mtabs button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 4px;font:inherit;font-weight:800;font-size:13.5px;color:var(--navy);cursor:pointer}.mtabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}.mset{margin-top:8px}.mset summary{cursor:pointer;font-size:12.5px;font-weight:700;color:#5B6B80}.agrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.agrid .pbtn{margin:0}
 .mz{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;transition:box-shadow .3s}.mz.hl{box-shadow:0 0 0 3px #F58220}.mz h4{margin:0 0 6px;font-size:14px;color:var(--navy)}.mrow{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px dashed var(--line)}.mrow>div{flex:1;min-width:0}.pbtn.sm2{width:auto;margin:0;padding:6px 10px;font-size:12.5px}
 .f.zone{display:grid;place-items:center;background:rgba(255,255,255,.92);border:2px solid #2D7FF9;color:#1d4fa8;border-radius:999px;font-weight:900;font-size:13px;cursor:pointer;z-index:3;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.18)}
 .desk{background:#C8955E;border-radius:8px;box-shadow:0 4px 0 #A6763F,0 6px 10px rgba(0,0,0,.12)}
@@ -558,7 +559,8 @@ let SCHED=null;
 function meetUrl(room){ const L=(BOOT&&BOOT.links)||{}; if(L[room]&&L[room].url) return L[room].url; return "https://meet.jit.si/GrowOffice-"+(room==="edu"?"Lecture":"Meeting")+"-7k3qz"; }
 const head=()=>ME&&(ME.role==="manager"||ME.role==="admin");
 const isAdm=()=>head()||sessionStorage.getItem("growAdmin")==="1";
-function meetZone(k){ const r=ROOMS.find(x=>x.id==="edu"); if(curId!=="edu"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); setTimeout(()=>{ const z=document.getElementById("mz_"+k); if(z){ z.scrollIntoView({block:"start",behavior:"smooth"}); z.classList.add("hl"); setTimeout(()=>z.classList.remove("hl"),1500); } if(k==="adm"&&isAdm()) openPage("/#v=admin","관리자센터"); },120); }
+let MZ="lect";
+function meetZone(k){ const r=ROOMS.find(x=>x.id==="edu"); MZ=k; if(curId!=="edu"){ target=null; moveTo(r.x+r.w/2,r.y+r.h*0.62); } renderPanel(r); }
 async function enterRoom(){ const r=curRoom(); renderPanel(r); TAB=r.id==="private"?"all":(isChatRoom(r.id)&&r.id!=="hall"?"room":TAB); renderTabs(); roomSheet(r);
   if(isChatRoom(r.id)&&!LOGS[r.id]){ const x=await api({action:"chat_list",room:r.id}); if(x&&x.ok){ LOGS[r.id]=Array.isArray(x.chat)?x.chat:[]; renderLog(); } } else renderLog(); }
 function renderPanel(r){ const P=$("#panel"); let h="";
@@ -576,18 +578,21 @@ function renderPanel(r){ const P=$("#panel"); let h="";
       <p class="sm" style="margin:10px 0 0">이 방 채팅은 ${E(r.name)} 소속만 보고 쓸 수 있으며 저장됩니다.</p>`; }
   else if(r.id==="edu"){ const LK=(BOOT&&BOOT.links)||{}; const M=(BOOT&&BOOT.minutes)||[]; const MT=(BOOT&&BOOT.meets)||[];
     const setTxt=k=>LK[k]?(LK[k].pw?`회의 ID <b>${E(LK[k].mid||"")}</b> · 암호 <b>${E(LK[k].pw)}</b>`:`${E(LK[k].by)} · ${E(LK[k].at)} 설정`):"기본 방(Jitsi)";
-    h=`<div class="ttl"><b>🏢 미팅룸</b><span class="sm">교육장 · 회의실 · 관리자방</span></div>
-      <div class="mz" id="mz_lect"><h4>🎓 교육장</h4><a class="pbtn o" href="${E(meetUrl("edu"))}" target="_blank" rel="noopener">줌 강의 입장</a><p class="sm" style="margin:4px 0 0">${setTxt("edu")}</p>
-        ${head()?`<div class="nform"><input id="lkEdu" maxlength="300" placeholder="줌 강의 주소 (https://zoom.us/…)" value="${E(LK.edu?LK.edu.url:"")}"><button class="pbtn l" type="button" data-lk="edu">강의 주소 저장</button></div>`:""}</div>
-      <div class="mz" id="mz_meet"><h4>🎥 회의실</h4>
-        <a class="pbtn g" href="${E(meetUrl("meet"))}" target="_blank" rel="noopener">기본 회의실 입장</a><p class="sm" style="margin:4px 0 6px">${setTxt("meet")}</p>
+    const tab=(k,t)=>`<button type="button" data-mz="${k}" class="${MZ===k?"on":""}">${t}</button>`;
+    let body="";
+    if(MZ==="lect") body=`<div class="mz"><h4>🎥 줌 강의실</h4><a class="pbtn o" href="${E(meetUrl("edu"))}" target="_blank" rel="noopener">줌 강의 입장</a><p class="sm" style="margin:4px 0 0">${setTxt("edu")}</p>
+        ${head()?`<details class="mset"><summary>강의 주소 바꾸기</summary><div class="nform"><input id="lkEdu" maxlength="300" placeholder="줌 강의 주소 (https://zoom.us/…)" value="${E(LK.edu?LK.edu.url:"")}"><button class="pbtn l" type="button" data-lk="edu">강의 주소 저장</button></div></details>`:""}</div>
+      <div class="mz"><h4>📚 교육자료</h4><a class="pbtn g" href="/#v=datacenter&t=edu">교육자료 보기</a><a class="pbtn l" href="/#v=schedule">교육·회의 일정</a></div>`;
+    else if(MZ==="meet") body=`<div class="mz"><h4>🎥 화상회의실</h4>
+        <a class="pbtn g" href="${E(meetUrl("meet"))}" target="_blank" rel="noopener">기본 회의실 입장</a>
         ${MT.map(m=>`<div class="mrow"><div><b>${E(m.name)}</b><br><span class="sm">${E(m.by)} · ${E(String(m.at).slice(5))}</span></div><a class="pbtn g sm2" href="${E(m.url)}" target="_blank" rel="noopener">입장</a>${m.mine||(ME&&ME.role==="admin")?`<button type="button" class="pbtn sm2" data-mdel="${E(m.id)}">닫기</button>`:""}</div>`).join("")}
-        <div class="nform"><input id="mtName" maxlength="30" placeholder="새 회의실 이름 (예: 다온 주간회의)"><input id="mtUrl" maxlength="300" placeholder="줌·미트 주소 (비우면 자동 생성)"><button class="pbtn l" type="button" id="mtNew">회의실 만들기</button></div>
-        ${head()?`<div class="nform"><input id="lkMeet" maxlength="300" placeholder="기본 회의실 주소 (줌·구글 미트)" value="${E(LK.meet?LK.meet.url:"")}"><button class="pbtn l" type="button" data-lk="meet">기본 회의실 주소 저장</button></div>`:""}
-        <button class="pbtn l" type="button" id="mtChat">💬 실시간 회의 채팅 (아래 채팅창)</button>
-        <button class="pbtn" type="button" id="mtHist">📝 회의 기록 열람 · 회의록 쓰기</button>
-        ${M.length?`<div class="sm" style="margin-top:10px">최근 회의록</div>`+M.slice(0,3).map(m=>`<div class="ev"><i>${E(String(m.at).slice(5,10).replace("-","/"))}</i><div><b>${E(m.title)}</b><br><span class="sm">${E(m.name)}</span></div></div>`).join(""):""}</div>
-      <div class="mz" id="mz_adm"><h4>🔐 관리자방</h4>${isAdm()?`<a class="pbtn o" href="/#v=admin">관리자센터 열기</a><p class="sm" style="margin:4px 0 0">DB 배분·설계사 등록·게시물 관리</p>`:`<p class="sm" style="margin:0">지사장·지점장·관리자만 들어갈 수 있습니다.</p>`}</div>`; }
+        <details class="mset"><summary>＋ 새 회의실 만들기</summary><div class="nform"><input id="mtName" maxlength="30" placeholder="회의실 이름 (예: 다온 주간회의)"><input id="mtUrl" maxlength="300" placeholder="줌·미트 주소 (비우면 자동 생성)"><button class="pbtn l" type="button" id="mtNew">회의실 만들기</button></div></details>
+        ${head()?`<details class="mset"><summary>기본 회의실 주소 바꾸기</summary><div class="nform"><input id="lkMeet" maxlength="300" placeholder="기본 회의실 주소 (줌·구글 미트)" value="${E(LK.meet?LK.meet.url:"")}"><button class="pbtn l" type="button" data-lk="meet">저장</button></div></details>`:""}</div>
+      <div class="mz"><h4>📝 회의록</h4><button class="pbtn" type="button" id="mnNew">회의록 쓰기</button><button class="pbtn l" type="button" id="mtHist">회의록 · 지난 채팅 보기</button>
+        ${M.length?M.slice(0,3).map(m=>`<div class="ev"><i>${E(String(m.at).slice(5,10).replace("-","/"))}</i><div><b>${E(m.title)}</b><br><span class="sm">${E(m.name)}</span></div></div>`).join(""):""}</div>`;
+    else body=isAdm()?`<div class="mz"><h4>🔐 관리자방</h4><div class="agrid">${[["event","📋 행사신청"],["db","🗂️ DB신청"],["eventdb","📂 DB관리",1],["album","🖼️ 앨범관리"],["branch","👥 지사관리",1]].filter(x=>!x[2]||head()).map(x=>`<a class="pbtn l" href="/#v=admin&t=${x[0]}">${x[1]}</a>`).join("")}</div></div>`
+      :`<div class="mz"><h4>🔐 관리자방</h4><p class="sm" style="margin:0">지사장·지점장·관리자만 들어갈 수 있습니다.</p></div>`;
+    h=`<div class="mtabs" style="margin-top:0">${tab("lect","🎓 교육장")}${tab("meet","🎥 회의실")}${tab("adm","🔐 관리자방")}</div>${body}`; }
   else if(r.id==="event"){ h=`<div class="ttl"><b>행사팀 · 행사 일정</b><a class="sm" href="/#v=schedule">전체 일정 ›</a></div><div id="evList" class="sm" style="margin-top:6px">불러오는 중…</div>`; loadSched(); }
   else if(r.id!=="hall"){ const L=LINKS[r.id]||[]; h=`<div class="ttl"><b>${E(r.name)}</b><span class="sm">${E(r.sub||"")}</span></div>${L.map(([t,u])=>`<a class="pbtn l" href="${u}">${t} ›</a>`).join("")}`; }
   P.innerHTML=h; P.style.display=h?"":"none"; if(r.id==="private") renderTodo(); }
@@ -608,7 +613,9 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.id==="nPost"){ const ti=($("#nT").value||"").trim(), bo=($("#nB").value||"").trim(); if(!ti) return toast("제목을 적어 주세요."); t.disabled=true; const r=await api({action:"notice_post",title:ti,body:bo,branch:curRoom().branch}); if(r&&r.ok){ await reboot(); toast("공지를 올렸습니다."); } else { t.disabled=false; toast((r&&r.error)||"실패했습니다."); } }
   if(t.dataset&&t.dataset.ndel){ if(!confirm("이 공지를 지울까요?")) return; const r=await api({action:"notice_del",id:t.dataset.ndel}); if(r&&r.ok){ await reboot(); } else toast((r&&r.error)||"실패했습니다."); }
   if(t.id==="mtChat"){ TAB="room"; renderTabs(); renderLog(); const m=$("#msg"); if(m) m.focus(); }
-  if(t.id==="mtHist") openHist();
+  if(t.id==="mtHist"){ HT="min"; openHist(); }
+  if(t.id==="mnNew"){ HT="new"; openHist(); }
+  if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.lk){ const k=t.dataset.lk; const u=($(k==="edu"?"#lkEdu":"#lkMeet").value||"").trim(); const r=await api({action:"link_set",room:k,url:u}); if(r&&r.ok){ BOOT.links=r.links||{}; renderPanel(curRoom()); toast(u?"회의 주소를 바꿨습니다.":"기본 회의방으로 되돌렸습니다."); } else toast((r&&r.error)||"실패했습니다."); }
 });
 document.addEventListener("change",e=>{ const t=e.target; if(t.dataset&&t.dataset.ti!=null){ TODO[+t.dataset.ti].d=t.checked; renderTodo(); saveTodo(); } });
