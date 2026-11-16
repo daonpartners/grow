@@ -66,6 +66,7 @@ button{font:inherit;cursor:pointer}
 .priv{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border-radius:18px;padding:22px 26px;z-index:6;box-shadow:0 12px 40px rgba(14,42,71,.3);text-align:center;min-width:300px;display:none}.priv.on{display:block}.priv h4{margin:0 0 4px;font-size:18px;color:var(--navy)}.priv p{margin:0 0 14px;font-size:13px;color:var(--muted)}.priv a{display:block;margin-top:8px;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;color:#fff;background:var(--navy)}.priv a.o{background:var(--orange)}
 .av .b{width:44px;height:44px;border-radius:50%;background:var(--c,#1F8A7A);color:#fff;display:grid;place-items:center;font-weight:900;font-size:16px;border:3px solid #fff;box-shadow:0 4px 8px rgba(0,0,0,.3)}
 .av.me .b{box-shadow:0 0 0 4px rgba(245,130,32,.55),0 4px 8px rgba(0,0,0,.3)}
+.av .n .n2{display:block;font-size:.78em;font-weight:600;opacity:.85;line-height:1.2}.av.guide .n{top:-66px;border-radius:12px;text-align:center;line-height:1.25}
 .av .n{position:absolute;top:-26px;left:50%;transform:translateX(-50%);white-space:nowrap;background:rgba(14,42,71,.92);color:#fff;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px}
 .av .n em{font-style:normal;color:#9fe3d3;margin-left:4px;font-weight:600}
 .av .st{position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;border:2px solid #fff;background:#43d17a}
@@ -219,7 +220,7 @@ body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:n
 .room.art .tag{z-index:3}
 .av .b.spr{width:46px;height:60px;margin:-24px 0 0 -1px;background:none!important;border:0;border-radius:0;box-shadow:none!important;display:block}
 .av .b.spr img{width:100%;height:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 5px 3px rgba(40,25,10,.35))}
-.av.spr .n{top:-44px}.av.spr .acc{top:-40px;right:-6px}
+.av.spr .n{top:-44px}.av.guide.spr .n{top:-72px}.av.spr .acc{top:-40px;right:-6px}
 .av.me.spr .b.spr::after{content:"";position:absolute;left:50%;bottom:-4px;width:44px;height:12px;margin-left:-22px;border-radius:50%;background:rgba(245,130,32,.45);box-shadow:0 0 0 2px rgba(245,130,32,.8);z-index:-1}
 .av.bot .b.spr{width:80px;height:96px;margin:-52px 0 0 -18px;animation:float 2.6s ease-in-out infinite}
 .av.bot .b.spr img{filter:drop-shadow(0 0 12px rgba(20,184,166,.9)) drop-shadow(0 8px 6px rgba(0,0,0,.25))}
@@ -519,7 +520,7 @@ function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid
   else { if(bb.dataset.s){ bb.dataset.s=""; bb.innerHTML=""; }
   bb.textContent=img?"":(face||String(a.name||"?").slice(0,1)); bb.classList.toggle("face",!!face&&!img); if(!a.npc){ bb.style.background=lk.c||BCOL[short(a.branch)]||"#1F8A7A"; if(img){ bb.style.backgroundImage=`url("${img}")`; bb.style.backgroundSize="cover"; bb.style.backgroundPosition="center"; } } }
   a.el.querySelector(".acc").textContent=lk.a&&lk.a!=="-"?lk.a:"";
-  a.el.querySelector(".n").innerHTML=E(a.name)+(a.branch?`<em>${E(short(a.branch))}</em>`:"");
+  a.el.querySelector(".n").innerHTML=(a.sub2?`${E(a.name)}<small class="n2">${E(a.sub2)}</small>`:E(a.name))+(a.branch?`<em>${E(short(a.branch))}</em>`:"");
   const pr=roomAt(a.x,a.y); a.room=pr?pr.id:"hall"; a.el.style.display=(a.room==="private"&&!(ME&&id===ME.uid))?"none":""; return a; }
 function drop(id){ const a=AV[id]; if(a){ a.el.remove(); delete AV[id]; } }
 function say(id,text){ const a=AV[id]; if(!a) return; let s=a.el.querySelector(".say"); if(!s){ s=el("say"); a.el.appendChild(s); } s.textContent=text; clearTimeout(a.sayT); a.sayT=setTimeout(()=>s.remove(),6000); }
@@ -530,7 +531,7 @@ function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
 /* 총무님 카톡: 오픈채팅·카카오톡 채널 주소를 아래에 넣으면 총무님 캐릭터를 눌렀을 때 바로 열림 */
 const KAKAO_GM="https://pf.kakao.com/_qFxoxhX/chat"; /* GROW ON 홈의 '사업부 업무지원 카톡'과 같은 채널 */
-const NPC=[{id:"npc_gm",name:"총무님 · 눌러서 카톡",sprite:"ch_f_suit",room:"desk",lit:true,fixed:true,kakao:true,home:MOBL?[390,120]:[580,118]},{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"hall",lit:true,bot:true,slow:true,home:[LANES.x[0]+(LANES.x[1]-LANES.x[0])/2,LANES.y[1]]}];
+const NPC=[{id:"npc_gm",name:"총무님",sub2:"눌러서 톡으로 연결",sprite:"ch_f_suit",room:"desk",lit:true,fixed:true,kakao:true,home:MOBL?[390,135]:[580,118]},{id:"npc2",name:"그로우매니저",sub2:"눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:MOBL?[150,135]:[168,100]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"hall",lit:true,bot:true,slow:true,home:[LANES.x[0]+(LANES.x[1]-LANES.x[0])/2,LANES.y[1]]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.id==="npc2"&&GMBUSY&&AV[ME&&ME.uid]){ const a=AV[ME.uid]; return [a.x+55,a.y+10]; }
   if(n.fixed) return [r.x+n.home[0],r.y+n.home[1]];
@@ -543,7 +544,7 @@ function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
     n.cur=[x,y]; return n.cur; }
   if(!n.walk) return [r.x+n.home[0]+(Math.random()*40-20),r.y+n.home[1]+(Math.random()*20-10)];
   return [r.x+40+Math.random()*(r.w-80),r.y+50+Math.random()*(r.h-100)]; }
-function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,kakao:n.kakao,sprite:n.sprite,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
+function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,kakao:n.kakao,sub2:n.sub2,sprite:n.sprite,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
 const NPCSAY=["오늘도 화이팅이에요!","출근 체크 잊지 마세요 :)"];
 const BOTSAY=["궁금한 약관·청구, 저에게 물어보세요!","저를 누르면 바로 질문할 수 있어요 🤖","상품·서류·업무 절차 다 물어보세요"]; let botN=0;
 setInterval(()=>{ if(AV.aibot&&!$("#aiBox").classList.contains("on")) say("aibot",BOTSAY[botN++%BOTSAY.length]); },9000);
