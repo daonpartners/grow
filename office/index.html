@@ -452,7 +452,7 @@ let ME=null, BOOT=null;
 const W=$("#world"); const ROOMS=[];
 BR.forEach((b,i)=>ROOMS.push({id:"br_"+b[0],name:b[0]+"지사",sub:"지사장 "+b[2],x:40+i*258,y:40,w:238,h:240,branch:b[0],c:b[1],floor:"wood"}));
 ROOMS.push({id:"edu",name:"그로우라운지",sub:"교육장 · 회의실 · 오피스공지 · 관리자방",x:40,y:340,w:600,h:280,c:"#2D7FF9",floor:"carpet"});
-ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:656,y:340,w:904,h:280,c:"#14B8A6",floor:"marble"});
+ROOMS.push({id:"lobby",name:"로비",sub:"회사소개 · 지사소개 · 공지 · 업무링크",x:656,y:340,w:904,h:280,c:"#14B8A6",floor:"marble"});
 /* 영업팀: 한 방 안에 온라인영업팀·행사팀·사업자영업팀 (팀마다 공지·게시판·채팅방은 따로) */
 const STEAMS=[["online","온라인영업팀","💻","#2D7FF9"],["event","행사팀","🎉","#F97316"],["biz","사업자영업팀","🏪","#10B981"]];
 ROOMS.push({id:"sales",name:"영업팀",sub:"온라인 · 행사 · 사업자",x:40,y:690,w:806,h:220,c:"#2D7FF9",floor:"wood",team:true});
