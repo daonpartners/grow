@@ -529,7 +529,7 @@ function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit
 
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
 /* 총무님 카톡: 오픈채팅·카카오톡 채널 주소를 아래에 넣으면 총무님 캐릭터를 눌렀을 때 바로 열림 */
-const KAKAO_GM="";
+const KAKAO_GM="https://pf.kakao.com/_qFxoxhX/chat"; /* GROW ON 홈의 '사업부 업무지원 카톡'과 같은 채널 */
 const NPC=[{id:"npc_gm",name:"총무님 · 눌러서 카톡",sprite:"ch_f_suit",room:"desk",lit:true,fixed:true,kakao:true,home:MOBL?[390,120]:[580,118]},{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"hall",lit:true,bot:true,slow:true,home:[LANES.x[0]+(LANES.x[1]-LANES.x[0])/2,LANES.y[1]]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.id==="npc2"&&GMBUSY&&AV[ME&&ME.uid]){ const a=AV[ME.uid]; return [a.x+55,a.y+10]; }
