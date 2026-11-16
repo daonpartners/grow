@@ -583,7 +583,7 @@ function renderPanel(r){ const P=$("#panel"); let h="";
     let body="";
     if(MZ==="lect") body=`<div class="mz"><h4>🎥 줌 강의실</h4><a class="pbtn o" href="${E(meetUrl("edu"))}" target="_blank" rel="noopener">줌 강의 입장</a><p class="sm" style="margin:4px 0 0">${setTxt("edu")}</p>
         ${head()?`<details class="mset"><summary>강의 주소 바꾸기</summary><div class="nform"><input id="lkEdu" maxlength="300" placeholder="줌 강의 주소 (https://zoom.us/…)" value="${E(LK.edu?LK.edu.url:"")}"><button class="pbtn l" type="button" data-lk="edu">강의 주소 저장</button></div></details>`:""}</div>
-      <div class="mz"><h4>📚 교육자료</h4><a class="pbtn g" href="/#v=datacenter&t=edu">교육자료 보기</a><a class="pbtn l" href="/#v=schedule">교육·회의 일정</a></div>`;
+      <div class="mz"><h4>📚 교육자료</h4><a class="pbtn g" href="/#v=datacenter&t=edu">${isAdm()?"교육자료 보기 · 수정 · 삭제":"교육자료 보기"}</a>${isAdm()?`<a class="pbtn" href="/#v=datacenter&t=edu&n=eduInternal">＋ 교육자료 등록</a>`:""}<a class="pbtn l" href="/#v=schedule">교육·회의 일정</a></div>`;
     else if(MZ==="meet") body=`<div class="mz"><h4>🎥 화상회의실</h4>
         <a class="pbtn g" href="${E(meetUrl("meet"))}" target="_blank" rel="noopener">기본 회의실 입장</a>
         ${MT.map(m=>`<div class="mrow"><div><b>${E(m.name)}</b><br><span class="sm">${E(m.by)} · ${E(String(m.at).slice(5))}</span></div><a class="pbtn g sm2" href="${E(m.url)}" target="_blank" rel="noopener">입장</a>${m.mine||(ME&&ME.role==="admin")?`<button type="button" class="pbtn sm2" data-mdel="${E(m.id)}">닫기</button>`:""}</div>`).join("")}
@@ -615,7 +615,7 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.dataset&&t.dataset.ndel){ if(!confirm("이 공지를 지울까요?")) return; const r=await api({action:"notice_del",id:t.dataset.ndel}); if(r&&r.ok){ await reboot(); } else toast((r&&r.error)||"실패했습니다."); }
   if(t.id==="mtChat"){ TAB="room"; renderTabs(); renderLog(); const m=$("#msg"); if(m) m.focus(); }
   if(t.id==="mtHist"){ HT="min"; openHist(); }
-  if(t.id==="mnNew"){ HT="new"; openHist(); }
+  if(t.id==="mnNew"){ HT="new"; MEDIT=null; openHist(); }
   if(t.dataset&&t.dataset.mz){ MZ=t.dataset.mz; renderPanel(curRoom()); }
   if(t.dataset&&t.dataset.lk){ const k=t.dataset.lk; const u=($(k==="edu"?"#lkEdu":"#lkMeet").value||"").trim(); const r=await api({action:"link_set",room:k,url:u}); if(r&&r.ok){ BOOT.links=r.links||{}; renderPanel(curRoom()); toast(u?"회의 주소를 바꿨습니다.":"기본 회의방으로 되돌렸습니다."); } else toast((r&&r.error)||"실패했습니다."); }
 });
@@ -758,18 +758,20 @@ function openPage(u,t){ $("#pgF").src=u; $("#pgOut").href=u; $("#pgT").textConte
 document.addEventListener("click",e=>{ const a=e.target.closest('a[href^="/#v="]'); if(!a||e.ctrlKey||e.metaKey) return; e.preventDefault(); e.stopPropagation(); openPage(a.getAttribute("href"),a.textContent.replace(/[›↗]/g,"").trim()); },true);
 
 /* ---- 회의 기록 ---- */
-let HT="min", HIST=null, MOPEN=null, MQ="";
+let HT="min", HIST=null, MOPEN=null, MQ="", MEDIT=null;
 async function openHist(){ $("#hiBox").classList.add("on"); HIST=null; renderHist(); const r=await api({action:"meet_hist"}); HIST=r&&r.ok?r:{chat:[],minutes:[],err:(r&&r.error)||"불러오지 못했습니다."}; if(BOOT&&HIST.minutes) BOOT.minutes=HIST.minutes; renderHist(); }
 function renderHist(){ document.querySelectorAll("[data-ht]").forEach(b=>b.classList.toggle("on",b.dataset.ht===HT)); const B=$("#hiBody");
-  if(HT==="new"){ B.innerHTML=`<div class="nform" style="margin:0"><input id="mnT" maxlength="80" placeholder="회의 제목 (예: 11월 3주 지사장 회의)"><textarea id="mnB" rows="12" maxlength="4000" placeholder="참석자 / 논의 내용 / 결정 사항 / 할 일·담당자"></textarea><button class="pbtn g" type="button" id="mnPost">회의록 저장</button></div><p class="sm">저장한 회의록은 오피스에 들어오는 모든 사람이 볼 수 있습니다. 고객 개인정보는 적지 마세요.</p>`; return; }
+  if(HT==="new"){ const ED=MEDIT; B.innerHTML=`<div class="nform" style="margin:0">${ED?`<p class="sm" style="margin:0 0 4px">✏️ 회의록 수정 · ${E(ED.at)} <button type="button" id="mnCancel" class="pbtn sm2" style="width:auto;display:inline-block;margin-left:6px">수정 취소</button></p>`:""}<input id="mnT" maxlength="80" placeholder="회의 제목 (예: 11월 3주 지사장 회의)" value="${ED?E(ED.title):""}"><textarea id="mnB" rows="12" maxlength="4000" placeholder="참석자 / 논의 내용 / 결정 사항 / 할 일·담당자">${ED?E(ED.body):""}</textarea><button class="pbtn g" type="button" id="mnPost">${ED?"수정 저장":"회의록 저장"}</button></div><p class="sm">저장한 회의록은 오피스에 들어오는 모든 사람이 볼 수 있습니다. 고객 개인정보는 적지 마세요.</p>`; return; }
   if(!HIST){ B.innerHTML='<p class="sm">불러오는 중…</p>'; return; } if(HIST.err){ B.innerHTML=`<p class="sm">${E(HIST.err)}</p>`; return; }
   if(HT==="min"){ const q=MQ.trim(); const M=(HIST.minutes||[]).filter(m=>!q||(m.title+" "+m.body+" "+m.name).indexOf(q)>=0);
-    B.innerHTML=`<input id="mnQ" class="mnq" placeholder="회의록 검색 (제목·내용·작성자)" value="${E(MQ)}"><p class="sm" style="margin:4px 0 8px">전체 ${(HIST.minutes||[]).length}건${q?` · 검색 ${M.length}건`:""} · 눌러서 내용 보기</p>`+(M.length?`<div class="mnlist">${M.map(m=>{ const on=String(m.id)===String(MOPEN); return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-mnopen="${m.id}"><i>${E(String(m.at).slice(0,10))}</i><b>${E(m.title)}</b><span>${E(m.name)}</span></button>${on?`<div class="mnbody">${E(m.body)}<div class="mnft"><small>${E(m.at)}</small>${(ME.role==="admin"||String(m.name).indexOf(ME.name+" (")===0)?`<button type="button" data-mndel="${m.id}">삭제</button>`:""}</div></div>`:""}</div>`; }).join("")}</div>`:'<p class="sm">'+(q?"검색 결과가 없습니다.":"저장된 회의록이 없습니다. \"회의록 쓰기\"에서 남겨 주세요.")+'</p>'); return; }
+    B.innerHTML=`<input id="mnQ" class="mnq" placeholder="회의록 검색 (제목·내용·작성자)" value="${E(MQ)}"><p class="sm" style="margin:4px 0 8px">전체 ${(HIST.minutes||[]).length}건${q?` · 검색 ${M.length}건`:""} · 눌러서 내용 보기</p>`+(M.length?`<div class="mnlist">${M.map(m=>{ const on=String(m.id)===String(MOPEN); return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-mnopen="${m.id}"><i>${E(String(m.at).slice(0,10))}</i><b>${E(m.title)}</b><span>${E(m.name)}</span></button>${on?`<div class="mnbody">${E(m.body)}<div class="mnft"><small>${E(m.at)}</small>${(ME.role==="admin"||String(m.name).indexOf(ME.name+" (")===0)?`<span><button type="button" data-mnedit="${m.id}" style="color:var(--navy)">수정</button> <button type="button" data-mndel="${m.id}">삭제</button></span>`:""}</div></div>`:""}</div>`; }).join("")}</div>`:'<p class="sm">'+(q?"검색 결과가 없습니다.":"저장된 회의록이 없습니다. \"회의록 쓰기\"에서 남겨 주세요.")+'</p>'); return; }
   const C=HIST.chat||[]; let d="", h=""; C.forEach(m=>{ const day=String(m.at).slice(0,10); if(day!==d){ d=day; h+=`<div class="hday">${E(day)}</div>`; } h+=`<div class="msg"><b>${E(m.name)}</b><small>${E(short(m.branch))} · ${E(String(m.at).slice(11))}</small><br>${E(m.text)}</div>`; });
   B.innerHTML=h||'<p class="sm">미팅룸 채팅 기록이 없습니다.</p>'; }
 document.addEventListener("click",async e=>{ const t=e.target;
-  if(t.dataset&&t.dataset.ht){ HT=t.dataset.ht; renderHist(); }
-  if(t.id==="mnPost"){ const ti=($("#mnT").value||"").trim(), bo=($("#mnB").value||"").trim(); if(!ti||!bo) return toast("제목과 내용을 적어 주세요."); t.disabled=true; const r=await api({action:"minutes_post",title:ti,body:bo}); if(r&&r.ok){ toast("회의록을 저장했습니다."); HT="min"; await openHist(); await reboot(); } else { t.disabled=false; toast((r&&r.error)||"실패했습니다."); } }
+  if(t.dataset&&t.dataset.ht){ HT=t.dataset.ht; if(HT!=="new") MEDIT=null; renderHist(); }
+  if(t.dataset&&t.dataset.mnedit){ MEDIT=((HIST&&HIST.minutes)||[]).find(m=>String(m.id)===t.dataset.mnedit)||null; if(MEDIT){ HT="new"; renderHist(); } }
+  if(t.id==="mnCancel"){ MEDIT=null; HT="min"; renderHist(); }
+  if(t.id==="mnPost"){ const ti=($("#mnT").value||"").trim(), bo=($("#mnB").value||"").trim(); if(!ti||!bo) return toast("제목과 내용을 적어 주세요."); t.disabled=true; const ED=MEDIT; const r=await api(ED?{action:"minutes_edit",id:ED.id,title:ti,body:bo}:{action:"minutes_post",title:ti,body:bo}); if(r&&r.ok){ toast(ED?"회의록을 수정했습니다.":"회의록을 저장했습니다."); MEDIT=null; MOPEN=null; HT="min"; await openHist(); await reboot(); } else { t.disabled=false; toast((r&&r.error)||"실패했습니다."); } }
   if(t.closest&&t.closest("[data-mnopen]")){ const id=t.closest("[data-mnopen]").dataset.mnopen; MOPEN=String(MOPEN)===id?null:id; if(!$("#hiBox").classList.contains("on")){ HT="min"; openHist(); } else renderHist(); }
   if(t.dataset&&t.dataset.mndel){ if(!confirm("이 회의록을 지울까요?")) return; const r=await api({action:"notice_del",id:t.dataset.mndel}); if(r&&r.ok){ MOPEN=null; await openHist(); await reboot(); } else toast((r&&r.error)||"실패했습니다."); } });
 

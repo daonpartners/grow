@@ -5659,7 +5659,9 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
   /* GROW 오피스 등 다른 페이지에서 /#v=보기이름 으로 들어오면 그 화면을 연다 */
   (function(){ const h=location.hash||''; const m=/[#&]v=([a-z]+)/.exec(h), t=/[#&]t=([a-z]+)/.exec(h); if(m && document.getElementById('view-'+m[1])) setTimeout(()=>{ showView(m[1]);
     /* t=탭: 오피스에서 관리자센터·자료센터의 특정 탭을 바로 엶 */
-    if(t){ setTimeout(()=>{ const b=document.querySelector(m[1]==='admin'?'#adminTabs [data-atab="'+t[1]+'"]':'[data-dctab="'+t[1]+'"]'); if(b) b.click(); },300); } },0); })();
+    if(t){ setTimeout(()=>{ const b=document.querySelector(m[1]==='admin'?'#adminTabs [data-atab="'+t[1]+'"]':'[data-dctab="'+t[1]+'"]'); if(b) b.click();
+      /* n=폴더: 그 폴더의 '새 글 등록'을 바로 엶 (오피스 교육장 → 교육자료 등록) */
+      const n=/[#&]n=([A-Za-z]+)/.exec(h); if(n) setTimeout(()=>{ const nb=document.querySelector('[data-newkey="'+n[1]+'"]'); if(nb){ nb.click(); nb.scrollIntoView({block:'center'}); } },900); },300); } },0); })();
 
   function renderGrowDaily(){
     return;
