@@ -157,7 +157,7 @@ body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:n
 .av.bot .n{background:linear-gradient(90deg,#F58220,#EC4899)!important;color:#fff!important;border:none;font-size:13px;padding:5px 12px;top:-42px;box-shadow:0 4px 12px rgba(236,72,153,.4)}
 .av.bot::before{content:"";position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:3px solid rgba(45,127,249,.55);animation:ring 2s ease-out infinite;pointer-events:none}
 @keyframes ring{0%{transform:scale(.55);opacity:1}100%{transform:scale(1.3);opacity:0}}
-.av.guide{cursor:pointer;pointer-events:auto}.av.guide .n{background:#8B5CF6}
+.av.guide{cursor:pointer;pointer-events:auto}.av.guide .n{background:#8B5CF6}.av.kakao .n{background:#FEE500;color:#3A1D1D}
 #btnAi{background:linear-gradient(90deg,#F58220,#EC4899)!important;border:none!important;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
 .chup{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.chup label{display:inline-block;padding:9px 14px;border-radius:10px;background:var(--navy);color:#fff;font-weight:800;font-size:13px;cursor:pointer}
 .th-banner{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:8;background:#fff;border-radius:999px;padding:7px 18px;font-weight:900;font-size:14px;box-shadow:0 6px 18px rgba(14,42,71,.18);white-space:nowrap;pointer-events:none;display:none}
@@ -507,7 +507,8 @@ window.addEventListener("resize",fit); fit();
 
 /* ---- 아바타 ---- */
 const AV={};
-function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid?" me":"")+(info&&info.npc?" npc":"")+(info&&info.bot?" bot":""),{}); d.innerHTML=`<div class="n"></div><div class="b"></div><span class="acc"></span>`; W.appendChild(d); a=AV[id]={el:d}; if(info&&info.bot) d.addEventListener("click",e=>{ e.stopPropagation(); if(Date.now()-DRAGEND<350) return; openAi(); }); if(info&&info.guide){ d.classList.add("guide"); d.addEventListener("click",e=>{ e.stopPropagation(); $("#gdBox").classList.add("on"); }); } }
+function avatar(id,info){ let a=AV[id]; if(!a){ const d=el("av"+(ME&&id===ME.uid?" me":"")+(info&&info.npc?" npc":"")+(info&&info.bot?" bot":""),{}); d.innerHTML=`<div class="n"></div><div class="b"></div><span class="acc"></span>`; W.appendChild(d); a=AV[id]={el:d}; if(info&&info.bot) d.addEventListener("click",e=>{ e.stopPropagation(); if(Date.now()-DRAGEND<350) return; openAi(); }); if(info&&info.kakao){ d.classList.add("guide","kakao"); d.addEventListener("click",e=>{ e.stopPropagation(); if(Date.now()-DRAGEND<350) return; if(KAKAO_GM) window.open(KAKAO_GM,"_blank","noopener"); else toast("총무님 카톡 주소를 아직 등록하지 않았습니다."); }); }
+  if(info&&info.guide){ d.classList.add("guide"); d.addEventListener("click",e=>{ e.stopPropagation(); $("#gdBox").classList.add("on"); }); } }
   Object.assign(a,info); a.el.style.left=px(a.x); a.el.style.top=px(a.y);
   const bb=a.el.querySelector(".b"), lk=a.look||{}; const face=a.icon||(lk.f&&lk.f!=="A"&&lk.f!=="IMG"?lk.f:"");
   const img=okImg(lk.img)&&lk.f==="IMG"?lk.img:"";
@@ -526,7 +527,9 @@ function emo(id,e){ const a=AV[id]; if(!a) return; const s=el("emo",{},E(e)); a.
 function lights(){ const occ={}; Object.values(AV).forEach(a=>{ if(!a.npc||a.lit) occ[a.room]=1; }); ROOMS.forEach(r=>{ const on=!!occ[r.id]&&(r.id!=="private"||(ME&&AV[ME.uid]&&AV[ME.uid].room==="private")); RE[r.id].classList.toggle("lit",on); RE[r.id].classList.toggle("dark",!on); }); }
 
 /* ---- 분위기용 도우미 (자동으로 움직이는 캐릭터) ---- */
-const NPC=[{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"hall",lit:true,bot:true,slow:true,home:[LANES.x[0]+(LANES.x[1]-LANES.x[0])/2,LANES.y[1]]}];
+/* 총무님 카톡: 오픈채팅·카카오톡 채널 주소를 아래에 넣으면 총무님 캐릭터를 눌렀을 때 바로 열림 */
+const KAKAO_GM="";
+const NPC=[{id:"npc_gm",name:"총무님 · 눌러서 카톡",sprite:"ch_f_suit",room:"desk",lit:true,fixed:true,kakao:true,home:MOBL?[390,120]:[580,118]},{id:"npc2",name:"그로우매니저 · 눌러서 사용법",icon:"🧑‍💼",sprite:"ch_manager",room:"desk",lit:true,guide:true,home:[168,92]},{id:"aibot",name:"🤖 보험비서 AI · 눌러서 질문",icon:"🤖",sprite:"ch_robot",room:"hall",lit:true,bot:true,slow:true,home:[LANES.x[0]+(LANES.x[1]-LANES.x[0])/2,LANES.y[1]]}];
 function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
   if(n.id==="npc2"&&GMBUSY&&AV[ME&&ME.uid]){ const a=AV[ME.uid]; return [a.x+55,a.y+10]; }
   if(n.fixed) return [r.x+n.home[0],r.y+n.home[1]];
@@ -539,7 +542,7 @@ function npcSpot(n){ const r=ROOMS.find(x=>x.id===n.room);
     n.cur=[x,y]; return n.cur; }
   if(!n.walk) return [r.x+n.home[0]+(Math.random()*40-20),r.y+n.home[1]+(Math.random()*20-10)];
   return [r.x+40+Math.random()*(r.w-80),r.y+50+Math.random()*(r.h-100)]; }
-function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,sprite:n.sprite,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
+function npcTick(){ NPC.forEach(n=>{ const [x,y]=npcSpot(n); avatar(n.id,{npc:true,bot:n.bot,guide:n.guide,kakao:n.kakao,sprite:n.sprite,name:n.name,icon:n.icon,branch:"",x,y,lit:n.lit}); }); lights(); }
 const NPCSAY=["오늘도 화이팅이에요!","출근 체크 잊지 마세요 :)"];
 const BOTSAY=["궁금한 약관·청구, 저에게 물어보세요!","저를 누르면 바로 질문할 수 있어요 🤖","상품·서류·업무 절차 다 물어보세요"]; let botN=0;
 setInterval(()=>{ if(AV.aibot&&!$("#aiBox").classList.contains("on")) say("aibot",BOTSAY[botN++%BOTSAY.length]); },9000);
