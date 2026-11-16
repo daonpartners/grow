@@ -331,7 +331,7 @@ button{font:inherit;cursor:pointer}
         <h4>🚶 움직이기</h4><p>방향키·WASD로 걷거나, 가고 싶은 바닥을 누르면 그 자리로 갑니다. 방에 들어가면 오른쪽 안내판이 그 방 기능으로 바뀝니다.</p>
         <h4>🏢 지사 방</h4><p>내 지사 방만 들어갈 수 있습니다. 지사 공지판과 지사 채팅은 소속만 보고, 저장됩니다. 지사장은 공지를 올리고 오늘 출근 명단을 봅니다.</p>
         <h4>🎓 미팅룸</h4><p>줌 강의·화상회의 입장 버튼, 실시간 회의 채팅, 회의록 쓰기·지난 회의 기록 열람이 있습니다. 강의·회의 주소는 지사장이 바꿀 수 있습니다.</p>
-        <h4>🧭 영업지원 데스크 · 영업부 방</h4><p>보험사 정보·영업센터·영업전략 같은 GROW ON 화면이 오피스 안에서 바로 열립니다. 행사팀 방에는 행사 일정이 보입니다.</p>
+        <h4>🧭 영업지원 데스크 · 영업부 방</h4><p>보험사 업무지원·영업센터·영업전략 같은 GROW ON 화면이 오피스 안에서 바로 열립니다. 행사팀 방에는 행사 일정이 보입니다.</p>
         <h4>🔒 나만의 공간</h4><p>출근 체크, 오늘 할 일, 보잇 CRM, 내 DB 조회. 다른 사람에게는 보이지 않습니다.</p>
         <h4>🤖 보험비서 AI</h4><p>복도(공용 통로)의 로봇이나 위쪽 버튼을 누르면 질문할 수 있습니다. 고객 이름·연락처·주민번호는 자동으로 지워서 보내며, 답변은 약관·상품설명서로 꼭 확인하세요.</p>
         <h4>🎨 내 캐릭터</h4><p>위쪽 "내 캐릭터"에서 캐릭터·색상을 고르거나 사진을 올릴 수 있습니다. 이 기기에 저장되고 접속자에게 바로 보입니다.</p>
@@ -431,7 +431,7 @@ const W=$("#world"); const ROOMS=[];
 BR.forEach((b,i)=>ROOMS.push({id:"br_"+b[0],name:b[0]+"지사",sub:"지사장 "+b[2],x:40+i*258,y:40,w:238,h:240,branch:b[0],c:b[1],floor:"wood"}));
 ROOMS.push({id:"edu",name:"미팅룸",sub:"교육장 · 회의실 · 관리자방",x:40,y:340,w:600,h:280,c:"#2D7FF9",floor:"carpet"});
 ROOMS.push({id:"lobby",name:"로비 · 공용 라운지",sub:"누구나 · 전체 공지",x:656,y:340,w:904,h:280,c:"#14B8A6",floor:"marble"});
-[["online","온라인영업팀","블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","산모교실·아파트·펫","#F97316","wood"],["biz","사업자영업팀","소상공인·기업","#10B981","wood"],["desk","영업지원 데스크","보험사 정보·영업센터·영업전략","#8B5CF6","tile"],["private","나만의 공간","다른 사람에게 보이지 않음","#0E2A47","carpet"]]
+[["online","온라인영업팀","블로그·카페·온라인 상담","#2D7FF9","wood"],["event","행사팀","산모교실·아파트·펫","#F97316","wood"],["biz","사업자영업팀","소상공인·기업","#10B981","wood"],["desk","영업지원 데스크","보험사 업무지원·영업센터·영업전략","#8B5CF6","tile"],["private","나만의 공간","다른 사람에게 보이지 않음","#0E2A47","carpet"]]
   .forEach((t,i)=>{ const X=[40,314,588,862,1214], Wd=[258,258,258,336,346]; ROOMS.push({id:t[0],name:t[1],sub:t[2],x:X[i],y:690,w:Wd[i],h:220,c:t[3],floor:t[4],team:i<3}); });
 /* 휴대폰: 세로로 긴 배치(2줄)로 바꿔 사무실 전체가 잘리지 않게 보여 줌 */
 const MOBL=window.matchMedia("(max-width:700px)").matches;
@@ -441,7 +441,7 @@ if(MOBL){ const M={"br_광명":[20,20,240,220],"br_다온":[280,20,240,220],"br_
   edu:[20,760,500,240],lobby:[20,1040,500,240],online:[20,1320,240,220],event:[280,1320,240,220],biz:[20,1580,240,220],desk:[280,1580,240,220],private:[20,1840,500,220]};
   ROOMS.forEach(r=>{ const m=M[r.id]; if(m){ r.x=m[0]; r.y=m[1]; r.w=m[2]; r.h=m[3]; } }); }
 function artOf(r){ return ({edu:"flat_edu",lobby:"flat_lobby",desk:"flat_desk",private:"flat_private"})[r.id]||""; }
-const LINKS={lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],edu:[["교육·회의 일정","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],desk:[["보험사 정보","/#v=insurers"],["영업센터","/#v=salescenter"],["영업전략","/#v=salesstrategy"]]};
+const LINKS={lobby:[["그로우 공지사항","/#v=notice"],["그로우앨범","/#v=album"]],edu:[["교육·회의 일정","/#v=schedule"]],online:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],event:[["영업센터","/#v=salescenter"],["일정달력","/#v=schedule"]],biz:[["영업센터","/#v=salescenter"],["자료센터","/#v=datacenter"]],desk:[["보험사 업무지원","/#v=insurers"],["영업센터","/#v=salescenter"],["영업전략","/#v=salesstrategy"]]};
 function el(cls,css,html){ const d=document.createElement("div"); d.className=cls; Object.assign(d.style,css||{}); if(html!=null) d.innerHTML=html; return d; }
 const px=v=>v+"px"; const RE={};
 function buildMap(){ W.style.width=WD.w+"px"; W.style.height=WD.h+"px";
@@ -820,7 +820,7 @@ $("#btnAi").addEventListener("click",openAi);
 /* ---- 업무 메뉴: GROW ON 기능을 오피스 안 창으로 (같은 로그인) · 보잇은 새 창 ---- */
 function tlRender(){ const adm=isAdm();
   const G=[["내 업무",[["내 DB 조회","배정 고객·진행 기록","/#v=fclookup"],["영업센터","영업 도구 모음","/#v=salescenter"],["리포트 생성","보장분석·지문 리포트","/report/"],["보험비서 AI","약관·상품 질문","ai"]]],
-    ["자료",[["자료센터","서식·자료 내려받기","/#v=datacenter"],["영업전략","월별 판매자료","/#v=salesstrategy"],["보험사 정보","원수사 링크·연락처","/#v=insurers"],["공지사항","","/#v=notice"],["일정","교육·행사","/#v=schedule"]]],
+    ["자료",[["자료센터","서식·자료 내려받기","/#v=datacenter"],["영업전략","월별 판매자료","/#v=salesstrategy"],["보험사 업무지원","보험회사 전산·연락처","/#v=insurers"],["공지사항","","/#v=notice"],["일정","교육·행사","/#v=schedule"]]],
     ["보잇",[["보잇 BOIT","고객관리·보상청구 (새 창)","https://boit.ai.kr/"],["내 보험 불러오기","보잇 › 고객 (새 창)","https://boit.ai.kr/#customers"]]]];
   if(adm) G[0][1].push(["관리자센터","DB 배정·게시물","/#v=admin"]);
   $("#tlBody").innerHTML=G.map(([h,L])=>`<h4>${h}</h4>`+L.map(([t,d,u])=>`<button type="button" data-tl="${E(u)}" data-tt="${E(t)}">${E(t)}${d?`<small>${E(d)}</small>`:""}</button>`).join("")).join(""); }

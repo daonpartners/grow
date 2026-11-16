@@ -1266,6 +1266,16 @@ body.growon{ background:var(--g-navy); }
 /* GROW 오피스 안(창 속 창)에서 열릴 때: 홈 화면 틀을 숨기고 해당 화면만 보여 줌 */
 html.embed .growon-hd,html.embed #colLeft,html.embed #colRight,html.embed .gstrip,html.embed .scrim,html.embed .drawer,html.embed .ai-float-btn,html.embed .biz-support-float-btn,html.embed #admOut{display:none!important}
 html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!important}
+/* 좁은 화면(휴대폰·오피스 안 창)에서 글자가 세로로 찌그러지지 않게 */
+@media(max-width:560px){
+  .notice{flex-wrap:wrap;row-gap:6px}.notice-body{flex:1 1 55%}
+  .panel-head{flex-wrap:wrap;gap:8px}
+  .edu-tabs{flex-wrap:wrap}.edu-tab{white-space:nowrap;flex:1 1 auto}
+  #salesCenterTabs{display:grid;grid-template-columns:1fr 1fr}
+  #fcRemember{width:auto;flex:none;margin:0}
+  .sm-item{flex-wrap:wrap;row-gap:8px;gap:8px}.sm-item .sm-name{flex:1 1 calc(100% - 40px)}.sm-item .sm-meta,.sm-item .sm-by{flex:1 1 100%;padding-left:32px}
+  .sm-item .sm-view{padding-left:32px}
+}
 #adminTabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px}
 #adminTabs .edu-tab{white-space:nowrap;writing-mode:horizontal-tb;min-width:0}
 </style>
@@ -5657,11 +5667,14 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
     el.addEventListener('click',e=>{ e.preventDefault(); showView(el.dataset.view); });
   });
   /* GROW 오피스 등 다른 페이지에서 /#v=보기이름 으로 들어오면 그 화면을 연다 */
-  (function(){ const h=location.hash||''; const m=/[#&]v=([a-z]+)/.exec(h), t=/[#&]t=([a-z]+)/.exec(h); if(m && document.getElementById('view-'+m[1])) setTimeout(()=>{ showView(m[1]);
+  /* 오피스 창 안에서 주소(#v=)만 바뀌어도 해당 화면으로 다시 이동 */
+  window.addEventListener('hashchange', () => { try{ growRoute(); }catch(e){} });
+  function growRoute(){ document.querySelectorAll('.modal-backdrop.open, .dn-modal.open, .alb-lb.open').forEach(x => { x.classList.remove('open'); x.style.display = 'none'; }); const h=location.hash||''; const m=/[#&]v=([a-z]+)/.exec(h), t=/[#&]t=([a-z]+)/.exec(h); if(m && document.getElementById('view-'+m[1])) setTimeout(()=>{ showView(m[1]);
     /* t=탭: 오피스에서 관리자센터·자료센터의 특정 탭을 바로 엶 */
     if(t){ setTimeout(()=>{ const b=document.querySelector(m[1]==='admin'?'#adminTabs [data-atab="'+t[1]+'"]':'[data-dctab="'+t[1]+'"]'); if(b) b.click();
       /* n=폴더: 그 폴더의 '새 글 등록'을 바로 엶 (오피스 교육장 → 교육자료 등록) */
-      const n=/[#&]n=([A-Za-z]+)/.exec(h); if(n) setTimeout(()=>{ const nb=document.querySelector('[data-newkey="'+n[1]+'"]'); if(nb){ nb.click(); nb.scrollIntoView({block:'center'}); } },900); },300); } },0); })();
+      const n=/[#&]n=([A-Za-z]+)/.exec(h); if(n) setTimeout(()=>{ const nb=document.querySelector('[data-newkey="'+n[1]+'"]'); if(nb){ nb.click(); nb.scrollIntoView({block:'center'}); } },900); },300); } },0); }
+  growRoute();
 
   function renderGrowDaily(){
     return;
