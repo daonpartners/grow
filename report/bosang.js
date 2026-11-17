@@ -995,8 +995,8 @@ html,body{margin:0;padding:0;background:#fff}
     box.innerHTML = S.docs.map(d => origPages(d.imgs) + render2(d.M, { agent: me, insured: d.M.p.insured })).join("");
     reflow(box);
     list.innerHTML = S.docs.map((d, i) => `<div class="bsrow"><span><b>${escH(d.M.p.insured || "고객")}</b> · ${escH(d.M.p.company)} ${escH(d.M.p.product || d.file)}</span><span>${d.M.D ? `약관 계산 ${d.M.used.length}개${d.M.unknown.length ? ` · <span style="color:var(--warn,#b45309)">사전에 없는 담보 ${d.M.unknown.length}개</span>` : ""}` : `<span style="color:var(--warn,#b45309)">약관 등록 전 · 가입금액 기준</span>`}${d.source === "ai" ? " · AI 읽기(원본 대조 필요)" : ""} <button class="btn" type="button" data-bsdel="${i}">빼기</button></span></div>`).join("") || `<p class="note" style="margin:0">보험사 설계서(가입제안서) PDF를 올리면 원본 담보표 + 보상제안서 2장이 만들어집니다.</p>`;
-    const un = S.docs.flatMap(d => (d.warns || []).concat(d.M.D ? d.M.unknown.map(u => "약관 사전에 없어 설계서 가입금액 그대로 표시: " + u.name) : []));
-    const ub = $("#bsg-unknown"); if (ub) ub.innerHTML = un.length ? `<details open><summary>확인할 내용 ${un.length}개 (설계사용)</summary><p class="note">${un.map(escH).join("<br>")}</p></details>` : "";
+    // '확인할 내용 (설계사용)' 목록은 대표 지시로 표시하지 않음 (2026-11-17)
+    const ub = $("#bsg-unknown"); if (ub) ub.innerHTML = "";
     const pb = $("#bsg-pdf"); if (pb) pb.disabled = !S.docs.length;
     const pr = $("#bsg-print"); if (pr) pr.disabled = !S.docs.length;
   }
