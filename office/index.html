@@ -135,6 +135,7 @@ body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:n
 .panel .ttl{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .panel .ttl b{font-size:15px;color:var(--navy)}
 .pbtn{display:block;width:100%;text-align:center;margin-top:8px;padding:11px;border-radius:10px;font-weight:800;text-decoration:none;color:#fff;background:var(--navy);border:none}
+.wl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.wl a{display:block;padding:9px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);font-weight:700;font-size:13px;text-decoration:none;text-align:center;line-height:1.3}.wl a:hover{border-color:var(--orange);color:var(--orange)}
 .pbtn.o{background:var(--orange)}.pbtn.g{background:var(--teal)}.pbtn.l{background:#fff;color:var(--navy);border:1px solid var(--line)}
 .sm{font-size:12px;color:var(--muted)}
 .nlist{display:flex;flex-direction:column;gap:8px;margin-top:8px}
@@ -454,6 +455,12 @@ let ME=null, BOOT=null;
 const W=$("#world"); const ROOMS=[];
 BR.forEach((b,i)=>ROOMS.push({id:"br_"+b[0],name:b[0]+"지사",sub:"지사장 "+b[2],x:40+i*258,y:40,w:238,h:240,branch:b[0],c:b[1],floor:"wood"}));
 ROOMS.push({id:"edu",name:"그로우라운지",sub:"교육장 · 회의실 · 공지판 · 관리자방",x:40,y:340,w:600,h:280,c:"#2D7FF9",floor:"carpet"});
+/* 홈페이지(grow.ai.kr) 오른쪽 '업무링크'와 같은 외부 조회 링크 — 로비 업무링크 탭에서 바로 사용 (2026-11-17) */
+const WLINKS=[
+  ["🚗 자동차보험",[["보험개발원등록","https://iics.kidi.or.kr/insuUserReal/viewInsuUserReal.do"],["할인할증요인 조회","https://prem.kidi.or.kr:1443/"],["과실비율조회","https://accident.knia.or.kr/"],["자동차보험종합포털","https://carinfo.knia.or.kr/lmxsrv/main/main.do"]]],
+  ["🔥 화재·배상보험",[["특수건물조회","https://bridge.kfpa.or.kr/#/"],["건축물대장","https://www.gov.kr/mw/AA020InfoCappView.do?CappBizCD=15000000098&HighCtgCD=A02004002&Mcode=10205"],["승강기정보조회","https://www.elevator.go.kr/opn/MainPage.do"],["재난배상정보조회","https://www.safemap.go.kr/insur/searchInsur.do"],["어린이놀이시설 조회","https://cps.kstar.or.kr/playgroundState"]]],
+  ["🏥 연금·건강보험",[["연금계산기","https://www.nps.or.kr"],["건강보험심사평가원","https://www.hira.or.kr/main.do"],["건강보험용어검색","https://www.hira.or.kr/rc/term/getExplainList.do?pgmid=HIRAA030407000000"],["의료기관찾기","https://www.hira.or.kr/ra/dtlCndHospSrch/dtlCndHospSrch.do?pgmid=HIRAA050200000000"],["내가먹는약조회","https://www.hira.or.kr/rb/dur/form.do?pgmid=HIRAA050300000100"]]]
+];
 ROOMS.push({id:"lobby",name:"로비",sub:"회사소개 · 지사소개 · 공지 · 업무링크",x:656,y:340,w:904,h:280,c:"#14B8A6",floor:"marble"});
 /* 영업팀: 한 방 안에 온라인영업팀·행사팀·사업자영업팀 (팀마다 공지·게시판·채팅방은 따로) */
 const STEAMS=[["online","온라인영업팀","💻","#2D7FF9"],["event","행사팀","🎉","#F97316"],["biz","사업자영업팀","🏪","#10B981"]];
@@ -633,7 +640,7 @@ function renderPanel(r){ const P=$("#panel"); let h="";
     else if(LZ==="br") body=`<div class="mz"><h4>📍 지사소개</h4><a class="pbtn l" href="/#v=home">전국 지사 안내</a></div>`;
     else if(LZ==="nt"){ if(!PUBN) loadPubN();
       body=`<div class="mz"><h4>📢 공지사항</h4>${!PUBN?`<p class="sm">불러오는 중…</p>`:N.length?`<div class="mnlist">${N.map((n,i)=>{ const on=LOPEN===i; return `<div class="mnrow${on?" on":""}"><button type="button" class="mnhd" data-lopen="${i}"><i>${E(String(n.date||"").slice(5,10).replace(".","/"))}</i><b>${n.pinned?"📌 ":""}${E(n.title)}</b><span>${E(n.tag||"")}</span></button>${on?`<div class="mnbody">${E(n.content||"")}${(n.images||[]).length?`<div class="agrid" style="margin-top:8px">${n.images.map(u=>`<img src="${E(u)}" style="width:100%;border-radius:8px" loading="lazy">`).join("")}</div>`:""}</div>`:""}</div>`; }).join("")}</div>`:`<p class="sm">${g?"외부에 공개된 공지가 없습니다.":"등록된 공지가 없습니다."}</p>`}${g?"":`<a class="pbtn l" href="/#v=notice" style="margin-top:6px">공지 전체 보기</a>`}</div>`; }
-    else body=`<div class="mz"><h4>🔗 업무링크</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=recruit">파트너 지원</a>${g?"":`<a class="pbtn l" href="/#v=album">그로우앨범</a>`}</div></div>`;
+    else body=`<div class="mz"><h4>🔗 업무링크</h4><div class="agrid"><a class="pbtn l" href="/#v=insurers">보험사 업무지원</a><a class="pbtn l" href="/#v=recruit">파트너 지원</a>${g?"":`<a class="pbtn l" href="/#v=album">그로우앨범</a>`}</div></div>`+WLINKS.map(([t,L])=>`<div class="mz"><h4>${t}</h4><div class="wl">${L.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join("")}</div></div>`).join("");
     h=`<div class="mtabs mtabs4" style="margin-top:0">${tab("co","🏢 회사소개")}${tab("br","📍 지사소개")}${tab("nt","📢 공지사항")}${tab("lk","🔗 업무링크")}</div>${body}${g?`<p class="sm" style="margin:8px 2px 0">게스트로 둘러보는 중입니다. 다른 방은 사업부 소속만 들어갈 수 있습니다.</p>`:""}`; }
   else if(r.id==="desk"){ const att=BOOT&&BOOT.att;
     h=`<div class="att ${att?"done":""}" id="attBox">${att?`<span>오늘 출근 <b>${E(att)}</b></span><span class="sm">체크 완료</span>`:`<span>오늘 출근 체크를<br>아직 안 했습니다</span><button type="button" id="attBtn">출근 체크</button>`}</div>
