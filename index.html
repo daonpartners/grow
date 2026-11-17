@@ -1572,6 +1572,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
               <input type="checkbox" id="bizMgrNewShowPosts" style="width:auto;"> 이 센터는 게시물 목록형(개별 항목을 직접 등록·수정·삭제)으로 운영
             </label>
             <button type="button" class="qna-new-btn" id="bizMgrCatAddBtn" style="background:var(--navy-2); color:#fff; border:none;">＋ 사업센터 추가</button>
+            <div class="cm-msg" id="bizMgrAddMsg"></div>
           </div>
 
           <div style="font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 8px; border-top:1px solid var(--line); padding-top:18px;">📋 게시물형 센터 관리</div>
@@ -9173,9 +9174,9 @@ const limitCompareData = {};
     const summary = document.getElementById('bizMgrNewSummary').value.trim();
     const desc = document.getElementById('bizMgrNewDesc').value.trim();
     const showPosts = document.getElementById('bizMgrNewShowPosts').checked;
-    const msg = document.getElementById('bizMgrMsg');
-    if(!name || !summary){ msg.textContent = '이름과 한 줄 요약은 반드시 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
-    if(!showPosts && !desc){ msg.textContent = '게시물형이 아니면 상세 설명을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    const msg = document.getElementById('bizMgrAddMsg') || document.getElementById('bizMgrMsg');
+    /* 안내 메시지가 버튼 아래에 바로 보이게, 상세 설명은 비워도 한 줄 요약으로 채움 (2026-11-17) */
+    if(!name || !summary){ msg.textContent = '센터 이름과 한 줄 요약을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; cmToast('센터 이름과 한 줄 요약을 입력해주세요', 'err'); return; }
     bizItems.push({ icon, name, summary, desc: desc || summary, category: name, showPosts });
     await bizSaveAll(msg, _bizMgrCatAddBtn);
     document.getElementById('bizMgrNewIcon').value = '';
