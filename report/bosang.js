@@ -1045,5 +1045,5 @@ html,body{margin:0;padding:0;background:#fff}
   }
   if (typeof document !== "undefined") { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init(); }
 
-  G.BOSANG = { printPages, reflow, subGroups, pdfLines, parseKB, build, build2, readProposal, render2, origPages, ensureCss, companyOf, manAny, genClass, GROUPS, man, fmt, DICTS, KB_DICT, IC_NAME, AI_URL };
+  G.BOSANG = { packOf, printPages, reflow, subGroups, pdfLines, parseKB, build, build2, readProposal, render2, origPages, ensureCss, companyOf, manAny, genClass, GROUPS, man, fmt, DICTS, KB_DICT, IC_NAME, AI_URL };
 })(typeof window !== "undefined" ? window : globalThis);
