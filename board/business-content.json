@@ -47,6 +47,14 @@
       "desc": "그로우사업부 제휴업체",
       "category": "제휴업체",
       "showPosts": true
+    },
+    {
+      "icon": "🏥",
+      "name": "병원인하우스",
+      "summary": "수원플란치과병원",
+      "desc": "수원플란치과병원",
+      "category": "병원인하우스",
+      "showPosts": false
     }
   ],
   "posts": [
@@ -97,5 +105,5 @@
     }
   ],
   "author": "김화진",
-  "updatedAt": "2026-08-18T14:57:12.336+09:00"
+  "updatedAt": "2026-11-17T17:47:03.545+09:00"
 }
