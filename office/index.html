@@ -107,6 +107,7 @@ body.guest #btnTl,body.guest #btnAi,body.guest #btnCal,body.guest #jump button:n
 .gate .dr-glass i::after{content:"";position:absolute;top:34%;width:7px;height:30%;border-radius:4px;background:linear-gradient(90deg,#e9edf1,#9aa6b2);box-shadow:0 2px 6px rgba(0,0,0,.3)}.gate .dr-glass i:first-child::after{right:10px}.gate .dr-glass i:last-of-type::after{left:10px}
 .gate .dr-glass.open i:first-child{transform:translateX(-104%)}.gate .dr-glass.open i:last-of-type{transform:translateX(104%)}
 .gate .dr-in{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);background:#F58220;color:#fff;border:0;border-radius:999px;padding:16px 46px;font:inherit;font-size:20px;font-weight:900;box-shadow:0 10px 26px rgba(0,0,0,.35);cursor:pointer}
+.gate .dr-home{position:absolute;left:18px;top:16px;z-index:5;margin:0!important;background:rgba(255,255,255,.12)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 16px!important;font-size:14px;font-weight:800;text-decoration:none}.gate .dr-home:hover{background:rgba(255,255,255,.22)!important}
 .gate .dr-guest{position:absolute;z-index:2;left:50%;top:calc(50% + 52px);transform:translateX(-50%);background:rgba(255,255,255,.92);color:#0E2A47;border:0;border-radius:999px;padding:10px 22px;font:inherit;font-size:14.5px;font-weight:800;box-shadow:0 6px 16px rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}
 .gate .dr-glass.open .dr-in,.gate .dr-glass.open .dr-guest{display:none}
 .gate .dr-glass .dr-card{position:absolute!important;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88%,380px)}
@@ -413,7 +414,7 @@ function saveLogin(sb,ver,r,remember){ SKEYS.forEach(k=>sessionStorage.removeIte
   try{ if(remember) localStorage.setItem("growFcAuto",JSON.stringify({at:Date.now(),sabun:sb,ver})); else localStorage.removeItem("growFcAuto"); }catch(_){} }
 function autoInfo(){ try{ const v=JSON.parse(localStorage.getItem("growFcAuto")||"null"); if(v&&v.sabun&&v.ver&&Date.now()-v.at<7*86400000) return v; }catch(e){} return null; }
 function gate(msg){ const g=document.createElement("div"); g.className="gate door";
-  g.innerHTML=`<div class="dr-wrap"><div class="dr-sign"><small>미래에셋금융서비스</small><b>그로우사업부</b><span>GROW OFFICE</span></div>
+  g.innerHTML=`<a class="dr-home" href="/">← GROW ON 홈페이지</a><div class="dr-wrap"><div class="dr-sign"><small>미래에셋금융서비스</small><b>그로우사업부</b><span>GROW OFFICE</span></div>
   <div class="dr-glass" id="gDoor" style="--art:url(art/flat_lobby.webp)"><i></i><i></i><button type="button" class="dr-in" id="gIn">입장</button><button type="button" class="dr-guest" id="gGuest">게스트로 둘러보기</button>
   <div class="dr-card" id="gCard" hidden><form id="gFc"><input id="gSb" inputmode="numeric" autocomplete="username" placeholder="사번" maxlength="12"><input id="gPw" type="password" autocomplete="current-password" placeholder="비밀번호">
    <div id="gNew" class="dr-new" hidden><p id="gNewT"></p><input id="gPw2" type="password" autocomplete="new-password" placeholder="비밀번호 한 번 더"></div>
