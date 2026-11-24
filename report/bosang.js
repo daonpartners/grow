@@ -529,12 +529,24 @@
   const GROUPS = { dx: "진단받으면 받는 돈 (진단비)", txc: "암 치료비", txb: "뇌·심장 치료비", dem: "치매", surg: "수술할 때 받는 돈 (수술비)", care: "간병인", drv: "운전자", base: "사망·후유장해" };
   const GCLS = { dx: "c", txc: "c", txb: "h", dem: "b", surg: "g", care: "b", drv: "g", base: "" };
   const GKPI = { dx: "진단비", txc: "암 치료비", txb: "뇌·심장 치료비", dem: "치매", surg: "수술비", care: "간병인", drv: "운전자", base: "사망·후유장해" };
-  function genClass(name) { const n = String(name).replace(/\s+/g, ""); const r = GEN.find(([, , re]) => re.test(n)); return r ? { k: r[0], g: r[1] } : { k: "skip", g: null }; }
+  function genClass(name) { const n = String(name).replace(/\s+/g, "").replace(/\[(기본계약|선택계약|기본|선택)\]/g, "").replace(/^갱신형/, ""); /* 메리츠 세부담보 이름 끝 [기본계약] 때문에 모두 빠지던 문제 (2026-11-25) */ const r = GEN.find(([, , re]) => re.test(n)); return r ? { k: r[0], g: r[1] } : { k: "skip", g: null }; }
 
   /* ---------------- 5-2. 계산: 약관 등록 회사는 사전, 미등록은 가입금액 그대로 ---------------- */
   function build2(p) {
     const M = build(p);
-    M.items = p.items.filter(i => !i.group && i.amt != null).map(i => Object.assign({}, i, genClass(i.name))).filter(i => i.g && !(i.g === "base" && i.amt < 1000));
+    let L = p.items.filter(i => !i.group && i.amt != null).map(i => Object.assign({}, i, genClass(i.name))).filter(i => i.g && !(i.g === "base" && i.amt < 1000));
+    /* 세부보장 묶기: 머리줄(가입금액 없음) 이름으로 시작하는 세부 담보가 5개 이상이고 금액이 같으면 1줄로 (예: 암종별(30종)통합암진단비 → 암종마다 각 5천만원).
+       합치지 않으면 같은 담보가 30줄로 나오거나 금액을 더해 버림 (2026-11-25) */
+    const ck = n => String(n).replace(/\s+/g, "").replace(/\[[^\]]*\]/g, "").replace(/^갱신형/, "");
+    p.items.filter(h => !h.group && h.amt == null).forEach(h => { const hk = ck(h.name); if (hk.length < 6) return;
+      const sub = L.filter(i => { const k = ck(i.name); return k.length > hk.length && k.startsWith(hk); });
+      if (sub.length < 5 || new Set(sub.map(i => i.amt)).size !== 1) return;
+      const lab = sub.map(i => ck(i.name).slice(hk.length).replace(/^\(|\)$/g, ""));
+      const one = Object.assign({}, sub[0], { name: String(h.name).replace(/\[[^\]]*\]/g, "").trim(), prem: sub.reduce((a, i) => a + (+i.prem || 0), 0), subs: lab, subNote: `세부 ${sub.length}개 암종·질병마다 각각 ${sub[0].amt.toLocaleString()}만원 (해당 세부보장별 최초 1회 · 더하지 않음)` }, genClass(h.name));
+      L = L.filter(i => sub.indexOf(i) < 0); L.splice(0, 0, one);
+      const R = (M.pvItems || p.items).filter(i => sub.indexOf(i) < 0 && !sub.some(x => x.name === i.name)); const hi = R.findIndex(i => i === h || i.name === h.name);
+      if (hi >= 0) R.splice(hi, 1, one); else R.unshift(one); M.pvItems = R; });
+    M.items = L;
     return M;
   }
 
@@ -597,7 +609,7 @@
       if (k > 0 && /특약/.test(sp.slice(0, k).join(""))) t = sp.slice(k).join(" ");
       return t.replace(/\s+/g, " ").trim();
     };
-    const RAW = (p.items || []).filter(i => !i.group && i.amt != null && i.amt > 0 && !/포인트/.test(nm(i)));
+    const RAW = (M.pvItems || p.items || []).filter(i => !i.group && i.amt != null && i.amt > 0 && !/포인트/.test(nm(i)));
     const find = (...res) => RAW.filter(i => res.every(re => re.test(nm(i))));
     const sumA = arr => arr.reduce((x, i) => x + i.amt, 0);
     const uniq = arr => [...new Set(arr)];
@@ -608,7 +620,7 @@
       const per = (String(r.amtText || "").match(/매월|매년/) || [])[0] || (/매월/.test(r.freq) ? "매월" : /매년/.test(r.freq) ? "매년" : "");
       return { amt: r.amt, per, freq: r.freq.replace(/^(매월|매년)\s*,?\s*/, "") };
     };
-    const chipI = (i, cls) => { const y = payOf(i), sc = scopeOf(i); return `<div class="bs-li ${cls || ""}"><span>${escH(short(i.name))}${y.freq ? `<small>${escH(y.freq)}</small>` : ""}${sc ? `<small>${escH(sc)}</small>` : ""}</span><b>${y.per ? y.per + " " : ""}${fmt2(y.amt)}</b></div>`; };
+    const chipI = (i, cls) => { const y = payOf(i), sc = scopeOf(i); return `<div class="bs-li ${cls || ""}"><span>${escH(short(i.name))}${y.freq ? `<small>${escH(y.freq)}</small>` : ""}${sc ? `<small>${escH(sc)}</small>` : ""}${i.subNote ? `<small>${escH(i.subNote)}</small>` : ""}</span><b>${y.per ? y.per + " " : ""}${fmt2(y.amt)}</b></div>`; };
     const card = (title, sub, pill, pillSub, chips, ref, cls, tx, sumHtml) => `<div class="bs-case ${cls || ""}"><div class="bs-case-h"><div><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</div>${pill ? `<div class="bs-pill">${pill}${pillSub ? `<small>${pillSub}</small>` : ""}</div>` : ""}</div><div class="bs-lis">${chips.join("")}</div>${sumHtml || ""}${tx ? `<div class="bs-txw"><i>${sumHtml ? "그 밖의 치료 항목 (그 치료를 받으면 추가)" : "치료받을 때 — 항목마다 정해진 금액"}</i>${tx}</div>` : ""}${ref ? `<div class="bs-ref">${ref}</div>` : ""}</div>`;
 
     // ── 수술 공통: 질병수술비(제외 조건 없는 것 / 있는 것), 1~5종 질병수술비
