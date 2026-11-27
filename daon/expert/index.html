@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title id="pageTitle">전문가 프로필 | 다온파트너스</title>
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#0B1E42">
+
+<link rel="icon" type="image/png" href="/daon/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="/daon/assets/favicon-daon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style>
+:root{
+  --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
+  --paper:#FFFFFF; --cream:#F5F7FA;
+  --orange:#E39BA5; --deep:#A85F6C; --tint:#F9E9EC;
+  --navy:#0B1E42; --navy2:#16305C;
+  --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
+  --maxw:560px; --pad:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.7;font-size:18px;word-break:keep-all}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad) 50px}
+.topbar{display:flex;align-items:center;gap:9px;padding:16px var(--pad);max-width:var(--maxw);margin:0 auto}
+.brand-mark{height:22px;width:auto}
+.brand-txt{font-size:14px;color:var(--steel);font-weight:700}
+
+.hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;padding:34px 0 30px;text-align:center;position:relative}
+.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
+.photo{width:92px;height:92px;border-radius:50%;object-fit:cover;border:3px solid var(--orange);margin:0 auto 14px;display:block;background:var(--navy2)}
+.badge{display:inline-block;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.05em;background:var(--orange);color:var(--navy);padding:5px 13px;border-radius:999px;margin-bottom:8px}
+.hero h1{font-family:var(--display);font-weight:900;font-size:28px}
+.hero .role{font-size:16px;color:#D6DEE8;font-weight:600;margin-top:5px}
+.hero .intro{margin-top:14px;font-size:17px;color:#EAEFF5;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.75}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px}
+.tag{font-size:13.5px;font-weight:700;background:rgba(227,155,165,.16);color:var(--orange);border:1px solid rgba(227,155,165,.35);padding:5px 12px;border-radius:999px}
+
+.ctarow{display:flex;gap:8px;margin-top:20px;padding:0 var(--pad)}
+.cta{flex:1;text-align:center;padding:14px 8px;border-radius:11px;font-size:15.5px;font-weight:700;text-decoration:none}
+.cta--kakao{background:#FEE500;color:#3C1E1E}
+.cta--call{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.cta--vcard{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer}
+.cta--card{background:var(--orange);color:#fff}
+
+.sec{padding:30px 0}
+.sec__label{font-family:var(--display);font-weight:700;font-size:13.5px;letter-spacing:.1em;color:var(--steel);margin-bottom:14px;text-align:center}
+
+.consultgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.consultgrid a{text-decoration:none;color:inherit}
+.cbtn{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:16px 10px;text-align:center;font-size:16px;font-weight:700;transition:border-color .14s,transform .14s}
+.cbtn:hover{border-color:var(--orange);transform:translateY(-2px)}
+
+.content{display:grid;gap:8px}
+.claimbox{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:18px}
+.claimbox__desc{font-size:14px;color:var(--ink-2);line-height:1.65;margin-bottom:14px}
+.claimbox__btn{display:block;width:100%;text-align:center;background:var(--navy);color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:11px;text-decoration:none;border:none;cursor:pointer;font-family:var(--body)}
+
+.content a{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:15px 16px;text-decoration:none;color:var(--ink);font-size:16px;font-weight:600}
+.content a:hover{border-color:var(--orange)}
+.content .ico{font-size:19px}
+
+.recruitbox{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:22px 20px;text-align:center;color:#fff}
+.recruitbox p{font-size:13.5px;color:#C6D0DE;margin:6px 0 16px}
+.recruitbtn{display:inline-block;background:var(--orange);color:var(--navy);font-family:var(--display);font-weight:700;font-size:13.5px;padding:11px 20px;border-radius:999px;text-decoration:none}
+
+.state{text-align:center;padding:60px 20px;color:var(--steel)}
+#profileArea{display:none}
+
+/* 이미지 명함 - 1000x560 고정 디자인, 화면 폭에 맞춰 scale */
+.bizcard-wrap{padding:0 var(--pad);margin-top:4px}
+.bizcard-outer{width:100%;aspect-ratio:1000/560;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:4px;background:#fff}
+.bizcard{width:1000px;height:560px;position:absolute;top:0;left:0;transform-origin:top left;background:#fff}
+
+.bc-logo-mirae{position:absolute;top:52px;left:60px;height:66px;width:auto}
+.bc-logo-daon{position:absolute;top:44px;right:60px;height:82px;width:auto}
+
+.bc-name{position:absolute;top:215px;right:60px;font-family:var(--display);font-weight:900;font-size:50px;line-height:1;letter-spacing:.1em;color:#14161A;white-space:nowrap}
+.bc-role{position:absolute;top:285px;right:60px;font-size:20px;line-height:1.2;color:#2A2E33;font-weight:700;white-space:nowrap}
+
+.bc-hr{position:absolute;left:0;right:0;top:372px;height:4px;background:var(--orange)}
+
+.bc-info{position:absolute;left:60px;top:392px;right:60px;font-family:var(--body);font-size:19px;color:#14161A;line-height:1.6;font-weight:500}
+.bc-info b{color:var(--orange);font-weight:800;margin-right:6px}
+.bc-row{display:flex;gap:52px}
+
+.bizcard-btn{display:block;width:100%;margin-top:12px;background:var(--navy);color:#fff;text-align:center;padding:16px;border-radius:11px;font-size:17px;font-weight:700;border:none;cursor:pointer}
+
+/* ══ 다온파트너스 브랜드 컬러 보정 ══ */
+:root{ --pink:#E39BA5; --pink-deep:#A85F6C; }
+.badge{background:var(--pink);color:#0B1E42}
+.photo{border-color:var(--pink)}
+.hero::after{background:var(--pink)}
+.tag{background:rgba(227,155,165,.18);color:#F2C6CD;border-color:rgba(227,155,165,.4)}
+.xsec{text-align:left}
+.xregion{text-align:center;font-weight:800;color:var(--navy, #0B1E42);font-size:16px}
+.xcareer{max-width:460px;margin:12px auto 0;padding-left:20px;line-height:1.8;font-size:15px}
+.xcols{max-width:560px;margin:0 auto}
+.xcols a{display:flex;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid rgba(127,127,127,.25);text-decoration:none;color:inherit}
+.xcols a b{font-weight:700}
+.xcols a span{font-size:12.5px;opacity:.65;white-space:nowrap}
+.xcols a.all{justify-content:center;border:0;font-weight:800;color:var(--orange)}
+.xcol-t{font-family:var(--display);font-size:21px;line-height:1.45;max-width:560px;margin:0 auto 12px}
+.xcol-b{max-width:560px;margin:0 auto;font-size:15.5px;line-height:1.85}
+.xcol-b p+p{margin-top:10px}
+.xcol-n{max-width:560px;margin:16px auto 0;font-size:12.5px;opacity:.7}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <img class="brand-mark" src="/daon/assets/logo.png" alt="다온파트너스" width="65" height="22" decoding="async">
+  <span class="brand-txt">다온파트너스</span>
+</header>
+
+<div id="loadingState" class="state">불러오는 중...</div>
+<div id="errorState" class="state" style="display:none;">프로필을 찾을 수 없습니다.<br><a href="/daon/experts" style="color:var(--deep);font-weight:700;">전문가 목록으로 이동</a></div>
+
+<div id="profileArea">
+  <section class="hero">
+    <img class="photo" id="p-photo" src="" alt="">
+    <div id="p-badge"></div>
+    <h1 id="p-name"></h1>
+    <div class="role" id="p-title"></div>
+    <div class="intro" id="p-intro"></div>
+    <div class="tags" id="p-tags"></div>
+    <div class="ctarow">
+      <a class="cta cta--kakao" id="p-kakao" href="#" target="_blank" rel="noopener">카카오톡</a>
+      <a class="cta cta--call" id="p-call" href="#">전화</a>
+      <button class="cta cta--vcard" id="p-vcard" type="button">연락처 저장</button>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec xsec" id="p-careerSec" style="display:none;padding-top:26px;">
+      <div class="sec__label">경력 · 활동지역</div>
+      <p class="xregion" id="p-region"></p>
+      <ul class="xcareer" id="p-career"></ul>
+    </section>
+
+    <section class="sec" style="padding-top:26px;">
+      <div class="sec__label">디지털 명함</div>
+      <div class="bizcard-wrap">
+        <div class="bizcard-outer" id="bizcardOuter">
+          <div class="bizcard" id="bizcard">
+            <img class="bc-logo-mirae" src="/daon/assets/logo-miraeasset.png" alt="미래에셋금융서비스">
+            <img class="bc-logo-daon" src="/daon/assets/logo-daon-wordmark.png" alt="다온파트너스">
+            <div class="bc-name" id="bc-name"></div>
+            <div class="bc-role" id="bc-role"></div>
+            <div class="bc-hr"></div>
+            <div class="bc-info">
+              <div class="bc-row">
+                <span><b>M.</b><span id="bc-phone"></span></span>
+                <span><b>F.</b>041-534-1126</span>
+              </div>
+              <div><b>E.</b><span id="bc-email"></span></div>
+              <div><b>A.</b>충남 아산시 탕정면 용머리길 22, 브라운스톤갤럭시 C301호</div>
+            </div>
+          </div>
+        </div>
+        <button class="bizcard-btn" id="bc-download" type="button">명함 이미지 다운로드</button>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec__label">보험 상담</div>
+      <div class="consultgrid" id="p-consult"></div>
+    </section>
+
+    <section class="sec">
+      <div class="sec__label">보험금 청구</div>
+      <div class="claimbox">
+        <p class="claimbox__desc">병원 서류를 사진으로 찍어 보내주시면, 담당 설계사가 확인 후 보험사 청구 접수를 도와드립니다. 필요한 서류는 보험사·상품에 따라 다를 수 있어, 부족한 서류는 따로 안내해 드립니다.</p>
+        <a class="claimbox__btn" id="claimLink" href="/daon/claim/app/">청구서류 발송하기</a>
+      </div>
+    </section>
+
+    <section class="sec xsec" id="p-colSec" style="display:none;">
+      <div class="sec__label">설계사 칼럼</div>
+      <div class="xcols" id="p-cols"></div>
+    </section>
+
+    <section class="sec" id="p-contentSec" style="display:none;">
+      <div class="sec__label">전문 콘텐츠</div>
+      <div class="content" id="p-content"></div>
+    </section>
+  </div>
+</div>
+
+
+<script>
+const API = "https://daonpartners.app.n8n.cloud/webhook/daon-expert-profile";
+const params = new URLSearchParams(location.search);
+const code = params.get("a") || "";
+
+const consultPages = [
+  { label: "🩺 건강보험", path: "/daon/insu/", pick: "종합건강" },
+  { label: "🎗️ 암보험", path: "/daon/insu/", pick: "암" },
+  { label: "🚗 자동차보험", path: "/daon/insu/", pick: "자동차" },
+  { label: "🐶 펫보험", path: "/daon/insu/", pick: "펫" },
+  { label: "🔥 화재보험", path: "/daon/insu/", pick: "화재" },
+  { label: "☂️ 보험 점검", path: "/daon/insu/", pick: "보험점검" }
+];
+
+if (!code) {
+  document.getElementById("loadingState").style.display = "none";
+  document.getElementById("errorState").style.display = "block";
+} else {
+  fetch(API + "?a=" + encodeURIComponent(code) + "&t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.json())
+    .then(p => {
+      if (!p || p.error || !p.name) throw new Error("not found");
+      document.getElementById("loadingState").style.display = "none";
+      document.getElementById("profileArea").style.display = "block";
+      document.getElementById("pageTitle").textContent = p.name + " | 다온파트너스";
+
+      document.getElementById("p-photo").src = p.photo || "/daon/assets/logo.png";
+      document.getElementById("p-photo").alt = p.name;
+      document.getElementById("p-badge").innerHTML = '';
+      document.getElementById("p-name").textContent = p.name;
+      document.getElementById("p-title").textContent = p.title || "";
+      document.getElementById("p-intro").textContent = p.intro || "";
+      document.getElementById("p-tags").innerHTML = (p.specialties || []).map(s => `<span class="tag">${s}</span>`).join('');
+
+      const kakaoEl = document.getElementById("p-kakao");
+      if (p.kakao) { kakaoEl.href = p.kakao; }
+      else if (p.phone) { kakaoEl.href = "tel:" + p.phone.replace(/[^0-9]/g,""); kakaoEl.removeAttribute("target"); }
+      else { kakaoEl.href = "#"; }
+      window.__expertProfile = p;
+      const callEl = document.getElementById("p-call");
+      if (p.phone) { callEl.href = "tel:" + p.phone.replace(/[^0-9]/g,""); } else { callEl.style.display = "none"; }
+
+      const vcardEl = document.getElementById("p-vcard");
+      vcardEl.addEventListener("click", () => {
+        const lines = [
+          "BEGIN:VCARD",
+          "VERSION:3.0",
+          "FN:" + p.name,
+          "ORG:다온파트너스",
+          "TITLE:" + (p.title || ""),
+          p.phone ? "TEL;TYPE=CELL:" + p.phone : "",
+          p.kakao ? "URL;TYPE=kakao:" + p.kakao : "",
+          "URL:" + location.href,
+          p.intro ? "NOTE:" + p.intro : "",
+          "END:VCARD"
+        ].filter(Boolean).join("\r\n");
+        const blob = new Blob([lines], { type: "text/vcard;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = p.name + "_다온파트너스.vcf";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      });
+
+      document.getElementById("p-consult").innerHTML = consultPages.map(c =>
+        `<a href="${c.path}?m=${encodeURIComponent(code)}${c.pick ? "&pick=" + encodeURIComponent(c.pick) : ""}"><div class="cbtn">${c.label}</div></a>`
+      ).join('');
+
+      // 디지털 명함 채우기
+      document.getElementById("bc-name").textContent = p.name;
+      document.getElementById("bc-role").textContent = "다온파트너스 | " + (p.title || "보험컨설턴트");
+      document.getElementById("bc-phone").textContent = p.phone || "010-0000-0000";
+      document.getElementById("bc-email").textContent = p.email || "";
+
+      function scaleBizcard(){
+        const outer = document.getElementById("bizcardOuter");
+        const card = document.getElementById("bizcard");
+        const s = outer.clientWidth / 1000;
+        card.style.transform = "scale(" + s + ")";
+      }
+      scaleBizcard();
+      window.addEventListener("resize", scaleBizcard);
+
+      document.getElementById("bc-download").addEventListener("click", function(){
+        const btn = this;
+        const card = document.getElementById("bizcard");
+        btn.disabled = true;
+        btn.textContent = "이미지 생성 중...";
+        const prevTransform = card.style.transform;
+        card.style.transform = "none";
+        html2canvas(card, { scale: 3, backgroundColor: "#ffffff", useCORS: true, width: 1000, height: 560 }).then(canvas => {
+          card.style.transform = prevTransform;
+          const link = document.createElement("a");
+          link.download = p.name + "_다온파트너스_명함.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+          btn.disabled = false;
+          btn.textContent = "명함 이미지 다운로드";
+        }).catch(() => {
+          card.style.transform = prevTransform;
+          btn.disabled = false;
+          btn.textContent = "명함 이미지 다운로드";
+          alert("이미지 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+        });
+      });
+
+      const contentItems = [];
+      if (p.blog) contentItems.push({ ico: "📝", label: p.name + " 블로그", url: p.blog });
+      if (p.youtube) contentItems.push({ ico: "🎬", label: p.name + " 유튜브", url: p.youtube });
+      if (p.instagram) contentItems.push({ ico: "📷", label: p.name + " 인스타그램", url: p.instagram });
+      if (contentItems.length) {
+        document.getElementById("p-contentSec").style.display = "block";
+        document.getElementById("p-content").innerHTML = contentItems.map(c =>
+          `<a href="${c.url}" target="_blank" rel="noopener"><span class="ico">${c.ico}</span>${c.label}</a>`
+        ).join('');
+      }
+    })
+    .catch(() => {
+      document.getElementById("loadingState").style.display = "none";
+      document.getElementById("errorState").style.display = "block";
+    });
+}
+
+// ── 활동지역·경력·칼럼 (전문가찾기 목록 API) ──
+if (code) {
+  fetch("https://daonpartners.app.n8n.cloud/webhook/daon-expert-list-v2?t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.json())
+    .then(d => {
+      const arr = Array.isArray(d) ? d : ((d && d.items) || []);
+      const x = arr.find(p => p.code === code); if (!x) return;
+      const esc = s => String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+      const ln = t => String(t || "").split(/\n+/).map(v => v.trim()).filter(Boolean);
+      const crs = ln(x.career); if (x.regNo) crs.unshift("보험설계사 등록번호 " + x.regNo);
+      if (x.region || crs.length) {
+        document.getElementById("p-careerSec").style.display = "block";
+        document.getElementById("p-region").textContent = x.region ? "활동지역 · " + x.region : "";
+        document.getElementById("p-career").innerHTML = crs.map(v => "<li>" + esc(v) + "</li>").join("");
+      }
+
+    }).catch(() => {});
+}
+
+// ── 이 설계사의 칼럼 목록 ──
+if (code) {
+  fetch("https://daonpartners.app.n8n.cloud/webhook/daon-column-list?a=" + encodeURIComponent(code) + "&t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.json())
+    .then(d => {
+      const arr = Array.isArray(d) ? d : ((d && d.items) || []); if (!arr.length) return;
+      const esc = s => String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+      document.getElementById("p-colSec").style.display = "block";
+      document.getElementById("p-cols").innerHTML = arr.map(c => '<a href="/daon/column/p/' + encodeURIComponent(c.id) + '.html"><b>' + esc(c.title) + '</b><span>' + esc(c.date) + '</span></a>').join("") + '<a class="all" href="/daon/column/?a=' + encodeURIComponent(code) + '">칼럼 전체 보기 ›</a>';
+    }).catch(() => {});
+}
+
+// ── 보험금 청구: 새 청구 앱으로 연결 (담당 설계사 코드 전달) ──
+document.getElementById("claimLink").href = "/daon/claim/app/" + (code ? "?m=" + encodeURIComponent(code) : "");
+</script>
+<script src="/daon/assets/home-btn.js" defer></script></body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>보험물어봄 | 보험 궁금증, 바로 물어보세요 · 다온파트너스</title>
+<meta name="description" content="실비 청구 서류, 간병 보장, 자동차보험 담보처럼 궁금한 보험 질문을 남기면 AI가 약관·법령 자료로 바로 1차 안내를 하고, 다온 보험설계사가 이어서 확인해 드립니다.">
+<meta name="robots" content="index, follow">
+<meta name="naver-site-verification" content="a09350fbdee79685108cbb46df68b0bb178bb94b">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="다온파트너스">
+<meta property="og:title" content="보험물어봄 by 다온 | 보험 궁금증, 바로 물어보세요">
+<meta property="og:description" content="질문을 남기면 AI가 바로 1차 안내, 다온 보험설계사가 이어서 확인해 드립니다.">
+<meta property="og:url" content="https://grow.ai.kr/daon/qna/">
+<meta name="theme-color" content="#0B1E42">
+<link rel="canonical" href="https://grow.ai.kr/daon/qna/">
+<link rel="icon" type="image/png" href="/daon/assets/favicon-daon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--ink:#14161A;--ink-2:#3A4048;--steel:#6B7480;--line:#E4E7EA;--navy:#0B1E42;--navy2:#16305C;--orange:#E39BA5;--deep:#A85F6C;--tint:#F9E9EC;--gray:#EEF1F6;--kakao:#FEE500;--display:'Noto Serif KR',serif;--body:'Pretendard',-apple-system,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--body);color:var(--ink);line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased;background:#fff}
+a{color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.top{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:5}
+.top__in{max-width:1040px;margin:0 auto;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.top img{height:26px;display:block}
+.top nav{display:flex;gap:6px}
+.top nav a{font-size:12.5px;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:999px;background:var(--gray);color:var(--navy);white-space:nowrap}
+.hd{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.hd::before{content:"";position:absolute;right:-120px;top:-160px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(227,155,165,.2),transparent 65%)}
+.hd__in{position:relative;max-width:760px;margin:0 auto;padding:40px 20px 34px}
+.brand{display:inline-flex;align-items:baseline;gap:8px;font-weight:800;color:var(--orange);font-size:14px}
+.brand small{font-weight:600;color:#C9D3E1;font-size:12.5px}
+.hd h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,7vw,42px);letter-spacing:-.02em;line-height:1.28;margin-top:8px}
+.hd .sub{color:#C9D3E1;margin-top:12px;font-size:15px;max-width:34em}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:22px;list-style:none;counter-reset:f}
+.flow li{counter-increment:f;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;font-size:13px;color:#DCE4EE;line-height:1.5}
+.flow li::before{content:counter(f);display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--orange);color:var(--navy);font-weight:900;font-size:12px;align-items:center;justify-content:center;margin-bottom:6px}
+.flow b{display:block;color:#fff;font-size:14px}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.ask{margin-top:-14px;position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 14px 34px rgba(11,30,66,.08)}
+.ask h2{font-family:var(--display);font-size:20px;color:var(--navy)}
+.fld{margin-top:14px}
+.fld label,.lb{display:block;font-size:13.5px;font-weight:800;color:var(--ink-2);margin-bottom:6px}
+.fld textarea,.fld input,.fld select{width:100%;font:inherit;font-size:16px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;color:var(--ink);outline:none}
+.fld textarea{min-height:130px;resize:vertical;line-height:1.6}
+.fld textarea:focus,.fld input:focus,.fld select:focus{border-color:var(--navy)}
+.hint{font-size:12.5px;color:var(--steel);margin-top:6px}
+.hint b{color:var(--deep)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:13.5px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink-2);padding:7px 12px;border-radius:999px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.row2{display:grid;gap:10px}
+@media(min-width:560px){.row2{grid-template-columns:1fr 1fr}}
+.agree{margin-top:16px;background:var(--gray);border-radius:12px;padding:14px;font-size:13px;color:var(--ink-2)}
+.agree label{display:flex;gap:8px;align-items:flex-start;font-weight:800;color:var(--ink);font-size:14px;cursor:pointer}
+.agree input{width:20px;height:20px;margin-top:2px;flex-shrink:0;accent-color:var(--navy)}
+.agree dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin-top:8px;font-size:12.5px}
+.agree dt{color:var(--steel)}
+.go{display:block;width:100%;margin-top:16px;font:inherit;font-weight:800;font-size:17px;background:var(--navy);color:#fff;border:0;border-radius:12px;padding:16px;cursor:pointer}
+.go:disabled{opacity:.6;cursor:wait}
+.err{color:#B3261E;font-weight:700;font-size:14px;margin-top:10px;min-height:1px}
+.hp{position:absolute;left:-9999px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+/* 답변 */
+.res{margin-top:22px}
+.qbox{background:var(--gray);border-radius:14px;padding:16px}
+.qbox small{font-size:12.5px;color:var(--steel);font-weight:700}
+.qbox h3{font-family:var(--display);font-size:19px;color:var(--navy);margin-top:4px;line-height:1.45}
+.qbox p{font-size:14.5px;color:var(--ink-2);margin-top:6px;white-space:pre-wrap}
+.ans{margin-top:12px;border:1.5px solid var(--navy);border-radius:14px;padding:18px;background:#fff}
+.ans__h{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--navy)}
+.ans__h i{font-style:normal;font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:5px;background:var(--tint);color:var(--deep)}
+.ans__b{margin-top:10px;font-size:15.5px;line-height:1.8;white-space:pre-wrap}
+.ans__n{margin-top:12px;font-size:12px;color:var(--steel);line-height:1.6}
+.ans.fc{border-color:var(--deep)}
+.ans__by{display:flex;gap:10px;align-items:center;margin-top:14px;font-size:13px;color:var(--steel)}
+.ans__by img{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:top;background:var(--gray)}
+.ans__by b{color:var(--ink);font-size:14.5px}
+.typing{display:flex;gap:10px;align-items:center;color:var(--steel);font-size:14.5px;padding:8px 0}
+.typing span{display:inline-flex;gap:4px}
+.typing span i{width:7px;height:7px;border-radius:50%;background:var(--deep);animation:blink 1.2s infinite both}
+.typing span i:nth-child(2){animation-delay:.2s}.typing span i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.next{margin-top:16px;background:var(--tint);border-radius:14px;padding:18px}
+.next h4{font-family:var(--display);font-size:18px;color:var(--navy)}
+.next p{font-size:14px;color:var(--ink-2);margin-top:4px}
+.btns{display:grid;gap:8px;margin-top:12px}
+@media(min-width:560px){.btns{grid-template-columns:1fr 1fr}}
+.btns a,.btns button{display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-weight:800;font-size:15px;text-decoration:none;border:0;border-radius:12px;padding:14px;cursor:pointer}
+.b-call{background:var(--navy);color:#fff}
+.b-kakao{background:var(--kakao);color:#191600}
+.b-tel{background:#fff;color:var(--navy);border:1.5px solid var(--navy)!important;grid-column:1/-1}
+.done{margin-top:10px;font-weight:800;color:var(--navy);font-size:14.5px}
+.keep{margin-top:14px;font-size:13px;color:var(--steel)}
+.keep a{color:var(--deep);font-weight:700;word-break:break-all}
+/* 공개 질문 */
+.pub{padding:40px 0 60px}
+.pub h2{font-family:var(--display);font-size:clamp(20px,5vw,24px);color:var(--navy)}
+.pub .lead{font-size:14px;color:var(--steel);margin:4px 0 14px}
+.pq{border-top:1px solid var(--line)}
+.pq:last-child{border-bottom:1px solid var(--line)}
+.pq summary{list-style:none;cursor:pointer;padding:16px 4px;display:flex;gap:10px;align-items:flex-start}
+.pq summary::-webkit-details-marker{display:none}
+.pq summary::before{content:"Q";font-family:var(--display);font-weight:900;color:var(--deep);font-size:18px;line-height:1.4}
+.pq summary div{flex:1}
+.pq summary b{display:block;font-size:16px;color:var(--navy);line-height:1.5}
+.pq summary small{font-size:12px;color:var(--steel)}
+.pq[open] summary b{color:var(--deep)}
+.pq .in{padding:0 4px 18px 26px}
+.pq .in>p{font-size:14px;color:var(--ink-2);white-space:pre-wrap}
+.state{color:var(--steel);padding:20px 0;font-size:14.5px}
+.more-col{display:inline-block;margin-top:16px;font-weight:800;color:var(--deep)}
+.foot{background:var(--navy2);color:#8FA0B3;font-size:11.5px;line-height:1.8;text-align:center;padding:26px 20px 34px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+html,body{max-width:100%;overflow-x:clip}
+@media (max-width:420px){.top nav .sm-hide{display:none}}
+mark.hl{background:#FFF0A0;color:inherit;font-weight:800;padding:0 2px;border-radius:2px}
+</style>
+<link rel="apple-touch-icon" href="/daon/assets/app-icon-red-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="보험물어봄">
+</head>
+<body>
+
+<header class="top"><div class="top__in">
+  <a href="https://grow.ai.kr/daon/"><img src="/daon/assets/logo-daon-wordmark.png" alt="다온파트너스 홈"></a>
+  <nav><a href="#" class="js-app" style="background:#CF2E38;color:#fff">앱 설치</a><a href="/daon/column/">칼럼</a><a class="sm-hide" href="/#fp">설계사</a></nav>
+</div></header>
+
+<section class="hd"><div class="hd__in">
+  <span class="brand">보험물어봄 <small>by 다온</small></span>
+  <h1>보험, 혼자 찾지 말고<br>물어보세요</h1>
+  <p class="sub">질문을 남기면 AI가 약관·법령 자료를 근거로 바로 1차 안내를 드리고, 다온 보험설계사가 이어서 확인해 드립니다. 상담 비용은 받지 않습니다.</p>
+  <ol class="flow">
+    <li><b>질문 남기기</b>이름·연락처와 함께</li>
+    <li><b>AI 1차 안내</b>10초 안팎으로 바로</li>
+    <li><b>설계사 확인</b>답변·전화·카톡 상담</li>
+  </ol>
+</div></section>
+
+<main class="wrap">
+  <form class="ask" id="f" novalidate>
+    <h2>무엇이 궁금하세요?</h2>
+    <div class="fld">
+      <span class="lb">분야 <span style="font-weight:600;color:var(--steel)">(모르면 건너뛰세요)</span></span>
+      <div class="chips" id="cats"></div>
+    </div>
+    <div class="fld">
+      <label for="q">질문</label>
+      <textarea id="q" maxlength="1000" placeholder="예: 동네 의원에서 통원 치료를 받았는데 실비 청구하려면 어떤 서류가 필요한가요?"></textarea>
+      <p class="hint">진료받은 내용이나 상황을 편하게 적어 주세요. 주민등록번호·계좌번호는 자동으로 가려집니다.</p>
+    </div>
+    <div class="row2">
+      <div class="fld"><label for="nm">이름</label><input id="nm" autocomplete="name" maxlength="20" placeholder="홍길동"></div>
+      <div class="fld"><label for="ph">휴대폰 번호</label><input id="ph" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="010-0000-0000"></div>
+    </div>
+    <input class="hp" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="agree">
+      <label><input type="checkbox" id="ag"> [필수] 개인정보 수집·이용에 동의합니다</label>
+      <dl>
+        <dt>수집 항목</dt><dd>이름, 휴대폰 번호, 질문 내용(적으신 진료·건강 관련 내용 포함)</dd>
+        <dt>이용 목적</dt><dd>질문 답변, 요청하신 경우 상담 연락</dd>
+        <dt>보유 기간</dt><dd>답변·상담 완료 후 1년 (요청 시 즉시 파기)</dd>
+      </dl>
+      <p style="margin-top:6px;font-size:12px;color:var(--steel)">동의하지 않을 수 있으며, 동의하지 않으면 질문을 남길 수 없습니다. 게시판에 공개될 때는 이름을 가리고 연락처는 공개하지 않습니다.</p>
+    </div>
+    <button class="go" id="go" type="submit">질문하고 바로 답 받기</button>
+    <p class="err" id="err" role="alert"></p>
+  </form>
+
+  <section class="res" id="res" aria-live="polite"></section>
+</main>
+
+<section class="pub"><div class="wrap">
+  <h2>다른 분들이 물어본 질문</h2>
+  <p class="lead">다온 설계사가 확인하고 답한 질문만 이름을 가려 공개합니다.</p>
+  <div class="chips" id="pcats" style="margin-bottom:12px"></div>
+  <div id="plist"><p class="state">불러오는 중입니다</p></div>
+  <a class="more-col" href="/daon/column/">설계사 칼럼 더 읽기 ›</a>
+</div></section>
+
+<footer class="foot">
+  <a href="#" class="js-app" style="display:inline-block;margin-bottom:12px;color:#fff;font-weight:800;font-size:13px">휴대폰에 앱 설치</a><br>
+  보험물어봄은 다온파트너스(미래에셋금융서비스 다온지사)가 운영합니다.<br>
+  보험대리점 등록번호 2014048012 · 전화 041-534-1124 · 개인정보 보호책임자 다온파트너스 041-534-1124<br>
+  AI 안내와 설계사 답변은 일반적인 정보이며, 보장 여부와 지급 금액은 가입하신 상품의 약관과 보험회사 심사로 정해집니다.<br>
+  다온파트너스(884-14-02999) · 충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C동 301호
+</footer>
+
+<script>
+(function(){
+  var API='https://daonpartners.app.n8n.cloud/webhook/', KAKAO='https://pf.kakao.com/_ZVtsX/chat';
+  var CATS=['실손·보험금청구','간병·치매','암·뇌·심장','건강·수술','어린이','자동차·운전자','화재·배상책임','사업장·소상공인','펫','연금·종신','기타'];
+  var D_AI='AI가 공개된 약관·법령 자료와 다온 설계사 칼럼을 바탕으로 만든 1차 안내입니다. 가입하신 상품의 약관과 보험회사 안내가 우선하며, 보장 여부는 보험회사 심사로 정해집니다.';
+  var D_FC='(상기 내용은 모집종사자의 개인적인 의견으로, 계약 체결에 따른 이익 또는 손실은 보험계약자 및 피보험자에게 귀속됩니다)\n(보험회사 상품별로 보장 내용과 지급 조건이 다를 수 있으므로 세부사항은 반드시 해당 약관을 참조하시기 바랍니다)';
+  var $=function(id){return document.getElementById(id);};
+  var P=new URLSearchParams(location.search), TO=(P.get('m')||P.get('a')||'').replace(/[^A-Za-z0-9_-]/g,''), cat=P.get('c')||'', pcat='', EXP=null, CUR=null;
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function img(u){ u=String(u||''); return /^https?:\/\//.test(u)?u:'/daon/assets/favicon-daon.png'; }
+  function post(path,body){ return fetch(API+path,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(body)}).then(function(r){return r.json();}); }
+  if(P.get('q')) $('q').value=P.get('q').slice(0,1000);
+  if(CATS.indexOf(cat)<0) cat='';
+  function drawCats(){ $('cats').innerHTML=CATS.map(function(c){ return '<button type="button" data-c="'+esc(c)+'" aria-pressed="'+(c===cat)+'">'+esc(c)+'</button>'; }).join(''); }
+  drawCats();
+  $('cats').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; cat=(cat===b.dataset.c)?'':b.dataset.c; drawCats(); });
+  $('ph').addEventListener('input',function(){ var d=this.value.replace(/\D/g,'').slice(0,11); this.value=d.length>7?d.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3'):d.length>3?d.slice(0,3)+'-'+d.slice(3):d; });
+
+  /* 지정 설계사 (전문가 페이지에서 왔을 때) */
+  function loadExp(){ if(EXP||!TO) return Promise.resolve(); return fetch(API+'daon-expert-list-v2?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){ var a=Array.isArray(d)?d:(d&&d.items)||[]; EXP=a.filter(function(x){return x&&x.code===TO;})[0]||null; }).catch(function(){}); }
+  loadExp().then(function(){ if(EXP) $('go').textContent=EXP.name+' 설계사에게 질문하기'; });
+
+  /* ==형광펜== → 노란 표시, **굵게** → 굵게 (글자 escape 뒤 변환) */
+  function rich(t){ return esc(t).replace(/==([^=\n]{1,80})==/g,'<mark class="hl">$1</mark>').replace(/\*\*([^*\n]{1,200})\*\*/g,'<b>$1</b>'); }
+  function answerHtml(it, mine){
+    var h='<div class="qbox"><small>'+esc(it.cat)+' · '+esc(it.date||'')+'</small><h3>'+esc(it.title)+'</h3><p>'+esc(it.q)+'</p></div>';
+    if(it.answer){
+      var w=it.expert;
+      h+='<div class="ans fc"><div class="ans__h">설계사 답변</div><div class="ans__b">'+rich(it.answer)+'</div>'
+        +(w?'<div class="ans__by"><img src="'+esc(img(w.photo))+'" alt=""><span><b>'+esc(w.name)+'</b> · '+esc(w.job||'보험설계사')+'<br><a href="/daon/expert/?a='+encodeURIComponent(w.code)+'" style="color:var(--deep);font-weight:700">설계사 프로필 보기 ›</a></span></div>':'')
+        +'<p class="ans__n" style="white-space:pre-wrap">'+esc(D_FC)+'</p></div>';
+    }
+    if(mine && it.ai) h+='<div class="ans"'+(it.answer?' style="border-color:var(--line)"':'')+'><div class="ans__h">AI 1차 안내 <i>설계사 확인 전</i></div><div class="ans__b">'+rich(it.ai)+'</div><p class="ans__n">'+esc(D_AI)+'</p></div>';
+    return h;
+  }
+  function nextHtml(){
+    var tel=EXP&&EXP.phone?String(EXP.phone).replace(/\D/g,''):'';
+    return '<div class="next" id="next"><h4>내 상황에 맞는 답이 필요하다면</h4><p>가입한 증권과 약관을 봐야 정확히 알 수 있습니다. 편한 방법을 고르세요. 비용은 받지 않습니다.</p>'
+      +'<div class="btns"><button type="button" class="b-call" data-how="전화">설계사 전화 상담 요청</button><button type="button" class="b-kakao" data-how="카톡">카카오톡으로 상담</button>'
+      +(tel?'<a class="b-tel" href="tel:'+esc(tel)+'">'+esc(EXP.name)+' 설계사에게 바로 전화</a>':'')+'</div><p class="done" id="done" role="status"></p></div>';
+  }
+  function showMine(it, link){
+    CUR=it;
+    $('res').innerHTML=answerHtml(it,true)+nextHtml()+(link?'<p class="keep">이 화면 주소를 저장해 두면 설계사 답변을 다시 볼 수 있습니다.<br><a href="'+esc(link)+'">'+esc(location.origin+link)+'</a></p>':'');
+  }
+  $('res').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-how]'); if(!b||!CUR) return;
+    var how=b.dataset.how, win=null;
+    if(how==='카톡') win=window.open(KAKAO,'_blank','noopener');
+    b.disabled=true;
+    post('daon-qna-call',{id:CUR.id,key:CUR.key,how:how}).then(function(r){
+      b.disabled=false;
+      if(!r||!r.ok){ $('done').textContent=(r&&r.error)||'요청을 보내지 못했습니다. 잠시 후 다시 눌러 주세요.'; return; }
+      $('done').textContent=how==='전화'?'요청을 받았습니다. 다온 설계사가 남기신 번호로 연락드립니다.':'카카오톡 채널을 열었습니다. 질문 제목을 보내 주시면 이어서 상담해 드립니다.';
+      if(how==='카톡'&&!win) location.href=KAKAO;
+    }).catch(function(){ b.disabled=false; $('done').textContent='연결에 실패했습니다. 잠시 후 다시 눌러 주세요.'; });
+  });
+
+  $('f').addEventListener('submit',function(e){
+    e.preventDefault(); $('err').textContent='';
+    var q=$('q').value.trim(), nm=$('nm').value.trim(), ph=$('ph').value.replace(/\D/g,'');
+    if(q.length<8){ $('err').textContent='질문을 조금 더 자세히 적어 주세요. (8자 이상)'; $('q').focus(); return; }
+    if(nm.length<2){ $('err').textContent='이름을 적어 주세요.'; $('nm').focus(); return; }
+    if(!/^01[016789]\d{7,8}$/.test(ph)){ $('err').textContent='휴대폰 번호를 정확히 적어 주세요.'; $('ph').focus(); return; }
+    if(!$('ag').checked){ $('err').textContent='개인정보 수집·이용에 동의해 주세요.'; return; }
+    var b=$('go'); b.disabled=true; b.textContent='답을 쓰는 중입니다…';
+    $('res').innerHTML='<div class="qbox"><small>'+esc(cat||'질문')+'</small><h3>'+esc(q.length>60?q.slice(0,60)+'…':q)+'</h3></div><div class="ans"><div class="typing"><span><i></i><i></i><i></i></span>약관·법령 자료와 설계사 칼럼에서 근거를 찾고 있습니다</div></div>';
+    $('res').scrollIntoView({behavior:'smooth',block:'start'});
+    post('daon-qna-ask',{q:q,name:nm,phone:ph,agree:true,cat:cat,to:TO,hp:$('hp').value}).then(function(r){
+      b.disabled=false; b.textContent=EXP?EXP.name+' 설계사에게 질문하기':'질문하고 바로 답 받기';
+      if(!r||!r.ok){ $('res').innerHTML=''; $('err').textContent=(r&&r.error)||'질문을 보내지 못했습니다. 잠시 후 다시 시도해 주세요.'; return; }
+      try{ localStorage.setItem('daon_qna_last',r.link); }catch(x){}
+      history.replaceState(null,'',r.link);
+      showMine({id:r.id,key:r.key,title:r.title,cat:r.cat,q:q,ai:r.ai,date:'방금'},r.link);
+      $('q').value='';
+    }).catch(function(){ b.disabled=false; b.textContent='질문하고 바로 답 받기'; $('res').innerHTML=''; $('err').textContent='연결에 실패했습니다. 잠시 후 다시 시도해 주세요.'; });
+  });
+
+  /* 내 질문 다시 보기 (?id=&k=) */
+  if(P.get('id')){
+    fetch(API+'daon-qna-list?id='+encodeURIComponent(P.get('id'))+'&k='+encodeURIComponent(P.get('k')||'')+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(r){
+      if(!r||!r.ok) return;
+      if(r.mine){ r.item.key=P.get('k'); loadExp().then(function(){ showMine(r.item,null); }); }
+      else $('res').innerHTML=answerHtml(r.item,false);
+      $('res').scrollIntoView({block:'start'});
+    }).catch(function(){});
+  }
+
+  /* 공개 질문 */
+  var PUB=[];
+  function drawPub(){
+    var have=CATS.filter(function(c){ return PUB.some(function(x){return x.cat===c;}); });
+    $('pcats').innerHTML=have.length>1?['<button type="button" data-c="" aria-pressed="'+(!pcat)+'">전체</button>'].concat(have.map(function(c){ return '<button type="button" data-c="'+esc(c)+'" aria-pressed="'+(c===pcat)+'">'+esc(c)+'</button>'; })).join(''):'';
+    var arr=PUB.filter(function(x){ return !pcat||x.cat===pcat; });
+    $('plist').innerHTML=arr.length?arr.map(function(x){
+      return '<details class="pq"><summary><div><b>'+esc(x.title)+'</b><small>'+esc(x.cat)+' · '+esc(x.nick)+' 님 · '+esc(x.date)+(x.expert?' · '+esc(x.expert.name)+' 설계사 답변':'')+'</small></div></summary><div class="in"><p>'+esc(x.q)+'</p>'+answerHtml(x,false).replace(/^<div class="qbox">[\s\S]*?<\/div>/,'')+'</div></details>';
+    }).join(''):'<p class="state">아직 공개된 질문이 없습니다. 첫 질문을 남겨 주세요.</p>';
+  }
+  $('pcats').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; pcat=b.dataset.c; drawPub(); });
+  fetch(API+'daon-qna-list?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(r){ PUB=(r&&r.items)||[]; drawPub(); }).catch(function(){ $('plist').innerHTML='<p class="state">질문을 불러오지 못했습니다.</p>'; });
+})();
+</script>
+<script>
+(function(){
+  var dp=null, btns=[].slice.call(document.querySelectorAll('.js-app')); if(!btns.length) return;
+  var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(standalone){ document.documentElement.classList.add('is-app'); btns.forEach(function(b){ (b.closest('.appbar')||b).style.display='none'; }); return; }
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
+  btns.forEach(function(btn){ btn.addEventListener('click',function(ev){ ev.preventDefault();
+    if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
+    var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+    alert(ios?'아이폰: 사파리 아래쪽 [공유] 버튼 → [홈 화면에 추가]를 누르세요.':'브라우저 메뉴(⋮ 또는 ≡) → [홈 화면에 추가] 또는 [앱 설치]를 누르세요.');
+  }); });
+})();
+</script>
+<script src="/daon/assets/home-btn.js" defer></script></body>
+</html>

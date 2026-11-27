@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /daon/crm/
+Disallow: /daon/office/
+Disallow: /daon/send/
+Disallow: /daon/branch/
+Disallow: /daon/voice/
+
+Sitemap: https://grow.ai.kr/daon/sitemap.xml
+Sitemap: https://grow.ai.kr/daon/column-sitemap.xml
+Sitemap: https://grow.ai.kr/daon/recruit-sitemap.xml

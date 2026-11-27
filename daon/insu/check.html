@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>사업장 2분 점검 | 다온 보장점검센터</title>
+<meta name="description" content="화재, 배상책임, 직원 사고, 휴업 손실까지. 우리 사업장이 어디까지 준비되어 있는지 2분이면 확인됩니다.">
+<meta name="theme-color" content="#0B1E42">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="bar__name" href="index.html">다온 보장점검센터<span>미래에셋금융서비스 다온지사</span></a>
+  <a class="bar__tel" href="http://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener">카톡 문의</a>
+</header>
+
+<!-- 문항 -->
+<main class="wrap" id="quiz">
+  <div class="q-top">
+    <div class="q-prog"><i id="bar" style="width:0%"></i></div>
+    <div class="q-cnt" id="cnt"></div>
+  </div>
+  <div class="q-body">
+    <h2 id="q"></h2>
+    <div class="sub" id="qsub"></div>
+    <div class="opts" id="opts"></div>
+    <button class="q-back" id="back" hidden>이전 질문</button>
+  </div>
+</main>
+
+<!-- 결과 -->
+<main class="wrap" id="result" hidden>
+  <div class="res-head">
+    <div class="n" id="needN"></div>
+    <h1>확인이 필요한 항목이<br><span id="needTxt"></span> 있습니다</h1>
+    <p>아래는 점검 결과이며, 실제 필요 여부는 사업장 상황에 따라 달라집니다.</p>
+  </div>
+
+  <div class="sheet" id="sheet"></div>
+
+  <div class="disc">
+    이 결과는 입력하신 답변만으로 정리한 것이며 보험 가입이 필요하다는 뜻은 아닙니다. 이미 준비되어 있는 항목이 결과에 반영되지 않았을 수 있습니다. 정확한 확인은 담당자와 함께 현재 가입 상태를 확인한 뒤에 가능합니다.
+  </div>
+
+  <div style="margin:24px 0 40px">
+    <a class="btn btn--navy" id="go" href="apply.html?cat=business">점검 결과로 상담 신청</a>
+    <div class="btn-note">무료입니다. 담당자 한 명만 연락드립니다.</div>
+  </div>
+</main>
+
+<footer class="foot" id="foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function(){
+
+  /* ── 문항 정의 ──
+     주의: 특정 상품·보험사·보험료를 묻거나 제시하지 않습니다.
+     'need' 가 true 인 선택지는 '확인 필요'로 집계됩니다. */
+  var Q = [
+    { k:'bizType', q:'어떤 업종인가요?', sub:'업종에 따라 확인해야 할 항목이 달라집니다',
+      opts:[
+        {t:'음식점·카페'},{t:'소매·판매'},{t:'서비스·미용'},
+        {t:'학원·교육'},{t:'사무실·전문직'},{t:'제조·공장'},{t:'숙박'},{t:'기타'}
+      ], store:true },
+
+    { k:'place', q:'사업장은 어떤 형태인가요?', sub:'건물주인지 임차인지에 따라 책임 범위가 달라집니다',
+      opts:[{t:'임차'},{t:'자가'},{t:'재택·온라인'}], store:true },
+
+    { k:'staff', q:'함께 일하는 직원이 있나요?', sub:'',
+      opts:[{t:'없음'},{t:'1~4명'},{t:'5~9명'},{t:'10명 이상'}], store:true },
+
+    { k:'fire', q:'화재나 사고로 사업장이 손상되면 복구 준비가 되어 있나요?',
+      sub:'시설과 집기, 재고를 포함해서요',
+      opts:[{t:'준비되어 있다'},{t:'준비되어 있지 않다',need:true},{t:'잘 모르겠다',need:true}],
+      label:'재산 손해', desc:'시설·집기·재고 손해에 대한 준비 상태' },
+
+    { k:'liability', q:'손님이 사업장에서 다치면 배상 준비가 되어 있나요?',
+      sub:'미끄러짐, 낙하물, 시설 하자 같은 경우입니다',
+      opts:[{t:'준비되어 있다'},{t:'준비되어 있지 않다',need:true},{t:'잘 모르겠다',need:true}],
+      label:'시설·영업 배상책임', desc:'제3자 신체·재물 손해에 대한 배상 준비 상태' },
+
+    { k:'staffAcc', q:'직원이 일하다 다치면 산재 외에 준비된 것이 있나요?',
+      sub:'산재로 처리되지 않는 부분과 사업주 책임이 남습니다',
+      opts:[{t:'준비되어 있다'},{t:'준비되어 있지 않다',need:true},{t:'잘 모르겠다',need:true},{t:'직원이 없다'}],
+      label:'직원 사고', desc:'산재 외 사업주 책임 부분에 대한 준비 상태' },
+
+    { k:'biz', q:'사고로 한 달 문을 닫게 되면 그동안의 매출은 어떻게 되나요?',
+      sub:'임대료와 인건비는 계속 나갑니다',
+      opts:[{t:'감당할 수 있다'},{t:'감당하기 어렵다',need:true},{t:'생각해 본 적 없다',need:true}],
+      label:'휴업 손실', desc:'영업 중단 기간의 고정비와 매출 공백' },
+
+    { k:'legal', q:'업종에 따라 의무적으로 가입해야 하는 보험이 있는데 확인해 보셨나요?',
+      sub:'미가입 시 과태료가 부과되는 경우가 있습니다',
+      opts:[{t:'확인했다'},{t:'확인하지 않았다',need:true},{t:'그런 게 있는지 몰랐다',need:true}],
+      label:'의무보험 확인', desc:'업종별 법정 의무가입 대상 여부' },
+
+    { k:'age', q:'가입한 지 3년이 넘은 사업장 보험이 있나요?',
+      sub:'시설과 재고 가치가 달라지면 실제 보상액이 부족해질 수 있습니다',
+      opts:[{t:'최근에 점검했다'},{t:'3년 이상 그대로다',need:true},{t:'가입한 게 없다',need:true},{t:'잘 모르겠다',need:true}],
+      label:'가입 내용 최신화', desc:'현재 시설·재고 규모와 보장 금액의 일치 여부' }
+  ];
+
+  var i = 0, ans = {};
+
+  function render(){
+    var item = Q[i];
+    $('#bar').style.width = Math.round((i / Q.length) * 100) + '%';
+    $('#cnt').textContent = (i + 1) + ' / ' + Q.length;
+    $('#q').textContent = item.q;
+    $('#qsub').textContent = item.sub || '';
+    $('#qsub').style.display = item.sub ? '' : 'none';
+    $('#back').hidden = (i === 0);
+
+    $('#opts').innerHTML = item.opts.map(function(o, n){
+      return '<button class="opt" data-n="' + n + '">' + o.t + '</button>';
+    }).join('');
+
+    $$('#opts .opt').forEach(function(b){
+      b.addEventListener('click', function(){
+        var n = +b.dataset.n;
+        ans[item.k] = { t: item.opts[n].t, need: !!item.opts[n].need };
+        // 직원이 없으면 직원 사고 문항 건너뜀
+        if (item.k === 'staff' && item.opts[n].t === '없음') {
+          ans.staffAcc = { t:'직원이 없다', need:false, skip:true };
+        }
+        next();
+      });
+    });
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  function next(){
+    i++;
+    while (i < Q.length && ans[Q[i].k] && ans[Q[i].k].skip) i++;
+    if (i >= Q.length) return finish();
+    render();
+  }
+
+  $('#back').addEventListener('click', function(){
+    do { i--; } while (i > 0 && ans[Q[i].k] && ans[Q[i].k].skip);
+    if (i < 0) i = 0;
+    render();
+  });
+
+  function finish(){
+    var rows = Q.filter(function(x){ return x.label; });
+    var need = rows.filter(function(x){ return ans[x.k] && ans[x.k].need; });
+
+    $('#needN').textContent = need.length;
+    $('#needTxt').textContent = need.length + '개';
+
+    if (need.length === 0) {
+      $('#needN').style.color = 'var(--moss)';
+      $('.res-head h1').innerHTML = '확인이 필요한 항목이<br>없습니다';
+      $('.res-head p').textContent = '준비 상태가 좋은 편입니다. 가입 내용이 지금 규모에 맞는지만 한 번 확인해 보세요.';
+    }
+
+    $('#sheet').innerHTML = rows.map(function(x){
+      var a = ans[x.k] || { t:'-', need:false };
+      var st = a.need
+        ? '<span class="sheet__s s-need">확인 필요</span>'
+        : '<span class="sheet__s s-ok">확인됨</span>';
+      return '<div class="sheet__r">' + st +
+             '<div class="sheet__t"><b>' + x.label + '</b><span>' + x.desc + '<br>답변: ' + a.t + '</span></div>' +
+             '</div>';
+    }).join('');
+
+    // 신청 폼으로 넘길 요약 (개인정보 없음)
+    sessionStorage.setItem('insu_check', JSON.stringify({
+      bizType: ans.bizType ? ans.bizType.t : '',
+      place:   ans.place   ? ans.place.t   : '',
+      staff:   ans.staff   ? ans.staff.t   : '',
+      needCount: need.length,
+      needItems: need.map(function(x){ return x.label; }),
+      answers: Object.keys(ans).reduce(function(o,k){ o[k] = ans[k].t; return o; }, {}),
+      at: new Date().toISOString()
+    }));
+
+    // 추적 파라미터 유지
+    var keep = new URLSearchParams(location.search), pass = '';
+    ['m','utm_source','utm_medium','utm_campaign'].forEach(function(k){
+      if (keep.get(k)) pass += '&' + k + '=' + encodeURIComponent(keep.get(k));
+    });
+    if (pass) $('#go').href = 'apply.html?cat=business' + pass;
+
+    $('#quiz').hidden = true;
+    $('#result').hidden = false;
+    window.scrollTo(0, 0);
+  }
+
+  render();
+  renderFooter($('#foot'));
+})();
+</script>
+<script src="/daon/assets/home-btn.js" defer></script></body>
+</html>

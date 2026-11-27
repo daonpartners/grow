@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>전문가 찾기 | 다온파트너스</title>
+<meta name="description" content="다온파트너스 소속 보험 전문가를 만나보세요.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://grow.ai.kr/daon/experts">
+<meta name="theme-color" content="#0B1B33">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style>
+:root{
+  --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
+  --paper:#FFFFFF; --cream:#F5F7FA;
+  --orange:#F58220; --deep:#C2650A; --tint:#FDEEDD;
+  --navy:#0B1B33; --navy2:#132A4D;
+  --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
+  --maxw:680px; --pad:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.6;font-size:16px;word-break:keep-all}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad) 60px}
+.topbar{display:flex;align-items:center;gap:9px;padding:16px var(--pad);max-width:var(--maxw);margin:0 auto}
+.brand-mark{height:24px;width:auto}
+.brand-txt{font-size:13px;color:var(--steel);font-weight:600}
+.home-lnk{margin-left:auto;font-size:12.5px;color:var(--steel);text-decoration:none;font-weight:600}
+.hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;padding:36px 0 30px;text-align:center}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(22px,6.5vw,28px)}
+.hero p{margin-top:10px;font-size:14px;color:#C6D0DE}
+.list{display:grid;gap:12px;margin-top:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;transition:transform .14s,box-shadow .14s,border-color .14s}
+.card:hover{transform:translateY(-2px);border-color:var(--orange);box-shadow:0 8px 20px rgba(11,27,51,.08)}
+.photo{width:60px;height:60px;border-radius:50%;object-fit:cover;background:var(--cream);flex-shrink:0}
+.body{flex:1;min-width:0}
+.body h3{font-family:var(--display);font-weight:700;font-size:16.5px}
+.body p{font-size:12.5px;color:var(--steel);margin-top:2px}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tag{font-size:10.5px;font-weight:600;color:var(--deep);background:var(--tint);padding:3px 8px;border-radius:999px}
+.badge{font-size:9.5px;font-weight:700;color:#fff;background:var(--orange);padding:3px 7px;border-radius:999px;margin-left:6px}
+.state{text-align:center;padding:40px 10px;color:var(--steel);font-size:14px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <img class="brand-mark" src="/daon/assets/logo.png" alt="다온파트너스">
+  <span class="brand-txt">다온파트너스</span>
+  <a href="https://grow.ai.kr/daon/" class="home-lnk">← 홈으로</a>
+</header>
+
+<section class="hero">
+  <h1>전문가 찾기</h1>
+  <p>다온파트너스 소속 보험 전문가를 만나보세요</p>
+</section>
+
+<div class="wrap">
+  <div id="list" class="list">
+    <div class="state">불러오는 중...</div>
+  </div>
+</div>
+
+<script>
+const API = "https://daonpartners.app.n8n.cloud/webhook/daon-expert-list-v2";
+const listEl = document.getElementById("list");
+
+fetch(API + "?t=" + Date.now(), { cache: "no-store" })
+  .then(r => r.json())
+  .then(data => {
+    const arr = Array.isArray(data) ? data : ((data && data.items) || []);
+    if (!arr.length || !arr[0].name) {
+      listEl.innerHTML = '<div class="state">아직 등록된 전문가가 없습니다.</div>';
+      return;
+    }
+    listEl.innerHTML = arr.map(p => `
+      <a class="card" href="/daon/expert?a=${encodeURIComponent(p.code)}">
+        <img class="photo" src="${p.photo || '/daon/assets/logo.png'}" alt="${p.name}">
+        <div class="body">
+          <h3>${p.name}</h3>
+          <p>${p.title || ''}${p.region ? ' · ' + p.region : ''}</p>
+          <div class="tags">${(p.specialties || []).map(s => `<span class="tag">${s}</span>`).join('')}</div>
+        </div>
+      </a>
+    `).join('');
+  })
+  .catch(() => {
+    listEl.innerHTML = '<div class="state">목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</div>';
+  });
+</script>
+<script src="/daon/assets/home-btn.js" defer></script></body>
+</html>

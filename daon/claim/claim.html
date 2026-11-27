@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>보험금청구 무료대행 | 다온파트너스</title>
+<meta name="description" content="서류 사진만 올려주시면 다온파트너스가 보험사에 직접 청구해드립니다. 청구 대행 무료.">
+<style>
+  :root{
+    --bg:#FBF6EC;
+    --card:#FFFFFF;
+    --org:#E17A2D;
+    --org-dk:#C4631D;
+    --org-lt:#FCEBDA;
+    --ink:#2A2520;
+    --ink2:#6B6156;
+    --ink3:#A69C8D;
+    --line:#EAE0CE;
+    --green:#3F9142;
+    --green-lt:#E7F4E8;
+    --red:#D6483F;
+    --r:16px;
+    --shadow:0 2px 14px rgba(60,45,20,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased; padding-bottom:110px;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 18px}
+  a{color:inherit}
+
+  /* 헤더 */
+  header{background:var(--ink);color:#fff;padding:22px 18px 26px}
+  .brand{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;letter-spacing:.2px}
+  .home-btn{display:inline-block;color:#D8D0C4;font-size:12.5px;font-weight:700;text-decoration:none;
+    border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 12px;margin-bottom:14px}
+  .home-btn:active{background:rgba(255,255,255,.1)}
+  .brand b{color:var(--org)}
+  h1{font-size:26px;font-weight:800;margin:14px 0 6px;line-height:1.35}
+  header p{margin:0;color:#D8D0C4;font-size:14.5px}
+  .badges{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:6px 12px;font-size:12.5px;color:#F0EAE0}
+
+  /* 카드 공통 */
+  .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:20px 18px;margin-top:14px}
+  .sec-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
+    background:var(--org);color:#fff;font-size:13px;font-weight:800;margin-right:8px;flex-shrink:0}
+  .sec-h{display:flex;align-items:center;font-size:17px;font-weight:800;margin:0 0 4px}
+  .sec-sub{color:var(--ink2);font-size:13.5px;margin:0 0 16px 32px}
+
+  /* 보험사 그리드 */
+  .insurer-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .itab{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font-size:13.5px;font-weight:700;color:var(--ink2);cursor:pointer}
+  .itab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .insurer-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .ins-btn{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:13px 10px;font-size:14.5px;font-weight:700;
+    text-align:center;cursor:pointer;color:var(--ink)}
+  .ins-btn.on{border-color:var(--org);background:var(--org-lt);color:var(--org-dk)}
+  .ins-btn:active{transform:scale(.98)}
+
+  /* 폼 요소 */
+  label{display:block;font-size:13.5px;font-weight:700;color:var(--ink2);margin:14px 0 6px}
+  label:first-child{margin-top:0}
+  input[type=text],input[type=tel],input[type=date],textarea,select{
+    width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:11px;font-size:16px;
+    background:#fff;color:var(--ink);font-family:inherit
+  }
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--org)}
+  textarea{resize:vertical;min-height:84px}
+  .fld2{display:flex;gap:9px}
+  .fld2>*{flex:1;min-width:0}
+  .hint{font-size:12.5px;color:var(--ink3);margin-top:6px}
+
+  /* 토글 버튼(예/아니오, 성별, 사고유형) */
+  .toggle-row{display:flex;gap:8px}
+  .toggle-btn{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:13px 8px;
+    font-size:15px;font-weight:700;color:var(--ink2);cursor:pointer;text-align:center}
+  .toggle-btn.on{border-color:var(--org);background:var(--org-lt);color:var(--org-dk)}
+
+  .holder-box{background:var(--bg);border-radius:12px;padding:14px;margin-top:12px}
+  .hide{display:none !important}
+
+  /* 사진 업로드 */
+  .upload-box{border:2px dashed var(--line);border-radius:14px;padding:26px 14px;text-align:center;cursor:pointer;background:var(--bg)}
+  .upload-box:active{background:var(--org-lt)}
+  .upload-ic{font-size:30px;margin-bottom:6px}
+  .upload-box b{font-size:15px;display:block;color:var(--ink)}
+  .upload-box span{font-size:12.5px;color:var(--ink3);display:block;margin-top:4px}
+  .thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .thumb{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:#eee}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb .rm{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(20,16,10,.65);
+    color:#fff;border:none;font-size:13px;line-height:22px;text-align:center;padding:0;cursor:pointer}
+  .photo-count{font-size:13px;color:var(--ink2);margin-top:10px;text-align:right}
+
+  .agree-row{display:flex;align-items:flex-start;gap:9px;margin-top:16px}
+  .agree-row input{width:19px;height:19px;margin-top:2px;flex-shrink:0}
+  .agree-row span{font-size:13px;color:var(--ink2)}
+  .agree-row a{color:var(--org-dk);text-decoration:underline}
+
+  /* 하단 고정바 */
+  .footer-bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+    padding:12px 18px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -4px 14px rgba(0,0,0,.05)}
+  .submit-btn{max-width:604px;margin:0 auto;display:block;width:100%;background:var(--org);color:#fff;border:none;
+    border-radius:13px;padding:16px;font-size:16.5px;font-weight:800;cursor:pointer}
+  .submit-btn:disabled{background:#D9CFBF;cursor:not-allowed}
+  .submit-btn:active:not(:disabled){background:var(--org-dk)}
+  .err-line{color:var(--red);font-size:13px;margin-top:8px;font-weight:700;display:none}
+
+  /* 완료 화면 */
+  #doneScreen{display:none;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px 24px}
+  #doneScreen .ic{width:72px;height:72px;border-radius:50%;background:var(--green-lt);display:flex;align-items:center;justify-content:center;
+    font-size:36px;color:var(--green);margin-bottom:18px}
+  #doneScreen h2{font-size:21px;margin:0 0 10px}
+  #doneScreen p{color:var(--ink2);font-size:14.5px;max-width:320px;line-height:1.6}
+  #doneScreen .rn{margin-top:26px;background:var(--ink);color:#fff;border:none;border-radius:12px;padding:13px 26px;font-size:14.5px;font-weight:700;cursor:pointer}
+
+  footer{text-align:center;color:var(--ink3);font-size:12px;padding:26px 18px 10px}
+</style>
+</head>
+<body>
+
+<div id="formScreen">
+  <header>
+    <div class="wrap">
+      <a href="https://grow.ai.kr/daon/" class="home-btn">← 다온 홈으로</a>
+      <div class="brand">다온<b>파트너스</b></div>
+      <h1>서류만 보내주세요.<br>보험금 청구는 저희가 할게요.</h1>
+      <p>진단서·영수증 사진만 올려주시면 담당자가 확인 후 해당 보험사에 직접 청구해드립니다.</p>
+      <div class="badges">
+        <span class="badge">청구 대행 무료</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- 1. 보험사 -->
+    <div class="card">
+      <h2 class="sec-h"><span class="sec-num">1</span>어느 보험사에 청구하시나요?</h2>
+      <p class="sec-sub">청구하실 보험사를 골라주세요. 여러 곳이면 여러 개 골라도 됩니다.</p>
+      <div class="insurer-tabs">
+        <button type="button" class="itab on" data-cat="손해">손해보험</button>
+        <button type="button" class="itab" data-cat="생명">생명보험</button>
+        <button type="button" class="itab" data-cat="공제">공제조합</button>
+        <button type="button" class="itab" data-cat="확인후">잘 모르겠어요</button>
+      </div>
+      <div class="insurer-grid" id="insurerGrid"></div>
+      <p class="hint" id="insurerSelected"></p>
+    </div>
+
+    <!-- 2. 피보험자 정보 -->
+    <div class="card">
+      <h2 class="sec-h"><span class="sec-num">2</span>보험금 받으실 분 정보</h2>
+      <p class="sec-sub">치료받으신 분(피보험자) 기준으로 입력해주세요.</p>
+
+      <label>이름 *</label>
+      <input type="text" id="fName" placeholder="홍길동">
+
+      <label>연락처 *</label>
+      <input type="tel" id="fPhone" placeholder="010-0000-0000" maxlength="13">
+
+      <label>다온파트너스와 처음 거래하시나요? *</label>
+      <div class="toggle-row">
+        <button type="button" class="toggle-btn on" data-first="yes">네, 처음이에요</button>
+        <button type="button" class="toggle-btn" data-first="no">아니요, 이미 계약된 고객이에요</button>
+      </div>
+
+      <div id="rrnBox">
+        <label>주민등록번호 *</label>
+        <div class="fld2">
+          <input type="text" id="fRrnFront" inputmode="numeric" placeholder="생년월일 6자리" maxlength="6">
+          <input type="text" id="fRrnBack" inputmode="numeric" placeholder="뒤 7자리" maxlength="7">
+        </div>
+        <p class="hint">보험사에 실제로 청구하려면 주민등록번호가 꼭 필요해요. 청구 처리 목적으로만 사용됩니다.</p>
+      </div>
+      <div id="birthOnlyBox" class="hide">
+        <label>생년월일 *</label>
+        <input type="date" id="fBirthOnly">
+        <p class="hint">이미 계약이 있으신 고객님은 생년월일만 확인할게요. 주민등록번호는 계약서류로 확인합니다.</p>
+      </div>
+
+      <label>주소 (선택)</label>
+      <input type="text" id="fAddress" placeholder="우편물을 받으실 주소가 있다면 적어주세요">
+
+      <label>보험금 받으실 계좌 *</label>
+      <div class="toggle-row">
+        <button type="button" class="toggle-btn on" data-acctype="same">자동이체계좌와 동일해요</button>
+        <button type="button" class="toggle-btn" data-acctype="separate">다른 계좌로 받을게요</button>
+      </div>
+      <div class="holder-box hide" id="acctBox">
+        <label style="margin-top:0">은행명</label>
+        <input type="text" id="fBankName" placeholder="예: 신한은행">
+        <label>계좌번호</label>
+        <input type="text" id="fAccountNo" inputmode="numeric" placeholder="- 없이 숫자만 입력해도 돼요">
+      </div>
+    </div>
+
+    <!-- 3. 계약자 -->
+    <div class="card">
+      <h2 class="sec-h"><span class="sec-num">3</span>계약자와 동일하신가요?</h2>
+      <p class="sec-sub">보험을 가입하신 분(계약자)이 본인이 아니라면 알려주세요.</p>
+      <div class="toggle-row">
+        <button type="button" class="toggle-btn on" data-same="예">본인과 동일해요</button>
+        <button type="button" class="toggle-btn" data-same="아니오">다른 사람이에요</button>
+      </div>
+      <div class="holder-box hide" id="holderBox">
+        <label style="margin-top:0">계약자 이름</label>
+        <input type="text" id="fHolderName" placeholder="예: 배우자, 부모님 성함">
+        <label>계약자 연락처</label>
+        <input type="tel" id="fHolderPhone" placeholder="010-0000-0000" maxlength="13">
+      </div>
+    </div>
+
+    <!-- 4. 사고정보 -->
+    <div class="card">
+      <h2 class="sec-h"><span class="sec-num">4</span>어떤 일로 청구하시나요?</h2>
+      <p class="sec-sub">해당하는 유형을 골라주세요.</p>
+      <div class="toggle-row">
+        <button type="button" class="toggle-btn" data-acc="질병">질병</button>
+        <button type="button" class="toggle-btn" data-acc="상해">상해</button>
+        <button type="button" class="toggle-btn" data-acc="교통사고">교통사고</button>
+      </div>
+      <label>간단한 내용 (선택)</label>
+      <textarea id="fDetail" placeholder="예: OO병원 입원 3일 / 8월 중순 넘어져서 통원치료 중"></textarea>
+    </div>
+
+    <!-- 5. 서류 사진 -->
+    <div class="card">
+      <h2 class="sec-h"><span class="sec-num">5</span>청구서류 사진을 올려주세요</h2>
+      <p class="sec-sub">진단서, 영수증, 진료비 세부내역서 등 있는 대로 올려주시면 됩니다.</p>
+      <div class="upload-box" id="uploadBox">
+        <div class="upload-ic">📷</div>
+        <b>눌러서 사진 선택하기</b>
+        <span>여러 장을 한 번에 고르실 수 있어요 (최대 20장)</span>
+      </div>
+      <input type="file" id="fPhotos" accept="image/*" multiple capture="environment" class="hide">
+      <div class="thumbs" id="thumbs"></div>
+      <div class="photo-count" id="photoCount"></div>
+
+      <label>남기실 말씀 (선택)</label>
+      <textarea id="fMemo" placeholder="빠르게 처리해주셨으면 하는 부분이나 궁금하신 점을 적어주세요" style="min-height:64px"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="agree-row">
+        <input type="checkbox" id="fAgree">
+        <span>위 정보(<b>주민등록번호 또는 생년월일 포함</b>)와 서류 사진을 <b>보험금 청구 대행 목적</b>으로 다온파트너스에 제공하는 것에 동의합니다. 정보는 보험사에 청구하는 목적으로만 사용되며, 처리 완료 후 파기됩니다.</span>
+      </div>
+      <p class="err-line" id="errLine"></p>
+    </div>
+
+  </div>
+</div>
+
+<div id="doneScreen">
+  <div class="ic">✓</div>
+  <h2>접수됐습니다</h2>
+  <p>담당자가 내용을 확인한 뒤 순서대로 연락드리겠습니다. 서류가 더 필요하면 문자나 전화로 다시 안내해드릴게요.</p>
+  <button class="rn" onclick="location.reload()">처음으로</button>
+  <a href="https://grow.ai.kr/daon/" style="margin-top:12px;color:var(--ink3);font-size:13px;text-decoration:underline">다온 홈으로 가기</a>
+</div>
+
+<div class="footer-bar" id="footerBar">
+  <button class="submit-btn" id="submitBtn">접수하기</button>
+</div>
+
+<footer>다온파트너스 · 보험대리점 등록번호 2014048012<br>충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 041-534-1124</footer>
+
+<script>
+const INSURERS = {
+  '손해': ['AIG손해보험','KB손해보험','라이나손해보험','삼성화재','신한EZ손해보험','우체국보험','한화손해보험','AXA손해보험','NH농협손해보험','롯데손해보험','캐롯손해보험','현대해상화재','DB손해보험','메리츠화재','하나손해보험','흥국화재','기타'],
+  '생명': ['라이나생명','삼성생명','한화생명','교보생명','신한라이프','흥국생명','기타'],
+  '공제': ['새마을금고공제','신협공제','교직원공제','수협공제','예별손해보험','기타']
+};
+let curCat = '손해';
+let selInsurers = [];
+let selSame = '예';
+let selAcc = '';
+let selAcctType = 'same';
+let isFirstClaim = true;
+const photoList = [];
+
+function toggleInsurer(name){
+  if(name === '설계사확인후청구'){
+    selInsurers = selInsurers.includes('설계사확인후청구') ? [] : ['설계사확인후청구'];
+    return;
+  }
+  selInsurers = selInsurers.filter(function(x){ return x !== '설계사확인후청구'; });
+  const i = selInsurers.indexOf(name);
+  if(i >= 0) selInsurers.splice(i, 1); else selInsurers.push(name);
+}
+function renderInsurers(){
+  const grid = document.getElementById('insurerGrid');
+  const sumBox = document.getElementById('insurerSelected');
+  if(curCat === '확인후'){
+    const on = selInsurers.includes('설계사확인후청구');
+    grid.innerHTML = '<button type="button" class="ins-btn" style="grid-column:1/-1;text-align:left;line-height:1.55'
+      + (on ? ';border-color:var(--org);background:var(--org-lt);color:var(--org-dk)' : '')
+      + '" data-ins="설계사확인후청구">' + (on ? '✓ ' : '') + '괜찮아요. 서류 사진을 보고 담당 설계사가 확인해서<br>알맞은 보험사에 청구해드릴게요.</button>';
+  } else {
+    grid.innerHTML = INSURERS[curCat].map(function(name){
+      return '<button type="button" class="ins-btn' + (selInsurers.includes(name)?' on':'') + '" data-ins="' + name + '">' + (selInsurers.includes(name)?'✓ ':'') + name + '</button>';
+    }).join('');
+  }
+  if(sumBox){
+    const real = selInsurers.filter(function(x){ return x!=='설계사확인후청구'; });
+    sumBox.textContent = selInsurers.includes('설계사확인후청구') ? '선택됨: 설계사 확인 후 청구'
+      : (real.length ? ('선택됨(' + real.length + '곳): ' + real.join(', ')) : '');
+  }
+}
+document.querySelectorAll('.itab').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.itab').forEach(function(x){ x.classList.remove('on'); });
+    t.classList.add('on');
+    curCat = t.dataset.cat;
+    renderInsurers();
+  });
+});
+document.getElementById('insurerGrid').addEventListener('click', function(e){
+  const btn = e.target.closest('.ins-btn'); if(!btn) return;
+  toggleInsurer(btn.dataset.ins);
+  renderInsurers();
+});
+renderInsurers();
+
+document.querySelectorAll('[data-first]').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('[data-first]').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); isFirstClaim = b.dataset.first === 'yes';
+    document.getElementById('rrnBox').classList.toggle('hide', !isFirstClaim);
+    document.getElementById('birthOnlyBox').classList.toggle('hide', isFirstClaim);
+  });
+});
+
+document.querySelectorAll('[data-acctype]').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('[data-acctype]').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); selAcctType = b.dataset.acctype;
+    document.getElementById('acctBox').classList.toggle('hide', selAcctType==='same');
+  });
+});
+document.querySelectorAll('[data-same]').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('[data-same]').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); selSame = b.dataset.same;
+    document.getElementById('holderBox').classList.toggle('hide', selSame==='예');
+  });
+});
+document.querySelectorAll('[data-acc]').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('[data-acc]').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); selAcc = b.dataset.acc;
+  });
+});
+
+function maskPhone(el){
+  let v = el.value.replace(/[^0-9]/g,'').slice(0,11);
+  if(v.length>=8) v = v.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3');
+  else if(v.length>=4) v = v.replace(/(\d{3})(\d{1,4})/,'$1-$2');
+  el.value = v;
+}
+document.getElementById('fPhone').addEventListener('input', function(){ maskPhone(this); });
+document.getElementById('fHolderPhone').addEventListener('input', function(){ maskPhone(this); });
+function numOnly(el, max){ el.value = el.value.replace(/[^0-9]/g,'').slice(0,max); }
+document.getElementById('fRrnFront').addEventListener('input', function(){ numOnly(this,6); });
+document.getElementById('fRrnBack').addEventListener('input', function(){ numOnly(this,7); });
+
+document.getElementById('uploadBox').addEventListener('click', function(){
+  document.getElementById('fPhotos').click();
+});
+function compressImage(file){
+  return new Promise(function(resolve){
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = function(){
+      const MAX = 1800;
+      let w = img.width, h = img.height;
+      if(w > MAX || h > MAX){
+        if(w >= h){ h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = function(){
+      URL.revokeObjectURL(url);
+      const reader = new FileReader();
+      reader.onload = function(ev){ resolve(ev.target.result); };
+      reader.readAsDataURL(file);
+    };
+    img.src = url;
+  });
+}
+document.getElementById('fPhotos').addEventListener('change', function(e){
+  const files = Array.from(e.target.files || []).slice(0, 20 - photoList.length);
+  if(!files.length){ e.target.value=''; return; }
+  document.getElementById('uploadBox').querySelector('b').textContent = '사진 정리하는 중…';
+  Promise.all(files.map(compressImage)).then(function(results){
+    results.forEach(function(dataUrl){ photoList.push(dataUrl); });
+    renderThumbs();
+    document.getElementById('uploadBox').querySelector('b').textContent = '눌러서 사진 선택하기';
+  });
+  e.target.value = '';
+});
+function renderThumbs(){
+  const box = document.getElementById('thumbs');
+  box.innerHTML = photoList.map(function(src, i){
+    return '<div class="thumb"><img src="'+src+'"><button type="button" class="rm" data-i="'+i+'">×</button></div>';
+  }).join('');
+  document.getElementById('photoCount').textContent = photoList.length ? (photoList.length + '장 선택됨') : '';
+}
+document.getElementById('thumbs').addEventListener('click', function(e){
+  const btn = e.target.closest('.rm'); if(!btn) return;
+  photoList.splice(Number(btn.dataset.i), 1);
+  renderThumbs();
+});
+
+function getManagerCode(){
+  const p = new URLSearchParams(location.search);
+  return p.get('m') || '';
+}
+
+document.getElementById('submitBtn').addEventListener('click', function(){
+  const err = document.getElementById('errLine');
+  err.style.display = 'none';
+  const name = document.getElementById('fName').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  const rrnFront = document.getElementById('fRrnFront').value.trim();
+  const rrnBack = document.getElementById('fRrnBack').value.trim();
+  const birthOnly = document.getElementById('fBirthOnly').value;
+  const agree = document.getElementById('fAgree').checked;
+
+  const missing = [];
+  if(!selInsurers.length) missing.push('보험사');
+  if(!name) missing.push('이름');
+  if(!phone || phone.length < 12) missing.push('연락처');
+  if(isFirstClaim){
+    if(rrnFront.length !== 6 || rrnBack.length !== 7) missing.push('주민등록번호');
+  } else {
+    if(!birthOnly) missing.push('생년월일');
+  }
+  if(!selAcc) missing.push('사고유형');
+  if(selAcctType==='separate' && (!document.getElementById('fBankName').value.trim() || !document.getElementById('fAccountNo').value.trim())) missing.push('입금계좌 정보');
+  if(!photoList.length) missing.push('서류 사진');
+  if(!agree) missing.push('개인정보 제공 동의');
+
+  if(missing.length){
+    err.textContent = missing.join(', ') + ' 항목을 확인해주세요.';
+    err.style.display = 'block';
+    err.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = '접수 중…';
+
+  const payload = {
+    name: name,
+    phone: phone,
+    manager: getManagerCode(),
+    insurers: selInsurers,
+    isFirstClaim: isFirstClaim,
+    rrnFront: rrnFront,
+    rrnBack: rrnBack,
+    birthOnly: birthOnly,
+    address: document.getElementById('fAddress').value.trim(),
+    sameAsHolder: selSame === '예',
+    holderName: document.getElementById('fHolderName').value.trim(),
+    holderPhone: document.getElementById('fHolderPhone').value.trim(),
+    accidentType: selAcc,
+    accidentDetail: document.getElementById('fDetail').value.trim(),
+    accountType: selAcctType,
+    bankName: document.getElementById('fBankName').value.trim(),
+    accountNo: document.getElementById('fAccountNo').value.trim(),
+    memo: document.getElementById('fMemo').value.trim(),
+    photos: photoList,
+    submittedAt: new Date().toISOString()
+  };
+
+  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-claim-lead', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(){
+    document.getElementById('formScreen').style.display = 'none';
+    document.getElementById('footerBar').style.display = 'none';
+    document.getElementById('doneScreen').style.display = 'flex';
+    window.scrollTo(0,0);
+  }).catch(function(){
+    err.textContent = '접수 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '접수하기';
+  });
+});
+</script>
+<script src="/daon/assets/datefix.js"></script>
+<script src="/daon/assets/home-btn.js" defer></script></body>
+</html>

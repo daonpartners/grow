@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>행사 동의 발송 (설계사용)</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B1E42">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--navy:#0B1E42;--ink:#16181C;--ink2:#4F5661;--ink3:#8D949D;--line:#E4E7EB;--bg:#F5F6F8;--ok:#1E9E5A;--err:#C4472F}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;font-size:15px;line-height:1.5;word-break:keep-all}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.wrap{max-width:520px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 40px}
+.hide{display:none!important}
+h1{font-size:20px;margin:6px 0 4px}
+.sub{font-size:13px;color:var(--ink3);margin:0 0 12px}
+.card{background:#fff;border-radius:18px;padding:16px;margin-top:10px}
+.card h2{font-size:14px;margin:0 0 10px;color:var(--ink2)}
+.kinds{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kind{border:2px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;font-weight:800;background:#fff}
+.kind small{display:block;font-weight:500;font-size:12px;color:var(--ink3);margin-top:2px}
+.kind.wide{grid-column:1/-1}
+.kind.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.kind.on small{color:#AFC0D8}
+.lb{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin:10px 0 5px}
+.inp{width:100%;height:50px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;font-size:17px;outline:none;background:#fff}
+.inp:focus{border-color:var(--navy)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.b{display:flex;align-items:center;justify-content:center;height:52px;border-radius:14px;font-weight:800;font-size:15.5px;background:#EEF2F8;color:var(--navy);text-decoration:none}
+.b.pri{grid-column:1/-1;background:var(--navy);color:#fff;font-size:17px;height:56px}
+.b:disabled,.b.dis{opacity:.4;pointer-events:none}
+.qr{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:12px}
+.qr canvas,.qr img{width:220px!important;height:220px!important}
+.preview{margin-top:10px;background:var(--bg);border-radius:12px;padding:10px 12px;font-size:12.5px;color:var(--ink2);white-space:pre-wrap;word-break:break-all}
+.log{margin:0;padding:0;list-style:none;font-size:13px}
+.log li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.log li:last-child{border-bottom:0}
+.muted{color:var(--ink3)}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#16181C;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.chk{font-size:12.5px;color:var(--ink2);background:#FFF8EC;border-radius:12px;padding:10px 12px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>행사 동의 발송</h1>
+  <p class="sub">설계사용 · 고객에게 간편 동의 링크를 보냅니다. 서면 동의서는 현장에서 따로 받습니다.</p>
+
+  <section class="card">
+    <h2>1. 체험 선택</h2>
+    <div class="kinds">
+      <button type="button" class="kind" data-k="fp">자녀 지문검사<small>보호자 · 만 14세 미만 자녀</small></button>
+      <button type="button" class="kind" data-k="qm">양자공명 건강체험<small>성인 본인</small></button>
+      <button type="button" class="kind wide" data-k="pet">펫행사<small>성인 · 반려동물 보호자</small></button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. 고객 휴대폰 번호</h2>
+    <input class="inp" id="ph" type="tel" inputmode="numeric" maxlength="13" placeholder="010-0000-0000">
+    <div class="btns">
+      <a class="b pri dis" id="sms" href="#">문자로 보내기</a>
+      <button type="button" class="b dis" id="copy">문구 복사 (카톡)</button>
+      <button type="button" class="b dis" id="qrBtn">QR 보여주기</button>
+    </div>
+    <div class="qr hide" id="qrBox"><div id="qr"></div><span class="muted" style="font-size:12.5px">고객이 휴대폰 카메라로 찍으면 바로 열립니다</span><button type="button" class="b" id="qrSave" style="width:100%">인쇄용 QR 이미지 저장 (PNG)</button></div>
+    <div class="muted hide" id="pvLb" style="font-size:12.5px;font-weight:700;margin-top:12px">▼ 고객에게 가는 문자 내용 (PC에서도 확인)</div>
+    <div class="preview hide" id="pv"></div>
+    <div class="btns hide" id="pvBtns">
+      <button type="button" class="b" id="lnkCopy">링크만 복사</button>
+      <a class="b" id="lnkOpen" href="#" target="_blank" rel="noopener">고객 화면 미리보기</a>
+    </div>
+    <div class="chk">☐ 서면 동의서 받기 &nbsp; ☐ 고객 휴대폰의 신청 완료 화면 확인 → 체험 진행</div>
+  </section>
+
+  <section class="card">
+    <h2>설정 (이 기기에 저장)</h2>
+    <p class="muted" style="font-size:12.5px;margin:-4px 0 4px">행사명·지사를 선택하면 링크가 만들어집니다. 날짜는 고객이 접수한 날로 자동 기록되므로, 여러 날 행사도 링크·QR 하나로 쓰면 됩니다. 고객 동의 내역은 선택한 지사의 지사장에게 쌓이고 텔레그램으로 알려드립니다.</p>
+    <label class="lb" for="ev">행사명</label><input class="inp" id="ev" maxlength="30" placeholder="예) 아산 펫페어">
+    <label class="lb" for="br">지사·지점 선택</label>
+    <select class="inp" id="br">
+      <option value="">지사/지점을 선택하세요</option>
+      <option value="광명">광명</option><option value="다온">다온</option><option value="도약">도약</option>
+      <option value="동행">동행</option><option value="혁신">혁신</option><option value="리치로드맵">리치로드맵</option>
+    </select>
+    <p class="muted" id="brNote" style="font-size:12.5px;margin:6px 0 0"></p>
+    <label class="lb">함께 알림 받을 지사장 <span class="muted" style="font-weight:500">(공동 행사일 때 체크)</span></label>
+    <div id="ccBox" style="display:flex;flex-wrap:wrap;gap:8px 14px;font-size:14px"><span class="muted" style="font-size:12.5px">지사 목록을 불러오는 중…</span></div>
+    <p class="muted" style="font-size:12px;margin:6px 0 0">체크한 지사장에게는 접수 때마다 "행사명·체험·누적 건수"만 알려드립니다(고객 이름·연락처는 담당 지사에만 전달). DB는 위에서 선택한 담당 지사로 쌓입니다.</p>
+  </section>
+
+  <section class="card">
+    <a class="b" href="https://grow.ai.kr/" target="_blank" rel="noopener" style="width:100%">행사 DB 확인 · 배분 (그로우온 관리자센터 > DB관리)</a>
+  </section>
+
+  <section class="card">
+    <h2>오늘 보낸 기록 <span class="muted" style="font-weight:500">(이 기기에만 저장)</span></h2>
+    <ul class="log" id="log"></ul>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var BASE=(location.origin&&location.origin.indexOf('http')===0?location.origin:'https://grow.ai.kr')+'/daon';
+  var NAMES={fp:'자녀 지문검사',qm:'양자공명 건강체험',pet:'펫행사'}, DIR={fp:'fp',qm:'qm',pet:'pet-event'};
+  function today(){ var d=new Date(Date.now()+9*3600*1000); return d.toISOString().slice(0,10); }
+  var K=localStorage, KIND=K.getItem('snd_kind')||'';
+  ['ev','br'].forEach(function(id){ try{ $(id).value=K.getItem('snd_'+id)||''; }catch(e){} $(id).addEventListener((id==='br')?'change':'input',function(){ try{K.setItem('snd_'+id,this.value.trim());}catch(e){} refresh(); }); });
+  document.querySelectorAll('.kind').forEach(function(b){ b.addEventListener('click',function(){ KIND=b.dataset.k; try{K.setItem('snd_kind',KIND);}catch(e){} refresh(); }); });
+  $('ph').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,11); this.value=n.length>=8?n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'):(n.length>=4?n.replace(/(\d{3})(\d{1,4})/,'$1-$2'):n); refresh(); });
+  function link(){ var p=new URLSearchParams(); var e=$('ev').value.trim(), b=$('br').value; if(e) p.set('e',e); if(b) p.set('b',b); var cc=ccList(); if(cc.length) p.set('n',cc.join(',')); return BASE+'/'+DIR[KIND]+'/'+(p.toString()?'?'+p.toString():''); }
+  function msg(){ var e=$('ev').value.trim(); return '[미래에셋금융서비스 그로우사업부]\n'+(e?e+' ':'')+NAMES[KIND]+' 참여 안내입니다.\n아래 링크에서 정보를 입력하고 동의하시면 신청이 완료됩니다.\n'+link(); }
+  function phone(){ return $('ph').value.replace(/[^0-9]/g,''); }
+  function refresh(){
+    document.querySelectorAll('.kind').forEach(function(b){ b.classList.toggle('on',b.dataset.k===KIND); });
+    var ready=!!$('ev').value.trim()&&!!$('br').value;
+    var ok=!!KIND&&ready, okPh=ok&&/^01\d{8,9}$/.test(phone());
+    $('sms').classList.toggle('dis',!okPh); $('copy').classList.toggle('dis',!ok); $('qrBtn').classList.toggle('dis',!ok);
+    if(ok){ $('pv').textContent=msg(); $('pv').classList.remove('hide'); $('pvLb').classList.remove('hide'); $('pvBtns').classList.remove('hide'); $('lnkOpen').href=link(); $('sms').href='sms:'+phone()+'?&body='+encodeURIComponent(msg()); } else { $('pvLb').classList.add('hide'); $('pvBtns').classList.add('hide'); $('pv').textContent=KIND?'행사명을 입력하고 조직코드가 등록된 지사를 선택하면 문구가 나옵니다.':''; $('pv').classList.toggle('hide',!KIND); }
+    if(!$('qrBox').classList.contains('hide')) drawQR();
+  }
+  function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(e._t); e._t=setTimeout(function(){e.classList.remove('on');},2200); }
+  function logIt(how){
+    var d=new Date(), key='snd_log_'+d.toISOString().slice(0,10), arr=[];
+    try{ arr=JSON.parse(K.getItem(key)||'[]'); }catch(e){}
+    var p=phone(); arr.unshift({t:d.toTimeString().slice(0,5),k:NAMES[KIND],p:p?p.slice(0,3)+'-****-'+p.slice(-4):'-',h:how});
+    try{ K.setItem(key,JSON.stringify(arr.slice(0,100))); }catch(e){}
+    drawLog();
+  }
+  function drawLog(){ var arr=[]; try{ arr=JSON.parse(K.getItem('snd_log_'+new Date().toISOString().slice(0,10))||'[]'); }catch(e){}
+    $('log').innerHTML=arr.length?arr.map(function(x){ return '<li><span>'+x.t+' · '+x.k+'</span><span class="muted">'+x.p+' · '+x.h+'</span></li>'; }).join(''):'<li class="muted">아직 없습니다</li>'; }
+  $('sms').addEventListener('click',function(ev){
+    if(!/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)){ ev.preventDefault(); copyText(msg()); toast('PC에서는 문자 앱이 열리지 않아 문구를 복사했어요. 휴대폰·카톡에 붙여넣으세요'); logIt('복사'); return; }
+    logIt('문자'); });
+  $('lnkCopy').addEventListener('click',function(){ copyText(link()); toast('링크를 복사했어요'); });
+  function copyText(t){ var ok=false; var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ ok=document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); if(!ok&&navigator.clipboard) navigator.clipboard.writeText(t); }
+  $('copy').addEventListener('click',function(){
+    var t=msg(), ok=false; var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ ok=document.execCommand('copy'); }catch(e){} document.body.removeChild(ta);
+    if(!ok&&navigator.clipboard) navigator.clipboard.writeText(t);
+    toast('문구를 복사했어요. 카카오톡에 붙여넣으세요'); logIt('복사');
+  });
+  function drawQR(){ $('qr').innerHTML=''; if(window.QRCode) new QRCode($('qr'),{text:link(),width:220,height:220,correctLevel:QRCode.CorrectLevel.M}); else $('qr').textContent=link(); }
+  $('qrSave').addEventListener('click',function(){
+    if(!window.QRCode){ alert('QR 라이브러리를 불러오지 못했습니다. 새로고침해 주세요.'); return; }
+    var tmp=document.createElement('div'); tmp.style.cssText='position:fixed;left:-9999px;top:0';
+    document.body.appendChild(tmp);
+    new QRCode(tmp,{text:link(),width:1000,height:1000,correctLevel:QRCode.CorrectLevel.M});
+    setTimeout(function(){
+      var src=tmp.querySelector('canvas'); if(!src){ document.body.removeChild(tmp); alert('QR 생성에 실패했습니다.'); return; }
+      var M=100, W=1000+M*2, H=W+130, c=document.createElement('canvas'); c.width=W; c.height=H;
+      var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,W,H); x.drawImage(src,M,M,1000,1000);
+      var br=$('br').value, ev=$('ev').value.trim(); x.fillStyle='#111'; x.textAlign='center'; x.font='bold 44px sans-serif';
+      x.textBaseline='middle'; x.fillText('미래에셋금융서비스 그로우사업부',W/2,W+10);
+      var a=document.createElement('a'); a.href=c.toDataURL('image/png'); var KN={fp:'자녀지문',qm:'양자분석',pet:'펫행사'}[KIND]||''; a.download=(((br||'')+(ev||'')+KN).replace(/[\\/:*?"<>|\s]+/g,'')||'QR')+'.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); document.body.removeChild(tmp); logIt('QR저장');
+    },150);
+  });
+  $('qrBtn').addEventListener('click',function(){ var box=$('qrBox'); box.classList.toggle('hide'); if(!box.classList.contains('hide')){ drawQR(); logIt('QR'); } });
+  var CC={}; try{ CC=JSON.parse(K.getItem('snd_cc')||'{}')||{}; }catch(e){ CC={}; }
+  function ccList(){ var b=$('br').value; return Object.keys(CC).filter(function(k){ return CC[k]&&k!==b; }).slice(0,5); }
+  function ccDraw(hs){ var box=$('ccBox'); if(!hs){ return; } box.innerHTML=''; hs.forEach(function(h){ var l=document.createElement('label'); l.style.cssText='display:inline-flex;align-items:center;gap:5px;cursor:pointer'; var c=document.createElement('input'); c.type='checkbox'; c.checked=!!CC[h.branch]; c.dataset.b=h.branch; c.addEventListener('change',function(){ if(c.checked) CC[h.branch]=1; else delete CC[h.branch]; try{K.setItem('snd_cc',JSON.stringify(CC));}catch(e){} refresh(); }); l.appendChild(c); l.appendChild(document.createTextNode(h.branch)); box.appendChild(l); }); }
+  var MZOK={};
+  function note(){ var b=$('br').value; $('brNote').textContent=''; }
+  $('br').addEventListener('change',function(){ note(); });
+  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var hs=(r.heads||[]), cur=$('br').value, ord=[], pos={};
+    hs.forEach(function(h){ MZOK[h.branch]=h.mzCode; });
+    hs.filter(function(h){return !h.parent;}).forEach(function(h){ ord.push(h); hs.filter(function(c){return c.parent===h.branch;}).forEach(function(c){ ord.push(c); }); });
+    hs.forEach(function(h){ if(h.parent && ord.indexOf(h)<0) ord.push(h); });
+    if(ord.length){ var sel=$('br'); sel.innerHTML='<option value="">지사/지점을 선택하세요</option>'; ord.forEach(function(h){ var o=document.createElement('option'); o.value=h.branch; o.text=(h.parent?'\u00a0\u00a0└ ':'')+h.branch+(h.mzCode?'':' (조직코드 미등록)'); sel.appendChild(o); }); sel.value=cur; }
+    ccDraw(hs); note(); refresh(); }).catch(function(){ $('ccBox').innerHTML=''; $('brNote').textContent='지사 정보를 불러오지 못했습니다. 새로고침해 주세요.'; });
+  refresh(); drawLog();
+})();
+</script>
+<script src="/daon/assets/datefix.js"></script>
+</body>
+</html>

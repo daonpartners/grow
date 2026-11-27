@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>상담 신청 | 다온 보장점검센터</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B1E42">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar">
+  <a class="bar__name" href="index.html">다온 보장점검센터<span>미래에셋금융서비스 다온지사</span></a>
+  <a class="bar__tel" href="http://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener">카톡 문의</a>
+</header>
+
+<main class="wrap" id="main">
+
+  <div class="form-head">
+    <div class="kicker" id="kicker">상담 신청</div>
+    <h1 id="title">보장 점검 신청</h1>
+    <p id="desc"></p>
+  </div>
+
+  <div class="err" id="err" hidden></div>
+
+  <div id="fields"></div>
+
+  <!-- 동의 -->
+  <div class="fld agree">
+    <div class="lb">동의</div>
+
+    <div class="agree__item">
+      <label>
+        <input type="checkbox" id="ag1">
+        <span>개인정보 수집·이용에 동의합니다 <span class="tagreq">필수</span></span>
+      </label>
+      <div class="agree__box">
+        <b>수집 항목</b>
+        <p>이름, 휴대전화번호, 성별, 출생연도, 관심 분야, 통화 가능 시간, 상담 요청 내용<br>
+           (사업장 신청 시) 업종, 지역, 사업장 형태, 직원 수 구간</p>
+        <b>수집·이용 목적</b>
+        <p>보장 점검 및 보험 상담 서비스 제공, 담당자 배정, 상담 진행을 위한 연락</p>
+        <b>보유·이용 기간</b>
+        <p id="keep">상담 종료 후 1년</p>
+        <b>동의를 거부할 권리</b>
+        <p>동의를 거부하실 수 있습니다. 다만 거부하시면 상담 신청 접수가 불가능합니다.</p>
+        <b>수집하지 않는 정보</b>
+        <p>병력, 투약 이력, 수술 이력 등 건강 정보는 이 사이트에서 수집하지 않습니다.</p>
+      </div>
+    </div>
+
+    <div class="agree__item">
+      <label>
+        <input type="checkbox" id="ag2">
+        <span>보험 정보 및 안내 문자 수신에 동의합니다 <span class="tagopt">선택</span></span>
+      </label>
+      <div class="agree__box">
+        <p>보장 관련 안내, 제도 변경 소식 등을 문자로 받아보실 수 있습니다. 동의하지 않으셔도 상담 신청에는 영향이 없으며, 언제든 수신을 거부하실 수 있습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 봇 차단용 (사람에게 보이지 않음) -->
+  <div class="hp" aria-hidden="true">
+    <label>회사명<input type="text" id="hp" tabindex="-1" autocomplete="off"></label>
+  </div>
+
+  <div style="margin:22px 0 40px">
+    <button class="btn btn--navy" id="submit" type="button">신청서 보내기</button>
+    <div class="btn-note">보내기를 누르면 접수번호가 표시됩니다</div>
+  </div>
+
+</main>
+
+<!-- 완료 화면 -->
+<main class="wrap" id="doneView" hidden>
+  <div class="done">
+    <div class="done__mark">✓</div>
+    <h1>신청이 접수되었습니다</h1>
+    <p>담당자가 확인한 뒤 남겨주신 시간대에 연락드립니다.<br>영업일 기준 하루 안에 연락드리며, 연락이 없으면 대표번호로 문의해 주세요.</p>
+    <div class="code" id="ticket"></div>
+    <div style="margin-top:28px">
+      <a class="btn btn--line" href="index.html">처음으로</a>
+    </div>
+  </div>
+</main>
+
+<footer class="foot" id="foot"></footer>
+
+<script src="app.js"></script>
+<script>
+(function(){
+  var cat = qs('cat') || 'review';
+  if (!CATS[cat]) cat = 'review';
+  var isBiz = (cat === 'business');
+  var info  = CATS[cat];
+
+  $('#kicker').textContent = isBiz ? '사업장 리스크 점검' : '보장 점검 신청';
+  $('#title').textContent  = info.t;
+  $('#desc').textContent   = info.d;
+  $('#keep').textContent   = CONFIG.keepTerm;
+
+  /* ── 필드 구성 ── */
+  var timeOpts = ['언제든','오전','점심','오후','저녁','문자로만'];
+  var common =
+    '<div class="fld">' +
+      '<label for="name">이름<span class="req">필수</span></label>' +
+      '<input type="text" id="name" autocomplete="name" placeholder="홍길동">' +
+    '</div>' +
+    '<div class="fld">' +
+      '<label for="phone">휴대전화<span class="req">필수</span></label>' +
+      '<div class="hint">담당자 한 명만 이 번호로 연락드립니다</div>' +
+      '<input type="tel" id="phone" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000">' +
+    '</div>' +
+    '<div class="fld">' +
+      '<div class="lb">통화 가능한 시간<span class="req">필수</span></div>' +
+      '<div class="chips" id="timeChips">' +
+        timeOpts.map(function(t,i){
+          return '<label class="chip"><input type="radio" name="ctime" value="'+t+'"'+(i===0?' checked':'')+'><span>'+t+'</span></label>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+
+  var personal =
+    '<div class="fld">' +
+      '<div class="lb">성별</div>' +
+      '<div class="chips">' +
+        ['남','여','선택 안 함'].map(function(t,i){
+          return '<label class="chip"><input type="radio" name="sex" value="'+t+'"'+(i===2?' checked':'')+'><span>'+t+'</span></label>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="fld">' +
+      '<label for="byear">출생연도</label>' +
+      '<div class="hint">연령대에 맞는 안내를 위해서만 사용합니다</div>' +
+      '<input type="number" id="byear" inputmode="numeric" placeholder="1985" min="1930" max="2025">' +
+    '</div>' +
+    '<div class="fld">' +
+      '<div class="lb">현재 가입한 보험이 있나요?</div>' +
+      '<div class="chips">' +
+        ['있음','없음','잘 모름'].map(function(t,i){
+          return '<label class="chip"><input type="radio" name="has" value="'+t+'"'+(i===2?' checked':'')+'><span>'+t+'</span></label>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+
+  var biz =
+    '<div class="fld">' +
+      '<label for="bizType">업종<span class="req">필수</span></label>' +
+      '<select id="bizType">' +
+        ['선택해 주세요','음식점·카페','소매·판매','서비스·미용','학원·교육','사무실·전문직','제조·공장','숙박','기타']
+        .map(function(t){ return '<option>'+t+'</option>'; }).join('') +
+      '</select>' +
+    '</div>' +
+    '<div class="fld">' +
+      '<div class="lb">사업장 형태</div>' +
+      '<div class="chips">' +
+        ['임차','자가','재택·온라인'].map(function(t,i){
+          return '<label class="chip"><input type="radio" name="place" value="'+t+'"'+(i===0?' checked':'')+'><span>'+t+'</span></label>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="fld">' +
+      '<div class="lb">직원 수</div>' +
+      '<div class="chips">' +
+        ['없음','1~4명','5~9명','10명 이상'].map(function(t,i){
+          return '<label class="chip"><input type="radio" name="staff" value="'+t+'"'+(i===0?' checked':'')+'><span>'+t+'</span></label>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="fld">' +
+      '<label for="area">지역</label>' +
+      '<input type="text" id="area" placeholder="아산시 탕정면">' +
+    '</div>';
+
+  var memo =
+    '<div class="fld">' +
+      '<label for="memo">궁금한 점</label>' +
+      '<div class="hint">병력이나 치료 이력은 적지 마세요. 상담 단계에서 정식 절차로 확인합니다.</div>' +
+      '<textarea id="memo" placeholder="예: 보험료가 부담돼서 정리하고 싶습니다"></textarea>' +
+    '</div>';
+
+  $('#fields').innerHTML = common + (isBiz ? biz : personal) + memo;
+
+  /* 전화번호 자동 포맷 */
+  var ph = $('#phone');
+  ph.addEventListener('input', function(){ ph.value = fmtPhone(ph.value); });
+
+  /* 사업장 사전 점검 결과 이어받기 */
+  var pre = null;
+  try { pre = JSON.parse(sessionStorage.getItem('insu_check') || 'null'); } catch(e){}
+  if (isBiz && pre && pre.bizType) {
+    var sel = $('#bizType');
+    for (var i=0; i<sel.options.length; i++){
+      if (sel.options[i].text === pre.bizType) sel.selectedIndex = i;
+    }
+  }
+
+  function fail(msg, focusEl){
+    var e = $('#err');
+    e.textContent = msg; e.hidden = false;
+    window.scrollTo({ top:0, behavior:'smooth' });
+    if (focusEl) setTimeout(function(){ focusEl.focus(); }, 300);
+  }
+
+  var sending = false;
+  $('#submit').addEventListener('click', async function(){
+    if (sending) return;
+    $('#err').hidden = true;
+
+    // 봇 판별
+    if ($('#hp').value) { return; }
+    var landed = sessionStorage.getItem('insu_landed');
+    if (landed && (Date.now() - new Date(landed).getTime()) < 3000) {
+      return fail('잠시 후 다시 눌러주세요.');
+    }
+
+    var name  = $('#name').value.trim();
+    var phone = $('#phone').value.trim();
+    if (name.length < 2) return fail('이름을 입력해 주세요.', $('#name'));
+    if (!validPhone(phone)) return fail('휴대전화번호를 다시 확인해 주세요.', $('#phone'));
+    if (isBiz && $('#bizType').selectedIndex === 0) return fail('업종을 선택해 주세요.', $('#bizType'));
+    if (!$('#ag1').checked) return fail('개인정보 수집·이용 동의가 필요합니다.');
+
+    function radio(n){ var el = document.querySelector('input[name="'+n+'"]:checked'); return el ? el.value : ''; }
+
+    var payload = {
+      category:    cat,
+      categoryName:info.t,
+      type:        isBiz ? 'business' : 'personal',
+      name:        name,
+      phone:       phone,
+      callTime:    radio('ctime'),
+      memo:        $('#memo').value.trim().slice(0, 500),
+      agreeMarketing: $('#ag2').checked,
+      agreedAt:    new Date().toISOString(),
+      trace:       trace(),
+      ticket:      ticketNo()
+    };
+
+    if (isBiz) {
+      payload.bizType = $('#bizType').value;
+      payload.place   = radio('place');
+      payload.staff   = radio('staff');
+      payload.area    = $('#area').value.trim();
+      if (pre && pre.answers) payload.preCheck = pre;
+    } else {
+      payload.sex     = radio('sex');
+      payload.birthYear = $('#byear').value.trim();
+      payload.hasPolicy = radio('has');
+    }
+
+    sending = true;
+    $('#submit').disabled = true;
+    $('#submit').textContent = '보내는 중...';
+
+    try {
+      await sendLead(payload);
+      sessionStorage.removeItem('insu_check');
+      $('#main').hidden = true;
+      $('#ticket').textContent = '접수번호 ' + payload.ticket;
+      $('#doneView').hidden = false;
+      window.scrollTo(0, 0);
+    } catch (e) {
+      sending = false;
+      $('#submit').disabled = false;
+      $('#submit').textContent = '신청서 보내기';
+      fail('접수 중 문제가 생겼습니다. 다시 시도하시거나 카카오톡 채널로 문의해 주세요.');
+    }
+  });
+
+  renderFooter($('#foot'));
+})();
+</script>
+<script src="/daon/assets/home-btn.js" defer></script></body>
+</html>

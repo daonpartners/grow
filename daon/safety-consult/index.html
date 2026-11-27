@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>사장님 사업장 보험 상담 | 보험물어봄 by 다온</title>
+<meta name="description" content="화재·배상책임·의무보험·중대재해까지 사업장 보험을 한 번에 점검해 드립니다.">
+<meta name="robots" content="index, follow">
+<meta name="naver-site-verification" content="a09350fbdee79685108cbb46df68b0bb178bb94b">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="보험물어봄 by 다온">
+<meta property="og:title" content="사장님 사업장 보험 상담">
+<meta property="og:description" content="화재·배상책임·의무보험·중대재해까지 사업장 보험을 한 번에 점검해 드립니다.">
+<meta property="og:url" content="https://grow.ai.kr/daon/safety-consult">
+<meta name="theme-color" content="#0B1E42">
+<link rel="canonical" href="https://grow.ai.kr/daon/safety-consult">
+<link rel="icon" type="image/png" href="/daon/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="/daon/assets/favicon-daon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/daon/assets/consult.css?v=20261111b">
+</head>
+<body>
+<div class="app">
+  <header class="cs-top">
+    <a href="https://grow.ai.kr/daon/" aria-label="보험물어봄 홈"><img src="/daon/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a>
+    <a class="call" href="tel:0415341124">📞 전화 상담</a>
+  </header>
+
+  <section class="cs-hero">
+    <div class="ic">🏪</div>
+    <p class="kick">사장님 보험 상담</p>
+    <h1>사장님 사업장 보험,<br>한 번에 점검해 드려요</h1>
+    <p class="sub">화재, 손님 사고 배상, 의무보험, 직원 보험까지 빠진 곳이 없는지 확인해 드립니다.</p>
+    <div class="cs-badges"><span>상담 비용 없음</span><span>신청만으로 가입되지 않음</span></div>
+  </section>
+
+  <section class="cs-sec">
+    <h2><span class="n">1</span>사업장 정보</h2>
+    <div class="row fl"><div><label for="sBiz">업종</label><input class="inp" id="sBiz" maxlength="30" placeholder="예) 한식당"></div><div><label for="sArea">지역</label><input class="inp" id="sArea" maxlength="30" placeholder="예) 아산시"></div></div>
+    <div class="fl"><span class="lb">일하는 사람 <small>사장님·아르바이트 포함</small></span><div class="seg" data-k="head"><button type="button" data-v="1인(대표만)">혼자</button><button type="button" data-v="2~4인">2~4명</button><button type="button" data-v="5~19인">5~19명</button><button type="button" data-v="20인 이상">20명 이상</button></div></div>
+    <div class="fl"><span class="lb">사업장 건물</span><div class="seg" data-k="own"><button type="button" data-v="임대">빌린 곳</button><button type="button" data-v="자가">내 건물</button></div></div>
+  </section>
+  <section class="cs-sec">
+    <h2><span class="n">2</span>상담받고 싶은 보험</h2>
+    <div class="fl"><span class="lb">여러 개 골라도 돼요</span><div class="opts multi" data-k="topics"><button type="button" class="opt" data-v="화재보험"><span class="i">🔥</span><span><b>화재보험</b><small>시설·집기·재고</small></span></button><button type="button" class="opt" data-v="영업배상책임"><span class="i">🧑‍🤝‍🧑</span><span><b>손님 사고 배상</b><small>영업배상책임</small></span></button><button type="button" class="opt" data-v="의무보험"><span class="i">📜</span><span><b>의무보험</b><small>다중이용·재난·가스 등</small></span></button><button type="button" class="opt" data-v="중대재해·산재"><span class="i">🦺</span><span><b>중대재해·산재</b><small>5인 이상 사업장</small></span></button><button type="button" class="opt" data-v="직원 단체보험"><span class="i">👥</span><span><b>직원 보험</b><small>상해·단체</small></span></button><button type="button" class="opt" data-v="잘 모름"><span class="i">❔</span><span><b>잘 모르겠어요</b><small>알아서 봐주세요</small></span></button></div></div>
+    <div class="fl"><span class="lb">지금 가입한 사업장 보험</span><div class="seg" data-k="hasPolicy"><button type="button" data-v="있음">있어요</button><button type="button" data-v="없음">없어요</button><button type="button" data-v="모름">잘 몰라요</button></div></div>
+    <p class="box-note">우리 가게가 의무보험 대상인지 먼저 알고 싶다면 <a href="/daon/biz-d/" style="color:var(--navy);font-weight:700">1분 의무보험 확인</a>을 해보세요.</p>
+  </section>
+  <div data-contact></div>
+  <footer class="cs-legal"></footer>
+</div>
+<script src="/daon/assets/consult.js?v=20261111b"></script>
+<script>
+DaonConsult({
+  api: 'https://daonpartners.app.n8n.cloud/webhook/daon-safety-lead', contactNo: 3, noBirth: false,
+  doneTips: ['사업자등록증과 지금 가입한 보험증권을 준비해 두시면 상담이 빨라집니다.'],
+  validate: function(a){
+    if (!a.v('sBiz')) return ['업종을 적어주세요', 'sBiz'];
+    if (!a.S.topics.length) return ['상담받고 싶은 보험을 골라주세요', document.querySelector('[data-k=topics]')];
+  },
+  payload: function(a){
+    return { biz: a.v('sBiz'), area: a.v('sArea') || '-', headcount: a.S.head || '모름', ownership: a.S.own || '-', topics: a.S.topics, hasPolicy: a.S.hasPolicy || '모름' };
+  }
+});
+</script>
+<script src="/daon/assets/home-btn.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+ "name": "다온 영업관리",
+ "short_name": "다온 CRM",
+ "description": "다온지사 설계사 영업관리",
+ "start_url": "/crm/",
+ "scope": "/crm/",
+ "display": "standalone",
+ "background_color": "#0B1E42",
+ "theme_color": "#0B1E42",
+ "lang": "ko",
+ "icons": [
+  {
+   "src": "/assets/app-icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "/assets/app-icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

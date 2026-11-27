@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>사장님 보험 가이드 | 다온파트너스</title>
+<meta name="description" content="업종과 사업장 상황을 고르면 확인해야 할 보험을 바로 알려드리고, 담당 설계사가 상담해 드립니다.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="https://grow.ai.kr/daon/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="https://grow.ai.kr/daon/assets/favicon-daon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#F2F4F6; --surface:#FFFFFF; --ink:#191F28; --ink2:#4E5968; --ink3:#8B95A1; --line:#E5E8EB;
+  --brand:#0B1E42; --brand-dk:#0B1E42; --brand-lt:#FBEFF1;
+  --must:#D9480F; --must-lt:#FFF4EC; --law:#1F5FBF; --law-lt:#EEF4FF; --opt:#1E9E5A; --opt-lt:#EAF7F0;
+  --err:#E5484D; --err-lt:#FDECEC;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input{font:inherit;color:inherit}
+.app{max-width:520px;margin:0 auto;min-height:100%;background:var(--surface);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+
+.top{position:sticky;top:0;z-index:5;background:var(--surface);padding:12px 16px 0}
+.top-row{display:flex;align-items:center;height:44px}
+.back{width:44px;height:44px;margin-left:-10px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.back:active{background:var(--bg)}
+.back svg{width:24px;height:24px}
+.back.off{visibility:hidden}
+.brand{flex:1;text-align:center;font-weight:800;font-size:15px;color:var(--ink2);margin-right:34px}
+.brand b{color:var(--brand)}
+.bar{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--brand);border-radius:4px;transition:width .35s ease}
+.bar.hide{visibility:hidden}
+
+main{flex:1;padding:24px 22px 150px}
+.step{display:none}
+.step.on{display:block;animation:in .28s ease}
+@keyframes in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.step.on{animation:none}.bar i{transition:none}}
+.q{font-size:26px;font-weight:800;line-height:1.35;letter-spacing:-.4px;margin:4px 0 8px}
+.sub{color:var(--ink2);font-size:16px;margin:0 0 24px}
+
+/* 인트로 */
+.intro .q{font-size:30px;margin-top:18px}
+.flow{margin:30px 0 0;padding:0;list-style:none}
+.flow li{display:flex;gap:16px;align-items:flex-start;padding:0 0 24px;position:relative}
+.flow li:not(:last-child)::before{content:"";position:absolute;left:19px;top:42px;bottom:4px;width:2px;background:var(--line)}
+.flow .n{flex:none;width:40px;height:40px;border-radius:50%;background:var(--brand-lt);color:var(--brand-dk);font-weight:800;display:flex;align-items:center;justify-content:center}
+.flow b{display:block;font-size:18px;margin-top:7px}
+.flow span{display:block;color:var(--ink3);font-size:15px}
+.pill{display:inline-block;margin-top:4px;background:var(--bg);border-radius:10px;padding:10px 14px;font-size:15px;color:var(--ink2)}
+
+/* 선택 카드 */
+.opts{display:flex;flex-direction:column;gap:10px}
+.opts.two{display:grid;grid-template-columns:1fr 1fr}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:17px 18px;border-radius:18px;border:2px solid var(--line);background:var(--surface);transition:border-color .15s,background .15s}
+.opt:active{background:var(--bg)}
+.opt .ic{flex:none;width:46px;height:46px;border-radius:14px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:25px}
+.opt b{display:block;font-size:18px;line-height:1.35}
+.opt span.d{display:block;color:var(--ink3);font-size:14.5px;line-height:1.4}
+.opt.sel{border-color:var(--brand);background:var(--brand-lt)}
+.opt.sel .ic{background:#fff}
+.opts.two .opt{flex-direction:column;align-items:flex-start;gap:10px;padding:16px}
+.opts.two .opt b{font-size:17px}
+.chk{margin-left:auto;flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line)}
+.opt.sel .chk{border-color:var(--brand);background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/16px no-repeat}
+.help{color:var(--ink3);font-size:14.5px;margin:14px 2px 0}
+
+/* 결과 */
+.res-head{border-radius:20px;background:var(--ink);color:#fff;padding:22px 20px;margin-bottom:22px}
+.res-head .big{font-size:40px;font-weight:800;line-height:1}
+.res-head .big small{font-size:18px;font-weight:700;margin-left:4px}
+.res-head p{margin:10px 0 0;color:#C9CFD6;font-size:15px}
+.grp{margin:0 0 22px}
+.grp h3{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.grp h3 i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.card{border-radius:16px;padding:16px 16px 14px;margin-bottom:8px;border-left:5px solid}
+.card b{display:block;font-size:17px;margin-bottom:3px}
+.card p{margin:0;font-size:15px;color:var(--ink2);line-height:1.5}
+.card small{display:block;margin-top:8px;font-size:12.5px;color:var(--ink3)}
+.card.must{background:var(--must-lt);border-color:var(--must)} .grp.must h3 i{background:var(--must)}
+.card.law{background:var(--law-lt);border-color:var(--law)} .grp.law h3 i{background:var(--law)}
+.card.opt2{background:var(--opt-lt);border-color:var(--opt)} .grp.opt2 h3 i{background:var(--opt)}
+.disc{font-size:13.5px;color:var(--ink3);background:var(--bg);border-radius:14px;padding:14px 16px;margin-top:6px}
+
+/* 입력 */
+.field{margin-bottom:20px}
+.field label{display:block;font-size:15px;font-weight:700;color:var(--ink2);margin-bottom:8px}
+.field label em{font-style:normal;color:var(--ink3);font-weight:600;font-size:14px}
+.inp{width:100%;height:58px;border:2px solid var(--line);border-radius:16px;padding:0 18px;font-size:19px;font-weight:600;background:var(--surface);outline:none}
+.inp:focus{border-color:var(--brand)}
+.inp::placeholder{color:#B0B8C1;font-weight:500}
+.inp.bad{border-color:var(--err);background:var(--err-lt)}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;min-height:52px;border-radius:14px;border:2px solid var(--line);font-weight:700;font-size:16px;padding:6px}
+.seg button.on{border-color:var(--brand);background:var(--brand-lt);color:var(--brand-dk)}
+.agree{display:flex;gap:14px;align-items:flex-start;margin-top:8px;padding:16px;border-radius:16px;border:2px solid var(--line);text-align:left;width:100%}
+.agree .box{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);margin-top:1px}
+.agree.on{border-color:var(--brand);background:var(--brand-lt)}
+.agree.on .box{border-color:var(--brand);background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/16px no-repeat}
+.agree b{display:block;font-size:16px;margin-bottom:3px}
+.agree span{display:block;font-size:13.5px;color:var(--ink2);line-height:1.55}
+.err{display:none;margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--err-lt);color:var(--err);font-weight:700;font-size:15.5px}
+.err.on{display:block}
+
+/* 하단 */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:6;background:linear-gradient(to top,var(--surface) 72%,rgba(255,255,255,0));padding:18px 22px calc(16px + env(safe-area-inset-bottom,0px))}
+.dock-in{max-width:476px;margin:0 auto}
+.cta{width:100%;height:62px;border-radius:18px;background:var(--brand);color:#fff;font-size:19px;font-weight:800}
+.cta:active{background:var(--brand-dk)}
+.cta:disabled{background:#D1D6DB}
+.dock.hide{display:none}
+.cta:focus-visible,.opt:focus-visible,.seg button:focus-visible,.agree:focus-visible,.back:focus-visible,.kakao:focus-visible{outline:3px solid #2F6FEB;outline-offset:2px}
+
+/* 완료 */
+.done{text-align:center;padding-top:50px}
+.mark{width:92px;height:92px;border-radius:50%;background:var(--opt);margin:0 auto 24px;display:flex;align-items:center;justify-content:center}
+.mark svg{width:48px;height:48px}
+.next{text-align:left;background:var(--bg);border-radius:18px;padding:20px;margin:26px 0 0}
+.next p{margin:0 0 10px;font-size:16px;color:var(--ink2)} .next p:last-child{margin:0}
+.next b{color:var(--ink)}
+.kakao{display:flex;align-items:center;justify-content:center;width:100%;height:56px;margin-top:18px;border-radius:16px;background:#FEE500;color:#191919;font-weight:800;font-size:17px;text-decoration:none}
+
+footer{padding:24px 22px calc(120px + env(safe-area-inset-bottom,0px));color:var(--ink3);font-size:12px;line-height:1.7;background:var(--surface)}
+footer ul{margin:6px 0 0;padding-left:16px}
+footer b{color:var(--ink2)}
+
+/* 보험물어봄 by 다온 공통 표기 (2026-11-11) */
+.brand img{height:22px;width:auto;display:inline-block;vertical-align:middle}
+.cs-legal{margin:0;padding:22px 22px calc(130px + env(safe-area-inset-bottom,0px));background:#F3F4F7;font-size:12.5px;color:#8B95A1;line-height:1.7;text-align:left}
+.cs-legal .who{margin:0 0 10px;padding:12px 14px;border-radius:12px;background:#fff;color:#4E5968;font-size:13px}
+.cs-legal .who b{color:#191F28}
+.cs-legal p{margin:0 0 4px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="top-row">
+      <button class="back off" id="backBtn" aria-label="이전 단계">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="brand"><a href="https://grow.ai.kr/daon/"><img src="/daon/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a></div>
+    </div>
+    <div class="bar hide" id="bar"><i id="barFill"></i></div>
+  </div>
+
+  <main>
+    <!-- 시작 -->
+    <section class="step on intro" data-step="intro">
+      <h1 class="q">우리 사업장에<br>필요한 보험,<br>1분이면 알 수 있어요</h1>
+      <p class="sub">질문에 답하면 확인해야 할 보험을 바로 보여드려요.</p>
+      <ol class="flow">
+        <li><div class="n">1</div><div><b>사업장 상황 고르기</b><span>업종, 위치, 직원 수</span></div></li>
+        <li><div class="n">2</div><div><b>확인할 보험 보기</b><span>법으로 정해진 보험부터</span></div></li>
+        <li><div class="n">3</div><div><b>무료 상담 받기</b><span>담당 설계사가 연락드려요</span></div></li>
+      </ol>
+      <div class="pill">연락처는 마지막에, 원하실 때만 남기시면 돼요.</div>
+    </section>
+
+    <!-- 업종 -->
+    <section class="step" data-step="biz">
+      <h2 class="q">어떤 사업장을<br>운영하세요?</h2>
+      <p class="sub">가장 가까운 것 하나를 골라주세요.</p>
+      <div class="opts two" id="bizOpts"></div>
+    </section>
+
+    <!-- 층 (음식점만) -->
+    <section class="step" data-step="floor">
+      <h2 class="q">사업장이<br>몇 층에 있나요?</h2>
+      <p class="sub">손님이 드나드는 매장 기준이에요.</p>
+      <div class="opts" id="floorOpts"></div>
+    </section>
+
+    <!-- 면적 (음식점만) -->
+    <section class="step" data-step="size">
+      <h2 class="q">매장 넓이는<br>어느 정도인가요?</h2>
+      <p class="sub">영업장으로 쓰는 면적이에요. 대략이면 됩니다.</p>
+      <div class="opts" id="sizeOpts"></div>
+    </section>
+
+    <!-- 시설 -->
+    <section class="step" data-step="fac">
+      <h2 class="q">해당하는 것을<br>모두 골라주세요</h2>
+      <p class="sub">없으면 '해당 없음'을 눌러주세요.</p>
+      <div class="opts" id="facOpts"></div>
+      <div class="err" id="err-fac"></div>
+    </section>
+
+    <!-- 직원 -->
+    <section class="step" data-step="staff">
+      <h2 class="q">사장님 포함<br>몇 명이 일하나요?</h2>
+      <p class="sub">아르바이트도 포함해서 세어주세요.</p>
+      <div class="opts" id="staffOpts"></div>
+    </section>
+
+    <!-- 임대/자가 -->
+    <section class="step" data-step="own">
+      <h2 class="q">사업장 건물은<br>어떤 형태인가요?</h2>
+      <p class="sub">마지막 질문이에요.</p>
+      <div class="opts" id="ownOpts"></div>
+    </section>
+
+    <!-- 결과 -->
+    <section class="step" data-step="result">
+      <div class="res-head">
+        <div class="big" id="resCount"></div>
+        <p id="resSub"></p>
+      </div>
+      <div id="resBody"></div>
+      <div class="disc">답변을 바탕으로 한 간단 확인 결과예요. 실제 가입 대상 여부와 보장 내용은 사업장 정보와 약관을 확인해서 상담 때 정확히 안내해 드려요.</div>
+    </section>
+
+    <!-- 연락처 -->
+    <section class="step" data-step="contact">
+      <h2 class="q">상담받으실<br>연락처를 남겨주세요</h2>
+      <p class="sub">방금 확인한 결과가 담당 설계사에게 함께 전달돼요.</p>
+      <div class="field"><label for="fName">성함</label><input class="inp" id="fName" type="text" autocomplete="name" placeholder="홍길동"></div>
+      <div class="field"><label for="fPhone">휴대폰 번호</label><input class="inp" id="fPhone" type="tel" inputmode="numeric" maxlength="13" autocomplete="tel" placeholder="010-0000-0000"></div>
+      <div class="field"><label for="fShop">상호 <em>(선택)</em></label><input class="inp" id="fShop" type="text" placeholder="예) 다온식당"></div>
+      <div class="field"><label for="fArea">사업장 지역 <em>(선택)</em></label><input class="inp" id="fArea" type="text" placeholder="예) 아산시 탕정면"></div>
+      <div class="field">
+        <label>지금 가입한 사업장 보험이 있나요?</label>
+        <div class="seg" id="hasSeg"><button type="button" data-v="있음">있어요</button><button type="button" data-v="없음">없어요</button><button type="button" class="on" data-v="모름">잘 몰라요</button></div>
+      </div>
+      <button class="agree" type="button" id="agreeBtn" aria-pressed="false">
+        <span class="box"></span>
+        <div><b>상담 연락에 동의합니다</b>
+        <span>입력한 정보와 답변 내용을 보험 상담 목적으로 다온파트너스에 제공합니다. 상담 외 목적으로 사용하지 않습니다.</span></div>
+      </button>
+      <button class="agree" type="button" id="adBtn" aria-pressed="false" style="margin-top:10px">
+        <span class="box"></span>
+        <div><b>(선택) 보험 상품·이벤트 안내 수신 동의</b>
+        <span>사업장 보험 소식과 이벤트를 문자로 보내드립니다. 동의하지 않아도 상담은 그대로 진행되며, 언제든 수신을 거부할 수 있습니다.</span></div>
+      </button>
+      <div class="err" id="err-contact"></div>
+    </section>
+
+    <!-- 완료 -->
+    <section class="step" data-step="done">
+      <div class="done">
+        <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2 class="q">상담 신청이<br>접수됐어요</h2>
+        <p class="sub" id="doneName" style="margin:0"></p>
+        <div class="next">
+          <p><b>담당 설계사</b>가 확인하고 연락드려요.</p>
+          <p>보험증권이 있으면 미리 찾아두시면 상담이 빨라져요.</p>
+          <p>이 화면은 닫으셔도 됩니다.</p>
+        </div>
+        <a class="kakao" id="kakaoLink" href="http://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener">급하시면 카카오톡으로 문의</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cs-legal">
+    <div class="who">
+      <p><b>모집 보험대리점</b> 미래에셋금융서비스(주) · 대리점 등록번호 2014048012</p>
+      <p><b>담당 보험설계사</b> 김화진 · 설계사 등록번호 20150978060015</p>
+      <p><b>운영</b> 다온파트너스 · 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 041-534-1124</p>
+    </div>
+    <p>이 페이지는 보험 상담 연결 화면이며, 보험료 산출과 청약은 상담을 통해 진행합니다. 신청만으로 보험계약이 체결되지 않습니다.</p>
+    <p>계약 전 상품설명서와 약관을 반드시 확인하세요. 기존 계약을 해지하고 새로 가입하면 인수 거절, 보험료 인상, 보장 변경이 있을 수 있습니다.</p>
+    <p>보험금은 약관의 지급 한도와 면책 사항에 따라 제한될 수 있습니다.</p>
+    <p>개인정보 보호책임자 다온파트너스 · 041-534-1124</p>
+  </footer>
+</div>
+
+<div class="dock" id="dock"><div class="dock-in"><button class="cta" id="cta" type="button">시작하기</button></div></div>
+
+<script>
+(function(){
+  var WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-safety-lead';
+
+  var BIZ = [
+    {v:'food',   ic:'🍽️', t:'음식점·카페', d:'식당, 카페, 제과점'},
+    {v:'multi',  ic:'🎤', t:'노래방·PC방·주점', d:'고시원, 찜질방 등'},
+    {v:'stay',   ic:'🛏️', t:'숙박', d:'모텔, 펜션, 민박'},
+    {v:'edu',    ic:'📚', t:'학원·교육', d:'학원, 교습소'},
+    {v:'shop',   ic:'🛍️', t:'판매·서비스', d:'편의점, 미용실, 세탁소'},
+    {v:'office', ic:'💼', t:'사무실', d:'사무소, 전문직'},
+    {v:'factory',ic:'🏭', t:'제조·공장', d:'식품가공, 제조'},
+    {v:'etc',    ic:'➕', t:'기타', d:'위에 없는 업종'}
+  ];
+  var FLOOR = [
+    {v:'1',  ic:'🏠', t:'1층', d:'길에서 바로 들어오는 매장'},
+    {v:'up', ic:'🏢', t:'2층 이상', d:''},
+    {v:'b',  ic:'⬇️', t:'지하', d:''}
+  ];
+  var SIZE = [
+    {v:'s', ic:'▫️', t:'20평 미만', d:'약 66㎡ 미만'},
+    {v:'m', ic:'◻️', t:'20평 ~ 30평', d:'약 66㎡ ~ 100㎡'},
+    {v:'l', ic:'⬜', t:'30평 이상', d:'약 100㎡ 이상'},
+    {v:'u', ic:'❔', t:'잘 모르겠어요', d:''}
+  ];
+  var FAC = [
+    {v:'lpg',  ic:'🔥', t:'가스통(LPG)을 써요', d:'도시가스 배관이 아닌 가스통'},
+    {v:'elev', ic:'🛗', t:'엘리베이터를 직접 관리해요', d:'건물주이거나 관리를 맡은 경우'},
+    {v:'play', ic:'🛝', t:'어린이 놀이시설이 있어요', d:'키즈카페, 놀이터 등'},
+    {v:'none', ic:'✖️', t:'해당 없음', d:''}
+  ];
+  var STAFF = [
+    {v:'1인(대표만)', ic:'🙋', t:'혼자 해요', d:''},
+    {v:'2~4인', ic:'👥', t:'2 ~ 4명', d:''},
+    {v:'5~19인', ic:'👨‍👩‍👧', t:'5 ~ 19명', d:''},
+    {v:'20~49인', ic:'🏬', t:'20 ~ 49명', d:''},
+    {v:'50인 이상', ic:'🏭', t:'50명 이상', d:''}
+  ];
+  var OWN = [
+    {v:'임대', ic:'🔑', t:'빌려서 써요 (임대)', d:''},
+    {v:'자가', ic:'🏠', t:'내 건물이에요 (자가)', d:''}
+  ];
+
+  var params = new URLSearchParams(location.search);
+  var S = { biz:'', floor:'', size:'', fac:[], staff:'', own:'', has:'모름', agree:false,
+            manager: params.get('m') || '', hist:[] };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var order = ['intro','biz','floor','size','fac','staff','own','result','contact','done'];
+  function flow(){
+    return order.filter(function(s){ return (s!=='floor' && s!=='size') || S.biz==='food'; });
+  }
+  var cur = 'intro';
+
+  /* ---------- 선택지 그리기 ---------- */
+  function drawOpts(boxId, list, multi, key){
+    $(boxId).innerHTML = list.map(function(o){
+      return '<button type="button" class="opt" data-v="'+o.v+'"><span class="ic">'+o.ic+'</span>' +
+             '<div><b>'+o.t+'</b>'+(o.d?'<span class="d">'+o.d+'</span>':'')+'</div>' +
+             (multi?'<span class="chk"></span>':'') + '</button>';
+    }).join('');
+    $(boxId).addEventListener('click', function(e){
+      var b = e.target.closest('.opt'); if(!b) return;
+      var v = b.dataset.v;
+      if(multi){
+        if(v==='none'){ S.fac = S.fac.indexOf('none')>=0 ? [] : ['none']; }
+        else{
+          S.fac = S.fac.filter(function(x){ return x!=='none'; });
+          var i = S.fac.indexOf(v); if(i>=0) S.fac.splice(i,1); else S.fac.push(v);
+        }
+        mark(boxId, S.fac); clearErr(); updateCta();
+      } else {
+        S[key] = v; mark(boxId, [v]); updateCta();
+        setTimeout(function(){ if(cur===key || (key==='floor'&&cur==='floor')) next(); }, 200);
+      }
+    });
+  }
+  function mark(boxId, vals){
+    $(boxId).querySelectorAll('.opt').forEach(function(o){ o.classList.toggle('sel', vals.indexOf(o.dataset.v)>=0); });
+  }
+  drawOpts('bizOpts', BIZ, false, 'biz');
+  drawOpts('floorOpts', FLOOR, false, 'floor');
+  drawOpts('sizeOpts', SIZE, false, 'size');
+  drawOpts('facOpts', FAC, true, 'fac');
+  drawOpts('staffOpts', STAFF, false, 'staff');
+  drawOpts('ownOpts', OWN, false, 'own');
+
+  /* ---------- 이동 ---------- */
+  var CTA = {intro:'시작하기', fac:'다음', result:'무료 상담 신청하기', contact:'상담 신청 보내기'};
+  function show(name, push){
+    cur = name;
+    document.querySelectorAll('.step').forEach(function(s){ s.classList.toggle('on', s.dataset.step===name); });
+    var f = flow(), i = f.indexOf(name), qEnd = f.indexOf('result');
+    $('backBtn').classList.toggle('off', name==='intro' || name==='done');
+    $('bar').classList.toggle('hide', name==='intro' || name==='done');
+    $('barFill').style.width = Math.min(100, Math.round(i / qEnd * 100)) + '%';
+    var auto = ['biz','floor','size','staff','own'].indexOf(name) >= 0;
+    $('dock').classList.toggle('hide', name==='done' || (auto && !S[name]));
+    $('cta').textContent = CTA[name] || '다음';
+    if(name==='result') renderResult();
+    clearErr(); updateCta(); window.scrollTo(0,0);
+    if(push) history.pushState({s:name}, '', location.href);
+  }
+  function next(){
+    if(!validate()) return;
+    if(cur==='contact'){ submit(); return; }
+    var f = flow(); show(f[f.indexOf(cur)+1], true);
+  }
+  history.replaceState({s:'intro'}, '', location.href);
+  window.addEventListener('popstate', function(e){
+    if(cur==='done'){ history.pushState({s:'done'}, '', location.href); return; }
+    show((e.state && e.state.s) || 'intro', false);
+  });
+  $('backBtn').addEventListener('click', function(){ history.back(); });
+  $('cta').addEventListener('click', next);
+
+
+  function updateCta(){
+    var ok = true;
+    if(cur==='fac') ok = S.fac.length>0;
+    if(cur==='contact') ok = S.agree;
+    if(['biz','floor','size','staff','own'].indexOf(cur)>=0){
+      ok = !!S[cur];
+      $('dock').classList.toggle('hide', !ok);
+    }
+    $('cta').disabled = !ok;
+  }
+  function showErr(msg, el){
+    var box = $('err-'+cur); if(box){ box.textContent = msg; box.classList.add('on'); }
+    if(el){ el.classList.add('bad'); el.focus(); }
+  }
+  function clearErr(){
+    document.querySelectorAll('.err').forEach(function(e){ e.classList.remove('on'); });
+    document.querySelectorAll('.inp.bad').forEach(function(e){ e.classList.remove('bad'); });
+  }
+  function digits(v){ return (v||'').replace(/[^0-9]/g,''); }
+  function validate(){
+    clearErr();
+    if(cur==='fac' && !S.fac.length){ showErr('해당하는 것을 고르거나 "해당 없음"을 눌러주세요.'); return false; }
+    if(cur==='contact'){
+      if($('fName').value.trim().length < 2){ showErr('성함을 적어주세요.', $('fName')); return false; }
+      if(!/^01\d{8,9}$/.test(digits($('fPhone').value))){ showErr('휴대폰 번호를 다시 확인해주세요.', $('fPhone')); return false; }
+      if(!S.agree){ showErr('상담 연락 동의에 체크해주세요.'); return false; }
+    }
+    return true;
+  }
+
+  /* ---------- 결과 계산 ---------- */
+  var FIRE_MULTI = {k:'다중이용업소 화재배상책임보험', p:'화재 등으로 손님이나 다른 사람이 피해를 입었을 때 배상하는 보험이에요.', law:'다중이용업소의 안전관리에 관한 특별법'};
+  var DISASTER   = {k:'재난배상책임보험', p:'화재, 폭발, 붕괴로 다른 사람이 피해를 입었을 때 배상하는 보험이에요.', law:'재난 및 안전관리 기본법'};
+  function calc(){
+    var must = [], law = [], opt = [];
+    var b = S.biz, fl = S.floor, sz = S.size;
+    if(b==='food'){
+      if(fl==='1'){
+        if(sz==='l') must.push(add(DISASTER, '1층 음식점으로 영업장 면적이 100㎡(약 30평) 이상이면 가입 대상이에요.'));
+        if(sz==='u') must.push(add(DISASTER, '1층 음식점은 영업장 면적이 100㎡(약 30평) 이상이면 가입 대상이에요. 면적 확인이 필요해요.'));
+      }
+      if(fl==='up' && (sz==='l' || sz==='u'))
+        must.push(add(FIRE_MULTI, '2층 이상 음식점은 영업장 면적이 100㎡(약 30평) 이상이면 가입 대상이에요.' + (sz==='u'?' 면적 확인이 필요해요.':'')));
+      if(fl==='b' && sz!=='s')
+        must.push(add(FIRE_MULTI, '지하 음식점은 영업장 면적이 66㎡(약 20평) 이상이면 가입 대상이에요.' + (sz==='u'?' 면적 확인이 필요해요.':'')));
+    }
+    if(b==='multi') must.push(add(FIRE_MULTI, '노래연습장, PC방, 주점, 고시원 등 다중이용업소는 가입 대상일 수 있어요.'));
+    if(b==='edu')   must.push(add(FIRE_MULTI, '학원은 수용 인원 등 규모에 따라 다중이용업소에 해당할 수 있어요.'));
+    if(b==='stay')  must.push(add(DISASTER, '숙박업소는 재난배상책임보험 가입 대상 시설에 포함돼 있어요.'));
+    if(S.fac.indexOf('lpg')>=0)  must.push({k:'가스사고배상책임보험', p:'LPG를 사용하는 음식점 등은 가스사고로 인한 배상 보험 가입 대상일 수 있어요.', law:'액화석유가스의 안전관리 및 사업법'});
+    if(S.fac.indexOf('elev')>=0) must.push({k:'승강기 사고배상책임보험', p:'승강기를 관리하는 사람(관리주체)은 승강기 사고 배상 보험에 가입해야 해요.', law:'승강기 안전관리법'});
+    if(S.fac.indexOf('play')>=0) must.push({k:'어린이놀이시설 사고배상책임보험', p:'어린이놀이시설을 관리하는 사람은 사고 배상 보험에 가입해야 해요.', law:'어린이놀이시설 안전관리법'});
+
+    if(['5~19인','20~49인','50인 이상'].indexOf(S.staff)>=0)
+      law.push({k:'중대재해처벌법 적용', p:'상시 근로자 5명 이상 사업장은 중대재해처벌법 적용 대상이에요. 위험성평가 등 안전관리 의무를 점검해 보세요.', law:'중대재해 처벌 등에 관한 법률'});
+
+    opt.push({k:'화재보험', p:'불이 났을 때 우리 사업장 시설, 집기, 재고 피해를 보상받는 보험이에요.' + (S.own==='임대'?' 임대 매장은 건물주에게 물어줄 손해도 함께 확인해 보세요.':'')});
+    opt.push({k:'영업배상책임보험', p:'사업장에서 손님이 다치거나 손님 물건이 망가졌을 때 배상하는 보험이에요.'});
+    if(S.staff && S.staff!=='1인(대표만)') opt.push({k:'직원 상해보험', p:'일하다 다친 직원의 치료비 등을 보장하는 보험이에요.'});
+    if(b==='factory') opt.push({k:'생산물배상책임보험', p:'만들어 판 제품 때문에 다른 사람이 피해를 입었을 때 배상하는 보험이에요.'});
+    return {must:must, law:law, opt:opt};
+  }
+  function add(base, why){ return {k:base.k, p:why + ' ' + base.p, law:base.law}; }
+
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function group(cls, title, list){
+    if(!list.length) return '';
+    return '<div class="grp '+cls+'"><h3><i></i>'+title+'</h3>' + list.map(function(c){
+      return '<div class="card '+cls+'"><b>'+esc(c.k)+'</b><p>'+esc(c.p)+'</p>'+(c.law?'<small>근거: 「'+esc(c.law)+'」</small>':'')+'</div>';
+    }).join('') + '</div>';
+  }
+  function renderResult(){
+    var r = calc();
+    var n = r.must.length;
+    $('resCount').innerHTML = n ? (n + '<small>개</small>') : '0<small>개</small>';
+    $('resSub').textContent = n ? '법으로 가입이 정해져 있을 수 있는 보험이에요. 가입돼 있는지 꼭 확인해 보세요.'
+                                : '답변 기준으로는 의무보험 대상이 보이지 않아요. 아래 보험은 많이 준비하시는 보험이에요.';
+    $('resBody').innerHTML =
+      group('must', '꼭 확인하세요 (의무보험)', r.must) +
+      group('law', '함께 확인하세요', r.law) +
+      group('opt2', '많이 준비하는 보험 (선택)', r.opt);
+  }
+
+  /* ---------- 연락처 ---------- */
+  $('fPhone').addEventListener('input', function(){
+    var v = digits(this.value).slice(0,11);
+    if(v.length>=8) v = v.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'); else if(v.length>=4) v = v.replace(/(\d{3})(\d{1,4})/,'$1-$2');
+    this.value = v;
+  });
+  document.querySelectorAll('.inp').forEach(function(el){ el.addEventListener('input', function(){ el.classList.remove('bad'); }); });
+  $('hasSeg').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
+    S.has = b.dataset.v;
+  });
+  S.ad = false;
+  $('adBtn').addEventListener('click', function(){
+    S.ad = !S.ad; this.classList.toggle('on', S.ad); this.setAttribute('aria-pressed', S.ad);
+  });
+  $('agreeBtn').addEventListener('click', function(){
+    S.agree = !S.agree; this.classList.toggle('on', S.agree); this.setAttribute('aria-pressed', S.agree); clearErr(); updateCta();
+  });
+
+  /* ---------- 전송 ---------- */
+  function label(list, v){ for(var i=0;i<list.length;i++) if(list[i].v===v) return list[i].t; return v||'-'; }
+  var sending = false;
+  function submit(){
+    if(sending) return; sending = true;
+    var btn = $('cta'); btn.disabled = true; btn.textContent = '보내는 중…';
+    var r = calc();
+    var topics = ['화재·배상책임'];
+    if(r.must.length) topics.push('의무보험');
+    if(r.law.length) topics.push('중대재해·위험성평가');
+    if(S.staff && S.staff!=='1인(대표만)') topics.push('직원·근로자 안전');
+
+    var shop = $('fShop').value.trim();
+    var bizText = label(BIZ, S.biz) + (shop ? ' / 상호: ' + shop : '');
+    var lines = [];
+    lines.push('[사장님 보험가이드 셀프체크]');
+    if(S.biz==='food') lines.push('위치: ' + label(FLOOR, S.floor) + ', 면적: ' + label(SIZE, S.size));
+    lines.push('해당 시설: ' + S.fac.map(function(v){ return label(FAC, v); }).join(', '));
+    lines.push('확인 필요 의무보험: ' + (r.must.length ? r.must.map(function(c){ return c.k; }).join(', ') : '없음'));
+    if(r.law.length) lines.push('중대재해처벌법 적용 대상(5인 이상)');
+    lines.push('담당자코드: ' + (S.manager || '-'));
+    lines.push('접수처: 보험물어봄 사장님 보험가이드');
+    lines.push(S.ad ? '광고수신동의: 동의 (' + new Date().toISOString().slice(0,10) + ', 온라인 상담신청서)' : '광고수신동의: 미동의');
+
+    var payload = {
+      name: $('fName').value.trim(),
+      phone: $('fPhone').value.trim(),
+      area: $('fArea').value.trim(),
+      biz: bizText,
+      headcount: S.staff || '모름',
+      ownership: S.own,
+      topics: topics,
+      hasPolicy: S.has,
+      memo: lines.join('\n'),
+      manager: S.manager,
+      adConsent: !!S.ad,
+      adConsentAt: S.ad ? new Date().toISOString() : '',
+      utm_source: params.get('utm_source') || 'direct',
+      utm_medium: params.get('utm_medium') || '',
+      utm_campaign: params.get('utm_campaign') || '',
+      referrer: document.referrer || '',
+      submittedAt: new Date().toISOString()
+    };
+    fetch(WEBHOOK, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        $('doneName').textContent = payload.name + '님, 곧 연락드릴게요.';
+        show('done', true);
+      })
+      .catch(function(){
+        sending = false; btn.disabled = false; btn.textContent = '다시 보내기';
+        showErr('전송하지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요. 계속 안 되면 041-534-1124로 전화 주세요.');
+      });
+  }
+
+  show('intro', false);
+
+  /* ?biz=food 처럼 업종을 들고 오면 업종 선택을 건너뛰고 다음 질문부터 */
+  (function(){
+    var b = params.get('biz');
+    if(!b || !BIZ.some(function(o){ return o.v===b; })) return;
+    S.biz = b; mark('bizOpts', [b]);
+    show('biz', true); next();
+  })();
+})();
+</script>
+<script src="/daon/assets/home-btn.js" defer></script></body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>다온지사 지사페이지</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="/daon/assets/favicon-daon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<!--
+  다온지사 지사페이지 (2026-11-19 대표 지시)
+  - 다온 CRM 접속코드로 입장 (다온지사 소속만). 로그인 정보는 CRM과 같은 sessionStorage 'crmMe'에 넣어 CRM은 다시 로그인하지 않음.
+  - 메뉴: 영업관리(/daon/crm/) · 자료실(/daon/biz-insurance/) · 영업도구(이 페이지: 온라인 자동화 online.js, 소상공인 개척 biz-open.js) · AI 오피스(/daon/office/, 지사장만 보임 — 서버에서도 지사장만 허용)
+  - 사장님 든든 서랍(https://daon.io.kr/ceo/care/)은 사장님께 보여 드리는 공개 페이지라 새 창으로 엶
+  - 온라인 자동화: 보잇 online.js 복사본. 글·사진·키워드 서버는 보잇 n8n 그대로, 로그인은 "daon:접속코드" 토큰(n8n boit-daon-auth).
+    만든 글·계획·배너는 이 기기(IndexedDB 'daon-branch')에 저장 — 다른 기기와 공유되지 않음.
+-->
+<style>
+:root{
+  --bg:#EEF2EF; --surface:#FFFFFF; --fg:#17211E; --muted:#5E6B66; --line:#DDE3DF; --accent:#0E7A5F; --accent-soft:#E2F1EB; --accent-fg:#FFFFFF;
+  --warn:#B4610A; --warn-soft:#FBEEDC; --bad:#B42318; --bad-soft:#FBE4E1; --ok:#0E7A5F;
+  --f-ui:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:12px; --c1:#0E7A5F; --c2:#2563EB; --c3:#7C3AED; --c4:#D9480F; --c5:#0891B2;
+  --shadow:0 1px 2px rgba(16,40,32,.05),0 4px 14px rgba(16,40,32,.06);
+  --navy:#0B1530; --navy2:#15244A; --gold:#E3B85C;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.55;word-break:keep-all}
+button,input,select{font:inherit;color:inherit}
+a{color:inherit}
+h1{font-size:22px;margin:0} h2{font-size:17px;margin:0}
+.hide{display:none!important}
+/* 보잇 기본 부품 (online.js가 씀) */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 16px;font-weight:600;font-size:14px;max-width:100%;min-width:0;word-break:keep-all;overflow-wrap:anywhere;line-height:1.3}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pill.ok{background:var(--accent-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.ex{background:transparent;border:1px dashed var(--line);color:var(--muted);font-weight:500}
+.note{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.fgrid2{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+.fgrid>*,.row>*{min-width:0}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:13px;color:var(--muted);font-weight:500}
+.field input,.field select{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--surface);width:100%}
+.field textarea{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--surface);width:100%;font:inherit;resize:vertical}
+.kpi{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c,var(--accent));border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow)}
+.kpi b{font-family:var(--f-num);font-size:26px;font-variant-numeric:tabular-nums}
+.tbl-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.lnk{all:unset;cursor:pointer;font-weight:700;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+@media(max-width:760px){.fgrid2{grid-template-columns:1fr}}
+@media(max-width:760px){.btn{white-space:normal!important;min-height:44px;font-size:15px}.panel{overflow-wrap:break-word;min-width:0}}
+
+/* 입장 */
+.gate{min-height:100vh;display:grid;place-items:center;background:var(--navy);padding:20px}
+.gate__box{width:100%;max-width:360px;background:var(--navy2);border-radius:18px;padding:30px 24px;color:#F2F4F8;text-align:center}
+.gate__box small{letter-spacing:.24em;color:var(--gold);font-weight:700;font-size:12px}
+.gate__box h1{margin:8px 0 6px;font-size:22px}
+.gate__box p{margin:0 0 18px;color:#B6C0D4;font-size:14px}
+.gate__box input{width:100%;padding:13px 14px;border-radius:10px;border:1px solid #24365F;background:#0B1530;color:#fff;font-size:16px;text-align:center}
+.gate__box button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:10px;background:var(--gold);color:#1B1B1B;font-weight:800;font-size:16px;cursor:pointer}
+.gate__box button:disabled{opacity:.6}
+.gate__err{min-height:20px;margin-top:10px;color:#FF9C8F;font-size:13px}
+.gate__home{display:inline-block;margin-top:14px;color:#7C88A3;font-size:13px;text-decoration:none}
+
+/* 화면 */
+.hd{background:var(--navy);color:#F2F4F8}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.hd__in{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0}
+.hd__brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.hd__brand small{letter-spacing:.22em;color:var(--gold);font-weight:700;font-size:12px}
+.hd__brand b{font-size:17px}
+.hd__me{display:flex;align-items:center;gap:10px;font-size:13px;color:#B6C0D4}
+.hd__me button{border:1px solid #24365F;background:transparent;color:#B6C0D4;border-radius:8px;padding:6px 10px;cursor:pointer}
+.hd__grow{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:6px 11px;background:#F58220;color:#fff;font-weight:700;text-decoration:none;white-space:nowrap}
+.hd__grow:hover{filter:brightness(1.08)}
+.gate__grow{display:block;margin-top:10px;color:#F5A55C;font-size:13px;font-weight:700;text-decoration:none}
+.bt-tabs{display:flex;gap:4px;overflow-x:auto}
+.bt-tab{border:0;background:transparent;color:#9AA6BF;padding:10px 14px;font-weight:700;font-size:15px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.bt-tab.on{color:#fff;border-bottom-color:var(--gold)}
+main{padding:22px 0 60px}
+.hello{margin:0 0 16px}
+.hello p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.tile{display:flex;flex-direction:column;gap:6px;padding:20px;border-radius:14px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);text-decoration:none;color:var(--fg);cursor:pointer;text-align:left;font:inherit;border-top:5px solid var(--c)}
+.tile:hover{border-color:var(--c);transform:translateY(-1px)}
+.tile i{font-style:normal;font-size:26px}
+.tile b{font-size:18px}
+.tile span{font-size:13.5px;color:var(--muted)}
+.tile em{margin-top:auto;padding-top:6px;font-style:normal;font-weight:700;font-size:14px;color:var(--c)}
+.tile.boss{background:#FFFBF0}
+.tile .lock{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:#8A6410;background:#FBEFD0;border-radius:99px;padding:1px 8px;vertical-align:middle}
+.oa-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.oa-head p{margin:2px 0 0}
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="gate__box">
+    <small>DAON</small>
+    <h1>다온지사 지사페이지</h1>
+    <p>다온지사 소속 설계사 전용입니다.<br>다온 CRM 접속코드를 입력하세요.</p>
+    <input id="gcode" type="password" placeholder="접속코드" autocomplete="off">
+    <button id="gbtn" type="button">입장</button>
+    <div class="gate__err" id="gerr"></div>
+    <a class="gate__home" href="https://grow.ai.kr/daon/">보험물어봄 홈으로</a>
+    <a class="gate__grow" href="https://grow.ai.kr/">🏠 그로우온 홈으로</a>
+  </div>
+</div>
+
+<div id="app" class="hide">
+  <header class="hd">
+    <div class="wrap">
+      <div class="hd__in">
+        <a class="hd__brand" href="/daon/branch/"><small>DAON</small><b>다온지사</b></a>
+        <div class="hd__me"><a class="hd__grow" href="https://grow.ai.kr/" title="그로우온 홈으로">🏠 그로우 홈</a><span id="meName"></span><button type="button" id="logout">로그아웃</button></div>
+      </div>
+      <nav class="bt-tabs">
+        <button class="bt-tab on" type="button" data-tab="home">지사 홈</button>
+        <a class="bt-tab" href="/daon/crm/">영업관리</a>
+        <a class="bt-tab" href="/daon/biz-insurance/">자료실</a>
+        <button class="bt-tab" type="button" data-tab="tools">영업도구</button>
+        <a class="bt-tab hide" id="tabOffice" href="/daon/office/">AI 오피스</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="pane-home">
+      <div class="hello"><h1 id="hello"></h1><p>쓰실 메뉴를 누르세요.</p></div>
+      <div class="tiles">
+        <a class="tile" href="/daon/crm/" style="--c:#0E7A5F"><i>📋</i><b>영업관리</b><span>보유·가망고객, 일정, 할 일, 문자, 예상수수료</span><em>들어가기 ›</em></a>
+        <a class="tile" href="/daon/biz-insurance/" style="--c:#2563EB"><i>📂</i><b>자료실</b><span>사업장보험 업종별·담보별 자료</span><em>들어가기 ›</em></a>
+        <button class="tile" type="button" data-tab="tools" data-tool="online" style="--c:#7C3AED"><i>✍️</i><b>온라인 자동화</b><span>네이버 블로그·카페 글, 정보 이미지, 사진, 키워드</span><em>영업도구 ›</em></button>
+        <button class="tile" type="button" data-tab="tools" data-tool="bizopen" style="--c:#D9480F"><i>🏪</i><b>소상공인 개척</b><span>개척 가게 관리, 가게 홍보 글, 진단 리포트, 리뷰 QR, 접촉 문구</span><em>영업도구 ›</em></button>
+        <a class="tile" href="https://daon.io.kr/ceo/care/" target="_blank" rel="noopener" style="--c:#C2410C"><i>🧰</i><b>사장님 든든 서랍</b><span>사장님께 보여 드릴 세무·노무·기장·경정청구·정책자금·마케팅 점검 페이지</span><em>새 창으로 열기 ›</em></a>
+        <a class="tile boss hide" id="tileOffice" href="/daon/office/" style="--c:#B8860B"><i>🏢</i><b>AI 오피스<span class="lock">지사장</span></b><span>AI 직원 현황, 활동 기록, 남은 할 일</span><em>들어가기 ›</em></a>
+      </div>
+    </section>
+
+    <section id="pane-tools" class="hide">
+      <div class="oa-head"><div><h1>영업도구</h1><p class="note">만든 글·가게 기록은 이 기기에 저장됩니다.</p></div>
+        <div class="seg" role="tablist"><button class="btn" type="button" data-tool="online" aria-pressed="true">✍️ 온라인 자동화</button><button class="btn" type="button" data-tool="bizopen" aria-pressed="false">🏪 소상공인 개척</button></div></div>
+      <div id="tool-online"><div id="oa-root"></div></div>
+      <div id="tool-bizopen" class="hide"><div id="bo-root"></div></div>
+    </section>
+  </main>
+</div>
+
+<div id="toast" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#17211E;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;display:none;z-index:99"></div>
+
+<script>
+(function(){
+  "use strict";
+  var API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
+  var $ = function(id){ return document.getElementById(id); };
+  window.ME = null;
+
+  /* 온라인 자동화 저장소: 이 기기 IndexedDB (사람별) */
+  var KV = {
+    db: null,
+    open: function(){ var s=this; if(s.db) return Promise.resolve(s.db); return new Promise(function(ok,no){ try{ var r=indexedDB.open('daon-branch',1); r.onupgradeneeded=function(){ r.result.createObjectStore('kv'); }; r.onsuccess=function(){ s.db=r.result; ok(s.db); }; r.onerror=function(){ no(r.error); }; }catch(e){ no(e); } }); },
+    get: function(k){ return this.open().then(function(db){ return new Promise(function(ok){ var q=db.transaction('kv').objectStore('kv').get(k); q.onsuccess=function(){ ok(q.result); }; q.onerror=function(){ ok(null); }; }); }).catch(function(){ return null; }); },
+    put: function(k,v){ return this.open().then(function(db){ return new Promise(function(ok){ var t=db.transaction('kv','readwrite'); t.objectStore('kv').put(v,k); t.oncomplete=function(){ ok(true); }; t.onerror=function(){ ok(false); }; }); }).catch(function(){ return false; }); }
+  };
+  /* 사람별 저장: oa = 온라인 자동화(ME.oa), bo = 소상공인 개척(ME.bo) */
+  var KEYS = ['oa','bo'], lastSaved = {}, ready = {};
+  function saveOA(){ if(!window.ME) return; KEYS.forEach(function(k){ if(!ready[k]) return; var s; try{ s = JSON.stringify(window.ME[k] || {}); }catch(e){ return; } if(s === lastSaved[k]) return; lastSaved[k] = s; KV.put(k + ':' + window.ME.name, s); }); }
+  var tSave = null;
+  function soon(){ clearTimeout(tSave); tSave = setTimeout(saveOA, 800); }
+  ['click','change','input'].forEach(function(ev){ document.addEventListener(ev, soon, true); });
+  setInterval(saveOA, 5000);
+  window.addEventListener('pagehide', saveOA);
+  document.addEventListener('visibilitychange', function(){ if(document.hidden) saveOA(); });
+
+  /* 도구 파일은 처음 열 때 한 번만 불러옴 */
+  var TOOLS = { online: { key:'oa', src:'online.js?v=16', api:'ONLINE' }, bizopen: { key:'bo', src:'biz-open.js?v=1', api:'BIZOPEN' } };
+  var TOOL = 'online';
+  function loadTool(name){
+    var t = TOOLS[name]; if(t.loaded) { if(window[t.api]) window[t.api].render(); return; } t.loaded = true;
+    KV.get(t.key + ':' + window.ME.name).then(function(s){
+      var o = null; try{ o = s ? JSON.parse(s) : null; }catch(e){ o = null; }
+      if(o) window.ME[t.key] = o;
+      lastSaved[t.key] = s || ''; ready[t.key] = true;
+      var sc = document.createElement('script'); sc.src = t.src; document.body.appendChild(sc);
+    });
+  }
+  function showTool(name){
+    if(!TOOLS[name]) name = 'online'; TOOL = name;
+    Object.keys(TOOLS).forEach(function(k){ $('tool-' + k).classList.toggle('hide', k !== name); });
+    document.querySelectorAll('#pane-tools .seg [data-tool]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.tool === name)); });
+    loadTool(name);
+    try{ history.replaceState(null, '', '#' + name); }catch(e){}
+  }
+
+  function show(tab, tool){
+    var on = tab === 'tools';
+    $('pane-home').classList.toggle('hide', on);
+    $('pane-tools').classList.toggle('hide', !on);
+    document.querySelectorAll('.bt-tab[data-tab]').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === tab); });
+    if(on) showTool(tool || TOOL); else { try{ history.replaceState(null, '', location.pathname); }catch(e){} }
+    window.scrollTo(0, 0);
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('[data-tab]'); if(t){ e.preventDefault(); show(t.dataset.tab, t.dataset.tool); return; }
+    var s = e.target.closest('#pane-tools .seg [data-tool]'); if(s){ showTool(s.dataset.tool); }
+  });
+
+  function enter(me){
+    window.ME = { name: me.name, role: me.role || '', code: me.code, phone: me.phone || '', oa: {}, bo: { shops: [] } };
+    $('gate').classList.add('hide'); $('app').classList.remove('hide');
+    $('meName').textContent = me.name + ' 님' + (me.role ? ' · ' + me.role : '');
+    $('hello').textContent = me.name + '님, 안녕하세요';
+    var boss = me.role === '지사장';
+    $('tabOffice').classList.toggle('hide', !boss);
+    $('tileOffice').classList.toggle('hide', !boss);
+    try{ if(boss) sessionStorage.setItem('officeCode', me.code); else sessionStorage.removeItem('officeCode'); }catch(e){}
+    var next = new URLSearchParams(location.search).get('next');
+    if(next && /^\/(crm|biz-insurance|office)\//.test(next)){ location.replace(next); return; }
+    var h = location.hash.slice(1); if(TOOLS[h]) show('tools', h); else show('home');
+  }
+
+  function login(code){
+    $('gbtn').disabled = true; $('gbtn').textContent = '확인 중…'; $('gerr').textContent = '';
+    fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body: JSON.stringify({ action:'auth', code: code }) })
+      .then(function(r){ return r.json(); })
+      .then(function(r){
+        $('gbtn').disabled = false; $('gbtn').textContent = '입장';
+        if(!r || !r.ok || !r.name){ try{ sessionStorage.removeItem('crmMe'); }catch(e){} $('gate').classList.remove('hide'); $('app').classList.add('hide'); $('gerr').textContent = (r && r.error) || '접속코드가 올바르지 않습니다.'; return; }
+        r.code = code;
+        try{ sessionStorage.setItem('crmMe', JSON.stringify(r)); }catch(e){}
+        enter(r);
+      })
+      .catch(function(){ $('gbtn').disabled = false; $('gbtn').textContent = '입장'; $('gerr').textContent = '연결에 실패했습니다. 잠시 후 다시 시도하세요.'; });
+  }
+
+  $('gbtn').onclick = function(){ var c = $('gcode').value.trim(); if(!c){ $('gerr').textContent = '접속코드를 입력하세요.'; return; } login(c); };
+  $('gcode').addEventListener('keydown', function(e){ if(e.key === 'Enter') $('gbtn').onclick(); });
+  $('logout').onclick = function(){ saveOA(); try{ sessionStorage.removeItem('crmMe'); sessionStorage.removeItem('officeCode'); }catch(e){} location.href = '/daon/branch/'; };
+
+  /* CRM에서 이미 로그인한 탭이면 바로 입장 (접속코드는 서버에서 다시 확인) */
+  var saved = null; try{ saved = JSON.parse(sessionStorage.getItem('crmMe') || 'null'); }catch(e){}
+  if(saved && saved.code){ $('gate').classList.add('hide'); login(saved.code); }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>다온 비서</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B1E42">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--navy:#0B1E42;--navy2:#132B57;--pink:#E39BA5;--ink:#16181C;--ink2:#4F5661;--ink3:#8D949D;--line:#E4E7EB;--bg:#F3F5F8;--ok:#1E9E5A;--err:#C4472F}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;font-size:16px;line-height:1.55;word-break:keep-all;display:flex;flex-direction:column}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.hide{display:none!important}
+header{background:var(--navy);color:#fff;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;align-items:center;gap:10px}
+header b{font-size:17px}
+header span{font-size:12.5px;color:#AFC0D8}
+header .sp{flex:1}
+header button{color:#AFC0D8;font-size:13px;padding:6px 8px}
+#log{flex:1;overflow-y:auto;padding:16px 14px 10px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:11px 14px;border-radius:18px;font-size:16px;white-space:pre-wrap}
+.me{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:6px}
+.ai{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px}
+.ai .links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ai .links a{display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:10px;background:#EEF2F8;color:var(--navy);font-weight:700;font-size:14px;text-decoration:none}
+.ai .act{margin-top:10px;padding:10px 12px;border-radius:12px;background:#FFF6EC;border:1px solid #F6DCC7;font-size:14.5px}
+.ai .act .bt{display:flex;gap:8px;margin-top:8px}
+.ai .act button{flex:1;height:42px;border-radius:10px;font-weight:800}
+.ai .act .yes{background:var(--navy);color:#fff}
+.ai .act .no{background:#fff;border:1.5px solid var(--line)}
+.ai.done{border-color:#BFE3CC;background:#F2FBF5}
+.ai.fail{border-color:#F3C1B7;background:#FFF6F4}
+.hint{align-self:center;text-align:center;color:var(--ink3);font-size:14px;margin:auto 0;padding:20px}
+.hint b{display:block;color:var(--ink);font-size:18px;margin-bottom:8px}
+.hint ul{text-align:left;margin:12px auto 0;padding-left:18px;max-width:300px}
+footer{padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 70%,rgba(243,245,248,0))}
+#live{min-height:24px;text-align:center;color:var(--ink2);font-size:15px;margin-bottom:8px}
+.ctl{display:flex;align-items:center;gap:10px}
+#mic{flex:none;width:76px;height:76px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(11,30,66,.3);margin:0 auto}
+#mic svg{width:34px;height:34px}
+#mic.on{background:#D92D20;animation:pulse 1.2s infinite}
+#mic.busy{background:#8D949D}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,45,32,.5)}100%{box-shadow:0 0 0 22px rgba(217,45,32,0)}}
+.txt{display:flex;gap:6px;margin-top:10px}
+.txt input{flex:1;height:44px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;outline:none;background:#fff}
+.txt button{height:44px;padding:0 14px;border-radius:12px;background:#EEF2F8;color:var(--navy);font-weight:700}
+#login{position:fixed;inset:0;background:var(--navy);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:30px}
+#login h1{margin:0 0 6px;font-size:26px}
+#login p{margin:0 0 20px;color:#AFC0D8}
+#login input{width:100%;height:54px;border-radius:14px;border:0;padding:0 16px;font-size:18px;color:var(--ink)}
+#login button{width:100%;height:54px;border-radius:14px;margin-top:10px;background:var(--pink);color:var(--navy);font-weight:800;font-size:17px}
+#login .err{color:#FFB4A8;margin-top:10px;min-height:22px}
+#mic:focus-visible,.txt button:focus-visible,#login button:focus-visible{outline:3px solid #7FB0FF;outline-offset:3px}
+</style>
+</head>
+<body>
+<div id="login" class="hide">
+  <h1>다온 비서</h1>
+  <p>CRM 접속코드로 한 번만 로그인하면 이 휴대폰에서 계속 쓸 수 있습니다.</p>
+  <input id="code" type="password" placeholder="접속코드 (영문·숫자·기호)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+  <button id="loginBtn" type="button">시작하기</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<header>
+  <div><b>다온 비서</b><br><span id="who"></span></div>
+  <div class="sp"></div>
+  <button type="button" id="muteBtn" title="음성 답변 켜기/끄기">🔊 소리</button>
+  <button type="button" id="outBtn">로그아웃</button>
+</header>
+
+<div id="log">
+  <div class="hint" id="hint"><b>무엇을 도와드릴까요?</b>아래 버튼을 누르고 말씀하세요.
+    <ul><li>오늘 일정 알려줘</li><li>내일 오후 3시 박서연 고객 방문 일정 넣어줘</li><li>할 일에 화재보험 견적 추가</li><li>중요 메모: 다음 달 시상 확인</li><li>여수 학동 점심 맛집 2곳</li></ul></div>
+</div>
+
+<footer>
+  <div id="live"></div>
+  <div class="ctl"><button type="button" id="mic" aria-label="말하기"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button></div>
+  <div class="txt"><input id="txt" placeholder="또는 글자로 입력" enterkeyhint="send"><button type="button" id="sendBtn">보내기</button></div>
+</footer>
+
+<script>
+(function(){
+  var API='https://daonpartners.app.n8n.cloud/webhook/daon-voice';
+  var AUTH='https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
+  var $=function(i){return document.getElementById(i);};
+  var K=window.localStorage, ME=null, busy=false, pending=null, muted=false;
+  try{ ME=JSON.parse(K.getItem('daonVoiceMe')||'null'); muted=K.getItem('daonVoiceMute')==='1'; }catch(e){}
+  function showLogin(){ $('login').classList.remove('hide'); setTimeout(function(){ $('code').focus(); },100); }
+  function ready(){ $('login').classList.add('hide'); $('who').textContent=ME.name+' 님'; $('muteBtn').textContent=muted?'🔇 무음':'🔊 소리'; }
+  $('loginBtn').addEventListener('click',function(){
+    var c=$('code').value.trim(); if(!c) return;
+    $('loginErr').textContent='확인 중…';
+    fetch(AUTH,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'auth',code:c})}).then(function(r){return r.json();}).then(function(r){
+      if(!r||!r.ok){ $('loginErr').textContent=(r&&r.error)||'접속코드를 확인해 주세요.'; return; }
+      ME={name:r.name,code:c}; try{ K.setItem('daonVoiceMe',JSON.stringify(ME)); }catch(e){}
+      $('loginErr').textContent=''; ready(); maybeAutoListen();
+    }).catch(function(){ $('loginErr').textContent='연결에 실패했습니다.'; });
+  });
+  $('code').addEventListener('keydown',function(e){ if(e.key==='Enter') $('loginBtn').click(); });
+  $('outBtn').addEventListener('click',function(){ if(!confirm('이 휴대폰에서 로그아웃할까요?')) return; try{ K.removeItem('daonVoiceMe'); }catch(e){} ME=null; showLogin(); });
+  $('muteBtn').addEventListener('click',function(){ muted=!muted; try{ K.setItem('daonVoiceMute',muted?'1':'0'); }catch(e){} $('muteBtn').textContent=muted?'🔇 무음':'🔊 소리'; if(muted) speechSynthesis.cancel(); });
+
+  /* ── 화면 출력 ── */
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function add(cls,html){ var h=$('hint'); if(h) h.remove(); var d=document.createElement('div'); d.className='msg '+cls; d.innerHTML=html; $('log').appendChild(d); $('log').scrollTop=$('log').scrollHeight; return d; }
+  function actText(a){
+    if(!a) return '';
+    if(a.type==='schedule_create') return '📅 일정 등록: '+a.date+' '+(a.time||'')+' '+a.title+(a.place?' @'+a.place:'');
+    if(a.type==='schedule_update') return '📅 일정 수정: '+(a.before||'')+' → '+a.date+' '+(a.time||'')+' '+a.title;
+    if(a.type==='todo_add') return '✅ 할 일 추가: '+a.content;
+    if(a.type==='todo_done') return '✅ 할 일 완료: '+a.content;
+    if(a.type==='todo_edit') return '✅ 할 일 수정: '+a.content;
+    if(a.type==='note_add') return '📌 중요 메모: '+a.content;
+    if(a.type==='note_edit') return '📌 메모 수정: '+a.content;
+    return '';
+  }
+
+  /* ── 음성 출력 ── */
+  var voice=null;
+  function pickVoice(){ var vs=speechSynthesis.getVoices(); voice=vs.find(function(v){return /ko/i.test(v.lang);})||null; }
+  if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+  function say(t,after){
+    if(muted||!('speechSynthesis' in window)||!t){ if(after) after(); return; }
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(t); u.lang='ko-KR'; if(voice) u.voice=voice; u.rate=1.05;
+    u.onend=function(){ if(after) after(); }; u.onerror=function(){ if(after) after(); };
+    speechSynthesis.speak(u);
+  }
+
+  /* ── 음성 인식 ── */
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null, listening=false, heard='';
+  function listen(forConfirm){
+    if(!SR){ $('live').textContent='이 브라우저는 음성 인식을 지원하지 않습니다. 글자로 입력해 주세요.'; return; }
+    if(listening||busy) return;
+    speechSynthesis.cancel();
+    rec=new SR(); rec.lang='ko-KR'; rec.interimResults=true; rec.maxAlternatives=1; rec.continuous=false;
+    heard='';
+    rec.onresult=function(e){ var s=''; for(var i=e.resultIndex;i<e.results.length;i++){ s+=e.results[i][0].transcript; if(e.results[i].isFinal) heard+=e.results[i][0].transcript; } $('live').textContent=s||heard; };
+    rec.onerror=function(e){ listening=false; $('mic').classList.remove('on'); $('live').textContent=e.error==='not-allowed'?'마이크 권한을 허용해 주세요.':(e.error==='no-speech'?'말씀이 들리지 않았어요. 다시 눌러주세요.':''); };
+    rec.onend=function(){
+      listening=false; $('mic').classList.remove('on');
+      var t=heard.trim(); if(!t) return;
+      $('live').textContent='';
+      if(forConfirm && pending){ handleYesNo(t); return; }
+      ask(t);
+    };
+    try{ rec.start(); listening=true; $('mic').classList.add('on'); $('live').textContent=forConfirm?'"네" 또는 "아니요"로 답해주세요':'듣고 있어요…'; }catch(e){}
+  }
+  $('mic').addEventListener('click',function(){ if(listening){ try{ rec.stop(); }catch(e){} return; } listen(!!pending); });
+
+  /* ── 질문 보내기 ── */
+  function post(body){ return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({by:ME.code},body))}).then(function(r){ return r.json(); }); }
+  function setBusy(b){ busy=b; $('mic').classList.toggle('busy',b); }
+  function ask(t){
+    if(!ME){ showLogin(); return; }
+    t=String(t||'').trim(); if(!t||busy) return;
+    if(pending){ clearPending(); }
+    add('me',esc(t));
+    var wait=add('ai','<span style="color:#8D949D">생각 중…</span>');
+    setBusy(true);
+    post({mode:'ask',text:t}).then(function(r){
+      setBusy(false);
+      if(!r||r.ok===false){ wait.className='msg ai fail'; wait.innerHTML=esc((r&&r.speak)||'처리하지 못했습니다.'); if(r&&/로그인/.test(r.speak||'')){ try{K.removeItem('daonVoiceMe');}catch(e){} } say((r&&r.speak)||''); return; }
+      var html=esc(r.show||r.speak||'');
+      if(r.links&&r.links.length) html+='<div class="links">'+r.links.map(function(l){ return '<a href="'+esc(l.url)+'" target="_blank" rel="noopener">📍 '+esc(l.title||'지도 열기')+'</a>'; }).join('')+'</div>';
+      if(r.action){ pending={action:r.action,box:wait}; html+='<div class="act">'+esc(actText(r.action))+'<div class="bt"><button type="button" class="yes">네, 실행</button><button type="button" class="no">취소</button></div></div>'; }
+      wait.innerHTML=html;
+      if(r.action){ wait.querySelector('.yes').onclick=function(){ doConfirm(); }; wait.querySelector('.no').onclick=function(){ cancelPending(); }; }
+      say(r.speak, r.action?function(){ listen(true); }:null);
+    }).catch(function(){ setBusy(false); wait.className='msg ai fail'; wait.textContent='연결에 실패했습니다. 잠시 후 다시 시도해 주세요.'; });
+  }
+  function handleYesNo(t){
+    if(/^(네|예|응|어|그래|좋아|맞아|등록|저장|실행|해 ?줘|오케이|ok)/i.test(t.replace(/\s/g,''))) doConfirm();
+    else if(/(아니|취소|하지 ?마|그만|노)/.test(t)) cancelPending();
+    else { clearPending(); ask(t); }
+  }
+  function stopListen(){ if(listening&&rec){ try{ rec.abort(); }catch(e){} } listening=false; $('mic').classList.remove('on'); $('live').textContent=''; }
+  function clearPending(){ stopListen(); if(pending&&pending.box){ var a=pending.box.querySelector('.act .bt'); if(a) a.remove(); } pending=null; }
+  function cancelPending(){ clearPending(); var d=add('ai','취소했습니다.'); say('취소했습니다.'); }
+  function doConfirm(){
+    if(!pending) return; var act=pending.action; clearPending();
+    setBusy(true);
+    post({mode:'confirm',action:act}).then(function(r){
+      setBusy(false);
+      var ok=r&&r.ok; add('ai '+(ok?'done':'fail'),esc((r&&r.speak)||'처리하지 못했습니다.')); say((r&&r.speak)||'처리하지 못했습니다.');
+    }).catch(function(){ setBusy(false); add('ai fail','연결에 실패했습니다.'); });
+  }
+  $('sendBtn').addEventListener('click',function(){ var v=$('txt').value; $('txt').value=''; if(pending&&/^(네|예|응|아니|취소)/.test(v.trim())) handleYesNo(v.trim()); else ask(v); });
+  $('txt').addEventListener('keydown',function(e){ if(e.key==='Enter') $('sendBtn').click(); });
+
+  /* 빅스비 등에서 ?listen=1 로 열면 바로 듣기 시작 (브라우저가 막으면 버튼 안내) */
+  function maybeAutoListen(){
+    if(/[?&]listen=1/.test(location.search)){ setTimeout(function(){ listen(false); if(!listening) $('live').textContent='🎤 버튼을 누르고 말씀하세요'; },400); }
+  }
+  if(ME&&ME.code){ ready(); maybeAutoListen(); } else showLogin();
+})();
+</script>
+</body>
+</html>

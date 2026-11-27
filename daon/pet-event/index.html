@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>펫행사 참여 동의 | 미래에셋금융서비스 그로우사업부</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B1E42">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--navy:#0B1E42;--ink:#16181C;--ink2:#4F5661;--ink3:#8D949D;--line:#E4E7EB;--bg:#F5F6F8;--ok:#1E9E5A;--err:#C4472F;--mz:#E1242A}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;font-size:15px;line-height:1.55;word-break:keep-all}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.wrap{max-width:520px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(40px + env(safe-area-inset-bottom,0px))}
+.hide{display:none!important}
+.brand{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px}
+.hero{background:var(--navy);color:#fff;border-radius:20px;padding:20px}
+.hero h1{margin:0 0 6px;font-size:21px;line-height:1.35;letter-spacing:-.4px}
+.hero p{margin:0;font-size:13.5px;color:#C3CEDF}
+.steps{display:flex;gap:6px;margin-top:14px;font-size:12px;font-weight:700}
+.steps span{flex:1;text-align:center;padding:7px 4px;border-radius:10px;background:rgba(255,255,255,.1);color:#C3CEDF}
+.steps span.on{background:#fff;color:var(--navy)}
+.card{background:#fff;border-radius:18px;padding:18px;margin-top:12px}
+.f{margin-bottom:12px}
+.lb{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:6px}
+.sel{width:100%;height:50px;border:1.5px solid var(--line);border-radius:12px;padding:0 10px;background:#fff;font-size:16px}
+.grp{font-size:13.5px;font-weight:800;color:var(--navy);margin:16px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.grp:first-child{margin-top:4px;padding-top:0;border-top:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.inp{width:100%;height:50px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;background:#fff;outline:none;font-size:17px}
+.inp:focus{border-color:var(--navy)}
+.inp.bad{border-color:var(--err);background:#FFF6F4}
+.ag{display:flex;gap:10px;align-items:flex-start;padding:13px;border:1.5px solid var(--line);border-radius:14px;margin-top:8px;cursor:pointer}
+.ag input{flex:none;width:22px;height:22px;margin:1px 0 0;accent-color:var(--navy)}
+.ag b{display:block;font-size:14.5px}
+.ag b em{font-style:normal;color:var(--err);margin-right:4px}
+.ag small{display:block;font-size:12.5px;color:var(--ink2);margin-top:3px;line-height:1.5}
+.ag:has(input:checked){border-color:var(--navy)}
+.all{display:flex;align-items:center;gap:10px;padding:13px;border-radius:14px;background:#EEF2F8;font-weight:800;cursor:pointer}
+.all input{width:22px;height:22px;margin:0;accent-color:var(--navy)}
+.note{margin-top:12px;font-size:12.5px;color:var(--ink2);background:#F1F4F9;border-radius:12px;padding:11px 13px}
+.err{display:none;margin-top:10px;color:var(--err);font-weight:700;font-size:13.5px}
+.err.on{display:block}
+.go{display:flex;align-items:center;justify-content:center;width:100%;height:56px;margin-top:14px;border-radius:16px;background:var(--navy);color:#fff;font-size:17px;font-weight:800;text-decoration:none}
+.go:disabled{background:#C9CED6}
+.go.mz{background:var(--mz)}
+.done h2{margin:6px 0 4px;font-size:19px}
+.done p{margin:0;font-size:14px;color:var(--ink2)}
+.ok{width:58px;height:58px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center}
+.done ol{margin:12px 0 0;padding-left:20px;font-size:14px;color:var(--ink2)}
+.foot{margin-top:14px;font-size:11.5px;color:var(--ink3);line-height:1.7}
+.inp:focus-visible,.go:focus-visible{outline:3px solid #2F6FEB;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">미래에셋금융서비스 그로우사업부<span id="evName" style="color:var(--ink3);font-weight:500"></span></div>
+  <section class="hero">
+    <h1>보장분석 신청하고<br>펫행사에 참여하세요</h1>
+    <p>보험사 공식 동의를 마치신 성인(만 19세 이상) 보호자님께 펫행사 참여 혜택을 제공합니다.</p>
+    <div class="steps"><span class="on" id="st1">① 간편 동의</span><span id="st2">② 보험사 공식 동의</span><span>③ 펫행사 참여</span></div>
+  </section>
+
+  <section class="card" id="formCard">
+    <div class="grp">보호자(신청자) 정보</div>
+    <div class="f"><label class="lb" for="nm">성명</label><input class="inp" id="nm" autocomplete="name" maxlength="20"></div>
+    <div class="f"><label class="lb" for="bd">생년월일</label><input class="inp" id="bd" inputmode="numeric" maxlength="10" placeholder="1985-03-12"></div>
+    <div class="f"><label class="lb" for="ph">보호자 연락처</label><input class="inp" id="ph" type="tel" inputmode="numeric" maxlength="13" placeholder="010-0000-0000"></div>
+    <div class="grp">반려동물 정보</div>
+    <div class="two"><div class="f"><label class="lb" for="pt">종류</label><select class="sel" id="pt"><option value="">선택</option><option>반려견</option><option>반려묘</option></select></div>
+    <div class="f"><label class="lb" for="pn">이름</label><input class="inp" id="pn" maxlength="20"></div></div>
+    <div class="two"><div class="f"><label class="lb" for="pb">생년월일</label><input class="inp" id="pb" inputmode="numeric" maxlength="10" placeholder="2021-05-01"></div>
+    <div class="f"><label class="lb" for="pbr">품종</label><input class="inp" id="pbr" maxlength="20"></div></div>
+    <div class="two"><div class="f"><label class="lb" for="pc">털색</label><input class="inp" id="pc" maxlength="15"></div>
+    <div class="f"><label class="lb" for="ps">성별</label><select class="sel" id="ps"><option value="">선택</option><option>수컷</option><option>암컷</option></select></div></div>
+    <div class="two"><div class="f"><label class="lb" for="pne">중성화 여부</label><select class="sel" id="pne"><option value="">선택</option><option>예</option><option>아니오</option></select></div>
+    <div class="f"><label class="lb" for="prm">등록방식</label><select class="sel" id="prm"><option value="">선택</option><option>내장칩</option><option>외장칩</option><option>미등록</option></select></div></div>
+    <div class="f"><label class="lb" for="prn">동물등록번호 (있으면)</label><input class="inp" id="prn" inputmode="numeric" maxlength="20"></div>
+    <div class="two"><div class="f"><label class="lb" for="phs">관리 동물병원</label><input class="inp" id="phs" maxlength="25"></div>
+    <div class="f"><label class="lb" for="prg">관리 지역</label><input class="inp" id="prg" maxlength="25" placeholder="예) 아산시"></div></div>
+    <div class="grp">병력사항 (없으면 '없음'으로 선택·입력)</div>
+    <div class="f"><label class="lb" for="h6">최근 6개월 이내 병원 내원 이력</label><input class="inp" id="h6" maxlength="60" placeholder="없음"></div>
+    <div class="f"><label class="lb" for="h3">최근 3개월 이내 병원 내원 이력</label><input class="inp" id="h3" maxlength="60" placeholder="없음"></div>
+    <div class="f"><label class="lb" for="hc">선천성·유전성 질환</label><input class="inp" id="hc" maxlength="60" placeholder="없음 / 있으면 병명"></div>
+    <div class="two"><div class="f"><label class="lb" for="hv">예방접종</label><select class="sel" id="hv"><option value="">선택</option><option>완료</option><option>미완료</option></select></div>
+    <div class="f"><label class="lb" for="hm">계속 복용 중인 약</label><input class="inp" id="hm" maxlength="40" placeholder="없음"></div></div>
+    <label class="all"><input type="checkbox" id="all">아래 내용에 모두 동의합니다</label>
+    <label class="ag"><input type="checkbox" class="c" id="a1"><span><b><em>필수</em>보장분석 신청 및 개인정보 수집·이용</b><small>성명·생년월일·연락처를 보장분석 상담 신청 접수와 행사 참여 확인에 이용하고, 상담을 위해 그로우사업부 소속 지사·설계사에게 배분·제공하며 1년간 보관합니다. 연락처·주소 등은 현장 서면 신청서로 받습니다. 동의하지 않으면 참여가 어렵습니다.</small></span></label>
+    <label class="ag"><input type="checkbox" class="c" id="a2"><span><b><em>필수</em>펫행사 참여 및 안내</b><small>입력하신 반려동물 정보(종류·이름·생년월일·품종·성별·중성화·등록정보·병력)는 펫보험 상담·설계를 위해 이용하고, 상담을 위해 그로우사업부 소속 지사·설계사에게 배분·제공합니다. 주민등록번호·주소·직업·서명은 이 화면에서 받지 않고 현장 서면 신청서로 받습니다.</small></span></label>
+    <p class="err" id="err"></p>
+    <button type="button" class="go" id="go">동의하고 다음 단계로</button>
+    <div class="note">주민등록번호는 이 화면에서 받지 않습니다. 다음 단계의 <b>메리츠화재 공식 화면</b>에서 고객님이 직접 휴대폰 본인인증 후 동의합니다.</div>
+  </section>
+
+  <section class="card done hide" id="doneCard">
+    <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2>간편 동의 완료</h2>
+    <p id="doneTxt"></p>
+    <ol><li>아래 버튼을 눌러 <b>메리츠화재 공식 화면</b>으로 이동합니다.</li><li>고객님 휴대폰으로 <b>본인인증 후 동의</b>합니다.</li><li>완료 화면을 담당 설계사에게 보여주세요.</li></ol>
+    <a class="go mz" id="mz" href="#" target="_blank" rel="noopener">메리츠화재 보장분석 동의하기</a>
+    <div class="note">인증번호와 주민등록번호는 메리츠화재 화면에만 입력하세요. 설계사가 대신 입력하지 않습니다.</div>
+  </section>
+
+  <p class="foot">개인정보 처리자: 미래에셋금융서비스 그로우사업부 다온지사 · 문의 010-4007-7901. 동의 철회·열람·정정·삭제는 위 연락처로 요청하실 수 있습니다. 메리츠화재 화면에서 입력하는 정보는 메리츠화재 개인정보처리방침에 따라 처리되며, 이 화면의 정보를 메리츠화재에 전달하지 않습니다.</p>
+</div>
+<script>
+(function(){
+  var API='https://daonpartners.app.n8n.cloud/webhook/daon-event-lead';
+  var $=function(i){return document.getElementById(i);};
+  var q=new URLSearchParams(location.search);
+  var EV=(q.get('e')||'').slice(0,30), CODE=(q.get('m')||'').slice(0,20);
+  var DT=/^\d{4}-\d{2}-\d{2}$/.test(q.get('d')||'')?q.get('d'):'';
+  var MZ=/^[0-9]{6,12}$/.test(q.get('mz')||'')?q.get('mz'):'';
+  var BR=(q.get('b')||'').slice(0,10), NT=(q.get('n')||'').split(',').map(function(x){return x.trim().slice(0,10);}).filter(Boolean).slice(0,5).join(',');
+  function setMz(){ var a=$('mz'); if(MZ){ a.href='https://msea.meritzfire.com/mblCusReg.do?orgCd='+MZ; a.style.opacity=''; a.style.pointerEvents=''; } else { a.href='#'; a.style.opacity='.5'; a.style.pointerEvents='none'; } }
+  setMz();
+  var LK=BR||(MZ?'':'다온'), FBMZ='726069444';
+  if(BR||!MZ){ fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var h=(r.heads||[]).filter(function(x){return x.branch===LK;})[0]; if(h&&/^[0-9]{6,12}$/.test(h.mzCode)){ MZ=h.mzCode; } else if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }).catch(function(){ if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }); }
+  if(EV) $('evName').textContent=' · '+EV;
+  var cs=document.querySelectorAll('.c');
+  $('all').addEventListener('change',function(){ var on=this.checked; cs.forEach(function(c){c.checked=on;}); });
+  cs.forEach(function(c){ c.addEventListener('change',function(){ $('all').checked=[].every.call(cs,function(x){return x.checked;}); }); });
+  $('bd').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,8); this.value=n.length>6?n.slice(0,4)+'-'+n.slice(4,6)+'-'+n.slice(6):(n.length>4?n.slice(0,4)+'-'+n.slice(4):n); this.classList.remove('bad'); });
+  $('ph').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,11); this.value=n.length>=8?n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'):(n.length>=4?n.replace(/(\d{3})(\d{1,4})/,'$1-$2'):n); this.classList.remove('bad'); });
+  $('pb').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,8); this.value=n.length>6?n.slice(0,4)+'-'+n.slice(4,6)+'-'+n.slice(6):(n.length>4?n.slice(0,4)+'-'+n.slice(4):n); this.classList.remove('bad'); });
+  $('nm').addEventListener('input',function(){ this.classList.remove('bad'); });
+  function age(b){ var d=new Date(b); if(!/^\d{4}-\d{2}-\d{2}$/.test(b)||isNaN(d)||d>new Date()) return -1; var t=new Date(); return t.getFullYear()-d.getFullYear()-((t.getMonth()<d.getMonth()||(t.getMonth()===d.getMonth()&&t.getDate()<d.getDate()))?1:0); }
+  function fail(m,el){ var e=$('err'); e.textContent=m; e.classList.add('on'); if(el){ el.classList.add('bad'); el.focus(); } return false; }
+  var busy=false;
+  $('go').addEventListener('click',function(){
+    if(busy) return; $('err').classList.remove('on');
+    var nm=$('nm').value.trim(), bd=$('bd').value.trim(), a=age(bd);
+    if(nm.length<2) return fail('성명을 입력해 주세요',$('nm'));
+    if(a<0) return fail('생년월일을 1985-03-12 형식으로 입력해 주세요',$('bd'));
+    if(a<19) return fail('성인(만 19세 이상)만 신청할 수 있습니다',$('bd'));
+    var ph=$('ph').value.replace(/[^0-9]/g,'');
+    if(!/^01\d{8,9}$/.test(ph)) return fail('보호자 연락처를 입력해 주세요',$('ph'));
+    if(!$('pt').value) return fail('반려동물 종류를 선택해 주세요',$('pt'));
+    if($('pn').value.trim().length<1) return fail('반려동물 이름을 입력해 주세요',$('pn'));
+    if(age($('pb').value.trim())<0) return fail('반려동물 생년월일을 2021-05-01 형식으로 입력해 주세요 (정확히 모르면 대략적으로)',$('pb'));
+    if(!$('ps').value||!$('pne').value) return fail('반려동물 성별과 중성화 여부를 선택해 주세요',$('ps').value?$('pne'):$('ps'));
+    var v=function(i,d){ return ($(i).value||'').trim()||d; };
+    var pet='['+$('pt').value+'] 이름 '+v('pn','-')+' / 생일 '+v('pb','-')+' / 품종 '+v('pbr','-')+' / 털색 '+v('pc','-')+' / '+$('ps').value+' / 중성화 '+$('pne').value+' / 등록 '+v('prm','-')+' '+v('prn','')+' / 병원 '+v('phs','-')+' / 지역 '+v('prg','-')+' || 6개월내원 '+v('h6','없음')+' / 3개월내원 '+v('h3','없음')+' / 선천·유전 '+v('hc','없음')+' / 접종 '+v('hv','-')+' / 복용약 '+v('hm','없음');
+    if(!$('a1').checked||!$('a2').checked) return fail('필수 항목 2개에 모두 동의해 주세요');
+    var now=new Date();
+    busy=true; var b=$('go'); b.disabled=true; b.textContent='저장 중…';
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'pet',eventName:EV,eventDate:DT||'',branch:BR,notify:NT,sabun:CODE,mzCode:MZ,personName:nm,personBirth:bd,phone:ph,petInfo:pet,childName:'',childBirth:'',note:'주민등록번호·주소·직업 미수집(서면)'})})
+      .then(function(r){ if(!r.ok) throw 0; })
+      .then(function(){ $('formCard').classList.add('hide'); $('doneCard').classList.remove('hide'); $('st1').classList.remove('on'); $('st2').classList.add('on'); $('doneTxt').textContent=nm+'님, 이제 보험사 공식 동의만 남았습니다.'; window.scrollTo({top:0}); })
+      .catch(function(){ busy=false; b.disabled=false; b.textContent='동의하고 다음 단계로'; fail('저장하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러주세요.'); });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>행사 DB 확인 (설계사용)</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B1E42">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--navy:#0B1E42;--ink:#16181C;--ink2:#4F5661;--ink3:#8D949D;--line:#E4E7EB;--bg:#F5F6F8;--err:#C4472F}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,"Malgun Gothic",sans-serif;font-size:15px;line-height:1.5;word-break:keep-all}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 40px}
+.hide{display:none!important}
+h1{font-size:20px;margin:6px 0 4px}
+.sub{font-size:13px;color:var(--ink3);margin:0 0 12px}
+.card{background:#fff;border-radius:18px;padding:16px;margin-top:10px}
+.card h2{font-size:14px;margin:0 0 10px;color:var(--ink2)}
+.lb{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin:10px 0 5px}
+.inp{width:100%;height:46px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;outline:none}
+.inp:focus{border-color:var(--navy)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;height:50px;margin-top:12px;border:0;border-radius:14px;background:var(--navy);color:#fff;font-weight:800;font-size:16px;cursor:pointer;text-decoration:none}
+.btn.sec{background:#EEF2F8;color:var(--navy)}
+.err{color:var(--err);font-weight:700;font-size:13.5px;margin-top:8px}
+.sum{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.sum:last-child{border-bottom:0}
+.sum b{color:var(--navy)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:560px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{color:var(--ink2);font-size:12px}
+.muted{color:var(--ink3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>행사 DB 확인</h1>
+  <p class="sub">행사별·날짜별로 쌓인 동의 내역을 봅니다. 지사장 본인의 사번으로 접수된 건만 보입니다.</p>
+
+  <section class="card" id="login">
+    <h2>본인 확인</h2>
+    <label class="lb" for="sb">지사장 사번</label><input class="inp" id="sb" inputmode="numeric" maxlength="20">
+    <label class="lb" for="vc">조회코드</label><input class="inp" id="vc" type="password" maxlength="30" autocomplete="current-password">
+    <p class="err hide" id="lerr"></p>
+    <button class="btn" id="lgo" type="button">확인</button>
+    <p class="sub" style="margin-top:10px">조회코드는 대표님께 받으세요.</p>
+  </section>
+
+  <div id="main" class="hide">
+    <section class="card">
+      <h2><span id="who"></span> · 조건 선택</h2>
+      <label class="lb" for="fe">행사</label><select class="inp" id="fe"><option value="">전체 행사</option></select>
+      <div class="row">
+        <div><label class="lb" for="ff">시작일</label><input class="inp" id="ff" type="date"></div>
+        <div><label class="lb" for="ft">끝일</label><input class="inp" id="ft" type="date"></div>
+      </div>
+      <button class="btn" id="go" type="button">조회</button>
+    </section>
+    <section class="card"><h2>행사·날짜별 건수 <span class="muted" id="tot"></span></h2><div id="sum"></div></section>
+    <section class="card"><h2>최종 리스트</h2>
+      <div class="tw"><table><thead><tr><th>날짜</th><th>행사</th><th>체험</th><th>성명</th><th>생년월일</th><th>자녀</th><th>자녀생년월일</th><th>사번</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <button class="btn sec" id="csv" type="button">엑셀(CSV)로 저장</button>
+    </section>
+  </div>
+</div>
+<script>
+(function(){
+  var API='https://daonpartners.app.n8n.cloud/webhook/daon-event-list';
+  var $=function(i){return document.getElementById(i);};
+  var AUTH=null, LAST=[];
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function call(extra){
+    var body=Object.assign({sabun:AUTH.sabun,viewCode:AUTH.vc},extra||{});
+    return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){ return r.json(); });
+  }
+  function draw(r){
+    LAST=r.rows||[];
+    $('who').textContent=r.name+(r.admin?' (전체 보기)':'');
+    var cur=$('fe').value, ev=$('fe');
+    ev.innerHTML='<option value="">전체 행사</option>'+(r.events||[]).map(function(e){return '<option>'+esc(e)+'</option>';}).join('');
+    ev.value=cur;
+    $('tot').textContent='· 총 '+r.total+'건';
+    $('sum').innerHTML=(r.summary||[]).length?r.summary.map(function(s){return '<div class="sum"><span>'+esc(s.date)+' · '+esc(s.eventName)+' · '+esc(s.kind)+'</span><b>'+s.count+'건</b></div>';}).join(''):'<p class="muted">조건에 맞는 내역이 없습니다.</p>';
+    $('rows').innerHTML=LAST.map(function(x){return '<tr><td>'+esc(x.eventDate)+'</td><td>'+esc(x.eventName)+'</td><td>'+esc(x.kind)+'</td><td>'+esc(x.personName)+'</td><td>'+esc(x.personBirth)+'</td><td>'+esc(x.childName)+'</td><td>'+esc(x.childBirth)+'</td><td>'+esc(x.sabun)+'</td></tr>';}).join('');
+  }
+  function query(){
+    var b=$('go'); b.disabled=true; b.textContent='불러오는 중…';
+    call({eventName:$('fe').value,from:$('ff').value,to:$('ft').value}).then(function(r){
+      b.disabled=false; b.textContent='조회';
+      if(!r.ok){ alert(r.error||'조회하지 못했습니다.'); return; }
+      draw(r);
+    }).catch(function(){ b.disabled=false; b.textContent='조회'; alert('연결에 실패했습니다. 잠시 후 다시 시도해 주세요.'); });
+  }
+  $('lgo').addEventListener('click',function(){
+    var sb=$('sb').value.replace(/[^0-9]/g,''), vc=$('vc').value.trim(), e=$('lerr'); e.classList.add('hide');
+    if(!sb||!vc){ e.textContent='사번과 조회코드를 입력해 주세요'; e.classList.remove('hide'); return; }
+    AUTH={sabun:sb,vc:vc}; var b=$('lgo'); b.disabled=true; b.textContent='확인 중…';
+    call({}).then(function(r){
+      b.disabled=false; b.textContent='확인';
+      if(!r.ok){ AUTH=null; e.textContent=r.error||'확인하지 못했습니다'; e.classList.remove('hide'); return; }
+      $('login').classList.add('hide'); $('main').classList.remove('hide'); draw(r);
+    }).catch(function(){ AUTH=null; b.disabled=false; b.textContent='확인'; e.textContent='연결에 실패했습니다'; e.classList.remove('hide'); });
+  });
+  $('go').addEventListener('click',query);
+  $('csv').addEventListener('click',function(){
+    if(!LAST.length) return;
+    var h=['날짜','행사','체험','성명','생년월일','자녀','자녀생년월일','사번'];
+    var q=function(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; };
+    var lines=[h.map(q).join(',')].concat(LAST.map(function(x){ return [x.eventDate,x.eventName,x.kind,x.personName,x.personBirth,x.childName,x.childBirth,x.sabun].map(q).join(','); }));
+    var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='행사DB_'+new Date().toISOString().slice(0,10)+'.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+})();
+</script>
+<script src="/daon/assets/datefix.js"></script>
+</body>
+</html>
