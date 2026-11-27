@@ -1223,7 +1223,13 @@ body.growon{ background:var(--g-navy); }
 .sm-item .sm-view{font-size:11px; font-weight:800; color:var(--orange-deep); background:var(--canvas); padding:5px 10px; border-radius:999px; flex:none;}
 .sm-lb-dl{display:inline-block; margin-top:10px; background:var(--orange); color:#fff; font-size:13px; font-weight:800; padding:9px 20px; border-radius:8px; text-decoration:none;}
 .sm-lb-dl:hover{background:var(--orange-deep);}
-.evt-card{border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px;}
+.evt-card{border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; position:relative;}
+.evt-card.evt-off{background:#F6F7F9; opacity:.78;}
+.evt-card.evt-off .evt-title{color:#7A8596; text-decoration:line-through; text-decoration-thickness:1px;}
+.evt-off-tag{display:inline-block; font-size:11px; font-weight:800; color:#fff; background:#64748B; padding:3px 10px; border-radius:20px; margin-left:6px;}
+.evt-off-note{font-size:12.5px; font-weight:700; color:#64748B; margin-top:10px;}
+.evt-close-btn{position:absolute; top:12px; right:12px; border:1px solid #F3C9A6; background:#FFF4EA; color:#C25E0C; font-size:12px; font-weight:800; border-radius:999px; padding:6px 12px; cursor:pointer; font-family:inherit;}
+.evt-card.evt-off .evt-close-btn{border-color:#CBD5E1; background:#fff; color:#334155;}
 .evt-tag{display:inline-block; font-size:11px; font-weight:800; color:var(--orange-deep); background:#E7E9FB; padding:3px 10px; border-radius:20px; margin-bottom:8px;}
 .evt-title{font-size:15px; font-weight:800; color:var(--navy-2);}
 .evt-date{font-size:11.5px; color:var(--slate); margin-top:2px;}
@@ -11300,15 +11306,18 @@ const limitCompareData = {};
     if(!box) return;
     /* 예전 분류명은 새 이름으로 보여줌: 입주박람회→아파트행사, 펫페어→펫행사 */
     const ECAT = c => ({ '입주박람회': '아파트행사', '펫페어': '펫행사' })[c] || c || '기타행사';
-    const list = eventCat === '전체' ? eventPosts : eventPosts.filter(p => ECAT(p.category) === eventCat);
+    const EOFF = p => /^\[종료\]/.test(String(p.title || ''));
+    const ETTL = p => String(p.title || '').replace(/^\[종료\]\s*/, '');
+    const list = (eventCat === '전체' ? eventPosts : eventPosts.filter(p => ECAT(p.category) === eventCat)).slice().sort((a, b) => (EOFF(a) ? 1 : 0) - (EOFF(b) ? 1 : 0));
     if(!list.length){
       box.innerHTML = '<div class="cr-empty" style="padding:28px; text-align:center;">등록된 행사가 없습니다.</div>';
       return;
     }
     box.innerHTML = list.map(p => `
-      <div class="evt-card">
-        <span class="evt-tag">${escapeHtml(ECAT(p.category))}</span>
-        <div class="evt-title">${escapeHtml(p.title)}</div>
+      <div class="evt-card${EOFF(p) ? ' evt-off' : ''}">
+        <span class="evt-tag">${escapeHtml(ECAT(p.category))}</span>${EOFF(p) ? '<span class="evt-off-tag">종료</span>' : ''}
+        ${cmActive() ? `<button type="button" class="evt-close-btn" data-eid="${escapeHtml(p.id)}" data-eact="${EOFF(p) ? 'reopen' : 'close'}">${EOFF(p) ? '↩ 다시 열기' : '⏹ 행사 종료'}</button>` : ''}
+        <div class="evt-title">${escapeHtml(ETTL(p))}</div>
         <div class="evt-date">${escapeHtml(p.author || '')} · ${escapeHtml(p.date || '')}</div>
         ${p.content ? `<div class="evt-content">${escapeHtml(p.content)}</div>` : ''}
         ${(p.images && p.images.length) ? `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:10px;">${p.images.map(src => `
@@ -11317,14 +11326,14 @@ const limitCompareData = {};
         ${(p.replies && p.replies.length) ? `<div class="evt-apply-list">${p.replies.map(r => `
           <div class="evt-apply-item">${escapeHtml(r.manager)} · ${escapeHtml(r.branch)}(${escapeHtml(r.branchType)}) · 참석인원 ${escapeHtml(String(r.count))}명</div>
         `).join('')}</div>` : ''}
-        <span class="evt-apply-toggle" data-pid="${escapeHtml(p.id)}">📋 신청하기</span>
+        ${EOFF(p) ? '<div class="evt-off-note">종료된 행사입니다. 신청을 받지 않습니다.</div>' : `<span class="evt-apply-toggle" data-pid="${escapeHtml(p.id)}">📋 신청하기</span>`}
         ${(cmActive() && cmIsMine(p.author)) ? `
         <div class="cm-tools">
           <button type="button" class="cm-btn cm-evt-edit" data-id="${escapeHtml(p.id)}">✏️ 수정</button>
           <button type="button" class="cm-btn del cm-evt-del" data-id="${escapeHtml(p.id)}">🗑️ 삭제</button>
         </div>
         <div class="cm-edit" id="cmEvtEdit-${escapeHtml(p.id)}">
-          <input type="text" class="cm-f-title" value="${escapeHtml(p.title)}" placeholder="행사명">
+          <input type="text" class="cm-f-title" value="${escapeHtml(ETTL(p))}" placeholder="행사명">
           <textarea class="cm-f-content" placeholder="내용">${escapeHtml(p.content || '')}</textarea>
           <button type="button" class="cm-btn cm-evt-save" data-id="${escapeHtml(p.id)}">💾 저장</button>
         </div>
@@ -11374,7 +11383,7 @@ const limitCompareData = {};
           target: 'event',
           id: btn.dataset.id,
           fields: {
-            title: wrap.querySelector('.cm-f-title').value.trim(),
+            title: ((eventPosts.find(x => String(x.id) === String(btn.dataset.id)) || {}).title || '').startsWith('[종료]') ? '[종료] ' + wrap.querySelector('.cm-f-title').value.trim() : wrap.querySelector('.cm-f-title').value.trim(),
             content: wrap.querySelector('.cm-f-content').value.trim()
           },
           msgEl: document.getElementById('cmEvtMsg-' + btn.dataset.id),
@@ -11393,6 +11402,18 @@ const limitCompareData = {};
 
   const _el = document.getElementById('eventList');
   if(_el) _el.addEventListener('click', async (e) => {
+    const closeBtn = e.target.closest('.evt-close-btn');
+    if(closeBtn){
+      const act = closeBtn.dataset.eact, id = closeBtn.dataset.eid;
+      if(act === 'close' && !confirm('이 행사를 종료할까요?\n종료하면 신청 버튼이 사라지고 목록 아래로 내려갑니다. (다시 열기 가능)')) return;
+      let code = ''; try{ code = sessionStorage.getItem('growAdminCode') || ''; }catch(err){}
+      closeBtn.disabled = true; closeBtn.textContent = '처리 중…';
+      const r = await cmSend({ target: 'event', action: act, id: id, actor: cmMe() || '관리자', code: code });
+      cmToast(r.ok ? '✅ ' + r.message : '❌ ' + r.message, r.ok ? 'ok' : 'err');
+      if(r.ok){ const p = eventPosts.find(x => String(x.id) === String(id)); if(p){ const t = String(p.title || '').replace(/^\[종료\]\s*/, ''); p.title = act === 'close' ? '[종료] ' + t : t; } renderEvents(); }
+      else { closeBtn.disabled = false; closeBtn.textContent = act === 'close' ? '⏹ 행사 종료' : '↩ 다시 열기'; }
+      return;
+    }
     const toggleBtn = e.target.closest('.evt-apply-toggle');
     if(toggleBtn){
       document.getElementById('eventApplyForm-' + toggleBtn.dataset.pid).classList.toggle('open');
@@ -11558,17 +11579,20 @@ const limitCompareData = {};
     const now = new Date(), pad = n => String(n).padStart(2, '0');
     const today = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
     const ym = today.slice(0, 7);
-    const wk = new Date(now); wk.setDate(now.getDate() + 7);
-    const wkEnd = wk.getFullYear() + '-' + pad(wk.getMonth() + 1) + '-' + pad(wk.getDate());
+    const addDays = n => { const d = new Date(now); d.setDate(now.getDate() + n); return d; };
+    const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    const md = d => (d.getMonth() + 1) + '/' + d.getDate();
+    const w7 = addDays(6), w30 = addDays(29);
+    const wkEnd = iso(w7), moEnd = iso(w30);
     const list = schedule.filter(e => e && e.dateStart);
     const tCnt = list.filter(e => e.dateStart === today).length;
     const wCnt = list.filter(e => e.dateStart >= today && e.dateStart <= wkEnd).length;
-    const mCnt = list.filter(e => e.dateStart.slice(0, 7) === ym).length;
+    const mCnt = list.filter(e => e.dateStart >= today && e.dateStart <= moEnd).length;
     const next = list.filter(e => e.dateStart >= today).sort((a, b) => (a.dateStart + (a.time || '')).localeCompare(b.dateStart + (b.time || '')))[0];
     const days = ['일','월','화','수','목','금','토'];
     const nd = next ? new Date(next.dateStart + 'T00:00:00') : null;
     box.innerHTML = '<div class="gx-hero-top"><div><small>' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + days[now.getDay()] + '요일</small><h2>오늘도 함께 성장하는 그로우</h2></div></div>'
-      + '<div class="gx-kpis"><div class="gx-kpi"><b>' + tCnt + '건</b><span>오늘 일정</span></div><div class="gx-kpi"><b>' + wCnt + '건</b><span>앞으로 7일</span></div><div class="gx-kpi"><b>' + mCnt + '건</b><span>' + (now.getMonth() + 1) + '월 전체</span></div></div>'
+      + '<div class="gx-kpis"><div class="gx-kpi"><b>' + tCnt + '건</b><span>오늘 일정</span></div><div class="gx-kpi"><b>' + wCnt + '건</b><span>7일 안 (' + md(now) + '~' + md(w7) + ')</span></div><div class="gx-kpi"><b>' + mCnt + '건</b><span>30일 안 (' + md(now) + '~' + md(w30) + ')</span></div></div>'
       + (next ? '<div class="gx-next">⏭ 다음 일정 · ' + (nd.getMonth() + 1) + '/' + nd.getDate() + '(' + days[nd.getDay()] + ') ' + escapeHtml(next.time || '') + ' ' + escapeHtml(next.title || '') + (next.place ? ' · ' + escapeHtml(next.place) : '') + '</div>' : '<div class="gx-next">다가오는 일정이 아직 없습니다.</div>');
   }
   { const _rs = renderSchedule; renderSchedule = function(a){ const r = _rs.apply(this, arguments); try{ gxRenderHero(); }catch(e){} return r; }; }
