@@ -1280,6 +1280,74 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
 }
 #adminTabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px}
 #adminTabs .edu-tab{white-space:nowrap;writing-mode:horizontal-tb;min-width:0}
+
+/* ===== 2026-11-27 홈 개편: 밝고 산뜻한 테마 ===== */
+:root{ --gx-bg:#F3F6FB; --gx-line:#E4E9F1; --gx-ink:#14213D; --gx-sub:#64748B; --gx-or:#F58220; --gx-or2:#FF9F45; --gx-blue:#2F6BFF; --gx-sh:0 1px 2px rgba(16,24,40,.04),0 6px 18px rgba(16,24,40,.06); }
+body.growon{ background:var(--gx-bg); }
+.growon-hd{ border-bottom:none; box-shadow:0 1px 0 var(--gx-line),0 8px 24px rgba(16,24,40,.05); position:relative; }
+.growon-hd::after{ content:""; position:absolute; left:0; right:0; bottom:-3px; height:3px; background:linear-gradient(90deg,var(--gx-or),var(--gx-or2) 40%,var(--gx-blue)); }
+.gh-t{ background:linear-gradient(90deg,var(--gx-or),#FF6A3D); -webkit-background-clip:text; background-clip:text; color:transparent !important; letter-spacing:-.5px; }
+.gwrap{ padding:22px 20px; gap:18px; grid-template-columns:230px minmax(0,1fr) 230px; max-width:1520px; margin:0 auto; }
+.gcol{ gap:12px; }
+.gcard{ border:1px solid var(--gx-line); border-radius:16px; box-shadow:var(--gx-sh); padding:14px 12px; }
+.gcard-t{ text-align:left; font-size:12px; font-weight:800; color:var(--gx-sub); letter-spacing:.02em; padding:0 4px 8px; }
+.gbtn{ border:1px solid var(--gx-line); border-radius:14px; box-shadow:var(--gx-sh); color:var(--gx-ink); transition:transform .15s, box-shadow .15s, background .15s; text-align:left; padding:13px 14px; display:flex; flex-direction:column; }
+.gbtn:hover{ background:#fff; transform:translateY(-1px); box-shadow:0 2px 4px rgba(16,24,40,.06),0 12px 24px rgba(16,24,40,.08); }
+.gbtn.active{ background:linear-gradient(135deg,var(--gx-or),var(--gx-or2)); color:#fff; border-color:transparent; }
+.gbtn.active small{ color:rgba(255,255,255,.9); }
+.gbtn small{ color:var(--gx-sub); font-weight:600; }
+.gbtn.gx-dark{ background:linear-gradient(135deg,#14213D,#2B3A67); color:#fff; border-color:transparent; }
+.gbtn.gx-dark small{ color:#C9D3EA; }
+.gbtn.gx-boit{ background:linear-gradient(135deg,#2F6BFF,#5B8CFF); color:#fff; border-color:transparent; }
+.gbtn.gx-boit small{ color:#DCE6FF; }
+.gx-nav{ display:flex; flex-direction:column; gap:2px; }
+.gx-nav a{ display:flex; align-items:center; gap:10px; padding:10px 10px; border-radius:11px; font-size:14px; font-weight:700; color:var(--gx-ink); text-decoration:none; cursor:pointer; transition:background .15s,color .15s; }
+.gx-nav a i{ font-style:normal; width:28px; height:28px; display:inline-grid; place-items:center; border-radius:9px; background:#FFF3E8; font-size:14px; flex:none; }
+.gx-nav a:hover{ background:#F6F8FC; }
+.gx-nav a.active{ background:#FFF3E8; color:#C25E0C; }
+.gx-nav a.active i{ background:var(--gx-or); }
+.gx-br{ display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.gx-br button{ border:1px solid var(--gx-line); background:#fff; border-radius:12px; padding:10px 8px; text-align:left; cursor:pointer; font-family:inherit; transition:border-color .15s, background .15s; min-height:58px; }
+.gx-br button:hover{ border-color:var(--gx-or); background:#FFF8F1; }
+.gx-br b{ display:block; font-size:13px; font-weight:800; color:var(--gx-ink); }
+.gx-br span{ display:block; font-size:11px; color:var(--gx-sub); margin-top:2px; }
+.gx-br button.has-page{ background:linear-gradient(135deg,#FFF3E8,#fff); border-color:#FFD2AA; }
+.gx-br button.has-page span{ color:#C25E0C; font-weight:800; }
+.rail-t{ color:var(--gx-sub); font-size:12px; font-weight:800; letter-spacing:.02em; padding:4px 4px 0; }
+.rgroup{ border-radius:16px; border-color:var(--gx-line); box-shadow:var(--gx-sh); }
+.rgroup h4{ text-align:left; padding-left:4px; }
+.gmain{ border-radius:20px; border:1px solid var(--gx-line); box-shadow:var(--gx-sh); padding:22px 24px; }
+.gstrip{ display:none !important; }
+#colRight .rstack{ display:none; }
+.gfoot{ color:#94A3B8 !important; }
+.gfoot span{ color:#94A3B8 !important; }
+.drawer{ background:var(--gx-bg); }
+.drawer-x{ color:var(--gx-ink); }
+.panel-eyebrow{ color:var(--gx-or) !important; }
+.month-cell{ border-radius:12px; }
+.month-cell.today{ background:#FFF3E8 !important; color:var(--gx-ink) !important; box-shadow:inset 0 0 0 2px var(--gx-or); }
+.month-cell.today *{ color:var(--gx-ink) !important; }
+@keyframes gxIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+@media (prefers-reduced-motion:no-preference){ .gview.on{ animation:gxIn .28s ease-out; } }
+/* AI 자동 등록 창 */
+.gx-modal{ position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:200; display:none; align-items:center; justify-content:center; padding:16px; }
+.gx-modal.open{ display:flex; }
+.gx-box{ background:#fff; border-radius:18px; width:100%; max-width:560px; max-height:88vh; overflow:auto; padding:22px; box-shadow:0 24px 60px rgba(15,23,42,.25); }
+.gx-box h3{ margin:0 0 6px; font-size:18px; color:var(--gx-ink); }
+.gx-box p.gx-d{ margin:0 0 12px; font-size:13px; color:var(--gx-sub); line-height:1.6; }
+.gx-box textarea{ width:100%; box-sizing:border-box; min-height:180px; border:1px solid var(--gx-line); border-radius:12px; padding:12px; font-size:14px; font-family:inherit; resize:vertical; }
+.gx-box input[type=month],.gx-box input[type=file]{ font-size:14px; font-family:inherit; }
+.gx-row{ display:flex; gap:8px; justify-content:flex-end; margin-top:12px; flex-wrap:wrap; }
+.gx-btn{ border:none; border-radius:11px; padding:11px 16px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; background:#EEF2F7; color:var(--gx-ink); }
+.gx-btn.pri{ background:linear-gradient(135deg,var(--gx-or),var(--gx-or2)); color:#fff; }
+.gx-btn:disabled{ opacity:.55; cursor:default; }
+.gx-msg{ font-size:13px; margin-top:10px; color:var(--gx-sub); white-space:pre-wrap; }
+.gx-list{ margin-top:12px; border:1px solid var(--gx-line); border-radius:12px; overflow:hidden; }
+.gx-list label{ display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border-bottom:1px solid var(--gx-line); font-size:13.5px; cursor:pointer; }
+.gx-list label:last-child{ border-bottom:none; }
+.gx-list label small{ display:block; color:var(--gx-sub); font-size:12px; margin-top:2px; }
+.gx-list label.dup{ opacity:.55; }
+@media (max-width:900px){ .gwrap{ grid-template-columns:1fr; padding:12px; } .gbtn{ text-align:center; align-items:center; } }
 </style>
 <script>try{ if(window.self!==window.top) document.documentElement.classList.add('embed'); }catch(e){ document.documentElement.classList.add('embed'); }</script>
 </head>
@@ -1326,15 +1394,19 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
     </div>
     <div class="gcard">
       <div class="gcard-t">그로우사업부</div>
-      <div class="gcard-list">
-        <a data-view="guide">제도안내</a>
-        <a data-view="business">사업소개</a>
-        <a data-view="home">전국지사안내</a>
-      </div>
+      <nav class="gx-nav">
+        <a data-view="schedule"><i>📅</i>일정</a>
+        <a data-view="notice"><i>📢</i>공지사항</a>
+        <a data-view="salesstrategy"><i>📈</i>이달의 영업전략</a>
+        <a data-view="business"><i>🏢</i>사업부 소개</a>
+        <a data-view="home"><i>📍</i>지사 소개</a>
+      </nav>
     </div>
-    <button class="gbtn" data-view="admin">🔒 관리자센터</button>
-    <button class="gbtn" data-view="album">그로우앨범</button>
-    <button class="gbtn" data-view="recruit">파트너모집</button>
+    <button class="gbtn gx-dark" data-view="admin">🔒 관리자센터<small>공지·일정·자료 관리</small></button>
+    <div class="gcard">
+      <div class="gcard-t">지사 바로가기</div>
+      <div class="gx-br" id="gxBranchGrid"></div>
+    </div>
 
     <div class="gfoot">
       © 2026 GROW ON<br>
@@ -1350,7 +1422,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       <button class="gbtn" data-view="schedule">일정달력<small>그로우사업부 일정</small></button>
     </div>
     <div class="gmain">
-      <div class="gview on" id="view-home"></div>
+      <div class="gview" id="view-home"></div>
       <div class="gview" id="view-album">
         <div class="panel-head"><div><div class="panel-eyebrow">Grow Album</div><h2 class="panel-title">그로우앨범</h2></div></div>
         <div class="alb-grid" id="albGrid">
@@ -1379,6 +1451,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
                 <div><h2 class="panel-title" style="font-size:16px;">📈 영업전략 소식지</h2></div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                   <button class="qna-new-btn sc-inline-edit-btn" id="strategyQuickAddBtn" style="display:none;">✏️ 게시물 등록</button>
+                  <button class="qna-new-btn sc-inline-edit-btn" id="gxStratAIBtn" style="display:none;" onclick="gxOpenStratAI()">🤖 PDF로 한번에 등록</button>
                   <button class="qna-new-btn" id="strategyViewAllBtn" style="width:auto; padding:8px 16px; margin-bottom:0;">📋 게시물 보기</button>
                 </div>
               </div>
@@ -2762,16 +2835,13 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
   </div>
 
   <div class="gcol" id="colRight">
-    <div class="rail-t">그로우설계사공간</div>
-    <a class="gbtn" href="/report/" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">📑 리포트생성<small>지문 · 질병예측 · 보장분석 · 제안서</small></a>
-    <button class="gbtn" data-view="fclookup">👤 내 DB 조회<small>FC 전용</small></button>
-    <button class="gbtn" data-view="salescenter">🧾 영업센터</button>
-    <button class="gbtn" data-view="datacenter">🗂️ 자료센터</button>
-    <button class="gbtn" type="button" id="boitGoBtn">BOIT 바로가기</button>
-    <a class="gbtn" href="https://openga.calsplatz.com/login" target="_blank" rel="noopener" style="display:block; text-decoration:none; box-sizing:border-box;">미래에셋금융서비스<small>(M포스트)</small></a>
-    <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
-
-    <div class="rail-t">업무링크</div>
+    <div class="rail-t">설계사 공간</div>
+    <button class="gbtn" data-view="fclookup">👤 FC전용 DB센터<small>내게 배정된 DB 조회</small></button>
+    <button class="gbtn gx-boit" type="button" id="boitGoBtn">⚡ 영업툴 BOIT 바로가기<small>고객관리·청구·AI 보험비서</small></button>
+    <a class="gbtn" href="/report/" target="_blank" rel="noopener" style="text-decoration:none; box-sizing:border-box;">📑 리포트생성 (구)<small>지문 · 질병예측 · 보장분석 · 제안서</small></a>
+    <button class="gbtn" data-view="datacenter">🗂️ 자료센터 (구)<small>가이드·인수·교육 자료</small></button>
+    <div class="rail-t">바로가기</div>
+    <a class="gbtn" href="https://openga.calsplatz.com/login" target="_blank" rel="noopener" style="text-decoration:none; box-sizing:border-box;">M포스트<small>미래에셋금융서비스</small></a>
 
     <div class="rgroup">
       <h4>자동차보험</h4>
@@ -3825,6 +3895,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       bar.innerHTML = `<div class="sm-adminbar"><span class="sm-adminwho">✍️ ${escapeHtml(smWhoAmI())} 님 · 게시 권한 있음</span><button type="button" class="sm-newbtn" id="scheduleNewBtn">＋ 새 일정 등록</button></div>`;
       const nb = document.getElementById('scheduleNewBtn');
       if(nb) nb.addEventListener('click', () => scheduleOpenForm(null));
+      if(!document.getElementById('gxSchedAIBtn')){ const ab = document.createElement('button'); ab.type = 'button'; ab.className = 'sm-newbtn'; ab.id = 'gxSchedAIBtn'; ab.textContent = '🤖 카톡 공지로 한번에 등록'; ab.style.marginLeft = '6px'; ab.addEventListener('click', gxOpenSchedAI); (nb && nb.parentNode ? nb.parentNode : bar).appendChild(ab); }
     } else {
       bar.style.display = 'none';
       bar.innerHTML = '';
@@ -5577,7 +5648,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
   function renderHome(){
     const box=document.getElementById('view-home'); if(!box) return;
     box.innerHTML = `
-      <div class="panel-head"><div><div class="panel-eyebrow">Grow On</div><h2 class="panel-title">전국지사안내</h2></div></div>
+      <div class="panel-head"><div><div class="panel-eyebrow">Grow On</div><h2 class="panel-title">지사 소개</h2></div></div>
       <div class="map-wrap">
         <div class="kmap-box" id="kmapBox"><div id="gLeafletMap" style="width:100%; height:360px; border-radius:14px; overflow:hidden;"></div></div>
         <div><h4 style="font-size:14px;font-weight:900;margin-bottom:10px;">지사 목록</h4>
@@ -5666,7 +5737,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
     document.querySelectorAll('.qna-form.open').forEach(f => f.classList.remove('open'));
     if(gMapInstance){ gMapInstance.remove(); gMapInstance = null; }
     homeScheduleOffset = 0;
-    showView('home');
+    showView('schedule');
     renderHome();
     if(typeof dnRenderMini === 'function') dnRenderMini();
     if(sessionStorage.getItem('growAdmin') === '1' && typeof applyAdminRole === 'function') applyAdminRole();
@@ -9346,7 +9417,7 @@ const limitCompareData = {};
     if(typeof renderLectureAdminBar === 'function') renderLectureAdminBar();
     if(typeof renderDataCenter === 'function') renderDataCenter();
     if(typeof Object !== 'undefined' && typeof salesMaterials !== 'undefined') Object.keys(salesMaterials).forEach(k => { if(typeof renderSmFolder === 'function') renderSmFolder(k); });
-    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn','strategyQuickAddBtn'].forEach(id => {
+    ['guideEditJumpBtn','bizEditJumpBtn','onlineEditJumpBtn','crmEditJumpBtn','strategyQuickAddBtn','gxStratAIBtn'].forEach(id => {
       const el = document.getElementById(id);
       if(el) el.style.display = canPost() ? 'inline-block' : 'none';
     });
@@ -11321,7 +11392,136 @@ const limitCompareData = {};
     }
   });
 
-  syncGrowLayout(); renderHome(); showView('home');
+
+  /* ===== 2026-11-27 지사 바로가기 박스 ===== */
+  function gxRenderBranches(){
+    const box = document.getElementById('gxBranchGrid'); if(!box || typeof gBranches === 'undefined') return;
+    box.innerHTML = gBranches.map((b, i) => '<button type="button" data-gxb="' + i + '"' + (b.url ? ' class="has-page"' : '') + '><b>' + escapeHtml(b.name.replace(/지사$/, '')) + '</b><span>' + (b.url ? '지사페이지 ›' : escapeHtml(b.city || '')) + '</span></button>').join('');
+    box.querySelectorAll('[data-gxb]').forEach(el => el.addEventListener('click', () => {
+      const i = Number(el.dataset.gxb), b = gBranches[i]; if(!b) return;
+      if(b.url){ location.href = b.url; return; }
+      showView('home');
+      setTimeout(() => { try{ if(!gMapInstance) initGMap(); if(gMapInstance){ gMapInstance.invalidateSize(); gMapInstance.setView([b.lat, b.lng], 13, { animate:true }); if(gMapMarkers[i]) gMapMarkers[i].openPopup(); } }catch(e){} }, 350);
+    }));
+  }
+
+  /* ===== 2026-11-27 AI 자동 등록 (일정: 카톡 공지 / 영업전략: PDF) ===== */
+  const GX_SCHED_AI = 'https://daonpartners.app.n8n.cloud/webhook/grow-schedule-ai';
+  const GX_STRAT_AI = 'https://daonpartners.app.n8n.cloud/webhook/grow-strategy-ai';
+  function gxCode(){ try{ return sessionStorage.getItem('growAdminCode') || ''; }catch(e){ return ''; } }
+  function gxModal(id, html){
+    let m = document.getElementById(id);
+    if(!m){ m = document.createElement('div'); m.className = 'gx-modal'; m.id = id; document.body.appendChild(m); m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); }); }
+    m.innerHTML = '<div class="gx-box">' + html + '</div>'; m.classList.add('open'); return m;
+  }
+  function gxOpenSchedAI(){
+    const m = gxModal('gxSchedAI', '<h3>🤖 카톡 공지로 일정 한번에 등록</h3><p class="gx-d">단톡방 공지 글을 그대로 붙여넣으세요. AI가 날짜·시간·장소를 뽑아 목록으로 보여드리고, 확인한 것만 일정달력에 올립니다.</p>'
+      + '<textarea id="gxSchedText" placeholder="예) [12월 교육 일정]\n12/3(수) 10:30 삼성화재 신상품 교육 ZOOM\n12/5(금) 14:00 그로우 지사장 회의 광명"></textarea>'
+      + '<div class="gx-msg" id="gxSchedMsg"></div><div id="gxSchedList"></div>'
+      + '<div class="gx-row"><button class="gx-btn" id="gxSchedClose">닫기</button><button class="gx-btn pri" id="gxSchedGo">AI로 일정 뽑기</button></div>');
+    const msg = m.querySelector('#gxSchedMsg'), go = m.querySelector('#gxSchedGo');
+    m.querySelector('#gxSchedClose').onclick = () => m.classList.remove('open');
+    let found = [];
+    go.onclick = async () => {
+      if(found.length){ return gxSaveSched(found, m); }
+      const text = m.querySelector('#gxSchedText').value.trim();
+      if(!text){ msg.textContent = '공지 글을 붙여넣어 주세요.'; return; }
+      if(!gxCode()){ msg.textContent = '관리자센터에 먼저 로그인해 주세요.'; return; }
+      go.disabled = true; msg.textContent = 'AI가 일정을 읽는 중입니다… (10~30초)';
+      try{
+        const r = await fetch(GX_SCHED_AI, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: gxCode(), text: text }) });
+        const d = await r.json().catch(() => ({}));
+        if(!r.ok || !d.ok) throw new Error(d.error || (r.status === 500 ? '관리자 확인에 실패했거나 서버 오류입니다.' : '서버 응답 오류'));
+        found = (d.items || []).map(x => Object.assign({}, x, { dup: schedule.some(e => e.title === x.title && e.dateStart === x.dateStart) }));
+        if(!found.length){ msg.textContent = '날짜가 있는 일정을 찾지 못했습니다. 글을 확인해 주세요.'; go.disabled = false; return; }
+        m.querySelector('#gxSchedList').innerHTML = '<div class="gx-list">' + found.map((x, i) => '<label' + (x.dup ? ' class="dup"' : '') + '><input type="checkbox" data-gxi="' + i + '"' + (x.dup ? '' : ' checked') + '><span><b>' + escapeHtml(x.dateStart.slice(5).replace('-', '/')) + (x.dateEnd ? '~' + escapeHtml(x.dateEnd.slice(5).replace('-', '/')) : '') + ' · ' + escapeHtml(x.title) + '</b><small>' + escapeHtml([x.cat, x.time, x.place].filter(Boolean).join(' · ')) + (x.dup ? ' · 이미 등록됨' : '') + '</small></span></label>').join('') + '</div>';
+        msg.textContent = found.length + '건을 찾았습니다. 틀린 항목은 체크를 빼고 등록하세요.';
+        go.textContent = '선택한 일정 등록'; go.disabled = false;
+      }catch(err){ msg.textContent = '실패: ' + err.message; go.disabled = false; }
+    };
+  }
+  async function gxSaveSched(found, m){
+    const go = m.querySelector('#gxSchedGo'), msg = m.querySelector('#gxSchedMsg');
+    const pick = Array.from(m.querySelectorAll('[data-gxi]')).filter(c => c.checked).map(c => found[Number(c.dataset.gxi)]);
+    if(!pick.length){ msg.textContent = '등록할 일정을 선택해 주세요.'; return; }
+    go.disabled = true; let ok = 0;
+    for(const x of pick){
+      const days = [];
+      const d0 = new Date(x.dateStart + 'T00:00:00'), d1 = x.dateEnd ? new Date(x.dateEnd + 'T00:00:00') : d0;
+      for(let d = new Date(d0); d <= d1 && days.length < 14; d.setDate(d.getDate() + 1)) days.push(new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10));
+      for(const day of days){
+        const ev = { id: String(Date.now()) + Math.floor(Math.random() * 1000), title: x.title, cat: x.cat, dateStart: day, time: x.time, place: x.place, author: smWhoAmI() };
+        msg.textContent = '등록 중… ' + (ok + 1) + '번째 (' + x.title + ')';
+        try{
+          const r = await fetch(SCHEDULE_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ kind:'event', action:'create' }, ev)) });
+          if(r.ok){ schedule.push(ev); ok++; }
+        }catch(e){}
+        await new Promise(res => setTimeout(res, 700));
+      }
+    }
+    renderSchedule(schedule); if(typeof renderHomeSchedule === 'function') renderHomeSchedule();
+    msg.textContent = ok + '건 등록했습니다. 다른 기기에는 1~5분 뒤 보입니다.'; go.textContent = '완료'; go.onclick = () => m.classList.remove('open'); go.disabled = false;
+  }
+  let gxPdfLib = null;
+  function gxLoadPdf(){
+    if(gxPdfLib) return gxPdfLib;
+    gxPdfLib = new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; sc.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(window.pdfjsLib); }; sc.onerror = () => rej(new Error('PDF 읽기 도구를 불러오지 못했습니다.')); document.head.appendChild(sc); });
+    return gxPdfLib;
+  }
+  async function gxPdfPages(file){
+    const lib = await gxLoadPdf();
+    const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+    const out = [];
+    for(let i = 1; i <= Math.min(pdf.numPages, 200); i++){
+      const pg = await pdf.getPage(i); const tc = await pg.getTextContent();
+      let line = '', lastY = null; const lines = [];
+      tc.items.forEach(it => { const y = Math.round(it.transform[5]); if(lastY !== null && Math.abs(y - lastY) > 3){ lines.push(line); line = ''; } line += (line && !/\s$/.test(line) ? ' | ' : '') + it.str; lastY = y; });
+      if(line) lines.push(line);
+      out.push(lines.join('\n'));
+    }
+    return out;
+  }
+  function gxStratKind(name){ return /손해|손보/.test(name) ? '손보' : /생명|생보/.test(name) ? '생보' : '이슈'; }
+  function gxOpenStratAI(){
+    const now = new Date(), ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    const m = gxModal('gxStratAI', '<h3>🤖 영업전략 PDF 한번에 등록</h3><p class="gx-d">이달 판매전략 PDF(생보·손보·영업이슈)를 한꺼번에 고르세요. 게시판 글이 자동으로 올라가고, AI 보험비서(그로우·보잇)에도 이달 자료로 들어갑니다. 파일 이름에 "손해/손보", "생명/생보"가 있으면 자동으로 구분합니다.</p>'
+      + '<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;"><label style="font-size:13px; font-weight:700;">자료 월 <input type="month" id="gxStratMonth" value="' + ym + '"></label><input type="file" id="gxStratFiles" accept=".pdf,application/pdf" multiple></div>'
+      + '<div class="gx-msg" id="gxStratMsg"></div>'
+      + '<div class="gx-row"><button class="gx-btn" id="gxStratClose">닫기</button><button class="gx-btn pri" id="gxStratGo">등록하기</button></div>');
+    const msg = m.querySelector('#gxStratMsg'), go = m.querySelector('#gxStratGo');
+    m.querySelector('#gxStratClose').onclick = () => m.classList.remove('open');
+    go.onclick = async () => {
+      const files = Array.from(m.querySelector('#gxStratFiles').files || []);
+      const month = m.querySelector('#gxStratMonth').value;
+      if(!files.length){ msg.textContent = 'PDF 파일을 골라 주세요.'; return; }
+      if(!/^\d{4}-\d{2}$/.test(month)){ msg.textContent = '자료 월을 골라 주세요.'; return; }
+      if(!gxCode()){ msg.textContent = '관리자센터에 먼저 로그인해 주세요.'; return; }
+      const big = files.find(f => f.size > SALES_MAX_MB * 1024 * 1024); if(big){ msg.textContent = '"' + big.name + '" 파일이 ' + SALES_MAX_MB + 'MB를 넘습니다.'; return; }
+      go.disabled = true; const [yy, mm] = month.split('-'); const M = Number(mm); const log = [];
+      for(const f of files){
+        const k = gxStratKind(f.name);
+        const title = k === '이슈' ? M + '월 이달의 영업이슈·관심상품' : M + '월 보험사별 판매전략(' + k + ')';
+        const content = k === '이슈' ? '이달의 영업이슈·관심상품_' + yy + '년 ' + M + '월' : '이달의 보험사별 판매전략_' + yy + '년 ' + M + '월_' + (k === '손보' ? '손해보험' : '생명보험');
+        msg.textContent = log.concat(['⏳ ' + f.name + ' 처리 중…']).join('\n');
+        let line = '• ' + title + ': ';
+        try{
+          const fd = await smReadFile(f); const pid = String(Date.now());
+          const r1 = await fetch(STRATEGY_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ kind:'strategy', action:'create', id: pid, title: title, content: content, link: '', author: smWhoAmI(), files: [{ filename: fd.filename, mime: fd.mime, data: fd.data }] }) });
+          line += r1.ok ? '게시판 등록 ✓' : '게시판 등록 실패';
+          if(r1.ok){ strategyPosts.unshift({ id: pid, title: title, content: content, link: URL.createObjectURL(f), author: smWhoAmI(), date: new Date().toISOString().slice(0, 10).replace(/-/g, '.') + ' 게시', sortKey: new Date().toISOString(), images: [] }); }
+          const pages = await gxPdfPages(f);
+          const r2 = await fetch(GX_STRAT_AI, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: gxCode(), month: month, src: '그로우 ' + title, pages: pages }) });
+          const d2 = await r2.json().catch(() => ({}));
+          line += d2.ok ? ' · AI 비서 ' + d2.pages + '쪽 ✓' : ' · AI 비서 실패(' + (d2.error || r2.status) + ')';
+        }catch(err){ line += ' 실패(' + err.message + ')'; }
+        log.push(line);
+      }
+      renderStrategy(); renderStrategyAllList();
+      msg.textContent = log.join('\n') + '\n\n완료했습니다. 다른 기기에는 1~5분 뒤 보입니다.'; go.textContent = '완료'; go.disabled = false; go.onclick = () => m.classList.remove('open');
+    };
+  }
+
+  syncGrowLayout(); renderHome(); showView('schedule'); gxRenderBranches();
 
 
   // ================= 그로우사업부 소속 확인 (이미지·자료 저장 권한) =================
