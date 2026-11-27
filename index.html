@@ -5543,7 +5543,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
 
   const gBranches = [
     { name:'광명지사', city:'광명',   lat:37.4208606, lng:126.8824876, addr:'경기도 광명시 일직로 12번길 21 SH&01프라자 503,504호', manager:'황경호 (사업부총괄대표)', phone:'010-6301-6808' },
-    { name:'다온지사', city:'천안아산', lat:36.7948074, lng:127.048816, addr:'충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C301호', manager:'김화진', phone:'010-4007-7901' },
+    { name:'다온지사', city:'천안아산', lat:36.7948074, lng:127.048816, addr:'충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C301호', manager:'김화진', phone:'010-4007-7901', url:'https://daon.io.kr/branch/' },
     { name:'도약지사', city:'남양주',  lat:37.6233968, lng:127.1514528, addr:'경기 남양주시 다산중앙로123번길 21-3 다산역리더스타워 301호', manager:'박진근', phone:'010-5271-4491' },
     { name:'동행지사', city:'인천', lat:37.5966048, lng:126.7186398, addr:'인천광역시 검단구 완정로 165번안길 1 이편한프라자 503,504호', manager:'허준', phone:'010-9116-4634' },
     { name:'혁신지사', city:'광주',   lat:35.1668392, lng:126.7980429, addr:'광주광역시 광산구 하남을로24 우솔빌딩 3층 302호', manager:'양길성', phone:'010-2972-3966' },
@@ -5582,7 +5582,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
       <div class="map-wrap">
         <div class="kmap-box" id="kmapBox"><div id="gLeafletMap" style="width:100%; height:360px; border-radius:14px; overflow:hidden;"></div></div>
         <div><h4 style="font-size:14px;font-weight:900;margin-bottom:10px;">지사 목록</h4>
-          ${gBranches.map((b,i)=>`<div class="branch" data-bi="${i}"><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.manager||'')} · ${escapeHtml(b.phone||'')}</span></div>`).join('')}
+          ${gBranches.map((b,i)=>`<div class="branch" data-bi="${i}"><b>${escapeHtml(b.name)}${b.url?' <small style="color:var(--orange-deep);font-weight:800">지사페이지 ›</small>':''}</b><span>${escapeHtml(b.manager||'')} · ${escapeHtml(b.phone||'')}</span></div>`).join('')}
         </div>
       </div>
       <div class="home-extra" style="margin-top:22px;padding-top:18px;border-top:2px solid var(--line);">
@@ -5611,6 +5611,7 @@ html.embed .gwrap{grid-template-columns:minmax(0,1fr)!important;padding:8px!impo
         e.stopPropagation();
         const i = Number(el.dataset.bi);
         const b = gBranches[i];
+        if(b && b.url){ location.href = b.url; return; }
         if(!b || !gMapInstance || !gMapMarkers[i]) return;
         gMapInstance.setView([b.lat, b.lng], 13, { animate: true });
         gMapMarkers[i].openPopup();
