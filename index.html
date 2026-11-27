@@ -1076,8 +1076,11 @@ body.growon{ background:var(--g-navy); }
 @media (min-width:901px){ #aiFloatBtn, #bizSupportFloatBtn{display:none !important;} }
 .gh-c{text-align:center;} .gh-t{font-size:23px; font-weight:900; color:var(--orange);}
 .gh-t:hover{opacity:.82;}
-.gh-home-btn{display:inline-flex; align-items:center; gap:4px; margin-bottom:4px; padding:4px 12px; border:none; border-radius:999px; background:rgba(0,0,0,.06); color:var(--navy-2); font-size:11.5px; font-weight:700; cursor:pointer;}
-.gh-home-btn:hover{background:var(--orange); color:#fff;}
+/* 각 화면 맨 위 "그로우 홈" 버튼 (일정=홈 화면 제외) */
+.gv-home{display:flex; justify-content:flex-start; margin:0 0 10px;}
+.gv-home button{display:inline-flex; align-items:center; gap:4px; padding:6px 14px; border:1px solid rgba(0,0,0,.08); border-radius:999px; background:#fff; color:var(--navy-2); font-size:12.5px; font-weight:700; cursor:pointer;}
+.gv-home button:hover{background:var(--orange); border-color:var(--orange); color:#fff;}
+html.embed .gv-home{display:none!important}
 .gh-s{font-size:12px; color:var(--slate); margin-top:2px;}
 .gh-r{text-align:right; font-size:13px; font-weight:900; color:var(--navy-2); line-height:1.25; display:flex; align-items:center; justify-content:flex-end; gap:9px;}
 .gh-r img{height:32px; width:auto; display:block;}
@@ -1392,8 +1395,7 @@ body.growon{ background:radial-gradient(1200px 500px at 8% -10%, #FFE2C7 0%, rgb
 <div class="growon-hd">
   <div class="gh-l">미래에셋 그로우 사업부</div>
   <div class="gh-c">
-    <button type="button" id="ghHomeBtn" class="gh-home-btn" title="홈으로">🏠 홈으로</button>
-    <div class="gh-t" id="ghTitleHome" style="cursor:pointer;" title="홈으로">GROW ON</div>
+    <div class="gh-t" id="ghTitleHome" style="cursor:pointer;" title="그로우온 홈 (새로고침)">GROW ON</div>
     <div class="gh-s">함께 배우고, 연결하고, 성장하는 그로우사업부 통합 플랫폼</div>
   </div>
   <div class="gh-r">
@@ -5684,6 +5686,7 @@ body.growon{ background:radial-gradient(1200px 500px at 8% -10%, #FFE2C7 0%, rgb
   let homeScheduleOffset = 0;
   function renderHome(){
     const box=document.getElementById('view-home'); if(!box) return;
+    setTimeout(() => { try{ growHomeBar(box); }catch(e){} }, 0);
     box.innerHTML = `
       <div class="panel-head"><div><div class="panel-eyebrow">Grow On</div><h2 class="panel-title">지사 소개</h2></div></div>
       <div class="map-wrap">
@@ -5760,7 +5763,7 @@ body.growon{ background:radial-gradient(1200px 500px at 8% -10%, #FFE2C7 0%, rgb
   window.reloadHomeSchedule = renderHomeSchedule;
   function showView(v){
     document.querySelectorAll('.gview').forEach(s=>s.classList.remove('on'));
-    const t=document.getElementById('view-'+v); if(t) t.classList.add('on');
+    const t=document.getElementById('view-'+v); if(t){ t.classList.add('on'); growHomeBar(t); }
     document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active', el.dataset.view===v));
     closeDrawer(); window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -5779,10 +5782,21 @@ body.growon{ background:radial-gradient(1200px 500px at 8% -10%, #FFE2C7 0%, rgb
     if(typeof dnRenderMini === 'function') dnRenderMini();
     if(sessionStorage.getItem('growAdmin') === '1' && typeof applyAdminRole === 'function') applyAdminRole();
   }
-  const _ghHomeBtn = document.getElementById('ghHomeBtn');
-  if(_ghHomeBtn) _ghHomeBtn.addEventListener('click', e => { e.preventDefault(); goHome(); });
+  /* GROW ON 제목·각 화면 '그로우 홈' 버튼: 주소의 #v= 등을 지우고 페이지를 새로고침해 홈(일정) 첫 화면으로 */
+  function growReloadHome(){
+    const home = location.origin + location.pathname;
+    if(location.href === home) location.reload(); else location.href = home;
+  }
   const _ghTitleHome = document.getElementById('ghTitleHome');
-  if(_ghTitleHome) _ghTitleHome.addEventListener('click', e => { e.preventDefault(); goHome(); });
+  if(_ghTitleHome) _ghTitleHome.addEventListener('click', e => { e.preventDefault(); growReloadHome(); });
+  function growHomeBar(v){
+    if(!v || v.id === 'view-schedule' || v.querySelector(':scope > .gv-home')) return;
+    const bar = document.createElement('div'); bar.className = 'gv-home';
+    bar.innerHTML = '<button type="button" title="그로우온 홈으로">🏠 그로우 홈</button>';
+    bar.querySelector('button').addEventListener('click', growReloadHome);
+    v.insertBefore(bar, v.firstChild);
+  }
+  document.querySelectorAll('.gview').forEach(growHomeBar);
   document.querySelectorAll('[data-view]').forEach(el=>{
     el.addEventListener('click',e=>{ e.preventDefault(); showView(el.dataset.view); });
   });
