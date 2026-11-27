@@ -80,7 +80,12 @@ td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
 .gate__box button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:10px;background:var(--gold);color:#1B1B1B;font-weight:800;font-size:16px;cursor:pointer}
 .gate__box button:disabled{opacity:.6}
 .gate__err{min-height:20px;margin-top:10px;color:#FF9C8F;font-size:13px}
-.gate__home{display:inline-block;margin-top:14px;color:#7C88A3;font-size:13px;text-decoration:none}
+.gate__links{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.gate__home,.gate__grow{display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 8px;border-radius:10px;font-size:15px;font-weight:800;text-decoration:none;border:1px solid #2C4170;color:#E6EBF5;background:#0B1530}
+.gate__grow{color:#F5A55C;border-color:#6B4A22}
+.gate__home:hover,.gate__grow:hover{filter:brightness(1.2)}
+.gate__role{margin:0 0 14px;font-size:13px;color:#B6C0D4;line-height:1.6;background:#0B1530;border-radius:10px;padding:10px}
+.gate__role b{color:var(--gold)}
 
 /* 화면 */
 .hd{background:var(--navy);color:#F2F4F8}
@@ -93,7 +98,7 @@ td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
 .hd__me button{border:1px solid #24365F;background:transparent;color:#B6C0D4;border-radius:8px;padding:6px 10px;cursor:pointer}
 .hd__grow{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:6px 11px;background:#F58220;color:#fff;font-weight:700;text-decoration:none;white-space:nowrap}
 .hd__grow:hover{filter:brightness(1.08)}
-.gate__grow{display:block;margin-top:10px;color:#F5A55C;font-size:13px;font-weight:700;text-decoration:none}
+
 .bt-tabs{display:flex;gap:4px;overflow-x:auto}
 .bt-tab{border:0;background:transparent;color:#9AA6BF;padding:10px 14px;font-weight:700;font-size:15px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
 .bt-tab.on{color:#fff;border-bottom-color:var(--gold)}
@@ -119,12 +124,12 @@ main{padding:22px 0 60px}
   <div class="gate__box">
     <small>DAON</small>
     <h1>다온지사 지사페이지</h1>
-    <p>다온지사 소속 설계사 전용입니다.<br>다온 CRM 접속코드를 입력하세요.</p>
+    <p>다온지사 소속 전용입니다.</p>
+    <div class="gate__role"><b>지사장</b>은 지사장 코드, <b>설계사</b>는 설계사 코드<br>(다온 영업관리 접속코드와 같습니다)</div>
     <input id="gcode" type="password" placeholder="접속코드" autocomplete="off">
     <button id="gbtn" type="button">입장</button>
     <div class="gate__err" id="gerr"></div>
-    <a class="gate__home" href="https://grow.ai.kr/daon/">보험물어봄 홈으로</a>
-    <a class="gate__grow" href="https://grow.ai.kr/">🏠 그로우온 홈으로</a>
+    <div class="gate__links"><a class="gate__home" href="/daon/">💬 보험물어봄 홈</a><a class="gate__grow" href="/">🏠 그로우온 홈</a></div>
   </div>
 </div>
 
@@ -236,7 +241,7 @@ main{padding:22px 0 60px}
     $('tileOffice').classList.toggle('hide', !boss);
     try{ if(boss) sessionStorage.setItem('officeCode', me.code); else sessionStorage.removeItem('officeCode'); }catch(e){}
     var next = new URLSearchParams(location.search).get('next');
-    if(next && /^\/(crm|biz-insurance|office)\//.test(next)){ location.replace(next); return; }
+    if(next && /^\/daon\/(crm|biz-insurance|office)\//.test(next) && (next.indexOf('/daon/office/')!==0 || boss)){ location.replace(next); return; }
     var h = location.hash.slice(1); if(TOOLS[h]) show('tools', h); else show('home');
   }
 

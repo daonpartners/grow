@@ -205,7 +205,7 @@ a{color:inherit}
 </head>
 <body>
 
-<div class="gate" id="gate">
+<div class="gate hide" id="gate">
   <div class="gate__box">
     <b>DAON</b>
     <h2>AI 오피스</h2>
@@ -326,9 +326,10 @@ a{color:inherit}
   }
   $('gbtn').onclick = function(){ var c = $('gcode').value.trim(); if(!c){ $('gerr').textContent='접속코드를 입력하세요.'; return; } loadAll(c); };
   $('gcode').addEventListener('keydown', function(e){ if(e.key==='Enter') $('gbtn').onclick(); });
-  $('logout').onclick = function(){ try{ sessionStorage.removeItem('officeCode'); }catch(e){} location.reload(); };
-  var saved = null; try{ saved = sessionStorage.getItem('officeCode'); }catch(e){}
-  if(saved) loadAll(saved);
+  $('logout').onclick = function(){ try{ sessionStorage.removeItem('officeCode'); sessionStorage.removeItem('crmMe'); }catch(e){} location.href = '/daon/branch/'; };
+  /* 지사페이지에서 지사장으로 들어온 탭이면 다시 묻지 않음. 아니면 지사페이지 입장 화면으로 */
+  var saved = null; try{ saved = sessionStorage.getItem('officeCode'); if(!saved){ var m = JSON.parse(sessionStorage.getItem('crmMe')||'null'); if(m && m.role==='지사장' && m.code) saved = m.code; } }catch(e){}
+  if(saved) loadAll(saved); else location.replace('/daon/branch/?next=/daon/office/');
 
   function render(){
     var all = Object.keys(people).map(function(k){return people[k]});
