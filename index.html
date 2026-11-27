@@ -1330,6 +1330,35 @@ body.growon{ background:var(--gx-bg); }
 @keyframes gxIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
 @media (prefers-reduced-motion:no-preference){ .gview.on{ animation:gxIn .28s ease-out; } }
 /* AI 자동 등록 창 */
+/* ===== 2026-11-27 2차: 생동감 ===== */
+body.growon{ background:radial-gradient(1200px 500px at 8% -10%, #FFE2C7 0%, rgba(255,226,199,0) 60%), radial-gradient(1000px 520px at 100% 0%, #DCE8FF 0%, rgba(220,232,255,0) 60%), #F4F6FB; background-attachment:fixed; }
+.gx-hero{ position:relative; overflow:hidden; border-radius:18px; padding:20px 22px; margin:-4px 0 18px; color:#fff; background:linear-gradient(120deg,#FF7A1A 0%,#FF5E62 48%,#5B5BF0 100%); box-shadow:0 14px 30px -12px rgba(255,94,98,.55); }
+.gx-hero::before{ content:""; position:absolute; right:-60px; top:-80px; width:260px; height:260px; border-radius:50%; background:rgba(255,255,255,.14); }
+.gx-hero::after{ content:""; position:absolute; right:120px; bottom:-90px; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,.10); }
+.gx-hero-top{ position:relative; z-index:1; display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; }
+.gx-hero small{ font-size:12.5px; font-weight:700; opacity:.9; }
+.gx-hero h2{ margin:4px 0 0; font-size:24px; font-weight:900; letter-spacing:-.4px; color:#fff; }
+.gx-kpis{ position:relative; z-index:1; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:16px; }
+.gx-kpi{ background:rgba(255,255,255,.17); border:1px solid rgba(255,255,255,.28); border-radius:14px; padding:11px 13px; backdrop-filter:blur(4px); min-width:0; }
+.gx-kpi b{ display:block; font-size:22px; font-weight:900; line-height:1.1; }
+.gx-kpi span{ display:block; font-size:12px; opacity:.92; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gx-next{ position:relative; z-index:1; margin-top:10px; font-size:13px; font-weight:700; background:rgba(15,23,42,.18); border-radius:10px; padding:8px 12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gx-nav a:nth-child(1) i{ background:#FFE7D3; } .gx-nav a:nth-child(2) i{ background:#FFE0E6; } .gx-nav a:nth-child(3) i{ background:#DFF5EA; } .gx-nav a:nth-child(4) i{ background:#E3E9FF; } .gx-nav a:nth-child(5) i{ background:#F1E4FF; }
+.gx-nav a.active{ background:linear-gradient(90deg,#FFF0E2,#FFF8F2); box-shadow:inset 3px 0 0 var(--gx-or); }
+.gcard{ position:relative; overflow:hidden; }
+.gcard::before{ content:""; position:absolute; left:0; right:0; top:0; height:3px; background:linear-gradient(90deg,var(--gx-or),#FF5E62,#5B5BF0); }
+.gx-br button:nth-child(6n+1){ box-shadow:inset 3px 0 0 #F58220; } .gx-br button:nth-child(6n+2){ box-shadow:inset 3px 0 0 #FF5E62; } .gx-br button:nth-child(6n+3){ box-shadow:inset 3px 0 0 #18A97A; } .gx-br button:nth-child(6n+4){ box-shadow:inset 3px 0 0 #2F6BFF; } .gx-br button:nth-child(6n+5){ box-shadow:inset 3px 0 0 #8B5CF6; } .gx-br button:nth-child(6n){ box-shadow:inset 3px 0 0 #E5A100; }
+.gbtn.gx-boit{ background:linear-gradient(135deg,#0E7A5F,#16936F); color:#fff; flex-direction:row; align-items:center; gap:10px; text-align:left; }
+.gbtn.gx-boit img{ width:34px; height:34px; border-radius:9px; flex:none; box-shadow:0 0 0 2px rgba(255,255,255,.35); }
+.gbtn.gx-boit span{ display:flex; flex-direction:column; }
+.gbtn.gx-boit small{ color:#CFF0E2; }
+.gbtn.gx-dark{ background:linear-gradient(135deg,#1E2A55,#3B3F9E); }
+.gbtn.gx-fc{ background:linear-gradient(135deg,#FFF1E5,#fff); border-color:#FFD7B5; }
+.rail-t{ color:#475569; }
+.gmain{ background:rgba(255,255,255,.92); }
+.gx-map-note{ font-size:12px; color:var(--gx-sub); margin-top:6px; }
+@media (max-width:600px){ .gx-hero h2{ font-size:20px; } .gx-kpi b{ font-size:18px; } .gx-kpis{ gap:6px; } .gx-kpi{ padding:9px 10px; } }
+
 .gx-modal{ position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:200; display:none; align-items:center; justify-content:center; padding:16px; }
 .gx-modal.open{ display:flex; }
 .gx-box{ background:#fff; border-radius:18px; width:100%; max-width:560px; max-height:88vh; overflow:auto; padding:22px; box-shadow:0 24px 60px rgba(15,23,42,.25); }
@@ -1472,6 +1501,7 @@ body.growon{ background:var(--gx-bg); }
       </div>
       <div class="gview" id="view-schedule">
 <section class="panel" id="schedule">
+          <div class="gx-hero" id="gxHero"></div>
           <div class="panel-head">
             <div><div class="panel-eyebrow">Schedule</div><h2 class="panel-title">그로우사업부 일정</h2></div>
             <div class="panel-count" id="scheduleCount">이번 달 0건</div>
@@ -2836,8 +2866,8 @@ body.growon{ background:var(--gx-bg); }
 
   <div class="gcol" id="colRight">
     <div class="rail-t">설계사 공간</div>
-    <button class="gbtn" data-view="fclookup">👤 FC전용 DB센터<small>내게 배정된 DB 조회</small></button>
-    <button class="gbtn gx-boit" type="button" id="boitGoBtn">⚡ 영업툴 BOIT 바로가기<small>고객관리·청구·AI 보험비서</small></button>
+    <button class="gbtn gx-fc" data-view="fclookup">👤 FC전용 DB센터<small>내게 배정된 DB 조회</small></button>
+    <button class="gbtn gx-boit" type="button" id="boitGoBtn"><img src="assets/boit-icon.png" alt="BOIT"><span>영업툴 BOIT 바로가기<small>고객관리·청구·AI 보험비서</small></span></button>
     <a class="gbtn" href="/report/" target="_blank" rel="noopener" style="text-decoration:none; box-sizing:border-box;">📑 리포트생성 (구)<small>지문 · 질병예측 · 보장분석 · 제안서</small></a>
     <button class="gbtn" data-view="datacenter">🗂️ 자료센터 (구)<small>가이드·인수·교육 자료</small></button>
     <div class="rail-t">바로가기</div>
@@ -11401,7 +11431,7 @@ const limitCompareData = {};
       const i = Number(el.dataset.gxb), b = gBranches[i]; if(!b) return;
       if(b.url){ location.href = b.url; return; }
       showView('home');
-      setTimeout(() => { try{ if(!gMapInstance) initGMap(); if(gMapInstance){ gMapInstance.invalidateSize(); gMapInstance.setView([b.lat, b.lng], 13, { animate:true }); if(gMapMarkers[i]) gMapMarkers[i].openPopup(); } }catch(e){} }, 350);
+      setTimeout(() => { try{ gxFixMap(); if(gMapInstance){ gMapInstance.setView([b.lat, b.lng], 13, { animate:true }); if(gMapMarkers[i]) gMapMarkers[i].openPopup(); } }catch(e){} }, 500);
     }));
   }
 
@@ -11521,7 +11551,36 @@ const limitCompareData = {};
     };
   }
 
-  syncGrowLayout(); renderHome(); showView('schedule'); gxRenderBranches();
+  /* ===== 2026-11-27 2차: 일정 히어로 + 지도 다시 그리기 ===== */
+  function gxRenderHero(){
+    const box = document.getElementById('gxHero'); if(!box || typeof schedule === 'undefined') return;
+    const now = new Date(), pad = n => String(n).padStart(2, '0');
+    const today = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+    const ym = today.slice(0, 7);
+    const wk = new Date(now); wk.setDate(now.getDate() + 7);
+    const wkEnd = wk.getFullYear() + '-' + pad(wk.getMonth() + 1) + '-' + pad(wk.getDate());
+    const list = schedule.filter(e => e && e.dateStart);
+    const tCnt = list.filter(e => e.dateStart === today).length;
+    const wCnt = list.filter(e => e.dateStart >= today && e.dateStart <= wkEnd).length;
+    const mCnt = list.filter(e => e.dateStart.slice(0, 7) === ym).length;
+    const next = list.filter(e => e.dateStart >= today).sort((a, b) => (a.dateStart + (a.time || '')).localeCompare(b.dateStart + (b.time || '')))[0];
+    const days = ['일','월','화','수','목','금','토'];
+    const nd = next ? new Date(next.dateStart + 'T00:00:00') : null;
+    box.innerHTML = '<div class="gx-hero-top"><div><small>' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + days[now.getDay()] + '요일</small><h2>오늘도 함께 성장하는 그로우</h2></div></div>'
+      + '<div class="gx-kpis"><div class="gx-kpi"><b>' + tCnt + '건</b><span>오늘 일정</span></div><div class="gx-kpi"><b>' + wCnt + '건</b><span>앞으로 7일</span></div><div class="gx-kpi"><b>' + mCnt + '건</b><span>' + (now.getMonth() + 1) + '월 전체</span></div></div>'
+      + (next ? '<div class="gx-next">⏭ 다음 일정 · ' + (nd.getMonth() + 1) + '/' + nd.getDate() + '(' + days[nd.getDay()] + ') ' + escapeHtml(next.time || '') + ' ' + escapeHtml(next.title || '') + (next.place ? ' · ' + escapeHtml(next.place) : '') + '</div>' : '<div class="gx-next">다가오는 일정이 아직 없습니다.</div>');
+  }
+  { const _rs = renderSchedule; renderSchedule = function(a){ const r = _rs.apply(this, arguments); try{ gxRenderHero(); }catch(e){} return r; }; }
+  function gxFixMap(){
+    try{
+      if(typeof L === 'undefined') return;
+      if(!gMapInstance || !document.getElementById('gLeafletMap')){ initGMap(); }
+      if(gMapInstance){ gMapInstance.invalidateSize(); gMapInstance.fitBounds(L.latLngBounds(gBranches.map(b => [b.lat, b.lng])), { padding:[30, 30] }); }
+    }catch(e){}
+  }
+  { const _sv = showView; showView = function(v){ const r = _sv.apply(this, arguments); if(v === 'home') setTimeout(gxFixMap, 250); return r; }; }
+
+  syncGrowLayout(); renderHome(); showView('schedule'); gxRenderBranches(); gxRenderHero();
 
 
   // ================= 그로우사업부 소속 확인 (이미지·자료 저장 권한) =================
