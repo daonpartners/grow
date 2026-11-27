@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>다온파트너스 | 보험물어봄 — 보험 궁금증, 묻고 바로 답 받으세요</title>
+<meta name="description" content="실비 청구 서류, 간병·자동차보험처럼 궁금한 보험 질문을 남기면 AI가 약관·법령 자료로 바로 1차 안내를 하고, 다온 보험설계사가 이어서 확인해 드립니다. 설계사 칼럼과 보험금 청구 대행도 한곳에서.">
+<meta name="robots" content="index, follow">
+
+<meta name="naver-site-verification" content="a09350fbdee79685108cbb46df68b0bb178bb94b">
+<meta name="google-site-verification" content="[구글 서치콘솔 발급값]">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="다온파트너스">
+<meta property="og:title" content="다온파트너스 | 좋은 일이 다 온다">
+<meta property="og:description" content="보험을 넘어, 사람과 사업의 더 나은 내일을 연결합니다.">
+<meta property="og:url" content="https://grow.ai.kr/daon/">
+<meta name="theme-color" content="#0B1E42">
+
+<link rel="canonical" href="https://grow.ai.kr/daon/">
+<link rel="icon" type="image/png" href="https://daon.io.kr/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="https://daon.io.kr/assets/favicon-daon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style>
+:root{
+  --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
+  --paper:#FFFFFF; --navygray:#EEF1F6;
+  /* ── 다온파트너스 브랜드 컬러 (네이비 · 베이비핑크) ──
+     --orange = 베이비핑크, --deep = 딥로즈(글자용), --tint = 연핑크 배경 */
+  --orange:#E39BA5; --deep:#A85F6C; --tint:#F9E9EC;
+  --navy:#0B1E42; --navy2:#16305C; --gold:#D0A880; --kakao:#FEE500;
+  --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
+  --display-en:'Fraunces', 'Noto Serif KR', serif;
+  --maxw:680px; --pad:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.68;font-size:16px;word-break:keep-all;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px var(--pad);max-width:var(--maxw);margin:0 auto}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-mark{height:24px;width:auto;display:block}
+.brand-txt{font-size:13px;color:var(--steel);font-weight:600}
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:16px var(--pad);max-width:1040px;margin:0 auto}
+.topbar-outer{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.brand-lockup{display:flex;align-items:baseline;gap:7px;text-decoration:none}
+.brand-lockup .b1{font-family:var(--display-en);font-weight:800;font-size:19px;color:var(--navy);letter-spacing:.01em}
+.brand-lockup .b2{font-family:var(--body);font-weight:700;font-size:13.5px;color:var(--steel)}
+.topbar a.about-link{font-size:12.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--orange);padding:8px 14px;border-radius:999px;box-shadow:0 2px 0 var(--deep);transition:transform .12s,box-shadow .12s}
+.topbar a.about-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--deep)}
+.topbar__links{display:flex;gap:6px;flex-shrink:0}
+.topbar a.grow-link{font-size:12.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--navy);padding:8px 14px;border-radius:999px;box-shadow:0 2px 0 var(--navy2);transition:transform .12s,box-shadow .12s}
+.topbar a.grow-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--navy2)}
+.brand-mark{height:20px;width:auto;flex-shrink:0}
+
+/* ══ 브랜드 컬러 대비 보정 ══ */
+.topbar a.about-link{background:var(--orange);color:var(--navy);box-shadow:0 2px 0 var(--deep)}
+.topbar a.about-link:hover{box-shadow:0 1px 0 var(--deep)}
+.trustgrid .tag{color:var(--deep)}
+.recruit-btn{color:var(--navy)}
+.about-btn:hover{color:var(--navy)}
+
+/* ══ ① HERO ══ */
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:38px 0 32px;position:relative;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;top:-120px;right:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(227,155,165,.16),transparent 70%)}
+.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
+.hero__mean{font-family:var(--display-en);font-weight:600;font-style:italic;font-size:clamp(11px,3vw,14px);letter-spacing:.04em;color:var(--orange);margin-bottom:14px;white-space:nowrap;position:relative}
+.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(22px,5.6vw,34px);line-height:1.4;letter-spacing:-.01em;margin-bottom:14px;position:relative}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero__sub{font-size:14.5px;color:#D6DEE8;line-height:1.7;max-width:400px;margin:0 auto;position:relative}
+.hero__cta{margin-top:22px;position:relative}
+.hero__cta button{font-family:var(--display);font-weight:800;font-size:15px;border:none;cursor:pointer;
+  background:var(--orange);color:var(--navy);box-shadow:0 4px 0 var(--deep);padding:14px 30px;border-radius:999px}
+.hero__cta button:active{transform:translateY(2px);box-shadow:0 2px 0 var(--deep)}
+.hero__sublink{display:block;margin-top:14px;font-size:12.5px;color:#B9C4D3;text-decoration:underline;position:relative}
+.hero__sublink:hover{color:#fff}
+
+/* ══ ② TRUST 스탯바 ══ */
+.trust{background:var(--tint);padding:36px var(--pad) 34px}
+.trustgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:var(--maxw);margin:0 auto;text-align:center}
+.trustgrid > div{padding:0 6px}
+.trustgrid > div:not(:last-child){border-right:1px solid rgba(168,95,108,.25)}
+.trustgrid .tag{font-family:var(--display-en);font-weight:700;font-size:12.5px;letter-spacing:.08em;color:var(--orange);margin-bottom:10px;display:block}
+.trustgrid .th{font-family:var(--display);font-weight:800;font-size:19px;color:var(--navy);line-height:1.4;letter-spacing:-.01em}
+.trustgrid .tl{font-size:13px;color:var(--ink-2);margin-top:8px;line-height:1.55;font-weight:500}
+
+/* ══ 섹션 공통 ══ */
+.sec{padding:50px 0}
+.sec--navygray{background:var(--navygray)}
+.sec__label{font-family:var(--display);font-weight:600;font-size:12.5px;letter-spacing:.12em;color:var(--steel);margin-bottom:24px;text-align:center}
+.sec__title{font-family:var(--display);font-weight:700;font-size:clamp(16px,3.8vw,22px);line-height:1.5;letter-spacing:-.004em;margin-bottom:18px;text-align:center}
+
+/* ══ ③ SERVICE 4카드 ══ */
+/* 2컬럼: 다온지사 전용 / 고객 전용 */
+.twocol{display:grid;gap:34px}
+.col__label{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--deep);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--orange);display:inline-block}
+
+/* 개인 보험 컨설팅 팝업 */
+.modal-overlay{position:fixed;inset:0;background:rgba(11,27,51,.55);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal-sheet{background:#fff;width:100%;max-width:var(--maxw);border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));animation:sheetUp .22s ease-out}
+@keyframes sheetUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.modal-head h3{font-family:var(--display);font-weight:800;font-size:19px}
+.modal-close{background:var(--navygray);border:none;width:32px;height:32px;border-radius:50%;font-size:15px;color:var(--ink-2);cursor:pointer}
+.modal-sub{font-size:13px;color:var(--steel);margin-bottom:16px}
+.modal-list{display:grid;gap:8px}
+.modal-list a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--navygray);border-radius:12px;padding:15px 14px;font-size:15px;font-weight:700}
+.modal-list a:hover{background:var(--tint)}
+.modal-list a.kakao-direct{background:var(--kakao);font-weight:800}
+.modal-list a.kakao-direct:hover{background:#F5DC00}
+.modal-list .emo{font-size:18px}
+.modal-list .chev{margin-left:auto;color:var(--steel);font-weight:700}
+
+@media (min-width:600px){
+  .modal-overlay{align-items:center}
+  .modal-sheet{border-radius:20px;max-width:420px}
+}
+
+.gate{display:grid;gap:14px}
+.gate a{text-decoration:none;color:inherit;display:block}
+.gate-card{
+  background:#fff;border:1.5px solid var(--line);border-radius:16px;
+  padding:16px 15px;display:flex;gap:12px;align-items:center;
+  transition:transform .14s,box-shadow .14s,border-color .14s;
+}
+.gate-card:hover{transform:translateY(-2px);border-color:var(--orange);box-shadow:0 8px 22px rgba(11,27,51,.08)}
+.gate-ico{flex-shrink:0;width:48px;height:48px;border-radius:13px;background:var(--navygray);display:flex;align-items:center;justify-content:center;font-size:22px}
+.gate-body{flex:1;min-width:0}
+.gate-body h3{font-family:var(--display);font-weight:800;font-size:16px;margin-bottom:3px;letter-spacing:-.005em}
+.gate-body p{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.gate-arrow{flex-shrink:0;font-family:var(--display);font-weight:700;font-size:19px;color:var(--line)}
+.gate-card:hover .gate-arrow{color:var(--orange)}
+
+.soon{opacity:.55;pointer-events:none;position:relative}
+.soon .gate-ico::after{content:'준비중';position:absolute;top:-7px;right:-7px;font-family:var(--display);font-weight:700;font-size:10.5px;background:var(--steel);color:#fff;padding:3px 8px;border-radius:999px}
+
+/* 그룹형 카드 (하위 신청페이지 목록) */
+.gate-card--group{flex-direction:column;align-items:stretch}
+.gate-card--group:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.group-head{display:flex;gap:14px;align-items:center}
+.sublist{display:grid;gap:2px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.sublist a{display:flex;align-items:center;gap:10px;padding:11px 8px;border-radius:9px;text-decoration:none;color:var(--ink);font-size:14.5px;font-weight:600;transition:background .12s}
+.sublist a:hover{background:var(--navygray)}
+.sublist a .emo{font-size:16px;flex-shrink:0}
+.sublist a .chev{margin-left:auto;color:var(--line);font-family:var(--display);font-weight:700}
+.sublist a:hover .chev{color:var(--orange)}
+
+/* ══ ④ RECRUITING (강조 박스) ══ */
+.recruit{
+  margin-top:20px;background:linear-gradient(135deg,var(--navy),var(--navy2));
+  border-radius:22px;padding:34px 26px;text-align:center;
+  box-shadow:0 8px 24px rgba(11,27,51,.16);
+}
+.recruit__label{font-family:var(--display-en);font-weight:700;font-size:13px;letter-spacing:.08em;color:var(--orange);margin-bottom:12px}
+.recruit h3{font-family:var(--display);font-weight:800;font-size:23px;color:#fff;line-height:1.4;margin-bottom:10px}
+.recruit p{font-size:15.5px;color:#D0D9E4;line-height:1.65;margin-bottom:22px}
+.recruit-btn{display:inline-block;font-family:var(--display);font-weight:700;font-size:15.5px;color:var(--navy);background:var(--orange);padding:14px 26px;border-radius:999px;text-decoration:none}
+
+/* ══ 뉴스 섹션 ══ */
+.news{display:grid;gap:10px}
+.news a{text-decoration:none;color:inherit;display:block}
+.news-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:16px 17px;display:flex;gap:13px;align-items:center;
+  transition:transform .14s,box-shadow .14s,border-color .14s;
+}
+.news-card:hover{transform:translateY(-2px);border-color:var(--orange);box-shadow:0 6px 18px rgba(11,27,51,.07)}
+.news-ico{flex-shrink:0;width:42px;height:42px;border-radius:11px;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:19px}
+.news-body{flex:1;min-width:0}
+.news-body h3{font-family:var(--display);font-weight:700;font-size:15px;margin-bottom:2px}
+.news-body p{font-size:12px;color:var(--steel)}
+.news-arrow{flex-shrink:0;font-family:var(--display);font-weight:700;font-size:16px;color:var(--line)}
+.news-card:hover .news-arrow{color:var(--orange)}
+
+/* ══ ⑤ ABOUT DAON ══ */
+.about-sec{background:var(--navy);color:#fff;padding:52px 0;text-align:center}
+.about-sec h2{font-family:var(--display);font-weight:800;font-size:clamp(23px,6.4vw,28px);line-height:1.55;letter-spacing:-.008em;color:#fff}
+.about-sec p{font-size:16px;color:#D6DEE8;line-height:1.85;max-width:480px;margin:0 auto 14px}
+.about-btn{display:inline-block;margin-top:16px;font-family:var(--display);font-weight:700;font-size:15.5px;color:#fff;border:1.5px solid var(--orange);padding:14px 28px;border-radius:999px;text-decoration:none}
+.about-btn:hover{background:var(--orange);color:var(--navy)}
+
+/* ══ ⑥ FOOTER ══ */
+.foot{background:var(--navy2);color:#9FB0C1;padding:30px 0 0;font-size:13px;line-height:1.7;text-align:center}
+.foot__org{font-family:var(--display);font-weight:800;color:#fff;font-size:16px;letter-spacing:.02em}
+.foot__sub{font-size:12px;color:#8FA0B3;margin-top:4px}
+.foot__addr{margin-top:14px;font-size:12.5px;color:#B9C4D3;line-height:1.7}
+.foot__links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0;margin-top:18px;font-size:12.5px}
+.foot__links a{color:#DCE4EE;text-decoration:none;padding:0 10px;border-right:1px solid rgba(255,255,255,.2)}
+.foot__links a:last-child,.foot__links span:last-child{border-right:none}
+.foot__links span{padding:0 10px;color:#6B7C93}
+.foot__legal{margin-top:20px;padding:16px var(--pad) 34px;border-top:1px solid rgba(255,255,255,.1);font-size:10.5px;color:#6B7C93;line-height:1.8;max-width:var(--maxw);margin-left:auto;margin-right:auto}
+.foot__bottom{margin-top:20px;padding:20px var(--pad) 34px;border-top:1px solid rgba(255,255,255,.12);text-align:center}
+.foot__logo{display:block;height:26px;width:auto;margin:0 auto 8px;opacity:.95}
+.foot__bottom .foot__org{font-family:var(--display);font-weight:800;color:#fff;font-size:15px;letter-spacing:.02em}
+.foot__bottom .foot__sub{font-size:12px;color:#8FA0B3;margin-top:6px}
+.foot__bottom .foot__addr{font-size:11.5px;color:#6B7C93;margin-top:4px}
+
+@media (min-width:860px){
+  .wrap:has(.twocol){max-width:960px}
+  .twocol{grid-template-columns:1fr 1fr;align-items:start}
+}
+
+/* ══ 2026-11 보험물어봄: 질문 먼저 · 설계사 연결 ══ */
+.wrap2{max-width:1040px;margin:0 auto;padding:0 var(--pad)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.qh{position:relative;overflow:hidden;background:linear-gradient(180deg,#FFFFFF 0%,#F2F5FB 100%);border-bottom:1px solid var(--line)}
+.qh__blob{position:absolute;border-radius:50%;filter:blur(8px);pointer-events:none}
+.qh__blob.b1{width:420px;height:420px;right:-120px;top:-140px;background:radial-gradient(circle,rgba(227,155,165,.32),transparent 68%);animation:drift 16s ease-in-out infinite alternate}
+.qh__blob.b2{width:380px;height:380px;left:-160px;bottom:-200px;background:radial-gradient(circle,rgba(120,150,210,.22),transparent 68%);animation:drift 19s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(-50px,40px) scale(1.1)}}
+.qh__in>*{min-width:0}
+.qh__in{position:relative;max-width:1040px;margin:0 auto;padding:40px var(--pad) 44px;display:grid;gap:30px;align-items:center}
+@media (min-width:900px){.chat__body{min-height:282px}.qh__in{grid-template-columns:1.05fr .95fr;padding:64px var(--pad) 70px;gap:48px}}
+.qh__kick{font-weight:800;font-size:clamp(20px,5vw,26px);color:var(--deep);letter-spacing:-.01em;opacity:0;animation:rise .6s .05s ease forwards}
+.qh__kick span{font-weight:600;color:var(--steel);font-size:.62em;margin-left:2px}
+.qh h1{font-family:var(--display);font-weight:900;font-size:clamp(32px,7.4vw,52px);line-height:1.2;letter-spacing:-.025em;color:var(--navy);margin-top:10px;opacity:0;animation:rise .7s .15s ease forwards}
+.qh__lead{margin-top:14px;font-size:clamp(15px,3.8vw,17px);color:var(--ink-2);max-width:30em;opacity:0;animation:rise .7s .28s ease forwards}
+.qh__act{opacity:0;animation:rise .7s .4s ease forwards}
+.qh__search{display:flex;align-items:center;max-width:540px;margin-top:22px;background:#fff;border:1.5px solid #DCE2EC;border-radius:999px;padding:4px 6px 4px 22px;box-shadow:0 12px 30px rgba(11,30,66,.08);transition:border-color .2s,box-shadow .2s}
+.qh__search input{flex:1;border:0;outline:0;font:inherit;font-size:16px;padding:12px 0;color:var(--ink);background:transparent;min-width:0}
+.qh__search i{font-style:normal;font-size:20px;color:#fff;width:44px;height:44px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center}
+.qh__search:focus-within{border-color:var(--navy);box-shadow:0 12px 30px rgba(11,30,66,.14)}
+.qh__ask{display:inline-flex;align-items:center;gap:10px;margin-top:14px;padding:13px 22px;border-radius:999px;background:var(--orange);color:var(--navy);text-decoration:none;font-weight:800;font-size:15px;box-shadow:0 3px 0 var(--deep);transition:transform .15s,box-shadow .15s}
+.qh__ask b{font-weight:700;font-size:12.5px;color:var(--navy);background:rgba(255,255,255,.55);padding:2px 8px;border-radius:999px}
+.qh__ask:hover{transform:translateY(1px);box-shadow:0 2px 0 var(--deep)}
+.qh__ask:focus-visible{outline:3px solid var(--navy);outline-offset:3px}
+.qh__trust{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:18px;font-size:13px;color:var(--steel);font-weight:600}
+.qh__trust span::before{content:"✓";color:var(--deep);font-weight:900;margin-right:5px}
+/* 대화 미리보기 */
+.chat{position:relative;background:#fff;border-radius:24px;box-shadow:0 24px 60px rgba(11,30,66,.14),0 2px 6px rgba(11,30,66,.05);padding:18px 16px 16px;max-width:430px;width:100%;justify-self:center;opacity:0;animation:rise .8s .35s ease forwards}
+.chat__bar{display:flex;align-items:center;gap:8px;padding:0 4px 12px;border-bottom:1px solid #EEF1F6;font-size:13px;font-weight:800;color:var(--navy)}
+.chat__bar img{height:16px;width:auto}
+.chat__bar small{margin-left:auto;font-weight:700;font-size:11.5px;color:#2E9B6A;display:flex;align-items:center;gap:5px}
+.chat__bar small::before{content:"";width:7px;height:7px;border-radius:50%;background:#2E9B6A;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.3}}
+.chat__body{min-height:232px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding-top:14px}
+.bub{max-width:86%;font-size:14.5px;line-height:1.6;padding:11px 14px;border-radius:18px;animation:pop .38s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.bub.me{align-self:flex-end;background:var(--tint);color:var(--ink);border-bottom-right-radius:6px}
+.bub.ai{align-self:flex-start;background:var(--navy);color:#fff;border-bottom-left-radius:6px}
+.bub.ai small{display:block;font-size:11px;font-weight:700;color:var(--orange);margin-bottom:2px}
+.bub.typing{display:inline-flex;gap:4px;padding:14px 16px}
+.bub.typing i{width:7px;height:7px;border-radius:50%;background:#C9D3E1;animation:blink 1.1s infinite both}
+.bub.typing i:nth-child(2){animation-delay:.18s}.bub.typing i:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.chat__fc{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--navy);background:#FBF5EC;border:1px solid #EBDCC6;border-radius:999px;padding:5px 12px 5px 6px;animation:pop .38s ease both}
+.chat__fc img{width:24px;height:24px;border-radius:50%;object-fit:cover;object-position:top;background:var(--navygray)}
+.chat__note{margin-top:10px;font-size:11px;color:var(--steel);text-align:center}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.qa{padding:34px 0 30px}
+.qa__types{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:14px;scrollbar-width:none}
+.qa__types button{font:inherit;font-size:15px;font-weight:800;background:none;border:0;border-bottom:3px solid transparent;color:var(--steel);padding:10px 12px;cursor:pointer;white-space:nowrap}
+.qa__types button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--deep)}
+.qa__cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.qa__cats button{font:inherit;font-size:13.5px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink-2);padding:6px 12px;border-radius:999px;cursor:pointer}
+.qa__cats button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.qa__list{display:grid;gap:12px}
+@media (min-width:700px){.qa__list{grid-template-columns:1fr 1fr}}
+@media (min-width:1000px){.qa__list{grid-template-columns:1fr 1fr 1fr}}
+.qc{display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s;animation:rise .45s ease both;animation-delay:var(--d)}
+.qc:hover,.qc:focus-visible{transform:translateY(-3px);border-color:var(--deep);box-shadow:0 10px 24px rgba(11,30,66,.08);outline:none}
+.qc__tag{font-size:12px;font-weight:700;color:var(--deep)}
+.qc__tag b{background:var(--tint);padding:2px 8px;border-radius:5px;margin-right:6px}
+.qc h3{font-family:var(--display);font-size:18.5px;line-height:1.45;color:var(--navy);margin-top:10px}
+.qc p{font-size:14px;color:var(--ink-2);margin-top:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.qc__by{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:14px;font-size:13px;color:var(--steel)}
+.qc__by img{width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:top}
+.qa__more{grid-column:1/-1;font:inherit;font-weight:800;color:var(--navy);background:var(--navygray);border:0;border-radius:12px;padding:13px;cursor:pointer}
+.qa__all{display:inline-block;margin-top:16px;font-weight:800;color:var(--deep)}
+.fp{background:var(--navygray);padding:34px 0 30px}
+.fp__head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.fp h2{font-family:var(--display);font-weight:900;font-size:clamp(19px,4.6vw,24px);color:var(--navy);letter-spacing:-.015em}
+.fp__filter{display:flex;flex-wrap:wrap;gap:6px}
+.fp__filter button{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink-2);padding:6px 12px;border-radius:999px;cursor:pointer}
+.fp__filter button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.fp__state{color:var(--steel);padding:20px 0}
+.fp__list{display:grid;gap:10px}
+@media (min-width:700px){.fp__list{grid-template-columns:1fr 1fr}}
+@media (min-width:1000px){.fp__list{grid-template-columns:1fr 1fr 1fr}}
+.ex{display:flex;gap:12px;background:#fff;border-radius:14px;padding:14px;align-items:flex-start}
+.ex>img{width:58px;height:58px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;background:var(--navygray)}
+.ex__b{flex:1;min-width:0}
+.ex h3{font-family:var(--display);font-size:17px}
+.ex h3 a{color:var(--navy);text-decoration:none}
+.ex p{font-size:13px;color:var(--ink-2)}
+.ex small{display:block;font-size:11.5px;color:var(--steel)}
+.ex__sp{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.ex__sp i{font-style:normal;font-size:11.5px;font-weight:700;color:var(--deep);background:var(--tint);padding:2px 7px;border-radius:5px}
+.ex__act{display:flex;gap:6px;margin-top:10px}
+.ex__act a{flex:1;text-align:center;text-decoration:none;font-weight:800;font-size:13px;padding:9px 4px;border-radius:9px}
+.ex__act .a1{background:var(--navy);color:#fff}.ex__act .a2{background:var(--tint);color:var(--deep)}
+.ex__act a:focus-visible,.qa__types button:focus-visible,.qa__cats button:focus-visible,.fp__filter button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.qh__blob,.qc,.bub,.chat__fc,.chat,.qh__kick,.qh h1,.qh__lead,.qh__act{animation:none!important;opacity:1!important}.qc{transition:none}}
+.cl{background:var(--tint);padding:44px 0}
+.cl__in{display:grid;gap:20px;align-items:center}
+.cl h2{font-family:var(--display);font-weight:900;font-size:clamp(22px,5.4vw,30px);color:var(--navy);line-height:1.35}
+.cl p{margin-top:10px;font-size:15px;color:var(--ink-2);max-width:32em}
+.cl__btn{display:block;text-align:center;background:var(--navy);color:#fff;font-weight:800;font-size:16px;text-decoration:none;padding:16px 26px;border-radius:12px}
+.pet{background:#fff;padding:30px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pet__in{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pet__t{flex:1;min-width:220px}
+.pet h2{font-family:var(--display);font-weight:900;font-size:clamp(20px,5vw,26px);color:var(--navy);line-height:1.35}
+.pet p{margin-top:6px;font-size:14.5px;color:var(--ink-2)}
+.pet__btn{flex:0 0 auto;display:inline-block;background:var(--orange);color:var(--navy);font-weight:800;font-size:16px;text-decoration:none;padding:15px 24px;border-radius:12px;box-shadow:0 3px 0 var(--deep)}
+@media (min-width:760px){.cl__in{grid-template-columns:1fr auto}}
+.rc2{padding:44px 0}
+.biz-line{margin-top:18px;font-size:14px;color:var(--steel);text-align:center}
+.biz-line a{color:var(--navy);font-weight:700}
+.staffbar{background:var(--navygray);padding:16px 0;font-size:13.5px}
+.staffbar .wrap2{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.staffbar span{color:var(--steel);font-weight:600}
+.staffbar a{color:var(--navy);font-weight:700;text-decoration:none}
+html,body{max-width:100%;overflow-x:clip}
+.topbar{position:relative}
+.topbar__m{display:none}
+.tb-app{background:#CF2E38;color:#fff;font-weight:800;font-size:13px;padding:8px 14px;border-radius:999px;text-decoration:none;white-space:nowrap;box-shadow:0 2px 0 #9E1F28}
+.tb-menu{font:inherit;font-weight:800;font-size:13px;background:var(--gray);color:var(--navy);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+.tb-menu[aria-expanded="true"]{background:var(--navy);color:#fff}
+@media (max-width:900px){
+ .topbar{flex-wrap:nowrap;padding:10px var(--pad)}
+ .topbar__m{display:flex;gap:6px;align-items:center}
+ .topbar__links{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;flex-direction:column;gap:8px;padding:12px var(--pad) 16px;border-bottom:1px solid var(--line);box-shadow:0 14px 24px rgba(11,30,66,.12)}
+ .topbar__links.open{display:flex}
+ .topbar__links a{text-align:center;padding:13px!important;font-size:15px!important}
+}
+
+/* ══ 2026-11-11 홈 개편: 첫 화면에서 바로 상담으로 ══ */
+.wrap2{max-width:1200px}
+.topbar{max-width:1200px;flex-wrap:nowrap;padding:12px var(--pad)}
+.topbar__links{gap:2px;align-items:center}
+.topbar__links a{font-size:15px;font-weight:700;color:var(--ink-2);text-decoration:none;padding:9px 12px;border-radius:10px;white-space:nowrap}
+.topbar__links a:hover{background:var(--navygray);color:var(--navy)}
+.topbar__links a.nv-join{border:1.5px solid var(--line);margin-left:8px}
+.topbar__links a.nv-tel{background:var(--navy);color:#fff;margin-left:4px}
+.tb-tel{font-size:18px;text-decoration:none;padding:6px 8px}
+.hm{position:relative;overflow:hidden;background:linear-gradient(180deg,#FFFFFF 0%,#F3F5FA 100%);border-bottom:1px solid var(--line)}
+.hm__in{position:relative;max-width:1200px;margin:0 auto;padding:24px var(--pad) 30px;display:grid;gap:20px;grid-template-areas:"t" "r" "s"}
+.hm__l{grid-area:t}.hm__r{grid-area:r}.hm__s{grid-area:s}
+.hm__s .qh__search{margin-top:0}
+.hm__in>*{min-width:0}
+.hm h1{font-family:var(--display);font-weight:900;font-size:clamp(30px,6.4vw,50px);line-height:1.18;letter-spacing:-.025em;color:var(--navy);margin-top:8px}
+.hm__lead{margin-top:12px;font-size:16px;color:var(--ink-2)}
+.hm .qh__kick,.hm .qh__search{opacity:1;animation:none}
+.tg{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(11,30,66,.06)}
+.tg+.tg{margin-top:12px}
+.tg__h{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:12px}
+.tg__h i{font-style:normal;font-size:20px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-decoration:none;color:var(--ink);background:var(--navygray);border:1.5px solid transparent;border-radius:14px;padding:12px;transition:transform .15s,border-color .15s,background .15s}
+.tile span{font-size:26px;line-height:1;margin-bottom:6px}
+.tile b{font-size:15.5px;font-weight:800;color:var(--navy);line-height:1.3}
+.tile small{font-size:12px;color:var(--steel);line-height:1.35}
+.tile:hover,.tile:focus-visible{transform:translateY(-2px);background:#fff;border-color:var(--navy);outline:none}
+.claimbar{display:flex;align-items:center;gap:12px;margin-top:12px;text-decoration:none;background:var(--navy);color:#fff;border-radius:18px;padding:16px 18px;transition:transform .15s}
+.claimbar:hover{transform:translateY(-2px)}
+.claimbar>span{font-size:28px}
+.claimbar div{flex:1;min-width:0}
+.claimbar b{display:block;font-size:17px;font-weight:800}
+.claimbar small{display:block;font-size:13px;color:#C6D0E0}
+.claimbar em{font-style:normal;flex:none;background:var(--orange);color:var(--navy);font-weight:800;font-size:14px;padding:9px 14px;border-radius:999px}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sh h2{font-family:var(--display);font-weight:900;font-size:clamp(20px,4.6vw,26px);color:var(--navy);letter-spacing:-.015em}
+.sh a{font-weight:800;color:var(--deep);text-decoration:none;white-space:nowrap}
+.qa{padding:34px 0 30px}
+.qa__grid{display:grid;gap:22px}
+.qa__grid>*{min-width:0}
+.qa__side .chat{max-width:none;opacity:1;animation:none;padding:14px 14px 12px}
+.qa__side .chat__body{min-height:220px}
+.side__btn{display:block;margin-top:10px;text-align:center;background:var(--orange);color:var(--navy);font-weight:800;text-decoration:none;padding:14px;border-radius:14px;box-shadow:0 3px 0 var(--deep)}
+.fp{padding:32px 0}
+.bt{padding:26px 0 30px;background:#fff}
+.bt__in{display:grid;gap:12px}
+.bt__join{display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--tint);border-radius:18px;padding:18px 20px;color:var(--ink)}
+.bt__join div{flex:1;min-width:0}
+.bt__join small{display:block;font-size:13px;color:var(--deep);font-weight:700}
+.bt__join b{display:block;font-size:19px;font-weight:900;color:var(--navy)}
+.bt__join span{display:block;font-size:13.5px;color:var(--ink-2)}
+.bt__join em{font-style:normal;flex:none;background:var(--navy);color:#fff;font-weight:800;font-size:14px;padding:10px 16px;border-radius:999px}
+.bt__staff{background:var(--navygray);border-radius:18px;padding:16px 20px}
+.bt__staff small{display:block;font-size:13px;font-weight:700;color:var(--steel);margin-bottom:8px}
+.bt__staff div{display:flex;flex-wrap:wrap;gap:8px}
+.bt__staff a{background:#fff;color:var(--navy);font-weight:800;font-size:14px;text-decoration:none;padding:9px 14px;border-radius:10px}
+@media (max-width:900px){.topbar__links a{background:var(--navygray);color:var(--navy)}.topbar__links a.nv-join,.topbar__links a.nv-tel{margin:0}.topbar__links a.nv-tel{background:var(--navy);color:#fff}}
+@media (min-width:980px){
+  .hm__in{grid-template-columns:.9fr 1.1fr;grid-template-areas:"t r" "s r";column-gap:48px;row-gap:22px;align-items:end;padding:44px var(--pad) 48px}
+  .hm__s{align-self:start}
+  .qa__grid{grid-template-columns:1fr 340px;align-items:start}
+  .qa__side{position:sticky;top:80px}
+  .qa__list{grid-template-columns:1fr 1fr!important}
+  .fp__list{grid-template-columns:repeat(4,1fr)!important}
+  .bt__in{grid-template-columns:1.4fr 1fr}
+}
+@media (max-width:640px){
+  .tiles{gap:6px}.tile{padding:10px 8px}.tile b{font-size:14px}.tile small{display:none}.tile span{font-size:24px}
+  .claimbar em{display:none}
+  .qh__ask{display:flex;justify-content:center}
+}
+
+/* ══ 2026-11-11 홈 2차: 왼쪽 실시간 질문·답변, 오른쪽 상담 바로가기, 아래 설계사|칼럼 ══ */
+.hm__in{grid-template-areas:"r" "c"!important}
+.hm__r{grid-area:r}.hm__c{grid-area:c}
+.hm h1{font-size:clamp(28px,5.4vw,40px);margin-top:4px}
+.hm__lead{margin:6px 0 14px;font-size:15px}
+.hm__lead span{display:inline-block;color:var(--steel);font-size:13.5px;font-weight:600}
+.hm__c .chat{display:block;text-decoration:none;color:inherit;max-width:none;opacity:1;animation:none;padding:14px 14px 10px;transition:transform .15s}
+.hm__c .chat:hover{transform:translateY(-2px)}
+.hm__c .chat__body{min-height:300px}
+.hm__c .qh__search{margin-top:14px;max-width:none}
+.hm__c .qh__ask{display:flex;justify-content:center;margin-top:10px}
+.bub .by{display:block;font-size:11.5px;font-weight:700;color:var(--orange);margin-bottom:2px}
+.bub.me .by{color:var(--deep)}
+.duo{background:var(--navygray);padding:30px 0 34px}
+.duo__in{display:grid;gap:16px}
+.duo__in>*{min-width:0}
+.duo__box{background:#fff;border-radius:20px;padding:20px;border:1px solid var(--line)}
+.duo .fp,.duo .qa{padding:20px}
+.duo .fp__filter{margin-bottom:12px}
+.duo .ex{border:1px solid var(--line)}
+.duo .qa__list{grid-template-columns:1fr!important}
+.duo .qc{padding:14px 16px}
+.duo .qc h3{font-size:16.5px;margin-top:6px}
+.duo .qc p{-webkit-line-clamp:2}
+@media (min-width:980px){
+  .hm__in{grid-template-columns:400px 1fr!important;grid-template-areas:"c r"!important;align-items:start!important;column-gap:40px!important}
+  .hm__c{position:sticky;top:84px}
+  .duo__in{grid-template-columns:1fr 1fr}
+  .duo .fp__list{grid-template-columns:1fr 1fr!important}
+}
+.tg__more{margin-left:auto;font-size:13px;font-weight:800;color:#fff;background:var(--deep);padding:6px 11px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.tg__more:hover{background:var(--navy)}
+/* 2026-11-19 홈 균형: 청구 대행·든든 서랍 막대는 PC에서 왼쪽(질문창 아래), 모바일에서 상담 바로가기 아래 */
+.hm__b{grid-area:b}
+.hm__b .claimbar:first-child{margin-top:0}
+.claimbar.care{background:var(--deep)}
+.claimbar.care small{color:#F6DDE2}
+.claimbar.care em{background:#fff;color:var(--deep)}
+.hm__in{grid-template-areas:"r" "b" "c"!important}
+@media (min-width:980px){
+  .hm__in{grid-template-areas:"c r" "b b"!important;align-items:stretch!important;row-gap:14px!important}
+  .hm__c{position:static;display:flex;flex-direction:column}
+  .hm__c .chat{flex:1;display:flex;flex-direction:column}
+  .hm__c .chat__body{flex:1}
+  .hm__b{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .hm__b .claimbar{margin-top:0}
+}
+
+/* 2026-11-19 모바일 깨짐 방지: 큰 글씨(앱 내 브라우저·글자 크게 설정)에서도 넘치지 않게 */
+html,body{overflow-x:hidden}
+.tg__h{flex-wrap:wrap;row-gap:6px}
+.tg__h,.sh h2,.chat__bar small{white-space:nowrap}
+.chat__bar{flex-wrap:wrap;row-gap:4px}
+.tg__more{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{min-width:0}
+.tile b,.tile small{word-break:keep-all;overflow-wrap:anywhere}
+.claimbar div,.claimbar b,.claimbar small{overflow-wrap:anywhere}
+@media (max-width:640px){
+  .tg__more-x{display:none}
+  .tg__h{font-size:15px}
+  .tile b{font-size:13.5px;line-height:1.25}
+  .claimbar{padding:14px}
+  .claimbar>span{font-size:24px}
+  .claimbar b{font-size:16px}
+  .claimbar small{font-size:12.5px}
+  .bt__join{flex-wrap:wrap}
+  .bt__join div{flex-basis:100%}
+  .chat__bar{font-size:12.5px}
+}
+@media (max-width:340px){
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+
+<link rel="apple-touch-icon" href="https://daon.io.kr/assets/app-icon-red-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="보험물어봄">
+</head>
+<body>
+
+
+<div class="topbar-outer">
+<header class="topbar">
+  <a href="https://grow.ai.kr/daon/"><img class="brand-mark" src="https://daon.io.kr/assets/logo-daon-wordmark.png" alt="다온파트너스" width="90" height="26" decoding="async" style="height:26px;width:auto;display:block"></a>
+  <div class="topbar__m"><a href="tel:0415341124" class="tb-tel">📞</a><button type="button" class="tb-menu" id="tbMenu" aria-expanded="false" aria-controls="topLinks">메뉴</button></div>
+  <nav class="topbar__links" id="topLinks">
+    <a href="#go">보험 상담</a>
+    <a href="https://daon.io.kr/claim/app/?m=daon">보험금 청구</a>
+    <a href="https://daon.io.kr/ceo/">사장님 전용관</a>
+    <a href="https://daon.io.kr/qna/">질문하기</a>
+    <a href="#qa">칼럼</a>
+    <a href="#fp">설계사 찾기</a>
+    <a class="nv-join" href="https://daon.io.kr/join1">설계사 모집</a>
+    <a class="nv-tel" href="tel:0415341124">📞 041-534-1124</a>
+  </nav>
+</header>
+</div>
+
+<!-- ① 첫 화면: 실시간 질문·답변 + 무엇을 도와드릴까요 -->
+<section class="hm" id="go">
+  <span class="qh__blob b1" aria-hidden="true"></span>
+  <div class="hm__in">
+    <div class="hm__c">
+      <a class="chat" href="https://daon.io.kr/qna/" aria-label="보험물어봄 질문·답변 보러 가기">
+        <div class="chat__bar"><img src="https://daon.io.kr/assets/favicon-daon.png" alt="">보험물어봄 실시간 질문·답변<small>답변 중</small></div>
+        <div class="chat__body" id="chatBody"></div>
+        <p class="chat__note" id="chatNote">보장 여부는 가입한 상품의 약관으로 정해집니다.</p>
+      </a>
+      <label class="qh__search"><span class="sr">궁금한 것 검색</span><input id="q" type="search" placeholder="예: 간병인, 실비 청구, 자동차 사고" autocomplete="off"><i aria-hidden="true">⌕</i></label>
+      <a class="qh__ask" href="https://daon.io.kr/qna/" id="askBtn">나도 물어보기 <b>무료</b></a>
+    </div>
+
+    <div class="hm__r">
+      <p class="qh__kick">보험물어봄 <span>by 다온</span></p>
+      <h1>무엇을 도와드릴까요?</h1>
+      <p class="hm__lead">누르면 1분 안에 상담 신청이 끝납니다. <span>상담 비용 없음 · 설계사 등록번호 공개</span></p>
+      <div class="tg">
+        <h2 class="tg__h"><i>👨‍👩‍👧</i>개인·가족 보험 상담</h2>
+        <div class="tiles">
+          <a class="tile" href="https://daon.io.kr/health-consult/?m=daon"><span>🩺</span><b>건강보험</b><small>실비·수술·간병·치매</small></a>
+          <a class="tile" href="https://daon.io.kr/cancer-consult/?m=daon"><span>🎗️</span><b>암보험</b><small>보장 충분한지 비교</small></a>
+          <a class="tile" href="https://daon.io.kr/consult/?m=daon"><span>📋</span><b>내 보험 점검</b><small>무료 보장분석</small></a>
+          <a class="tile" href="https://daon.io.kr/auto-consult/?m=daon"><span>🚗</span><b>자동차보험</b><small>만기 전 견적 비교</small></a>
+          <a class="tile" href="https://daon.io.kr/fire-consult/?m=daon"><span>🏠</span><b>주택 화재보험</b><small>주소만 알려주세요</small></a>
+          <a class="tile" href="https://daon.io.kr/pet-consult/?m=daon"><span>🐾</span><b>펫보험</b><small>강아지·고양이</small></a>
+        </div>
+      </div>
+      <div class="tg" id="biz">
+        <h2 class="tg__h"><i>🏪</i>사장님·사업장<a class="tg__more" href="https://daon.io.kr/ceo/">사장님 전용관<span class="tg__more-x"> · 마케팅·리뷰·제휴</span> ›</a></h2>
+        <div class="tiles">
+          <a class="tile" href="https://daon.io.kr/biz-d/?m=daon"><span>📜</span><b>의무보험 확인</b><small>1분 확인</small></a>
+          <a class="tile" href="https://daon.io.kr/safety-consult/?m=daon"><span>🔥</span><b>사업장 보험 상담</b><small>화재·배상·직원</small></a>
+          <a class="tile" href="https://daon.io.kr/business/?m=daon"><span>🦺</span><b>안전 자가진단</b><small>중대재해 5인 이상</small></a>
+        </div>
+      </div>
+    </div>
+    <div class="hm__b">
+      <a class="claimbar" href="https://daon.io.kr/claim/app/?m=daon"><span>🧾</span><div><b>보험금 청구 무료 대행</b><small>담당 설계사가 없어도 됩니다 · 서류 사진만 올리세요</small></div><em>청구하기 ›</em></a>
+      <a class="claimbar care" href="https://daon.io.kr/ceo/care/"><span>🧰</span><div><b>사장님 든든 서랍</b><small>세금·직원·장부·정책자금·홍보 3분 점검</small></div><em>열어 보기 ›</em></a>
+    </div>
+  </div>
+</section>
+
+<!-- ② 설계사 소개 | 칼럼 -->
+<section class="duo">
+  <div class="wrap2 duo__in">
+    <div class="duo__box fp" id="fp">
+      <div class="sh"><h2>설계사 소개</h2><a href="https://daon.io.kr/experts/">전체 보기 ›</a></div>
+      <div class="fp__filter" id="fpFilter"></div>
+      <div class="fp__list" id="fpList"><p class="fp__state">설계사 정보를 불러오는 중입니다</p></div>
+    </div>
+    <div class="duo__box qa" id="qa">
+      <div class="sh"><h2>설계사 칼럼</h2><a href="https://daon.io.kr/column/">전체 보기 ›</a></div>
+      <div class="qa__types" id="qaTypes" role="tablist"></div>
+      <div class="qa__cats" id="qaCats"></div>
+      <div class="qa__list" id="qaList"><p class="fp__state">글을 불러오는 중입니다</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ④ 모집 · 설계사 전용 -->
+<section class="bt">
+  <div class="wrap2 bt__in">
+    <a class="bt__join" href="https://daon.io.kr/join1"><div><small>함께 일할 분을 찾습니다</small><b>보험설계사 모집</b><span>신입 · 경력팀장 · 관리자 | 현장 지역행사 + 온라인 영업</span></div><em>모집 안내 ›</em></a>
+    <div class="bt__staff"><small>다온지사 설계사 전용</small><div><a href="https://daon.io.kr/branch/">지사페이지 입장</a><a href="https://grow.ai.kr" target="_blank" rel="noopener">그로우사업부</a></div></div>
+  </div>
+</section>
+
+<!-- ⑥ FOOTER -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__legal" style="border-top:none;padding-top:0;margin-top:0;">
+      전화 041-534-1124 · 팩스 041-534-1126<br>
+      본 사이트는 특정 보험회사나 상품을 광고·비교하지 않으며, 상담·제휴·채용 관련 정보 제공 및 신청 접수를 목적으로 합니다.<br>
+      개인정보 보호책임자 다온파트너스 · 041-534-1124
+    </div>
+
+    <div class="foot__links">
+      <a href="#" class="js-app" style="color:#fff;font-weight:800">휴대폰에 앱 설치</a>
+      <a href="https://daon.io.kr/about">회사소개</a>
+      <a href="https://daon.io.kr/about#way">오시는 길</a>
+      <span>개인정보처리방침</span>
+      <a href="https://open.kakao.com/me/daonp" target="_blank" rel="noopener">상담문의</a>
+    </div>
+  </div>
+
+  <div class="foot__bottom">
+    <img class="foot__logo" src="https://daon.io.kr/assets/logo-daon-wordmark-white.png" alt="DAON PARTNERS"
+         width="177" height="60" decoding="async">
+    <div class="foot__sub">다온파트너스(884-14-02999)</div>
+    <div class="foot__addr">충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C동 301호</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var EX='https://daonpartners.app.n8n.cloud/webhook/daon-expert-list-v2', CO='https://daonpartners.app.n8n.cloud/webhook/daon-column-list';
+  var SPECS=['건강보험','암보험','화재보험','자동차보험','펫보험','사업장위험관리','퇴직연금','종신보험'];
+  var TYPES=['전체','질문답변','정보','보상사례','가입사례'];
+  var CATS=['실손·보험금청구','간병·치매','암·뇌·심장','건강·수술','어린이','자동차·운전자','화재·배상책임','사업장·소상공인','펫','연금·종신','기타'];
+  var $=function(id){return document.getElementById(id);};
+  var EXP=[], COLS=[], sel='', ty='전체', cat='', q='', shown=6;
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function img(u){ u=String(u||''); return /^https?:\/\//.test(u)?u:'https://daon.io.kr/assets/favicon-daon.png'; }
+  function lines(t){ return String(t||'').split(/\n+/).map(function(x){return x.trim();}).filter(Boolean); }
+  /* 칼럼 */
+  function colCard(c,i){
+    var ex=c.summary||lines(c.body).filter(function(x){return x.charAt(0)!=='('&&x.indexOf('##')!==0;}).join(' ');
+    return '<a class="qc" style="--d:'+(i*60)+'ms" href="https://daon.io.kr/column/p/'+encodeURIComponent(c.id)+'.html"><span class="qc__tag"><b>'+esc(c.type||'정보')+'</b>'+esc(c.cat||'기타')+'</span><h3>'+esc(c.title)+'</h3><p>'+esc(ex)+'</p><span class="qc__by"><img src="'+esc(img(c.photo))+'" alt="" loading="lazy">'+esc(c.name)+' · '+esc(c.job||'보험설계사')+'</span></a>';
+  }
+  function hit(c){
+    if(ty!=='전체'&&c.type!==ty) return false;
+    if(cat&&c.cat!==cat) return false;
+    if(q){ var t=(c.title+' '+(c.summary||'')+' '+(c.kw||'')+' '+c.cat+' '+c.body).toLowerCase(); return q.split(/\s+/).every(function(w){return t.indexOf(w)>=0;}); }
+    return true;
+  }
+  function drawCols(){
+    $('qaTypes').innerHTML=TYPES.map(function(t){ return '<button type="button" role="tab" data-t="'+t+'" aria-selected="'+(t===ty)+'">'+(t==='전체'?'전체 글':t)+'</button>'; }).join('');
+    var have=CATS.filter(function(k){return COLS.some(function(c){return c.cat===k;});});
+    $('qaCats').innerHTML=have.length>1?['<button type="button" data-c="" aria-pressed="'+(!cat)+'">모든 분야</button>'].concat(have.map(function(k){return '<button type="button" data-c="'+esc(k)+'" aria-pressed="'+(k===cat)+'">'+esc(k)+'</button>';})).join(''):'';
+    var arr=COLS.filter(hit);
+    $('qaList').innerHTML=arr.length?arr.slice(0,shown).map(colCard).join('')+(arr.length>shown?'<button type="button" class="qa__more" id="qaMore">글 더 보기 ('+(arr.length-shown)+')</button>':'')
+      :'<p class="fp__state">'+(q?'"'+esc(q)+'"에 맞는 글이 아직 없습니다. ':'이 조건의 글은 아직 없습니다. ')+'<a href="https://daon.io.kr/qna/'+(q?'?q='+encodeURIComponent(q):'')+(cat?(q?'&':'?')+'c='+encodeURIComponent(cat):'')+'" style="color:var(--deep);font-weight:800">질문을 남기면 AI가 바로 답해 드립니다 ›</a></p>';
+  }
+  $('qaTypes').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; ty=b.dataset.t; shown=6; drawCols(); });
+  $('qaCats').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; cat=b.dataset.c; shown=6; drawCols(); });
+  $('qaList').addEventListener('click',function(e){ if(e.target.id==='qaMore'){ shown+=6; drawCols(); } });
+  var tmr; $('q').addEventListener('input',function(){ clearTimeout(tmr); var v=this.value; tmr=setTimeout(function(){ q=v.trim().toLowerCase(); shown=6; drawCols(); $('askBtn').href='https://daon.io.kr/qna/'+(v.trim()?'?q='+encodeURIComponent(v.trim()):''); },180); });
+  $('q').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); var v=this.value.trim(); q=v.toLowerCase(); shown=6; drawCols(); if(v && !COLS.some(hit)){ location.href='https://daon.io.kr/qna/?q='+encodeURIComponent(v); return; } $('qa').scrollIntoView({behavior:still?'auto':'smooth'}); } });
+  /* 대화 미리보기 */
+  var DEMO=[
+    ['실비 청구할 때 서류는 뭐가 필요해요?','진료비 계산서·영수증과 세부내역서, 진단명이 적힌 서류(처방전·진단서 등)가 기본이에요. 금액별로 생략해 주는 기준은 보험사마다 달라요.'],
+    ['간병인 사용일당이랑 지원일당은 뭐가 달라요?','사용일당은 간병인을 쓰고 증빙하면 정해진 일당을 받고, 지원일당은 보험사와 계약된 업체가 간병인을 보내 주는 방식이에요.'],
+    ['예전 병원비도 지금 청구할 수 있나요?','보험금 청구권은 3년이 지나면 소멸해요(상법 제662조). 3년이 안 지났다면 지금 청구해 보세요.']
+  ];
+  /* 실시간 질문·답변: 공개된 실제 질문 중 설계사 답변이 달린 것을 돌려 보여줌 (없으면 예시) */
+  function plain(t,n){ t=String(t||'').replace(/[#*_>`\[\]]/g,'').replace(/\s+/g,' ').trim(); return t.length>n?t.slice(0,n)+'…':t; }
+  var LIVE=DEMO.map(function(d){ return {q:d[0],a:d[1],by:'AI 1차 안내',ph:'',note:'예시 질문입니다. 보장 여부는 가입한 상품의 약관으로 정해집니다.'}; });
+  function chatDemo(){
+    var box=$('chatBody'); if(!box) return; var k=0, T=[], iv;
+    function add(h){ box.insertAdjacentHTML('beforeend',h); return box.lastElementChild; }
+    function show(n,anim){
+      box.innerHTML=''; var d=LIVE[n]; $('chatNote').textContent=d.note;
+      add('<div class="bub me"><span class="by">'+esc(d.who||'고객 질문')+'</span>'+esc(d.q)+'</div>');
+      var ans='<div class="bub ai"><span class="by">'+esc(d.by)+'</span>'+esc(d.a)+'</div>';
+      var chip='<div class="chat__fc">'+(d.ph?'<img src="'+esc(d.ph)+'" alt="">':'<img src="https://daon.io.kr/assets/profile-hwajin-expert.jpg" alt="">')+(d.ph?'전체 답변 보기 ›':'다온 설계사가 증권 보고 이어서 답변')+'</div>';
+      if(!anim){ add(ans); add(chip); return; }
+      T.push(setTimeout(function(){ var t=add('<div class="bub ai typing"><i></i><i></i><i></i></div>');
+        T.push(setTimeout(function(){ t.remove(); add(ans); T.push(setTimeout(function(){ add(chip); },800)); },1300)); },700));
+    }
+    function start(){ clearInterval(iv); T.forEach(clearTimeout); T=[]; k=0;
+      if(still){ show(0,false); return; }
+      show(0,true); iv=setInterval(function(){ T.forEach(clearTimeout); T=[]; k=(k+1)%LIVE.length; show(k,true); },8000); }
+    start();
+    fetch('https://daonpartners.app.n8n.cloud/webhook/daon-qna-list?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(r){
+      var items=((r&&r.items)||[]).filter(function(x){ return x&&x.answer&&(x.title||x.q); }).slice(0,8);
+      if(!items.length) return;
+      LIVE=items.map(function(x){ var w=x.expert||{};
+        return {q:plain(x.q||x.title,90), who:(x.nick?x.nick+' 님':'고객')+' · '+(x.cat||'질문'), a:plain(x.answer,150), by:(w.name?w.name+' 설계사 답변':'설계사 답변'), ph:img(w.photo), note:'실제 공개 질문입니다'+(x.date?' · '+x.date:'')+' · 보장 여부는 약관으로 정해집니다.'}; });
+      start();
+    }).catch(function(){});
+  }
+  chatDemo();
+  var tbm=$('tbMenu'); if(tbm) tbm.addEventListener('click',function(){ var o=$('topLinks').classList.toggle('open'); tbm.setAttribute('aria-expanded',o); tbm.textContent=o?'닫기':'메뉴'; });
+  $('topLinks').addEventListener('click',function(e){ if(e.target.closest('a')&&tbm){ $('topLinks').classList.remove('open'); tbm.setAttribute('aria-expanded',false); tbm.textContent='메뉴'; } });
+  function ticker(){}
+  /* 설계사 (작게) */
+  function exCard(p){
+    var c=encodeURIComponent(p.code);
+    return '<article class="ex"><img src="'+esc(img(p.photo))+'" alt="'+esc(p.name)+' 설계사" loading="lazy"><div class="ex__b"><h3><a href="https://daon.io.kr/expert/?a='+c+'">'+esc(p.name)+'</a></h3><p>'+esc(p.title||'보험설계사')+(p.region?' · '+esc(p.region):'')+'</p>'
+      +(p.regNo?'<small>등록번호 '+esc(p.regNo)+'</small>':'')
+      +(p.specialties&&p.specialties.length?'<span class="ex__sp">'+p.specialties.slice(0,3).map(function(x){return '<i>'+esc(x)+'</i>';}).join('')+'</span>':'')
+      +'<span class="ex__act"><a class="a1" href="https://daon.io.kr/expert/?a='+c+'">상담하기</a><a class="a2" href="https://daon.io.kr/claim/app/?m='+c+'">청구 맡기기</a></span></div></article>';
+  }
+  function drawEx(){
+    var arr=EXP.filter(function(p){ return !sel||(p.specialties||[]).indexOf(sel)>=0; });
+    $('fpList').innerHTML=arr.length?arr.map(exCard).join(''):'<p class="fp__state">해당 분야 설계사가 아직 없습니다.</p>';
+    var have=SPECS.filter(function(s){ return EXP.some(function(p){ return (p.specialties||[]).indexOf(s)>=0; }); });
+    $('fpFilter').innerHTML=have.length?['전체'].concat(have).map(function(s){ var v=s==='전체'?'':s; return '<button type="button" data-v="'+esc(v)+'" aria-pressed="'+(v===sel)+'">'+esc(s)+'</button>'; }).join(''):'';
+  }
+  $('fpFilter').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; sel=b.dataset.v; drawEx(); });
+  fetch(CO+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+    COLS=(Array.isArray(d)?d:(d&&d.items)||[]); drawCols(); ticker();
+  }).catch(function(){ $('qaList').innerHTML='<p class="fp__state">글을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.</p>'; });
+  fetch(EX+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+    EXP=(Array.isArray(d)?d:(d&&d.items)||[]).filter(function(p){return p&&p.name&&p.code;}); drawEx();
+  }).catch(function(){ $('fpList').innerHTML='<p class="fp__state">설계사 정보를 불러오지 못했습니다.</p>'; });
+})();
+</script>
+<script>
+(function(){
+  var dp=null, btns=[].slice.call(document.querySelectorAll('.js-app')); if(!btns.length) return;
+  var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(standalone){ document.documentElement.classList.add('is-app'); btns.forEach(function(b){ (b.closest('.appbar')||b).style.display='none'; }); return; }
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
+  btns.forEach(function(btn){ btn.addEventListener('click',function(ev){ ev.preventDefault();
+    if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
+    var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+    alert(ios?'아이폰: 사파리 아래쪽 [공유] 버튼 → [홈 화면에 추가]를 누르세요.':'브라우저 메뉴(⋮ 또는 ≡) → [홈 화면에 추가] 또는 [앱 설치]를 누르세요.');
+  }); });
+})();
+</script>
+</body>
+</html>
